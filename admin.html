@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Gérer les films — BINKSFILMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --noir:#0A0A0A; --surface:#131313; --surface-2:#191919;
+  --ivoire:#EDEBE6; --gris:#8E8A84; --gris-2:#5C5955;
+  --rouge:#B11226; --vert:#4C9A6A;
+  --ligne:rgba(237,235,230,.13); --ligne-2:rgba(237,235,230,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--noir);color:var(--ivoire);font-family:'Archivo','Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(177,18,38,.5)}
+:focus-visible{outline:1px solid var(--rouge);outline-offset:2px}
+button{font-family:inherit;cursor:pointer;color:inherit}
+img{display:block;max-width:100%}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+
+/* barre */
+header{position:sticky;top:0;z-index:20;background:rgba(10,10,10,.96);border-bottom:1px solid var(--ligne)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:16px;padding-bottom:16px;flex-wrap:wrap}
+.marque{font-weight:800;font-stretch:125%;font-size:13px;letter-spacing:.24em;text-transform:uppercase}
+.marque span{color:var(--gris);font-weight:600;letter-spacing:.14em}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{background:none;border:1px solid var(--ligne);color:var(--ivoire);font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:12px 18px;transition:.2s}
+.btn:hover{border-color:rgba(237,235,230,.45)}
+.btn.plein{background:var(--ivoire);color:var(--noir);border-color:var(--ivoire)}
+.btn.plein:hover{opacity:.85}
+.btn.danger:hover{border-color:var(--rouge);color:#E4586B}
+
+/* aide */
+.aide{margin:34px 0 0;border:1px solid var(--ligne);background:var(--surface);padding:22px 24px}
+.aide h2{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gris)}
+.aide ol{margin:14px 0 0 20px;font-size:14.5px;color:var(--ivoire)}
+.aide li{margin:7px 0}
+.aide li b{font-weight:600}
+.aide code{background:var(--surface-2);padding:2px 7px;font-size:13px;font-family:Consolas,Menlo,monospace}
+
+/* etat */
+.etat{margin-top:26px;display:flex;gap:26px;flex-wrap:wrap;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--gris)}
+.etat b{color:var(--ivoire);font-variant-numeric:tabular-nums}
+#alerte{margin-top:18px;padding:14px 18px;border:1px solid;font-size:14px;display:none}
+#alerte.on{display:block}
+#alerte.ok{border-color:rgba(76,154,106,.5);color:#8FCFA6}
+#alerte.ko{border-color:rgba(177,18,38,.55);color:#E4586B}
+
+/* liste */
+.liste{margin:30px 0 90px;display:flex;flex-direction:column;gap:10px}
+.item{border:1px solid var(--ligne);background:var(--surface)}
+.item.arch{opacity:.5}
+.tete{display:grid;grid-template-columns:132px 1fr auto;gap:16px;align-items:center;padding:12px}
+@media(max-width:700px){.tete{grid-template-columns:96px 1fr;gap:12px}.tete .cmd{grid-column:1/-1}}
+.vignette{aspect-ratio:16/9;background:#000;overflow:hidden}
+.vignette img{width:100%;height:100%;object-fit:cover}
+.infos .t{font-size:15px;font-weight:600}
+.infos .s{margin-top:3px;font-size:12px;color:var(--gris);letter-spacing:.06em}
+.infos .s b{color:var(--rouge);font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:10.5px}
+.cmd{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.mini{background:none;border:1px solid var(--ligne);color:var(--gris);font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:8px 11px;transition:.2s}
+.mini:hover{color:var(--ivoire);border-color:rgba(237,235,230,.45)}
+.mini.danger:hover{color:#E4586B;border-color:var(--rouge)}
+.fleche{padding:8px 10px;font-size:13px;line-height:1}
+
+/* formulaire */
+.form{display:none;border-top:1px solid var(--ligne);padding:22px 12px 24px}
+.item.ouvert .form{display:block}
+.grille{display:grid;gap:16px}
+@media(min-width:640px){.grille.deux{grid-template-columns:1fr 1fr}.grille.trois{grid-template-columns:1fr 1fr 1fr}}
+.champ{display:flex;flex-direction:column;gap:6px}
+.champ label{font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris)}
+.champ input,.champ textarea,.champ select{
+  width:100%;background:var(--noir);color:var(--ivoire);border:1px solid var(--ligne);
+  font-family:inherit;font-size:14.5px;padding:11px 12px;border-radius:0;-webkit-appearance:none;appearance:none;transition:border-color .2s;
+}
+.champ textarea{resize:vertical;min-height:82px;line-height:1.55}
+.champ input:focus,.champ textarea:focus,.champ select:focus{outline:none;border-color:rgba(237,235,230,.5)}
+.champ .note{font-size:11.5px;color:var(--gris-2);line-height:1.5}
+.champ.err input{border-color:var(--rouge)}
+.sep{margin:24px 0 4px;font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gris-2);border-top:1px solid var(--ligne-2);padding-top:20px}
+
+/* ajout */
+#ajout{border:1px solid rgba(237,235,230,.28);background:var(--surface-2);padding:24px;margin-top:30px;display:none}
+#ajout.on{display:block}
+#ajout h2{font-weight:800;font-stretch:125%;font-size:20px;text-transform:uppercase;letter-spacing:-.01em;margin-bottom:18px}
+
+/* sortie */
+#sortie{position:fixed;inset:0;z-index:40;background:rgba(10,10,10,.97);display:none;overflow-y:auto}
+#sortie.on{display:block}
+#sortie .wrap{padding-top:50px;padding-bottom:60px}
+#sortie h2{font-weight:800;font-stretch:125%;font-size:24px;text-transform:uppercase;margin-bottom:8px}
+#sortie p{color:var(--gris);font-size:14.5px;margin-bottom:20px}
+#sortie textarea{width:100%;height:52vh;background:#000;color:#B9D8C4;border:1px solid var(--ligne);font-family:Consolas,Menlo,monospace;font-size:12.5px;line-height:1.5;padding:16px;resize:vertical}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="marque">BINKSFILMS <span>— Gérer les films</span></p>
+    <div class="actions">
+      <button class="btn" onclick="ouvrirAjout()">+ Ajouter un film</button>
+      <button class="btn" onclick="voirCode()">Voir le fichier</button>
+      <button class="btn plein" onclick="telecharger()">Télécharger films.js</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="aide">
+    <h2>Comment ça marche</h2>
+    <ol>
+      <li>Tu modifies ce que tu veux ci-dessous : ajouter, archiver, supprimer, changer une bannière, une description…</li>
+      <li>Tu cliques sur <b>Télécharger films.js</b>. Le fichier arrive dans tes téléchargements.</li>
+      <li>Sur GitHub, page de ton dépôt → <b>Add file → Upload files</b> → tu glisses le nouveau <code>films.js</code> → <b>Commit changes</b>.</li>
+      <li>Vercel remet le site à jour tout seul en ~30 secondes. Même adresse.</li>
+    </ol>
+  </div>
+
+  <div class="etat">
+    <span>En ligne <b id="n-actifs">0</b></span>
+    <span>Archivés <b id="n-arch">0</b></span>
+    <span>Total <b id="n-tot">0</b></span>
+    <span id="n-mod" style="color:var(--rouge)"></span>
+  </div>
+
+  <div id="alerte"></div>
+
+  <div id="ajout">
+    <h2>Ajouter un film</h2>
+    <div class="grille deux">
+      <div class="champ">
+        <label for="a-url">Lien YouTube</label>
+        <input id="a-url" type="text" placeholder="https://www.youtube.com/watch?v=...">
+        <span class="note">Colle le lien, l’identifiant est reconnu tout seul.</span>
+      </div>
+      <div class="champ">
+        <label for="a-date">Date de sortie</label>
+        <input id="a-date" type="date">
+      </div>
+      <div class="champ">
+        <label for="a-artist">Artiste</label>
+        <input id="a-artist" type="text" placeholder="Fono M">
+      </div>
+      <div class="champ">
+        <label for="a-title">Titre</label>
+        <input id="a-title" type="text" placeholder="Free Durk">
+      </div>
+    </div>
+    <div class="actions" style="margin-top:20px">
+      <button class="btn plein" onclick="ajouter()">Ajouter</button>
+      <button class="btn" onclick="fermerAjout()">Annuler</button>
+    </div>
+  </div>
+
+  <div class="liste" id="liste"></div>
+</div>
+
+<div id="sortie">
+  <div class="wrap">
+    <h2>films.js</h2>
+    <p>Si le téléchargement ne marche pas : sélectionne tout ci-dessous, copie, et colle dans ton fichier <code>films.js</code>.</p>
+    <textarea id="code" readonly></textarea>
+    <div class="actions" style="margin-top:16px">
+      <button class="btn plein" onclick="copier()">Copier</button>
+      <button class="btn" onclick="document.getElementById('sortie').classList.remove('on')">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script src="films.js"></script>
+<script>
+var MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+var films = JSON.parse(JSON.stringify(window.FILMS_DATA || []));
+var initial = JSON.stringify(films);
+var ouverts = {};
+
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function banniere(f){ return f.poster ? f.poster : "https://i.ytimg.com/vi/"+f.yt+"/hqdefault.jpg"; }
+function dateLongue(s){
+  var p = String(s||"").split("-");
+  if(p.length !== 3) return "date à remplir";
+  return parseInt(p[2],10)+" "+MOIS[parseInt(p[1],10)-1]+" "+p[0];
+}
+function idYoutube(v){
+  v = String(v||"").trim();
+  var m = v.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
+  if(m) return m[1];
+  if(/^[\w-]{11}$/.test(v)) return v;         /* identifiant collé seul */
+  return "";
+}
+function slugifier(s){
+  return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,50) || "film";
+}
+function slugLibre(base, sauf){
+  var s = base, n = 2;
+  while(films.some(function(f,i){ return i !== sauf && f.slug === s; })){ s = base+"-"+(n++); }
+  return s;
+}
+function alerte(msg, ok){
+  var a = document.getElementById("alerte");
+  a.textContent = msg;
+  a.className = "on " + (ok ? "ok" : "ko");
+  clearTimeout(window.__al);
+  window.__al = setTimeout(function(){ a.className = ""; }, 4500);
+}
+
+function dessiner(){
+  var actifs = films.filter(function(f){ return !f.archive; }).length;
+  document.getElementById("n-actifs").textContent = actifs;
+  document.getElementById("n-arch").textContent = films.length - actifs;
+  document.getElementById("n-tot").textContent = films.length;
+  var modifie = JSON.stringify(films) !== initial;
+  document.getElementById("n-mod").textContent = modifie ? "• modifications non téléchargées" : "";
+
+  document.getElementById("liste").innerHTML = films.map(function(f,i){
+    var cred = (f.credits||[]).map(function(c){ return c[0]+" : "+c[1]; }).join("\n");
+    return '<div class="item'+(f.archive?" arch":"")+(ouverts[i]?" ouvert":"")+'">'
+      + '<div class="tete">'
+      +   '<div class="vignette"><img src="'+esc(banniere(f))+'" alt="" loading="lazy"></div>'
+      +   '<div class="infos"><p class="t">'+esc(f.artist)+' — '+esc(f.title)+'</p>'
+      +     '<p class="s">'+esc(f.type||"Clip")+' · '+dateLongue(f.sortie)+' · '+esc(f.yt)
+      +     (f.archive ? ' · <b>archivé</b>' : '')+'</p></div>'
+      +   '<div class="cmd">'
+      +     '<button class="mini fleche" onclick="monter('+i+')" title="Monter" '+(i===0?'disabled style="opacity:.3"':'')+'>&uarr;</button>'
+      +     '<button class="mini fleche" onclick="descendre('+i+')" title="Descendre" '+(i===films.length-1?'disabled style="opacity:.3"':'')+'>&darr;</button>'
+      +     '<button class="mini" onclick="basculer('+i+')">'+(ouverts[i]?"Fermer":"Modifier")+'</button>'
+      +     '<button class="mini" onclick="archiver('+i+')">'+(f.archive?"Remettre":"Archiver")+'</button>'
+      +     '<button class="mini danger" onclick="supprimer('+i+')">Supprimer</button>'
+      +   '</div>'
+      + '</div>'
+      + '<div class="form">'
+      +   '<div class="grille deux">'
+      +     ch(i,"artist","Artiste",f.artist)
+      +     + ch(i,"title","Titre",f.title)
+      +     + ch(i,"sortie","Date de sortie",f.sortie,"date")
+      +     + ch(i,"type","Type",f.type||"Clip")
+      +   '</div>'
+      +   '<p class="sep">La bannière</p>'
+      +   '<div class="grille">'
+      +     ch(i,"poster","Image personnalisée (laisser vide = image YouTube)",f.poster,"text",
+             "Nom d’un fichier placé à côté du site, ex : img/mon-image.jpg — ou une adresse complète.")
+      +   '</div>'
+      +   '<p class="sep">La fiche</p>'
+      +   '<div class="grille">'
+      +     cht(i,"note","Description",f.note,"Deux ou trois phrases, écrites comme tu parles. Laisser vide n’affiche rien.")
+      +   '</div>'
+      +   '<div class="grille deux">'
+      +     ch(i,"lieu","Lieu",f.lieu)
+      +     + ch(i,"tournage","Date de tournage",f.tournage)
+      +   '</div>'
+      +   '<div class="grille">'
+      +     cht(i,"__credits","Crédits — une ligne par poste, sous la forme « Poste : Nom »",cred,"")
+      +   '</div>'
+      +   '<p class="sep">Contre-champ — facultatif</p>'
+      +   '<div class="grille deux">'
+      +     ch(i,"__cc_a","Image : le plan du film",(f.contrechamp||{}).a)
+      +     + ch(i,"__cc_b","Image : derrière la caméra",(f.contrechamp||{}).b)
+      +   '</div>'
+      +   '<div class="grille">'
+      +     ch(i,"__cc_l","Légende",(f.contrechamp||{}).legende,"text",
+             "Les deux images sont nécessaires pour que le contre-champ s’affiche.")
+      +   '</div>'
+      +   '<div class="grille">'
+      +     cht(i,"__bts","Images de tournage — une adresse par ligne",(f.bts||[]).join("\n"),"")
+      +   '</div>'
+      +   '<div class="grille">'
+      +     ch(i,"slug","Adresse de la page",f.slug,"text","Apparaît dans le lien du film. Évite de la changer si tu l’as déjà partagée.")
+      +   '</div>'
+      + '</div>'
+      + '</div>';
+  }).join("");
+}
+function ch(i,cle,label,val,type,note){
+  return '<div class="champ"><label>'+label+'</label>'
+       + '<input type="'+(type||"text")+'" value="'+esc(val)+'" oninput="maj('+i+',\''+cle+'\',this.value)">'
+       + (note ? '<span class="note">'+note+'</span>' : '') + '</div>';
+}
+function cht(i,cle,label,val,note){
+  return '<div class="champ"><label>'+label+'</label>'
+       + '<textarea oninput="maj('+i+',\''+cle+'\',this.value)">'+esc(val)+'</textarea>'
+       + (note ? '<span class="note">'+note+'</span>' : '') + '</div>';
+}
+
+function maj(i,cle,val){
+  var f = films[i];
+  if(cle === "__credits"){
+    f.credits = val.split("\n").map(function(l){
+      var p = l.split(":"); if(p.length < 2) return null;
+      var poste = p.shift().trim(), nom = p.join(":").trim();
+      return (poste && nom) ? [poste,nom] : null;
+    }).filter(Boolean);
+  }
+  else if(cle === "__bts"){
+    f.bts = val.split("\n").map(function(l){ return l.trim(); }).filter(Boolean);
+  }
+  else if(cle.indexOf("__cc_") === 0){
+    /* __cc garde la saisie en cours tant que les deux images ne sont pas là */
+    var cc = f.__cc || f.contrechamp || {a:"",b:"",legende:""};
+    cc[{ "__cc_a":"a", "__cc_b":"b", "__cc_l":"legende" }[cle]] = val.trim();
+    f.contrechamp = (cc.a && cc.b) ? cc : null;
+    f.__cc = cc;                                   /* on garde la saisie en cours */
+  }
+  else if(cle === "slug"){ f.slug = slugifier(val); }
+  else { f[cle] = val; }
+  document.getElementById("n-mod").textContent =
+    JSON.stringify(films) !== initial ? "• modifications non téléchargées" : "";
+}
+function basculer(i){ ouverts[i] = !ouverts[i]; dessiner(); }
+function archiver(i){ films[i].archive = !films[i].archive; dessiner(); }
+function supprimer(i){
+  var f = films[i];
+  if(!confirm("Supprimer définitivement « "+f.artist+" — "+f.title+" » ?\n\nPour le retirer du site sans le perdre, utilise plutôt Archiver.")) return;
+  films.splice(i,1); ouverts = {}; dessiner();
+  alerte("Film supprimé. Pense à télécharger films.js.", true);
+}
+function monter(i){ if(i>0){ films.splice(i-1,0,films.splice(i,1)[0]); ouverts={}; dessiner(); } }
+function descendre(i){ if(i<films.length-1){ films.splice(i+1,0,films.splice(i,1)[0]); ouverts={}; dessiner(); } }
+
+function ouvrirAjout(){
+  document.getElementById("ajout").classList.add("on");
+  document.getElementById("a-url").focus();
+  scrollTo({top:0,behavior:"smooth"});
+}
+function fermerAjout(){
+  document.getElementById("ajout").classList.remove("on");
+  ["a-url","a-date","a-artist","a-title"].forEach(function(id){ document.getElementById(id).value = ""; });
+}
+function ajouter(){
+  var url = document.getElementById("a-url").value;
+  var yt = idYoutube(url);
+  if(!yt) return alerte("Lien YouTube non reconnu. Colle l’adresse complète de la vidéo.");
+  if(films.some(function(f){ return f.yt === yt; })) return alerte("Cette vidéo est déjà dans la liste.");
+  var artist = document.getElementById("a-artist").value.trim();
+  var title  = document.getElementById("a-title").value.trim();
+  if(!artist || !title) return alerte("Il me faut l’artiste et le titre.");
+  var d = document.getElementById("a-date").value;
+  films.unshift({
+    slug: slugLibre(slugifier(artist+"-"+title), -1),
+    yt: yt, artist: artist, title: title,
+    sortie: d || "", type: "Clip", archive: false, poster: "",
+    note: "", lieu: "", tournage: "",
+    credits: [["Réalisation, image & montage","BINKSFILMS"]],
+    contrechamp: null, bts: []
+  });
+  ouverts = {}; fermerAjout(); dessiner();
+  alerte("Film ajouté en haut de la liste. Pense à télécharger films.js.", true);
+}
+
+function fabriquer(){
+  var propre = films.map(function(f){
+    return {
+      slug: f.slug, yt: f.yt, artist: f.artist, title: f.title,
+      sortie: f.sortie || "", type: f.type || "Clip",
+      archive: !!f.archive, poster: f.poster || "", note: f.note || "",
+      lieu: f.lieu || "", tournage: f.tournage || "",
+      credits: (f.credits && f.credits.length) ? f.credits : [["Réalisation, image & montage","BINKSFILMS"]],
+      contrechamp: f.contrechamp || null,
+      bts: f.bts || []
+    };
+  });
+  return "/* ============================================================\n"
+       + "   BINKSFILMS — LES FILMS\n"
+       + "   ------------------------------------------------------------\n"
+       + "   Ne modifie pas ce fichier à la main.\n"
+       + "   Ouvre \"admin.html\", fais tes changements, clique sur\n"
+       + "   \"Télécharger films.js\", puis remplace ce fichier par celui\n"
+       + "   que tu viens de télécharger.\n"
+       + "   ============================================================ */\n"
+       + "window.FILMS_DATA = " + JSON.stringify(propre, null, 2) + ";\n";
+}
+function verifier(){
+  var pbs = [];
+  films.forEach(function(f){
+    if(!f.yt) pbs.push("un film n’a pas de vidéo YouTube");
+    if(!f.artist || !f.title) pbs.push("« "+(f.artist||f.title||"?")+" » : artiste ou titre manquant");
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(f.sortie||"")) pbs.push("« "+f.artist+" — "+f.title+" » : date de sortie manquante");
+  });
+  var slugs = films.map(function(f){ return f.slug; });
+  slugs.forEach(function(s,i){ if(slugs.indexOf(s) !== i) pbs.push("deux films ont la même adresse : "+s); });
+  return pbs;
+}
+function telecharger(){
+  var pbs = verifier();
+  if(pbs.length && !confirm("Attention :\n\n• " + pbs.slice(0,6).join("\n• ") + "\n\nTélécharger quand même ?")) return;
+  var blob = new Blob([fabriquer()], {type:"text/javascript;charset=utf-8"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "films.js";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); }, 3000);
+  initial = JSON.stringify(films);
+  dessiner();
+  alerte("films.js téléchargé. Envoie-le sur GitHub pour mettre le site à jour.", true);
+}
+function voirCode(){
+  document.getElementById("code").value = fabriquer();
+  document.getElementById("sortie").classList.add("on");
+}
+function copier(){
+  var t = document.getElementById("code");
+  t.select(); t.setSelectionRange(0, 999999);
+  try{ document.execCommand("copy"); alerte("Copié.", true); }
+  catch(e){ alerte("Copie impossible — sélectionne le texte et fais Ctrl+C."); }
+}
+
+addEventListener("beforeunload", function(e){
+  if(JSON.stringify(films) !== initial){ e.preventDefault(); e.returnValue = ""; }
+});
+if(!window.FILMS_DATA){
+  alerte("films.js n’a pas été chargé. Ouvre cette page depuis le même dossier que films.js.");
+}
+dessiner();
+</script>
+</body>
+</html>
