@@ -194,7 +194,7 @@ nav a:hover{color:var(--ivoire)}
 /* la chute : un ton plus haut que la voix, jamais plus qu'un ton —
    sinon elle écrase ce qu'elle est censée conclure */
 #binks .txt p.clos{
-  margin-top:38px;max-width:none;
+  margin-top:44px;max-width:none;
   font-style:italic;font-weight:300;
   font-size:clamp(18px,1.8vw,22px);line-height:1.45;
   color:var(--gris);
@@ -228,15 +228,20 @@ nav a:hover{color:var(--ivoire)}
 /* les réseaux : des prolongements, pas des boutons — troisième niveau */
 .ailleurs{margin-top:30px;border-top:1px solid var(--ligne-2);padding-top:24px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
 .ailleurs a{
-  display:inline-flex;align-items:baseline;gap:10px;
+  display:inline-flex;align-items:baseline;gap:9px;
   font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
   color:var(--gris);transition:color .25s;
 }
 .ailleurs a:hover{color:var(--ivoire)}
-.ailleurs a i{font-style:normal;font-size:11px;transition:transform .25s}
-.ailleurs a:hover i{transform:translate(2px,-2px)}
+/* flèche simple pivotée : le caractère « ↗ » a une variante emoji et
+   certains téléphones l'affichent en carré bleu. Celui-ci n'en a pas. */
+.ailleurs a i{
+  display:inline-block;font-style:normal;font-size:12px;line-height:1;
+  transform:rotate(-45deg);transform-origin:center;transition:transform .25s;
+}
+.ailleurs a:hover i{transform:rotate(-45deg) translateX(3px)}
 .ailleurs a em{font-style:normal;font-weight:400;font-size:12.5px;letter-spacing:.02em;text-transform:none;color:var(--gris-2)}
-footer .ailleurs{margin-top:44px;border:0;padding-top:0;flex-direction:row;gap:30px;justify-content:center;align-items:baseline}
+footer .ailleurs{margin-top:30px;border:0;padding-top:0;flex-direction:row;gap:28px;justify-content:center;align-items:baseline}
 
 /* les deux entrées : parler d'un projet / questions */
 .entrees{margin-top:44px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
@@ -360,13 +365,11 @@ footer .ailleurs{margin-top:44px;border:0;padding-top:0;flex-direction:row;gap:3
 .faq-rep p+p{margin-top:15px;font-size:16px;color:var(--gris)}
 
 /* ---------- générique de fin ---------- */
-footer{margin-top:170px;border-top:1px solid var(--ligne-2);padding:110px 24px 60px;text-align:center}
-footer .fin{font-weight:800;font-stretch:125%;font-size:clamp(64px,15vw,190px);letter-spacing:.06em;text-transform:uppercase;line-height:.9}
-footer .fin b{color:var(--rouge);font-weight:800}
-footer .lockup{margin-top:74px}
+/* de l'air, pas du vide : 72 + 48 au lieu de 170 + 110 */
+footer{margin-top:72px;border-top:1px solid var(--ligne-2);padding:48px 24px 44px;text-align:center}
 footer .lk-name{font-size:13px;letter-spacing:.26em}
 footer .lk-base{font-size:15px;color:var(--gris);margin-top:6px}
-footer .legal{margin-top:52px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gris-2)}
+footer .legal{margin-top:34px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gris-2)}
 
 /* ---------- page film ---------- */
 /* on garde les marges latérales de .wrap : seul le haut est redéfini */
@@ -415,6 +418,7 @@ body.film main#home{display:none}
 .f-meta .row b{color:var(--ivoire);font-weight:600;min-width:150px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding-top:2px}
 .f-meta a.yt{border-bottom:1px solid var(--ligne);transition:color .25s,border-color .25s}
 .f-meta a.yt:hover{color:var(--ivoire);border-color:var(--ivoire)}
+.f-meta a.yt .fl{display:inline-block;font-style:normal;transform:rotate(-45deg);line-height:1}
 .f-note{margin-top:44px;max-width:34em}
 .f-note p{font-size:20px;line-height:1.6}
 .f-sect{margin-top:70px}
@@ -547,8 +551,10 @@ body.intro{overflow:hidden}
         <p class="clos rv">BinksFilms s’est construit comme ça&nbsp;:<br>en faisant, encore et encore.</p>
       </div>
       <figure class="rv">
-        <img src="real-web.webp" width="1400" height="886" alt="BinksFilms, réalisateur" loading="lazy">
-        <figcaption>BinksFilms</figcaption>
+        <!-- width et height doivent correspondre aux vraies dimensions du
+             fichier : sinon le navigateur réserve la mauvaise place et la
+             page saute au chargement. À remettre à jour si tu changes la photo. -->
+        <img src="real-web.webp" width="1920" height="2566" alt="BinksFilms, réalisateur" loading="lazy">
       </figure>
     </div>
   </section>
@@ -556,7 +562,7 @@ body.intro{overflow:hidden}
   <section id="contact">
     <div class="wrap">
       <h2 class="display rv">Contact</h2>
-      <p class="intro rv">Chaque projet est différent. Donne-moi quelques infos en une minute, je regarde et je reviens vers toi avec une proposition.</p>
+      <p class="intro rv">Chaque projet est différent. Quelques infos me suffisent pour comprendre le tien et te faire une proposition adaptée.</p>
 
       <!-- 1 — l'action principale -->
       <div class="entrees">
@@ -572,8 +578,8 @@ body.intro{overflow:hidden}
 
       <!-- 3 — les prolongements. Mêmes adresses répétées dans le générique de fin. -->
       <div class="ailleurs">
-        <a href="https://instagram.com/binksfilms" target="_blank" rel="noopener">Instagram <i>&#8599;</i> <em>coulisses &amp; sorties</em></a>
-        <a href="https://youtube.com/@binksfilms" target="_blank" rel="noopener">YouTube <i>&#8599;</i> <em>les films en entier</em></a>
+        <a href="https://instagram.com/binksfilms" target="_blank" rel="noopener">Instagram <i>&#8594;</i> <em>coulisses &amp; sorties</em></a>
+        <a href="https://youtube.com/@binksfilms" target="_blank" rel="noopener">YouTube <i>&#8594;</i> <em>les films en entier</em></a>
       </div>
     </div>
   </section>
@@ -583,16 +589,15 @@ body.intro{overflow:hidden}
 <main id="film-view" class="wrap" aria-live="polite"></main>
 
 <footer>
-  <p class="fin">Fin<b>.</b></p>
-  <a class="lockup" href="#/">
+  <a class="lockup" href="#/" onclick="retourAccueil(event)">
     <span class="lk-name">Binksfilms</span>
     <span class="lk-base">Les beaux arts du ghetto</span>
   </a>
   <div class="ailleurs">
-    <a href="https://instagram.com/binksfilms" target="_blank" rel="noopener">Instagram <i>&#8599;</i></a>
-    <a href="https://youtube.com/@binksfilms" target="_blank" rel="noopener">YouTube <i>&#8599;</i></a>
+    <a href="https://instagram.com/binksfilms" target="_blank" rel="noopener">Instagram <i>&#8594;</i></a>
+    <a href="https://youtube.com/@binksfilms" target="_blank" rel="noopener">YouTube <i>&#8594;</i></a>
   </div>
-  <p class="legal">© 2026 — Réalisation, image &amp; montage BINKSFILMS</p>
+  <p class="legal">© 2026 — BINKSFILMS</p>
 </footer>
 
 <div id="cut" aria-hidden="true"></div>
@@ -880,7 +885,7 @@ function renderFilm(f,i){
     + (f.lieu ? '<div class="row"><b>Lieu</b><span>'+esc(f.lieu)+'</span></div>' : '')
     + (f.tournage ? '<div class="row"><b>Tournage</b><span>'+esc(f.tournage)+'</span></div>' : '')
     + '<div class="row"><b>Sortie</b><span>'+dateLongue(f)+'</span></div>'
-    + '<div class="row"><b>Voir</b><span><a class="yt" href="https://www.youtube.com/watch?v='+f.yt+'" target="_blank" rel="noopener">YouTube &#8599;</a></span></div>'
+    + '<div class="row"><b>Voir</b><span><a class="yt" href="https://www.youtube.com/watch?v='+f.yt+'" target="_blank" rel="noopener">YouTube <i class="fl">&#8594;</i></a></span></div>'
     + '</div>';
 
   if(f.note) h += '<div class="f-note"><p class="voix">'+esc(f.note)+'</p></div>';
