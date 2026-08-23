@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230A0A0A'/%3E%3Ctext x='32' y='45' font-family='Arial Black,Arial' font-size='38' font-weight='900' fill='%23EDEBE6' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:dark;          /* on assume le thème : pas d'inversion automatique */
@@ -105,25 +105,37 @@ nav a:hover{color:var(--ivoire)}
 @media(max-width:760px){#grid{grid-template-columns:1fr}}
 .film{grid-column:span 1;text-align:left;background:none;border:none;padding:0;display:block;width:100%}
 .film.w{grid-column:1 / -1}
-.film .thumb{position:relative;aspect-ratio:16/9;overflow:hidden;background:#111}
+/* La bannière. Arrondi net et discret — assez pour se voir, assez peu
+   pour ne pas faire bouton d'application. */
+.film .thumb{--r:11px;position:relative;aspect-ratio:16/9;overflow:hidden;background:#111;border-radius:var(--r)}
 /* pas de zoom au survol : la parallaxe pilote déjà transform */
 .film .thumb img{width:100%;object-fit:cover}
-/* Le cartel : le nom porte, le titre chante, la fiche se tait.
-   Trois voix pour les mêmes informations qu'avant. */
-.film .cartel{margin-top:15px}
+/* voile monté du bas : il tient le texte sans noircir l'image */
+.film .voile{
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to top,
+    rgba(6,6,6,.94) 0%, rgba(6,6,6,.72) 22%, rgba(6,6,6,.3) 46%, rgba(6,6,6,0) 72%);
+}
+.film .cartel{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:0 18px 15px}
+/* Le nom porte, le titre chante, la fiche se tait.
+   Le nom en grotesque massive, le titre dans une serif de titrage à fort
+   contraste : deux voix nettement différentes, mais du même monde. */
 .film .artiste{
   font-weight:800;font-stretch:112%;text-transform:uppercase;
-  font-size:16px;letter-spacing:-.005em;line-height:1.08;
+  font-size:15px;letter-spacing:.005em;line-height:1.1;
+  text-shadow:0 1px 12px rgba(0,0,0,.55);
 }
 .film .titre{
-  margin-top:3px;
-  font-family:'Newsreader',Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;
-  font-size:16px;line-height:1.24;color:var(--ivoire);
+  margin-top:1px;
+  font-family:'Instrument Serif','Newsreader',Georgia,serif;
+  font-style:italic;font-weight:400;
+  font-size:24px;line-height:1.1;letter-spacing:.005em;color:var(--ivoire);
+  text-shadow:0 1px 14px rgba(0,0,0,.6);
 }
 .film .meta{
   margin-top:8px;
-  font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
-  color:var(--gris);font-variant-numeric:tabular-nums;
+  font-size:9.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(237,235,230,.55);font-variant-numeric:tabular-nums;
 }
 .film .artiste span{background-image:linear-gradient(var(--ivoire),var(--ivoire));background-size:0 1px;background-position:0 100%;background-repeat:no-repeat;transition:background-size .35s}
 .film:hover .artiste span{background-size:100% 1px}
@@ -133,19 +145,20 @@ nav a:hover{color:var(--ivoire)}
    on voit la carte en cours et on devine celle d'avant et d'après.
    (Placé après les règles de base, sinon elles l'emportent.) */
 @media(max-width:760px){
-  #grid{gap:24px}
-  .film .thumb{aspect-ratio:4/5}
-  .film .cartel{
-    margin-top:13px;min-height:78px;      /* place réservée : rien ne saute */
-    transition:opacity .32s ease,transform .32s ease;
-  }
-  .film .artiste{font-size:20px;letter-spacing:-.012em}
-  .film .titre{font-size:18.5px;margin-top:3px;line-height:1.2}
-  .film .meta{margin-top:8px;font-size:10px;letter-spacing:.2em}
+  #grid{gap:34px}
+  .film .thumb{--r:13px}
+  .film .cartel{padding:0 20px 17px}
+  .film .artiste{font-size:16px}
+  .film .titre{font-size:27px}
+  .film .meta{margin-top:9px}
 
-  /* Carte au centre de l'écran : l'image parle seule, le texte s'efface.
-     Il reprend sa place dès qu'elle n'est plus au centre. */
-  .film.vu.actif .cartel{opacity:0;transform:translateY(-8px)}
+  /* Bannière au centre de l'écran : le texte se floute puis s'efface,
+     l'image reste seule. Il revient net dès qu'elle n'est plus au centre. */
+  .film .cartel,.film .voile{transition:opacity .4s ease,filter .4s ease,transform .4s ease}
+  /* .vu.actif : la règle de dévoilement remet l'opacité à 1 plus loin
+     dans la feuille, il faut donc être plus spécifique qu'elle */
+  .film.vu.actif .cartel{opacity:0;filter:blur(7px);transform:translateY(5px)}
+  .film.vu.actif .voile{opacity:.35}
 }
 
 /* ---------- réalisateur ---------- */
@@ -483,11 +496,12 @@ body.film main#home{display:none}
    les textes montent d'un cran. Rien ne clignote, rien ne rebondit. */
 .rv{opacity:0;transform:translateY(24px);transition:opacity .85s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.2,.7,.2,1)}
 .rv.vu{opacity:1;transform:none}
+/* le volet doit garder l'arrondi, sinon il recarre les angles */
 .film .thumb{
-  clip-path:inset(100% 0 0 0);transition:clip-path 1.05s cubic-bezier(.2,.75,.2,1);
-  transform-origin:center center;will-change:transform,filter;backface-visibility:hidden;
+  clip-path:inset(100% 0 0 0 round var(--r));transition:clip-path 1.05s cubic-bezier(.2,.75,.2,1);
+  transform-origin:center center;will-change:transform;backface-visibility:hidden;
 }
-.film.vu .thumb{clip-path:inset(0 0 0 0)}
+.film.vu .thumb{clip-path:inset(0 0 0 0 round var(--r))}
 /* la grille devient un espace : les cadres y basculent en profondeur */
 #grid{perspective:1300px;perspective-origin:50% 50%}
 .film .cartel{opacity:0;transform:translateY(14px);transition:opacity .7s ease .18s,transform .7s cubic-bezier(.2,.7,.2,1) .18s}
@@ -740,14 +754,17 @@ function accrochage(n){
   var n = FILMS.length, w = accrochage(n);
   document.getElementById("count").textContent = pad(n) + " films";
   document.getElementById("grid").innerHTML = FILMS.map(function(f,i){
-    /* artiste, titre et métadonnées séparés : mêmes informations,
-       mais hiérarchie possible (le nom, puis le titre, puis la fiche) */
+    /* Le texte vit dans la bannière, pas sous elle. Mêmes informations,
+       simplement posées sur l'image avec un voile pour la lisibilité. */
     return '<a class="film'+(w[i]?" w":"")+'" href="#/film/'+f.slug+'">'
-      + '<div class="thumb">'+thumb(f)+'</div>'
-      + '<div class="cartel">'
-      +   '<p class="artiste"><span>'+esc(f.artist)+'</span></p>'
-      +   '<p class="titre">'+esc(f.title)+'</p>'
-      +   '<p class="meta">'+f.type+' &middot; '+annee(f)+'</p>'
+      + '<div class="thumb">'
+      +   thumb(f)
+      +   '<span class="voile" aria-hidden="true"></span>'
+      +   '<div class="cartel">'
+      +     '<p class="artiste"><span>'+esc(f.artist)+'</span></p>'
+      +     '<p class="titre">'+esc(f.title)+'</p>'
+      +     '<p class="meta">'+f.type+' &middot; '+annee(f)+'</p>'
+      +   '</div>'
       + '</div></a>';
   }).join("");
 })();
@@ -1549,13 +1566,16 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
       var abs = Math.abs(d);
 
       if(etroit){
-        /* Sur téléphone la carte grandit en approchant du centre.
-           C'est l'échelle qui fait la hiérarchie, pas la bascule. */
+        /* Sur téléphone la bannière grandit en approchant du centre.
+           C'est l'échelle qui fait la hiérarchie, pas la bascule.
+           L'assombrissement va sur l'image et non sur le cadre : sinon
+           il éteindrait aussi le texte des bannières en attente. */
         var prox = 1 - Math.min(1, abs / 0.85);        /* 1 au centre, 0 loin */
         cadre.style.transform =
           "perspective(1400px) rotateX(" + (d * angle).toFixed(2) + "deg)"
-          + " scale(" + (0.9 + prox * 0.1).toFixed(4) + ")";
-        cadre.style.filter = "brightness(" + (0.55 + prox * 0.45).toFixed(3) + ")";
+          + " scale(" + (0.93 + prox * 0.07).toFixed(4) + ")";
+        cadre.style.filter = "";
+        img.style.filter = "brightness(" + (0.72 + prox * 0.28).toFixed(3) + ")";
         var distance = Math.abs(milieu - milieuEcran);
         if(distance < distanceProche){ distanceProche = distance; proche = cadre.parentNode; }
       } else {
@@ -1567,6 +1587,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
           + " scale(" + (1 - abs * 0.035).toFixed(4) + ")";
         /* et il s'assombrit en s'éloignant : c'est ça qui donne la profondeur */
         cadre.style.filter = "brightness(" + (1 - abs * 0.42).toFixed(3) + ")";
+        img.style.filter = "";          /* on nettoie si on vient du mobile */
       }
 
       /* l'image glisse dans le cadre, plus lentement que la page */
