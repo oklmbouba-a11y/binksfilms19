@@ -311,8 +311,11 @@ footer .ailleurs{margin-top:30px;border:0;padding-top:0;flex-direction:row;gap:2
 @media(max-width:560px){.gros-cta{width:100%;justify-content:space-between}}
 
 /* ---------- superposition : devis & questions ---------- */
-.ov{position:fixed;inset:0;z-index:100;background:var(--noir);display:none;overflow-y:auto;overscroll-behavior:contain}
+.ov{position:fixed;inset:0;z-index:100;background:var(--noir);display:none;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .ov.on{display:block}
+/* pas de délai de 300 ms au tap, pas de flash bleu : les gros choix
+   tactiles doivent répondre au doigt comme une vraie application */
+.ov button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .ov-bar{
   position:sticky;top:0;z-index:2;background:var(--noir);
   display:flex;align-items:center;justify-content:space-between;gap:16px;
@@ -323,8 +326,12 @@ footer .ailleurs{margin-top:30px;border:0;padding-top:0;flex-direction:row;gap:2
 .ov-bar button:hover{color:var(--ivoire)}
 .ov-bar button.vide{visibility:hidden}
 .ov-step{font-size:11px;font-weight:600;letter-spacing:.2em;color:var(--gris-2);font-variant-numeric:tabular-nums}
-.ov-body{max-width:700px;margin:0 auto;padding:42px 20px 90px}
+/* la marge du bas tient compte de la barre du navigateur mobile et de
+   l'encoche : aucune étape ne finit cachée derrière l'interface du téléphone */
+.ov-body{max-width:700px;margin:0 auto;padding:42px 20px calc(58px + env(safe-area-inset-bottom))}
 @media(min-width:900px){.ov-body{padding:62px 24px 110px}}
+/* le piège à robots : invisible, et surtout impossible à atteindre au clavier */
+.hp{position:absolute;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none}
 
 .dv-q{font-weight:800;font-stretch:125%;text-transform:uppercase;letter-spacing:-.01em;line-height:1.02;font-size:clamp(26px,5.2vw,44px)}
 .dv-sub{margin-top:13px;font-size:15px;color:var(--gris);max-width:34em}
@@ -345,10 +352,14 @@ footer .ailleurs{margin-top:30px;border:0;padding-top:0;flex-direction:row;gap:2
 .chip{
   background:none;border:1px solid var(--ligne);color:var(--ivoire);font-family:inherit;
   font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  padding:13px 17px;transition:border-color .2s,background .2s,color .2s;
+  padding:14px 18px;min-height:46px;transition:border-color .2s,background .2s,color .2s;
 }
 .chip:hover{border-color:rgba(237,235,230,.42)}
 .chip.on{background:var(--ivoire);color:var(--noir);border-color:var(--ivoire)}
+
+/* petit intertitre à l'intérieur d'un écran (« je te réponds par ») */
+.dv-mini{margin-top:34px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris)}
+.dv-mini+.dv-chips{margin-top:12px}
 
 .dv-champ{margin-top:26px;display:flex;flex-direction:column;gap:8px}
 .dv-champ label{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris)}
@@ -373,6 +384,23 @@ footer .ailleurs{margin-top:30px;border:0;padding-top:0;flex-direction:row;gap:2
 .passer:hover{color:var(--ivoire)}
 .dv-err{margin-top:16px;font-size:13.5px;color:var(--rouge);display:none}
 .dv-err.on{display:block}
+/* mobile : tout se fait au pouce, sans changer de main.
+   Le bouton d'avancement reste collé au bas de l'écran — il ne part
+   jamais sous la ligne de flottaison, même quand la liste d'options
+   dépasse la hauteur du téléphone. */
+@media(max-width:560px){
+  .ov-body{padding-top:34px}
+  .dv-q{font-size:clamp(26px,7.4vw,34px)}
+  .dv-opts{gap:7px}
+  .opt{padding:16px 18px}
+  .dv-suite{
+    position:sticky;bottom:0;z-index:1;margin:26px -20px 0;
+    padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+    background:linear-gradient(to top,var(--noir) 62%,rgba(10,10,10,0));
+  }
+  .dv-suite:empty{display:none}      /* écrans qui enchaînent sans bouton */
+  .dv-suite .suivant{width:100%;text-align:center}
+}
 
 /* calendrier */
 .cal{margin-top:30px;border:1px solid var(--ligne);padding:15px}
@@ -384,8 +412,9 @@ footer .ailleurs{margin-top:30px;border:0;padding-top:0;flex-direction:row;gap:2
 .cal-jours,.cal-grille{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
 .cal-jours span{text-align:center;font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--gris-2);padding-bottom:7px}
 .cal-grille button{
-  aspect-ratio:1;background:none;border:1px solid transparent;color:var(--ivoire);
+  aspect-ratio:1;min-height:42px;background:none;border:1px solid transparent;color:var(--ivoire);
   font-family:inherit;font-size:13.5px;font-variant-numeric:tabular-nums;transition:.15s;
+  touch-action:manipulation;
 }
 .cal-grille button:hover:not([disabled]){border-color:rgba(237,235,230,.38)}
 .cal-grille button[disabled]{color:var(--gris-2);opacity:.32;cursor:default}
@@ -393,10 +422,17 @@ footer .ailleurs{margin-top:30px;border:0;padding-top:0;flex-direction:row;gap:2
 .cal-grille i{display:block;aspect-ratio:1}
 
 /* écran final */
-.dv-fin{padding:14vh 0 0}
+.dv-fin{padding:12vh 0 0}
 .dv-fin h3{font-weight:800;font-stretch:125%;text-transform:uppercase;font-size:clamp(40px,10vw,90px);line-height:.94;letter-spacing:-.02em}
 .dv-fin p{margin-top:24px;font-size:17px;color:var(--gris);max-width:30em}
 .dv-fin .relire{margin-top:40px}
+/* filet tant que l'envoi direct n'est pas branché : la demande, copiable */
+.dv-recap{
+  margin-top:28px;width:100%;min-height:220px;background:transparent;color:var(--gris);
+  border:1px solid var(--ligne);border-radius:0;font-family:inherit;font-size:13.5px;
+  line-height:1.75;padding:16px;resize:vertical;-webkit-appearance:none;appearance:none;
+}
+.dv-recap:focus{outline:none;border-color:rgba(237,235,230,.42)}
 
 /* questions (FAQ) */
 .faq-liste{margin-top:34px;border-top:1px solid var(--ligne-2)}
@@ -418,12 +454,22 @@ footer .lk-base{font-size:15px;color:var(--gris);margin-top:6px}
 footer .legal{margin-top:34px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gris-2)}
 
 /* ---------- page film ---------- */
+/* Sur la page film, les gris secondaires montent d'un cran : au telephone,
+   le texte gris disparaissait presque. La hierarchie ne bouge pas
+   (ivoire principal -> gris secondaire -> noir), elle devient lisible.
+   Porte par body.film : l'accueil garde exactement ses valeurs. */
+body.film{
+  --gris:#ABA69F;
+  --gris-2:#7C7770;
+  --ligne:rgba(237,235,230,.17);
+  --ligne-2:rgba(237,235,230,.10);
+}
 /* on garde les marges latérales de .wrap : seul le haut est redéfini */
 #film-view{display:none;min-height:100svh;padding-top:120px}
 #film-view.on{display:block}
 body.film main#home{display:none}
-.back{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris);transition:color .25s}
-.back:hover{color:var(--ivoire)}
+.back{display:inline-flex;align-items:center;gap:9px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris);transition:color .35s ease}
+.back .ar{font-style:normal;display:inline-block;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
 .player{position:relative;aspect-ratio:16/9;background:#000;margin-top:26px;overflow:hidden}
 .player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 /* les images de l'aperçu, en fondu lent */
@@ -458,13 +504,14 @@ body.film main#home{display:none}
 .lire:hover .lire-txt{color:var(--ivoire)}
 .f-head{margin-top:44px;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px 24px}
 .f-head .eyebrow{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);font-variant-numeric:tabular-nums}
-.f-title{margin-top:14px;font-size:clamp(30px,5.6vw,72px);max-width:16em}
+.f-title{margin-top:14px;font-size:clamp(30px,5.6vw,72px);max-width:16em;overflow-wrap:break-word}
 .f-meta{margin-top:34px;display:flex;flex-direction:column;gap:8px;max-width:60ch}
 .f-meta .row{display:flex;gap:18px;font-size:14px;color:var(--gris)}
-.f-meta .row b{color:var(--ivoire);font-weight:600;min-width:150px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding-top:2px}
-.f-meta a.yt{border-bottom:1px solid var(--ligne);transition:color .25s,border-color .25s}
-.f-meta a.yt:hover{color:var(--ivoire);border-color:var(--ivoire)}
-.f-meta a.yt .fl{display:inline-block;font-style:normal;transform:rotate(-45deg);line-height:1}
+.f-meta .row b{color:var(--ivoire);font-weight:600;min-width:150px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;line-height:1.5;padding-top:2px;overflow-wrap:break-word}
+/* la valeur prend le reste et se replie : un credit long ne pousse jamais la ligne */
+.f-meta .row>span{flex:1 1 auto;min-width:0;overflow-wrap:break-word}
+.f-meta a.yt{border-bottom:1px solid var(--ligne);transition:color .3s ease,border-color .3s ease}
+.f-meta a.yt .fl{display:inline-block;font-style:normal;transform:rotate(-45deg);line-height:1;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
 .f-note{margin-top:44px;max-width:34em}
 .f-note p{font-size:20px;line-height:1.6}
 .f-sect{margin-top:70px}
@@ -478,13 +525,66 @@ body.film main#home{display:none}
 .bts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 @media(max-width:640px){.bts{grid-template-columns:repeat(2,1fr)}}
 .bts img{width:100%;aspect-ratio:4/3;object-fit:cover}
-.f-nav{margin-top:100px;border-top:1px solid var(--ligne-2);display:grid;grid-template-columns:1fr 1fr}
-.f-nav a{padding:30px 0;display:flex;flex-direction:column;gap:6px}
-.f-nav a:last-child{text-align:right;align-items:flex-end;border-left:1px solid var(--ligne-2);padding-left:24px}
-.f-nav a:first-child{padding-right:24px}
-.f-nav .dir{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gris-2)}
-.f-nav .nt{font-size:15px;font-weight:600;transition:color .25s;color:var(--gris)}
-.f-nav a:hover .nt{color:var(--ivoire)}
+/* ---- precedent / suivant ----
+   Entierement deduit de l'ordre reel de FILMS : aucun lien n'est ecrit a la
+   main, un film ajoute prend sa place tout seul.
+   Mobile : deux zones empilees, tres aerees, separees par un filet infime.
+   Desktop : gauche / droite, sans cloison verticale. */
+.f-nav{margin-top:84px;border-top:1px solid var(--ligne-2);display:grid;grid-template-columns:1fr}
+.f-nav a{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:11px;padding:26px 0 30px;min-width:0}
+.f-nav .next{border-top:1px solid var(--ligne-2)}
+/* le filet qui s'allonge, pose exactement sur la ligne du dessus */
+.f-nav a::after{content:"";position:absolute;left:0;top:-1px;height:1px;width:0;background:var(--ivoire);opacity:.55;transition:width .55s cubic-bezier(.2,.7,.2,1)}
+.f-nav .dir{display:inline-flex;align-items:center;gap:10px;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gris-2);transition:color .35s ease}
+.f-nav .ar{font-style:normal;display:inline-block;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+/* deux lignes au maximum : un titre a rallonge ne desequilibre jamais le bloc */
+.f-nav .nt{font-size:16px;font-weight:600;line-height:1.3;color:var(--gris);transition:color .35s ease;overflow-wrap:break-word;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+@media(min-width:760px){
+  .f-nav{margin-top:118px;grid-template-columns:1fr 1fr;column-gap:56px}
+  .f-nav a{padding:32px 0 36px}
+  .f-nav .next{border-top:0;align-items:flex-end;text-align:right}
+  .f-nav .next::after{left:auto;right:0}
+  .f-nav .nt{font-size:17px}
+}
+
+/* ---- micro-interactions ----
+   Au pointeur : au survol. Au doigt : au contact, sans etat qui reste colle. */
+@media(hover:hover){
+  .back:hover{color:var(--ivoire)}
+  .back:hover .ar{transform:translateX(-4px)}
+  .f-meta a.yt:hover{color:var(--ivoire);border-color:var(--ivoire)}
+  .f-meta a.yt:hover .fl{transform:rotate(-45deg) translate(3px,0)}
+  .f-nav a:hover .nt{color:var(--ivoire)}
+  .f-nav a:hover .dir{color:var(--gris)}
+  .f-nav a:hover::after{width:100%}
+  .f-nav .prev:hover .ar{transform:translateX(-4px)}
+  .f-nav .next:hover .ar{transform:translateX(4px)}
+}
+.back:active,.back:focus-visible{color:var(--ivoire)}
+.back:active .ar,.back:focus-visible .ar{transform:translateX(-4px)}
+.f-meta a.yt:active,.f-meta a.yt:focus-visible{color:var(--ivoire);border-color:var(--ivoire)}
+.f-meta a.yt:active .fl,.f-meta a.yt:focus-visible .fl{transform:rotate(-45deg) translate(3px,0)}
+.f-nav a:active .nt,.f-nav a:focus-visible .nt{color:var(--ivoire)}
+.f-nav a:active .dir,.f-nav a:focus-visible .dir{color:var(--gris)}
+.f-nav a:active::after,.f-nav a:focus-visible::after{width:100%}
+.f-nav .prev:active .ar,.f-nav .prev:focus-visible .ar{transform:translateX(-4px)}
+.f-nav .next:active .ar,.f-nav .next:focus-visible .ar{transform:translateX(4px)}
+
+/* ---- le blanc du haut, sur mobile ----
+   On garde la respiration, on rapproche seulement l'entree du contenu
+   d'environ un quart. Le desktop garde ses 120px intacts. */
+@media(max-width:759px){
+  #film-view{padding-top:90px}
+  .player{margin-top:18px}
+  .f-head{margin-top:36px}
+  .f-meta{margin-top:28px}
+}
+@media(max-width:420px){
+  .f-meta .row{gap:14px}
+  /* sous 420px, l'intitule ne prend jamais plus de la moitie de la ligne :
+     la valeur garde toujours de quoi respirer */
+  .f-meta .row b{min-width:112px;max-width:48%}
+}
 
 /* ---------- le cut ---------- */
 #cut{position:fixed;inset:0;z-index:90;background:#000;opacity:0;pointer-events:none}
@@ -659,6 +759,9 @@ body.intro{overflow:hidden}
     <button onclick="fermerOv()">Fermer &#10005;</button>
   </div>
   <div class="ov-body" id="dv-body"></div>
+  <!-- Piège à robots : invisible et hors tabulation, donc jamais rempli par
+       un humain. Si quelque chose écrit dedans, la demande n'est pas envoyée. -->
+  <input class="hp" id="dv-hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
 </div>
 
 <div class="ov" id="questions" role="dialog" aria-modal="true" aria-label="Questions fréquentes">
@@ -927,19 +1030,36 @@ function lireFilm(btn,yt,title){
     + 'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
 }
 
-/* ================= PAGE FILM ================= */
+/* ================= PAGE FILM =================
+   Modele unique : toutes les pages de detail passent ici, quel que soit le
+   type de projet (clip, studio session, interview, documentaire, making of,
+   pub...). On ne touche jamais un film en particulier, on touche ce modele. */
+/* « Artiste — Titre », sans tiret orphelin si l'un des deux manque. */
+function intitule(f){
+  return [f.artist, f.title].filter(Boolean).join(" — ");
+}
+/* Un voisin de navigation. Le sens vaut "prev" ou "next". */
+function lienVoisin(sens, f, mot){
+  var fleche = '<i class="ar">'+(sens === "prev" ? "&larr;" : "&rarr;")+'</i>';
+  var lab = sens === "prev" ? fleche+'<span>'+mot+'</span>' : '<span>'+mot+'</span>'+fleche;
+  return '<a class="'+sens+'" href="#/film/'+f.slug+'">'
+    + '<span class="dir">'+lab+'</span>'
+    + '<span class="nt">'+esc(intitule(f))+'</span></a>';
+}
 function renderFilm(f,i){
   var n = FILMS.length;
-  var h = '<a class="back" href="#/">&larr; Retour</a>'
+  /* type et date : un champ vide ne laisse pas de tiret en l'air */
+  var oeil = [f.type, dateLongue(f)].filter(Boolean).join(" — ");
+  var h = '<a class="back" href="#/"><i class="ar">&larr;</i><span>Retour</span></a>'
     + '<div class="player">'+lecteur(f)+'</div>'
-    + '<div class="f-head"><span class="eyebrow">'+f.type+' — '+dateLongue(f)+'</span>'
+    + '<div class="f-head"><span class="eyebrow">'+esc(oeil)+'</span>'
     + '<span class="eyebrow">'+pad(i+1)+' / '+pad(n)+'</span></div>'
-    + '<h1 class="f-title display">'+esc(f.artist)+' — '+esc(f.title)+'</h1>'
+    + '<h1 class="f-title display">'+esc(intitule(f))+'</h1>'
     + '<div class="f-meta">'
     + f.credits.map(function(c){ return '<div class="row"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>'; }).join("")
     + (f.lieu ? '<div class="row"><b>Lieu</b><span>'+esc(f.lieu)+'</span></div>' : '')
     + (f.tournage ? '<div class="row"><b>Tournage</b><span>'+esc(f.tournage)+'</span></div>' : '')
-    + '<div class="row"><b>Sortie</b><span>'+dateLongue(f)+'</span></div>'
+    + (dateLongue(f) ? '<div class="row"><b>Sortie</b><span>'+dateLongue(f)+'</span></div>' : '')
     + '<div class="row"><b>Voir</b><span><a class="yt" href="https://www.youtube.com/watch?v='+f.yt+'" target="_blank" rel="noopener">YouTube <i class="fl">&#8594;</i></a></span></div>'
     + '</div>';
 
@@ -960,11 +1080,14 @@ function renderFilm(f,i){
       + '</div></div>';
   }
 
-  var prev = FILMS[(i-1+n)%n], next = FILMS[(i+1)%n];
-  h += '<div class="f-nav">'
-    + '<a href="#/film/'+prev.slug+'"><span class="dir">&larr; Précédent</span><span class="nt">'+esc(prev.artist)+' — '+esc(prev.title)+'</span></a>'
-    + '<a href="#/film/'+next.slug+'"><span class="dir">Suivant &rarr;</span><span class="nt">'+esc(next.artist)+' — '+esc(next.title)+'</span></a>'
-    + '</div>';
+  /* Les deux voisins sortent de l'ordre reel de FILMS, en boucle.
+     Un film seul n'a pas de voisin : on n'affiche alors rien. */
+  if(n > 1){
+    h += '<nav class="f-nav" aria-label="Autres films">'
+      + lienVoisin("prev", FILMS[(i-1+n)%n], "Précédent")
+      + lienVoisin("next", FILMS[(i+1)%n],   "Suivant")
+      + '</nav>';
+  }
 
   document.getElementById("film-view").innerHTML = h;
   lancerApercu();                    /* images en fondu, tout de suite */
@@ -1052,34 +1175,83 @@ addEventListener("hashchange", function(){
 showRoute(true);
 
 /* ================= DEVIS =================
-   POUR RECEVOIR LES DEMANDES DIRECTEMENT (recommandé) :
-   crée un compte gratuit sur formspree.io (ou web3forms.com),
-   récupère l'URL du formulaire et colle-la ci-dessous. Tant que
-   la ligne est vide, le bouton final ouvre l'application mail
-   avec la demande déjà rédigée — ça marche, mais la personne
-   doit encore appuyer sur « envoyer » dans sa messagerie. */
+
+   ┌───────────────────────────────────────────────────────────────────┐
+   │  POUR RECEVOIR LES DEMANDES DIRECTEMENT — À FAIRE UNE SEULE FOIS  │
+   │                                                                   │
+   │  1. compte gratuit sur formspree.io                               │
+   │  2. « New form » → destinataire : binksfilms@gmail.com            │
+   │  3. Formspree affiche une URL du type                             │
+   │        https://formspree.io/f/abcdwxyz                            │
+   │  4. colle-la entre les guillemets de ENVOI_URL, juste en dessous  │
+   │  5. remets le site en ligne, envoie une demande de test et valide │
+   │     l'email de confirmation que Formspree envoie la 1re fois      │
+   │                                                                   │
+   │  Tant que la ligne est vide le formulaire marche quand même : à   │
+   │  la fin, la demande s'affiche, copiable — rien n'est perdu, mais  │
+   │  rien ne part tout seul. Une fois l'URL collée, l'envoi est       │
+   │  direct et la personne ne quitte jamais le site.                  │
+   └───────────────────────────────────────────────────────────────────┘ */
 var ENVOI_URL = "";
 var MAIL = "binksfilms@gmail.com";
+
+/* --- petits utilitaires --- */
+function val(x){ return typeof x === "function" ? x() : x; }
+function esc(s){
+  return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function att(s){ return esc(s).replace(/"/g,"&quot;"); }
+
+/* --- les enveloppes de budget : une grille par type de projet ---
+   Ce ne sont pas des tarifs fixes. Ça sert à comprendre l'ordre de
+   grandeur du client avant de faire un devis sur mesure. */
+var BUDGETS = {
+  clip:  ["650 — 900 €","900 — 1 500 €","1 500 — 2 500 €","2 500 € ET PLUS","À DÉFINIR"],
+  pub:   ["900 — 1 500 €","1 500 — 2 500 €","2 500 — 5 000 €","5 000 € ET PLUS","À DÉFINIR"],
+  photo: ["250 — 400 €","400 — 650 €","650 — 1 000 €","1 000 € ET PLUS","À DÉFINIR"],
+  cover: ["150 — 250 €","250 — 400 €","400 — 650 €","650 € ET PLUS","À DÉFINIR"],
+  doc:   ["800 — 1 500 €","1 500 — 2 500 €","2 500 — 4 000 €","4 000 € ET PLUS","À DÉFINIR"],
+  itw:   ["400 — 650 €","650 — 900 €","900 — 1 500 €","1 500 € ET PLUS","À DÉFINIR"],
+  autre: ["MOINS DE 500 €","500 — 1 000 €","1 000 — 2 500 €","2 500 € ET PLUS","À DÉFINIR"]
+};
+var BUDGET_SOUS = {
+  clip:  "Les clips démarrent à 650 €. C’est une enveloppe, pas un tarif : le devis dépend de ce qu’il faut mettre en place.",
+  pub:   "Selon la production et la diffusion, un projet commercial peut demander un traitement particulier.",
+  cover: "Une cover faite à partir d’une photo que tu fournis et un shooting complet avec direction artistique et retouche, ce n’est pas la même enveloppe.",
+  photo: "Une fourchette suffit — le devis dépend du temps, du lieu et de la retouche.",
+  doc:   "Une fourchette suffit — le devis dépend du tournage et du montage.",
+  itw:   "Une fourchette suffit — le devis dépend du format et du dispositif.",
+  autre: "Une fourchette suffit. Le devis final est fait sur mesure."
+};
+/* les coordonnées : un seul canal, un seul champ */
+var CHAMP_CANAL = {
+  "INSTAGRAM": {cle:"coord", label:"Instagram", ph:"@toncompte", brut:true},
+  "EMAIL":     {cle:"coord", label:"Email", ph:"toi@mail.com", type:"email", inputmode:"email", autoc:"email", brut:true},
+  "TÉLÉPHONE": {cle:"coord", label:"Téléphone", ph:"06 00 00 00 00", type:"tel", inputmode:"tel", autoc:"tel"}
+};
 
 /* --- banque de questions : ajouter une question = ajouter une entrée --- */
 var Q = {
   type: {
     q:"C’est quoi le projet ?", libelle:"Projet", mode:"un",
-    opts:["CLIP","PUB / COMMERCIAL","PHOTO","DOCUMENTAIRE","INTERVIEW / SESSION","AUTRE"]
+    opts:["CLIP","PHOTO","COVER / VISUEL","PUB / COMMERCIAL","DOCUMENTAIRE","INTERVIEW / SESSION","AUTRE"]
   },
+
+  /* ---- clip ---- */
   morceau: {
     q:"Le morceau est prêt ?", libelle:"Morceau", mode:"un",
     opts:["TERMINÉ","EN COURS","PAS ENCORE"],
-    champ:{ cle:"lien_son", label:"Lien du son", ph:"YouTube, SoundCloud, Drive, WeTransfer…",
+    champ:{ cle:"lien_son", recap:"Lien", label:"Lien du son (facultatif)",
+            ph:"YouTube, SoundCloud, Spotify, Drive, Dropbox, WeTransfer…", brut:true,
             si:function(v){ return v === "TERMINÉ" || v === "EN COURS"; } }
   },
   avancement: {
     q:"Où t’en es ?", libelle:"Avancement", mode:"un",
     opts:[
-      {v:"J’AI JUSTE LE SON",  d:"tout reste à inventer"},
-      {v:"J’AI UNE IDÉE",      d:"une direction, pas encore un concept"},
-      {v:"LE CONCEPT EST PRÊT",d:"il faut le tourner"},
-      {v:"TOUT EST CALÉ",      d:"lieu, équipe, date"}
+      {v:"J’AI JUSTE LE SON",   d:"tout reste à inventer"},
+      {v:"J’AI UNE IDÉE",       d:"une direction, pas encore un concept"},
+      {v:"LE CONCEPT EST PRÊT", d:"il faut le tourner"},
+      {v:"TOUT EST CALÉ",       d:"lieu, équipe, date"}
     ]
   },
   besoins: {
@@ -1087,9 +1259,11 @@ var Q = {
     excl:"TOUT LE PROJET",
     opts:[
       {v:"TOUT LE PROJET", d:"de l’idée au montage final"},
-      "RÉALISATION","CONCEPT & DIRECTION ARTISTIQUE","TOURNAGE","MONTAGE","VFX","TEASER","PHOTOS"
+      "RÉALISATION","CONCEPT & DA","TOURNAGE","MONTAGE","VFX","TEASER","PHOTOS"
     ]
   },
+
+  /* ---- pub / commercial ---- */
   marque: {
     q:"C’est pour qui ?", libelle:"Marque / produit", mode:"texte", obligatoire:true,
     champ:{ cle:"marque_nom", label:"Marque ou produit", ph:"Nom de la marque, du produit…" }
@@ -1098,14 +1272,45 @@ var Q = {
     q:"Ça part où ?", sub:"Plusieurs choix possibles.", libelle:"Diffusion", mode:"multi", puces:true,
     opts:["RÉSEAUX SOCIAUX","SPOT TV","SITE / E-COMMERCE","ÉVÉNEMENT","LANCEMENT PRODUIT","INTERNE"]
   },
+
+  /* ---- photo ---- */
   shooting: {
     q:"Quel type de shooting ?", libelle:"Shooting", mode:"un",
-    opts:["PORTRAIT","COVER / POCHETTE","RÉSEAUX","ÉVÉNEMENT","PHOTOS DE PLATEAU"]
+    opts:["PORTRAIT","COVER / POCHETTE","RÉSEAUX","ÉVÉNEMENT","PHOTOS DE PLATEAU","AUTRE"]
   },
   personnes: {
     q:"Combien de personnes ?", libelle:"Personnes", mode:"un",
     opts:["UNE SEULE","2 À 5","PLUS DE 5"]
   },
+  photo_besoins: {
+    q:"Il te faut quoi en plus ?", sub:"Plusieurs choix possibles.", libelle:"Besoins",
+    mode:"multi", excl:"JUSTE LES PHOTOS",
+    opts:[
+      {v:"JUSTE LES PHOTOS", d:"je shoote, je livre"},
+      "RETOUCHE","DIRECTION ARTISTIQUE","MISE EN SCÈNE","REPÉRAGE DU LIEU","PHOTOS + VIDÉO"
+    ]
+  },
+
+  /* ---- cover / visuel ---- */
+  cover_base: {
+    q:"Tu pars de quoi ?", libelle:"Point de départ", mode:"un",
+    opts:[
+      {v:"J’AI DÉJÀ LA PHOTO", d:"il reste à la traiter et à composer"},
+      {v:"IL FAUT SHOOTER",    d:"photo + cover"},
+      {v:"J’AI UNE RÉFÉRENCE", d:"une direction en tête"},
+      {v:"PAGE BLANCHE",       d:"on part de zéro"}
+    ]
+  },
+  cover_besoins: {
+    q:"Tu veux quoi ?", sub:"Plusieurs choix possibles.", libelle:"Besoins",
+    mode:"multi", excl:"TOUT LE PROJET",
+    opts:[
+      {v:"TOUT LE PROJET", d:"de la photo au fichier final"},
+      "SHOOTING","DIRECTION ARTISTIQUE","RETOUCHE","TYPO / TITRE","DÉCLINAISONS RÉSEAUX"
+    ]
+  },
+
+  /* ---- documentaire ---- */
   sujet: {
     q:"C’est sur quoi ?", libelle:"Sujet", mode:"texte", obligatoire:true,
     champ:{ cle:"sujet_txt", label:"Le sujet", ph:"En une phrase." }
@@ -1114,70 +1319,89 @@ var Q = {
     q:"Où en est le projet ?", libelle:"État", mode:"un",
     opts:["UNE IDÉE","EN PRÉPARATION","TOURNAGE COMMENCÉ","RUSHES À MONTER"]
   },
+
+  /* ---- interview / session ---- */
   format_itw: {
     q:"Quel format ?", libelle:"Format", mode:"un",
     opts:["INTERVIEW","SESSION LIVE","FREESTYLE","PODCAST","AUTRE"]
   },
+
+  /* ---- autre ---- */
   libre_autre: {
     q:"Raconte.", libelle:"Le projet", mode:"texte", obligatoire:true,
     champ:{ cle:"autre_txt", label:"Le projet", ph:"Ce que tu as en tête.", long:true }
   },
+
+  /* ---- communs à toutes les branches ---- */
   date: {
     q:"Date de tournage", sub:"Choisis un jour, ou dis-moi que c’est ouvert.",
     libelle:"Date", mode:"date"
   },
   lieu: {
-    q:"Ça se passe où ?", libelle:"Lieu", mode:"un",
+    q:"Ça se passe où ?",
+    sub:"Île-de-France, ailleurs en France, à l’étranger — je me déplace selon le projet.",
+    libelle:"Lieu", mode:"un",
     opts:["PARIS / ÎLE-DE-FRANCE","AILLEURS EN FRANCE","ÉTRANGER","À DÉFINIR"],
-    champ:{ cle:"ville", label:"Ville ou lieu (facultatif)", ph:"Ex : Évry, un parking, un rooftop…",
+    champ:{ cle:"ville", recap:"Ville", label:"Ville ou lieu (facultatif)",
+            ph:"Ex : Évry, un parking, un rooftop…",
             si:function(v){ return v !== "À DÉFINIR"; } }
   },
   budget: {
-    q:"Budget envisagé", sub:"Les clips démarrent à 650 €. Le reste dépend de ce qu’il faut mettre en place.",
-    libelle:"Budget", mode:"un",
-    opts:["650 — 900 €","900 — 1 500 €","1 500 — 2 500 €","2 500 € ET PLUS","À DÉFINIR"]
+    q:"Budget envisagé", libelle:"Budget", mode:"un",
+    sub:function(){ return BUDGET_SOUS[branche()] || BUDGET_SOUS.autre; },
+    opts:function(){ return BUDGETS[branche()] || BUDGETS.autre; }
   },
-  energie: {
-    q:"Tu vois ça comment ?", sub:"Plusieurs choix possibles. C’est l’énergie qui m’intéresse, pas une description.",
-    libelle:"Énergie", mode:"multi", puces:true,
-    opts:["BRUT","CLEAN","NOCTURNE","SOLAIRE","SOMBRE","RAPIDE","POSÉ",
-          "PERFORMANCE","NARRATIF","LUXE","EXPÉRIMENTAL","JE TE LAISSE PROPOSER"]
+  direction: {
+    q:"Tu vois ça comment ?",
+    sub:"Plusieurs choix possibles. C’est l’énergie qui m’intéresse — la direction se construit ensuite ensemble.",
+    libelle:"Direction", mode:"multi", puces:true,
+    opts:["BRUT","CINÉMATIQUE","SOMBRE","ÉNERGIQUE","POSÉ","NARRATIF","EXPÉRIMENTAL","JE TE LAISSE PROPOSER"]
   },
   contact: {
     q:"Je te réponds où ?", libelle:"Contact", mode:"contact",
     opts:["INSTAGRAM","EMAIL","TÉLÉPHONE"]
   },
   plus: {
-    q:"Autre chose ?", sub:"Facultatif — tu peux envoyer directement.",
-    libelle:"Références", mode:"plus", option:true
+    q:"Dernier mot ?",
+    sub:"Tu as des références ou un truc à ajouter ? Entièrement facultatif — tu peux envoyer directement.",
+    libelle:"Références", mode:"plus"
   }
 };
 
 /* --- parcours : ajouter une branche = ajouter une liste --- */
 var PARCOURS = {
-  clip:  ["type","morceau","avancement","besoins","date","lieu","budget","energie","contact","plus"],
-  pub:   ["type","marque","diffusion","besoins","date","lieu","budget","energie","contact","plus"],
-  photo: ["type","shooting","personnes","date","lieu","budget","energie","contact","plus"],
+  clip:  ["type","morceau","avancement","besoins","date","lieu","budget","direction","contact","plus"],
+  photo: ["type","shooting","personnes","photo_besoins","date","lieu","budget","direction","contact","plus"],
+  cover: ["type","cover_base","cover_besoins","date","budget","direction","contact","plus"],
+  pub:   ["type","marque","diffusion","besoins","date","lieu","budget","direction","contact","plus"],
   doc:   ["type","sujet","etat_doc","besoins","date","lieu","budget","contact","plus"],
-  itw:   ["type","format_itw","besoins","date","lieu","budget","contact","plus"],
+  itw:   ["type","format_itw","besoins","date","lieu","budget","direction","contact","plus"],
   autre: ["type","libre_autre","besoins","date","lieu","budget","contact","plus"]
 };
 var CLE_TYPE = {
-  "CLIP":"clip", "PUB / COMMERCIAL":"pub", "PHOTO":"photo",
+  "CLIP":"clip", "PHOTO":"photo", "COVER / VISUEL":"cover", "PUB / COMMERCIAL":"pub",
   "DOCUMENTAIRE":"doc", "INTERVIEW / SESSION":"itw", "AUTRE":"autre"
 };
 
-var REP = {}, LISTE = [], IDX = 0, calY = 0, calM = 0;
-var MOIS = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+var REP = {}, SAUT = {}, LISTE = [], IDX = 0, calY = 0, calM = 0, DEBUT = 0, ENVOI_EN_COURS = false;
+/* nom propre pour le calendrier — ne pas réutiliser MOIS, qui sert aux
+   dates de sortie des films et s'écrit en minuscules */
+var MOIS_CAL = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
 
+function branche(){ return CLE_TYPE[REP.type] || "clip"; }
+function parcoursComplet(){ return (PARCOURS[branche()] || PARCOURS.clip).slice(); }
+/* SAUT = ce que la FAQ a déjà renseigné. On ne le redemande pas,
+   mais ça reste dans la demande envoyée. */
 function listeCourante(){
-  LISTE = (PARCOURS[CLE_TYPE[REP.type] || "clip"] || PARCOURS.clip).slice();
+  LISTE = parcoursComplet().filter(function(k){ return !SAUT[k]; });
 }
+
 function ouvrirDevis(pre){
-  REP = {}; IDX = 0;
-  if(pre) for(var k in pre) REP[k] = pre[k];
+  REP = {}; SAUT = {}; IDX = 0; calY = 0; calM = 0;
+  ENVOI_EN_COURS = false; DEBUT = Date.now();
+  if(pre) for(var k in pre){ REP[k] = pre[k]; SAUT[k] = 1; }
   listeCourante();
-  if(pre && pre.type) IDX = 1;              /* le type est déjà choisi : on saute l'écran 1 */
+  var hp = document.getElementById("dv-hp"); if(hp) hp.value = "";
   document.getElementById("questions").classList.remove("on");
   document.getElementById("devis").classList.add("on");
   document.body.style.overflow = "hidden";
@@ -1190,23 +1414,25 @@ function fermerOv(){
 }
 function dvRetour(){ if(IDX > 0){ IDX--; dessiner(); } }
 function suivant(){
-  if(IDX === 0) listeCourante();            /* le type vient de changer : on reconstruit */
+  if(LISTE[IDX] === "type") listeCourante();   /* le type vient de changer : on reconstruit */
   if(IDX < LISTE.length - 1){ IDX++; dessiner(); } else { envoyer(); }
 }
 
 /* --- rendu --- */
-function dessiner(){
+function dessiner(garderScroll){
   var q = Q[LISTE[IDX]], k = LISTE[IDX];
   var corps = document.getElementById("dv-body");
+  var scroll = corps.parentNode.scrollTop;
   document.getElementById("dv-step").textContent = pad(IDX+1) + " / " + pad(LISTE.length);
   document.getElementById("dv-retour").className = IDX === 0 ? "vide" : "";
 
-  var h = '<p class="dv-q">'+q.q+'</p>' + (q.sub ? '<p class="dv-sub">'+q.sub+'</p>' : '');
+  var sub = val(q.sub);
+  var h = '<p class="dv-q">'+q.q+'</p>' + (sub ? '<p class="dv-sub">'+sub+'</p>' : '');
 
   if(q.mode === "un"){
-    h += '<div class="dv-opts">' + q.opts.map(function(o,i){
+    h += '<div class="dv-opts">' + val(q.opts).map(function(o,i){
       var v = o.v || o, d = o.d ? '<small>'+o.d+'</small>' : '';
-      return '<button class="opt'+(REP[k]===v?" on":"")+'" data-i="'+i+'">'+v+d+'</button>';
+      return '<button type="button" class="opt'+(REP[k]===v?" on":"")+'" data-i="'+i+'">'+v+d+'</button>';
     }).join("") + '</div>';
     if(q.champ && q.champ.si && REP[k] && q.champ.si(REP[k])) h += champHtml(q.champ);
   }
@@ -1215,12 +1441,12 @@ function dessiner(){
     if(q.puces){                                  /* libellés courts : en puces, pas en lignes */
       h += '<div class="dv-chips">' + q.opts.map(function(o,i){
         var v = o.v || o;
-        return '<button class="chip'+(sel.indexOf(v)>-1?" on":"")+'" data-m="'+i+'">'+v+'</button>';
+        return '<button type="button" class="chip'+(sel.indexOf(v)>-1?" on":"")+'" data-m="'+i+'">'+v+'</button>';
       }).join("") + '</div>';
     } else {
       h += '<div class="dv-opts">' + q.opts.map(function(o,i){
         var v = o.v || o, d = o.d ? '<small>'+o.d+'</small>' : '';
-        return '<button class="opt'+(sel.indexOf(v)>-1?" on":"")+'" data-i="'+i+'">'+v+d+'</button>';
+        return '<button type="button" class="opt'+(sel.indexOf(v)>-1?" on":"")+'" data-m="'+i+'">'+v+d+'</button>';
       }).join("") + '</div>';
     }
   }
@@ -1231,23 +1457,21 @@ function dessiner(){
     h += '<div class="cal" id="cal"></div>'
       + '<div class="dv-chips">'
       + ["JE SUIS FLEXIBLE","DATE À DÉFINIR"].map(function(v,i){
-          return '<button class="chip'+(REP.date===v?" on":"")+'" data-d="'+i+'">'+v+'</button>';
+          return '<button type="button" class="chip'+(REP.date===v?" on":"")+'" data-d="'+i+'">'+v+'</button>';
         }).join("") + '</div>';
   }
   else if(q.mode === "contact"){
-    h += '<div class="dv-chips">' + q.opts.map(function(v,i){
-      return '<button class="chip'+(REP.canal===v?" on":"")+'" data-i="'+i+'">'+v+'</button>';
-    }).join("") + '</div>';
-    if(REP.canal){
-      var ph = REP.canal==="INSTAGRAM" ? "@toncompte" : REP.canal==="EMAIL" ? "toi@mail.com" : "06 00 00 00 00";
-      h += champHtml({cle:"coord", label:REP.canal, ph:ph})
-        +  champHtml({cle:"nom",   label:"Nom ou blaze", ph:"Comment je t’appelle ?"});
-    }
+    h += champHtml({cle:"nom", label:"Nom / blaze", ph:"Comment je t’appelle ?", autoc:"name"})
+      +  '<p class="dv-mini">Je te réponds par</p>'
+      +  '<div class="dv-chips">' + q.opts.map(function(v,i){
+           return '<button type="button" class="chip'+(REP.canal===v?" on":"")+'" data-c="'+i+'">'+v+'</button>';
+         }).join("") + '</div>';
+    if(REP.canal && CHAMP_CANAL[REP.canal]) h += champHtml(CHAMP_CANAL[REP.canal]);
   }
   else if(q.mode === "plus"){
-    h += champHtml({cle:"refs", label:"Références (facultatif)",
-                    ph:"Colle tes liens : Instagram, Pinterest, YouTube, TikTok…", long:true})
-      +  champHtml({cle:"mot", label:"Un truc à ajouter (facultatif)", ph:"", long:true});
+    h += champHtml({cle:"refs", label:"Références",
+                    ph:"Instagram, Pinterest, YouTube, TikTok, Drive…", long:true, brut:true})
+      +  champHtml({cle:"mot", label:"Un truc à ajouter", ph:"", long:true});
   }
 
   h += '<p class="dv-err" id="dv-err"></p><div class="dv-suite">';
@@ -1255,33 +1479,39 @@ function dessiner(){
   /* pas de bouton quand un clic suffit : choix unique et date enchaînent seuls */
   var autonome = q.mode === "date" || (q.mode === "un" && !(q.champ && q.champ.si && REP[k] && q.champ.si(REP[k])));
   if(!autonome){
-    h += '<button class="suivant" id="dv-next">'+(dernier ? "Envoyer mon projet &rarr;" : "Continuer &rarr;")+'</button>';
+    h += '<button type="button" class="suivant" id="dv-next">'+(dernier ? "Envoyer mon projet &rarr;" : "Continuer &rarr;")+'</button>';
   }
-  if(q.option) h += '<button class="passer" id="dv-skip">Passer</button>';
   h += '</div>';
 
   corps.innerHTML = h;
-  corps.parentNode.scrollTop = 0;
+  corps.parentNode.scrollTop = garderScroll ? scroll : 0;
   if(q.mode === "date") majCal();
 
-  /* mémoriser la saisie au fil de la frappe */
+  /* mémoriser la saisie au fil de la frappe : rien ne se perd au retour */
   corps.querySelectorAll("[data-champ]").forEach(function(el){
-    el.addEventListener("input", function(){ REP[el.dataset.champ] = el.value.trim(); });
+    el.addEventListener("input", function(){
+      REP[el.dataset.champ] = el.value.trim();
+      var e = document.getElementById("dv-err"); if(e) e.classList.remove("on");
+    });
   });
   var next = document.getElementById("dv-next");
   if(next) next.addEventListener("click", valider);
-  var skip = document.getElementById("dv-skip");
-  if(skip) skip.addEventListener("click", envoyer);
 
-  corps.querySelectorAll(".opt").forEach(function(b){
-    b.addEventListener("click", function(){ clicOption(q, k, +b.dataset.i); });
+  corps.querySelectorAll(".opt[data-i]").forEach(function(b){
+    b.addEventListener("click", function(){ clicUn(q, k, +b.dataset.i); });
   });
-  corps.querySelectorAll(".chip[data-m]").forEach(function(b){
-    b.addEventListener("click", function(){ clicOption(q, k, +b.dataset.m); });
+  /* multi : on bascule la classe sur place — pas de re-rendu, donc pas de
+     saut de scroll quand on coche plusieurs réponses à la suite */
+  corps.querySelectorAll("[data-m]").forEach(function(b){
+    b.addEventListener("click", function(){ clicMulti(q, k, +b.dataset.m, corps); });
   });
-  corps.querySelectorAll(".chip[data-i]").forEach(function(b){
+  corps.querySelectorAll(".chip[data-c]").forEach(function(b){
     b.addEventListener("click", function(){
-      REP.canal = q.opts[+b.dataset.i]; REP.coord = ""; dessiner();
+      var choisi = q.opts[+b.dataset.c];
+      if(REP.canal !== choisi){ REP.canal = choisi; REP.coord = ""; }
+      dessiner(true);
+      var champ = document.querySelector('#dv-body [data-champ="coord"]');
+      if(champ) champ.focus();
     });
   });
   corps.querySelectorAll(".chip[data-d]").forEach(function(b){
@@ -1292,41 +1522,61 @@ function dessiner(){
   });
 }
 function champHtml(c){
-  var v = REP[c.cle] ? String(REP[c.cle]).replace(/"/g,"&quot;") : "";
+  var brut = c.brut ? ' autocapitalize="off" autocorrect="off" spellcheck="false"' : '';
   var el = c.long
-    ? '<textarea data-champ="'+c.cle+'" placeholder="'+c.ph+'">'+v+'</textarea>'
-    : '<input type="text" data-champ="'+c.cle+'" value="'+v+'" placeholder="'+c.ph+'">';
-  return '<div class="dv-champ"><label>'+c.label+'</label>'+el+'</div>';
+    ? '<textarea data-champ="'+c.cle+'" rows="3" placeholder="'+att(c.ph||"")+'"'+brut+'>'+esc(REP[c.cle]||"")+'</textarea>'
+    : '<input type="'+(c.type||"text")+'" data-champ="'+c.cle+'" value="'+att(REP[c.cle]||"")+'"'
+      + (c.inputmode ? ' inputmode="'+c.inputmode+'"' : '')
+      + ' autocomplete="'+(c.autoc||"off")+'"' + brut
+      + ' placeholder="'+att(c.ph||"")+'">';
+  return '<div class="dv-champ"><label>'+esc(c.label)+'</label>'+el+'</div>';
 }
-function clicOption(q, k, i){
-  var v = q.opts[i].v || q.opts[i];
-  if(q.mode === "multi"){
-    var sel = (REP[k] || []).slice();
-    if(q.excl && v === q.excl){ sel = sel.indexOf(v) > -1 ? [] : [v]; }
-    else {
-      if(q.excl) sel = sel.filter(function(x){ return x !== q.excl; });
-      var p = sel.indexOf(v);
-      if(p > -1) sel.splice(p,1); else sel.push(v);
-    }
-    REP[k] = sel; dessiner(); return;
-  }
+function clicUn(q, k, i){
+  var opts = val(q.opts), v = opts[i].v || opts[i];
+  var avant = REP[k];
   REP[k] = v;
-  if(k === "type") listeCourante();
+  if(k === "type"){
+    /* changer de type change la grille de budget : on ne garde pas une
+       tranche qui n'existe plus dans la nouvelle branche */
+    if(avant && avant !== v) delete REP.budget;
+    listeCourante();
+  }
   var reste = q.champ && q.champ.si && q.champ.si(v);
   dessiner();
   if(!reste) setTimeout(suivant, 170);       /* choix unique : on enchaîne */
 }
+function clicMulti(q, k, i, corps){
+  var v = q.opts[i].v || q.opts[i];
+  var sel = (REP[k] || []).slice();
+  if(q.excl && v === q.excl){ sel = sel.indexOf(v) > -1 ? [] : [v]; }
+  else {
+    if(q.excl) sel = sel.filter(function(x){ return x !== q.excl; });
+    var p = sel.indexOf(v);
+    if(p > -1) sel.splice(p,1); else sel.push(v);
+  }
+  REP[k] = sel;
+  corps.querySelectorAll("[data-m]").forEach(function(b){
+    var o = q.opts[+b.dataset.m], ov = o.v || o;
+    b.classList.toggle("on", sel.indexOf(ov) > -1);
+  });
+  var e = document.getElementById("dv-err"); if(e) e.classList.remove("on");
+}
 function erreur(msg){
   var e = document.getElementById("dv-err");
+  if(!e) return;
   e.textContent = msg; e.classList.add("on");
+  e.scrollIntoView({block:"nearest"});
 }
 function valider(){
   var q = Q[LISTE[IDX]], k = LISTE[IDX];
   if(q.mode === "multi" && !(REP[k] && REP[k].length)) return erreur("Choisis au moins une réponse.");
   if(q.mode === "texte" && q.obligatoire && !(REP[q.champ.cle] || "").length) return erreur("Il me faut cette info.");
   if(q.mode === "contact"){
-    if(!REP.canal) return erreur("Dis-moi par où te joindre.");
+    if(!(REP.nom || "").length) return erreur("Dis-moi comment t’appeler.");
+    if(!REP.canal) return erreur("Choisis par où je te réponds.");
     if(!(REP.coord || "").length) return erreur("Il me manque ton " + REP.canal.toLowerCase() + ".");
+    if(REP.canal === "EMAIL" && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(REP.coord)) return erreur("Cette adresse a l’air incomplète.");
+    if(REP.canal === "TÉLÉPHONE" && REP.coord.replace(/\D/g,"").length < 9) return erreur("Ce numéro a l’air incomplet.");
   }
   suivant();
 }
@@ -1341,17 +1591,17 @@ function majCal(){
   var nb = new Date(calY, calM+1, 0).getDate();
   var passe = (calY === auj.getFullYear() && calM === auj.getMonth());
 
-  var h = '<div class="cal-head"><button id="cal-p"'+(passe?' disabled':'')+'>&larr;</button>'
-        + '<span class="cal-mois">'+MOIS[calM]+' '+calY+'</span>'
-        + '<button id="cal-n">&rarr;</button></div>'
+  var h = '<div class="cal-head"><button type="button" id="cal-p" aria-label="Mois précédent"'+(passe?' disabled':'')+'>&larr;</button>'
+        + '<span class="cal-mois">'+MOIS_CAL[calM]+' '+calY+'</span>'
+        + '<button type="button" id="cal-n" aria-label="Mois suivant">&rarr;</button></div>'
         + '<div class="cal-jours">'+["L","M","M","J","V","S","D"].map(function(j){return '<span>'+j+'</span>';}).join("")+'</div>'
         + '<div class="cal-grille">';
   for(var i=0;i<decal;i++) h += '<i></i>';
   for(var d=1; d<=nb; d++){
     var jour = new Date(calY, calM, d);
-    var off = jour < auj;
-    var txt = d + " " + MOIS[calM].toLowerCase() + " " + calY;
-    h += '<button data-j="'+d+'"'+(off?' disabled':'')+(REP.date===txt?' class="on"':'')+'>'+d+'</button>';
+    var off = jour < auj;                                  /* une date passée n'est pas cliquable */
+    var txt = d + " " + MOIS_CAL[calM].toLowerCase() + " " + calY;
+    h += '<button type="button" data-j="'+d+'"'+(off?' disabled':'')+(REP.date===txt?' class="on"':'')+'>'+d+'</button>';
   }
   c.innerHTML = h + '</div>';
 
@@ -1364,88 +1614,132 @@ function majCal(){
   c.querySelectorAll("[data-j]").forEach(function(b){
     if(b.disabled) return;
     b.addEventListener("click", function(){
-      REP.date = b.dataset.j + " " + MOIS[calM].toLowerCase() + " " + calY;
+      REP.date = b.dataset.j + " " + MOIS_CAL[calM].toLowerCase() + " " + calY;
       dessiner(); setTimeout(suivant, 170);
     });
   });
 }
 
-/* --- envoi --- */
-function recap(){
-  var l = [];
-  LISTE.forEach(function(k){
+/* --- la demande, lisible ligne par ligne --- */
+function donnees(){
+  var d = {};
+  parcoursComplet().forEach(function(k){
     var q = Q[k], v = REP[k];
     if(!q || q.mode === "plus" || q.mode === "contact") return;
-    if(q.mode === "texte"){ if(REP[q.champ.cle]) l.push(q.libelle + " : " + REP[q.champ.cle]); return; }
+    if(q.mode === "texte"){ if(REP[q.champ.cle]) d[q.libelle] = REP[q.champ.cle]; return; }
     if(v == null || v === "" || (Array.isArray(v) && !v.length)) return;
-    l.push(q.libelle + " : " + (Array.isArray(v) ? v.join(", ") : v));
+    d[q.libelle] = Array.isArray(v) ? v.join(", ") : v;
     /* le champ conditionnel reste collé à sa question */
-    if(q.champ && REP[q.champ.cle]) l.push("  " + q.champ.label + " : " + REP[q.champ.cle]);
+    if(q.champ && REP[q.champ.cle]) d[q.champ.recap || q.champ.label] = REP[q.champ.cle];
   });
-  l.push("");
-  l.push("Contact : " + (REP.nom ? REP.nom + " — " : "") + (REP.canal||"") + " " + (REP.coord||""));
-  if(REP.refs) l.push("", "Références : " + REP.refs);
-  if(REP.mot)  l.push("", "Note : " + REP.mot);
-  return l.join("\n");
+  d["Nom"] = REP.nom || "";
+  d["Contact"] = REP.canal || "";
+  if(REP.canal && CHAMP_CANAL[REP.canal]) d[CHAMP_CANAL[REP.canal].label] = REP.coord || "";
+  if(REP.refs) d["Références"] = REP.refs;
+  if(REP.mot)  d["Note"] = REP.mot;
+  return d;
 }
-function ecranFin(titre, texte){
+function texteDemande(d){
+  return Object.keys(d).map(function(k){ return k + " : " + d[k]; }).join("\n");
+}
+
+function ecranFin(titre, texte, extra){
+  var corps = document.getElementById("dv-body");
   document.getElementById("dv-step").textContent = "";
   document.getElementById("dv-retour").className = "vide";
-  document.getElementById("dv-body").innerHTML =
-      '<div class="dv-fin"><h3>'+titre+'</h3><p>'+texte+'</p>'
-    + '<div class="relire"><button class="petit-cta" onclick="fermerOv()">Revenir au site</button></div></div>';
+  corps.innerHTML =
+      '<div class="dv-fin"><h3>'+titre+'</h3><p>'+texte+'</p>' + (extra||"")
+    + '<div class="relire"><button type="button" class="petit-cta" onclick="fermerOv()">Revenir au site</button></div></div>';
+  corps.parentNode.scrollTop = 0;
 }
+
+/* --- envoi --- */
 function envoyer(){
-  var texte = recap();
-  var sujet = "Projet — " + (REP.type||"") + (REP.nom ? " — " + REP.nom : "");
-  if(ENVOI_URL){
-    var btn = document.getElementById("dv-next");
-    if(btn){ btn.disabled = true; btn.textContent = "Envoi…"; }
-    fetch(ENVOI_URL, {
-      method:"POST",
-      headers:{"Accept":"application/json","Content-Type":"application/json"},
-      body: JSON.stringify({ sujet:sujet, message:texte, reponses:REP })
-    }).then(function(r){
-      if(!r.ok) throw 0;
-      ecranFin("Bien reçu.", "Je regarde ton projet et je reviens vers toi avec une proposition.");
-    }).catch(function(){
-      erreur("L’envoi a échoué. Écris-moi directement à " + MAIL + ".");
-      if(btn){ btn.disabled = false; btn.textContent = "Envoyer mon projet →"; }
-    });
-  } else {
-    location.href = "mailto:" + MAIL + "?subject=" + encodeURIComponent(sujet)
-                  + "&body=" + encodeURIComponent(texte);
-    ecranFin("Presque.", "Ton message est prêt dans ta messagerie — il ne reste qu’à appuyer sur envoyer.");
+  if(ENVOI_EN_COURS) return;
+  var d = donnees();
+  /* anti-spam invisible : le champ piège n'est jamais vu par un humain,
+     et personne ne remplit huit écrans en trois secondes. */
+  var hp = document.getElementById("dv-hp");
+  if((hp && hp.value) || (Date.now() - DEBUT) < 3000){
+    ecranFin("Bien reçu.", "Je regarde ton projet et je reviens vers toi.");
+    return;
   }
+  if(!ENVOI_URL){ finSansEnvoi(d); return; }
+
+  var btn = document.getElementById("dv-next");
+  ENVOI_EN_COURS = true;
+  if(btn){ btn.disabled = true; btn.innerHTML = "Envoi…"; }
+
+  var charge = { _subject: "Projet " + (REP.type||"") + (REP.nom ? " — " + REP.nom : ""), _gotcha: "" };
+  for(var k in d) charge[k] = d[k];
+  if(REP.canal === "EMAIL" && REP.coord) charge._replyto = REP.coord;
+
+  fetch(ENVOI_URL, {
+    method:"POST",
+    headers:{"Accept":"application/json","Content-Type":"application/json"},
+    body: JSON.stringify(charge)
+  }).then(function(r){
+    if(!r.ok) throw 0;
+    ENVOI_EN_COURS = false;
+    ecranFin("Bien reçu.", "Je regarde ton projet et je reviens vers toi.");
+  }).catch(function(){
+    ENVOI_EN_COURS = false;
+    erreur("L’envoi n’est pas passé. Réessaie, ou écris-moi à " + MAIL + ".");
+    if(btn){ btn.disabled = false; btn.innerHTML = "Envoyer mon projet &rarr;"; }
+  });
+}
+/* Filet tant que ENVOI_URL est vide : la demande ne part pas toute seule,
+   mais elle est là, complète et copiable. Aucun mailto n'est déclenché. */
+function finSansEnvoi(d){
+  var t = texteDemande(d);
+  ecranFin("Presque.",
+    "L’envoi direct n’est pas encore branché. Copie ta demande et envoie-la à " + MAIL + " — je te réponds pareil.",
+    '<textarea class="dv-recap" id="dv-recap" readonly>'+esc(t)+'</textarea>'
+    + '<div class="dv-suite"><button type="button" class="suivant" id="dv-copie">Copier ma demande</button></div>');
+  var b = document.getElementById("dv-copie");
+  b.addEventListener("click", function(){
+    var z = document.getElementById("dv-recap");
+    z.focus(); z.select(); z.setSelectionRange(0, t.length);
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch(e){}
+    if(ok){ b.textContent = "Copié"; }
+    else if(navigator.clipboard){ navigator.clipboard.writeText(t).then(function(){ b.textContent = "Copié"; }); }
+    else { b.textContent = "Sélectionne et copie"; }
+  });
 }
 
 /* ================= QUESTIONS FRÉQUENTES =================
-   Chaque réponse mène au formulaire, déjà configuré. */
+   Chaque réponse mène au formulaire, déjà configuré : ce qui vient
+   d'être dit ici n'est pas redemandé là-bas. */
 var FAQ = [
   { q:"C’est combien un clip ?",
     r:["Les clips démarrent à 650 €.",
-       "Le tarif dépend ensuite du projet, de l’idée et de ce qu’il faut mettre en place : préparation, nombre de lieux, équipe, matériel, VFX."],
+       "Le tarif dépend ensuite du projet, de l’idée et de ce qu’il faut mettre en place."],
     cta:"Parler de mon clip", pre:{type:"CLIP"} },
+
   { q:"Je n’ai pas encore d’idée",
-    r:["C’est le cas le plus fréquent, et ce n’est pas un problème.",
-       "Tu arrives avec le son, je construis le reste : concept, direction artistique, tournage, montage."],
+    r:["Ce n’est pas un problème — c’est même le cas le plus fréquent.",
+       "Tu arrives avec le son, on construit le projet ensemble."],
     cta:"Construire le projet ensemble",
     pre:{type:"CLIP", avancement:"J’AI JUSTE LE SON", besoins:["TOUT LE PROJET"]} },
+
   { q:"Tu te déplaces ?",
-    r:["Base en Île-de-France.",
-       "Ailleurs en France et à l’étranger selon le projet — les frais sont intégrés au devis."],
+    r:["Oui. BinksFilms se déplace en Île-de-France, ailleurs en France et à l’étranger selon le projet."],
     cta:"Parler d’un projet", pre:null },
+
+  { q:"Tu fais seulement des clips ?",
+    r:["Non.",
+       "Clips, photo, cover / visuel, pub et commercial, documentaire, interview et session — et les autres projets image."],
+    cta:"Parler d’un projet", pre:null },
+
+  { q:"C’est quoi le délai ?",
+    r:["Le délai dépend du projet, de la préparation et de la post-production.",
+       "On le cale ensemble avant de commencer."],
+    cta:"Parler d’un projet", pre:null },
+
   { q:"Tu fais le montage ?",
     r:["Oui. Réalisation, image et montage, c’est la même personne.",
-       "Le montage seul est possible aussi, à partir de tes rushes."],
-    cta:"Parler d’un projet", pre:null },
-  { q:"Tu fais seulement des clips ?",
-    r:["Non. Pubs et projets commerciaux, photo, documentaire, interviews et sessions.",
-       "Le clip reste le cœur du travail."],
-    cta:"Parler d’un projet", pre:null },
-  { q:"C’est quoi le délai ?",
-    r:["Ça dépend entièrement du projet.",
-       "Le délai est fixé avec toi et confirmé dans le devis, avant qu’on commence. Je ne donne pas de délai type qui ne voudrait rien dire."],
+       "Pour du montage seul à partir de rushes déjà tournés, écris-moi : on regarde selon le projet."],
     cta:"Parler d’un projet", pre:null }
 ];
 function ouvrirQuestions(){
@@ -1455,22 +1749,25 @@ function ouvrirQuestions(){
   fqListe();
 }
 function fqListe(){
+  var corps = document.getElementById("fq-body");
   document.getElementById("fq-retour").className = "vide";
-  document.getElementById("fq-body").innerHTML =
+  corps.innerHTML =
       '<p class="dv-q">Questions</p><div class="faq-liste">'
-    + FAQ.map(function(f,i){ return '<button class="faq-q" data-f="'+i+'">'+f.q+'</button>'; }).join("")
+    + FAQ.map(function(f,i){ return '<button type="button" class="faq-q" data-f="'+i+'">'+f.q+'</button>'; }).join("")
     + '</div>';
-  document.querySelectorAll("#fq-body .faq-q").forEach(function(b){
+  corps.parentNode.scrollTop = 0;
+  corps.querySelectorAll(".faq-q").forEach(function(b){
     b.addEventListener("click", function(){ fqRep(+b.dataset.f); });
   });
 }
 function fqRep(i){
-  var f = FAQ[i];
+  var f = FAQ[i], corps = document.getElementById("fq-body");
   document.getElementById("fq-retour").className = "";
-  document.getElementById("fq-body").innerHTML =
+  corps.innerHTML =
       '<p class="dv-q">'+f.q+'</p><div class="faq-rep">'
     + f.r.map(function(p){ return '<p>'+p+'</p>'; }).join("") + '</div>'
-    + '<div class="dv-suite"><button class="suivant" id="fq-cta">'+f.cta+' &rarr;</button></div>';
+    + '<div class="dv-suite"><button type="button" class="suivant" id="fq-cta">'+f.cta+' &rarr;</button></div>';
+  corps.parentNode.scrollTop = 0;
   document.getElementById("fq-cta").addEventListener("click", function(){ ouvrirDevis(f.pre); });
 }
 

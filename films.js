@@ -15,11 +15,16 @@ window.FILMS_DATA = [
     "sortie": "2026-08-14",
     "type": "Clip",
     "archive": false,
-    "poster": "",
+    "poster": "C:\\Users\\binks\\Pictures\\saisai boro 700 vf.mp4.00_01_37_11.Still001.jpg",
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -35,7 +40,12 @@ window.FILMS_DATA = [
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -46,12 +56,17 @@ window.FILMS_DATA = [
     "title": "Fiché S 2",
     "sortie": "2026-05-15",
     "type": "Clip",
-    "archive": false,
+    "archive": true,
     "poster": "",
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -67,7 +82,12 @@ window.FILMS_DATA = [
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -83,7 +103,12 @@ window.FILMS_DATA = [
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -99,7 +124,12 @@ window.FILMS_DATA = [
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -115,7 +145,12 @@ window.FILMS_DATA = [
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -126,12 +161,17 @@ window.FILMS_DATA = [
     "title": "La Voix — Épisode 1",
     "sortie": "2025-06-06",
     "type": "Clip",
-    "archive": false,
+    "archive": true,
     "poster": "",
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -147,7 +187,12 @@ window.FILMS_DATA = [
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -163,7 +208,12 @@ window.FILMS_DATA = [
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -179,7 +229,12 @@ window.FILMS_DATA = [
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -195,7 +250,12 @@ window.FILMS_DATA = [
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -211,7 +271,12 @@ window.FILMS_DATA = [
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -227,7 +292,12 @@ window.FILMS_DATA = [
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   },
@@ -238,12 +308,17 @@ window.FILMS_DATA = [
     "title": "Gotham feat. Codé",
     "sortie": "2018-01-05",
     "type": "Clip",
-    "archive": false,
+    "archive": true,
     "poster": "",
     "note": "",
     "lieu": "",
     "tournage": "",
-    "credits": [["Réalisation, image & montage", "BINKSFILMS"]],
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
     "contrechamp": null,
     "bts": []
   }
