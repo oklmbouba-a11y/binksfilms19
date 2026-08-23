@@ -15,7 +15,7 @@ window.FILMS_DATA = [
     "sortie": "2026-08-14",
     "type": "Clip",
     "archive": false,
-    "poster": "C:\\Users\\binks\\Pictures\\saisai boro 700 vf.mp4.00_01_37_11.Still001.jpg",
+    "poster": "C:\\Users\\binks\\Documents\\site binksfilms fable 5\\deploiement\\images\\saisai boro 700 vf.mp4.00_02_47_07.Still003.jpg",
     "note": "",
     "lieu": "",
     "tournage": "",
