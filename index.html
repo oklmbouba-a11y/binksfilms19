@@ -102,18 +102,51 @@ nav a:hover{color:var(--ivoire)}
 .sect-head h2{font-weight:800;font-stretch:125%;font-size:13px;letter-spacing:.24em;text-transform:uppercase}
 .sect-head .count{font-size:11px;letter-spacing:.14em;color:var(--gris);font-variant-numeric:tabular-nums}
 #grid{display:grid;grid-template-columns:1fr 1fr;gap:72px 28px}
-@media(max-width:760px){#grid{grid-template-columns:1fr;gap:56px}}
+@media(max-width:760px){#grid{grid-template-columns:1fr}}
 .film{grid-column:span 1;text-align:left;background:none;border:none;padding:0;display:block;width:100%}
 .film.w{grid-column:1 / -1}
 .film .thumb{position:relative;aspect-ratio:16/9;overflow:hidden;background:#111}
 /* pas de zoom au survol : la parallaxe pilote déjà transform */
 .film .thumb img{width:100%;object-fit:cover}
-.film .cartel{display:flex;align-items:baseline;justify-content:space-between;gap:14px;margin-top:14px}
-.film .cartel .t{font-size:15px;font-weight:600;letter-spacing:.01em}
-.film .cartel .t small{display:block;font-size:11px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--gris);margin-top:3px}
-.film .cartel .y{font-size:12px;color:var(--gris);font-variant-numeric:tabular-nums}
-.film .t span{background-image:linear-gradient(var(--ivoire),var(--ivoire));background-size:0 1px;background-position:0 100%;background-repeat:no-repeat;transition:background-size .35s}
-.film:hover .t span{background-size:100% 1px}
+/* Le cartel : le nom porte, le titre chante, la fiche se tait.
+   Trois voix pour les mêmes informations qu'avant. */
+.film .cartel{margin-top:15px}
+.film .artiste{
+  font-weight:800;font-stretch:112%;text-transform:uppercase;
+  font-size:16px;letter-spacing:-.005em;line-height:1.08;
+}
+.film .titre{
+  margin-top:3px;
+  font-family:'Newsreader',Georgia,'Times New Roman',serif;font-style:italic;font-weight:400;
+  font-size:16px;line-height:1.24;color:var(--ivoire);
+}
+.film .meta{
+  margin-top:8px;
+  font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--gris);font-variant-numeric:tabular-nums;
+}
+.film .artiste span{background-image:linear-gradient(var(--ivoire),var(--ivoire));background-size:0 1px;background-position:0 100%;background-repeat:no-repeat;transition:background-size .35s}
+.film:hover .artiste span{background-size:100% 1px}
+
+/* ---------- la grille sur téléphone ----------
+   Format d'affiche plutôt que vignette 16/9, espacement resserré :
+   on voit la carte en cours et on devine celle d'avant et d'après.
+   (Placé après les règles de base, sinon elles l'emportent.) */
+@media(max-width:760px){
+  #grid{gap:24px}
+  .film .thumb{aspect-ratio:4/5}
+  .film .cartel{
+    margin-top:13px;min-height:78px;      /* place réservée : rien ne saute */
+    transition:opacity .32s ease,transform .32s ease;
+  }
+  .film .artiste{font-size:20px;letter-spacing:-.012em}
+  .film .titre{font-size:18.5px;margin-top:3px;line-height:1.2}
+  .film .meta{margin-top:8px;font-size:10px;letter-spacing:.2em}
+
+  /* Carte au centre de l'écran : l'image parle seule, le texte s'efface.
+     Il reprend sa place dès qu'elle n'est plus au centre. */
+  .film.vu.actif .cartel{opacity:0;transform:translateY(-8px)}
+}
 
 /* ---------- réalisateur ---------- */
 #binks{padding:160px 0 0}
@@ -707,10 +740,15 @@ function accrochage(n){
   var n = FILMS.length, w = accrochage(n);
   document.getElementById("count").textContent = pad(n) + " films";
   document.getElementById("grid").innerHTML = FILMS.map(function(f,i){
+    /* artiste, titre et métadonnées séparés : mêmes informations,
+       mais hiérarchie possible (le nom, puis le titre, puis la fiche) */
     return '<a class="film'+(w[i]?" w":"")+'" href="#/film/'+f.slug+'">'
       + '<div class="thumb">'+thumb(f)+'</div>'
-      + '<div class="cartel"><p class="t"><span>'+esc(f.artist)+' — '+esc(f.title)+'</span>'
-      + '<small>'+f.type+'</small></p><span class="y">'+annee(f)+'</span></div></a>';
+      + '<div class="cartel">'
+      +   '<p class="artiste"><span>'+esc(f.artist)+'</span></p>'
+      +   '<p class="titre">'+esc(f.title)+'</p>'
+      +   '<p class="meta">'+f.type+' &middot; '+annee(f)+'</p>'
+      + '</div></a>';
   }).join("");
 })();
 
@@ -1491,32 +1529,61 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
      Une seule boucle d'animation, et seulement sur les cartes visibles. */
   var cartes = [], enCours = false;
   function recenser(){ cartes = [].slice.call(document.querySelectorAll(".film .thumb img")); }
+  var carteActive = null;
   function placer(){
     enCours = false;
-    var h = innerHeight;
-    var etroit = innerWidth < 760;
-    var angle = etroit ? 7 : 11;          /* plus discret sur petit écran */
+    var h = innerHeight, milieuEcran = h / 2;
+    var etroit = innerWidth <= 760;
+    var angle = etroit ? 5 : 11;          /* plus discret sur petit écran */
+    var proche = null, distanceProche = Infinity;
+
     for(var i = 0; i < cartes.length; i++){
       var img = cartes[i], cadre = img.parentNode;
       var r = cadre.getBoundingClientRect();
       if(r.bottom < -250 || r.top > h + 250) continue;   /* hors écran : on saute */
 
+      var milieu = r.top + r.height / 2;
       /* d = -1 tout en haut de l'écran, 0 au centre, +1 tout en bas */
-      var d = (r.top + r.height / 2 - h / 2) / (h / 2);
+      var d = (milieu - milieuEcran) / (h / 2);
       if(d < -1.4) d = -1.4; else if(d > 1.4) d = 1.4;
       var abs = Math.abs(d);
 
-      /* Le cadre bascule dans la profondeur : couché quand il arrive par
-         le bas, droit au centre, il repart en arrière vers le haut. */
-      cadre.style.transform =
-        "perspective(1300px) rotateX(" + (d * angle).toFixed(2) + "deg)"
-        + " translateZ(" + (-abs * 70).toFixed(1) + "px)"
-        + " scale(" + (1 - abs * 0.035).toFixed(4) + ")";
-      /* et il s'assombrit en s'éloignant : c'est ça qui donne la profondeur */
-      cadre.style.filter = "brightness(" + (1 - abs * 0.42).toFixed(3) + ")";
+      if(etroit){
+        /* Sur téléphone la carte grandit en approchant du centre.
+           C'est l'échelle qui fait la hiérarchie, pas la bascule. */
+        var prox = 1 - Math.min(1, abs / 0.85);        /* 1 au centre, 0 loin */
+        cadre.style.transform =
+          "perspective(1400px) rotateX(" + (d * angle).toFixed(2) + "deg)"
+          + " scale(" + (0.9 + prox * 0.1).toFixed(4) + ")";
+        cadre.style.filter = "brightness(" + (0.55 + prox * 0.45).toFixed(3) + ")";
+        var distance = Math.abs(milieu - milieuEcran);
+        if(distance < distanceProche){ distanceProche = distance; proche = cadre.parentNode; }
+      } else {
+        /* Le cadre bascule dans la profondeur : couché quand il arrive par
+           le bas, droit au centre, il repart en arrière vers le haut. */
+        cadre.style.transform =
+          "perspective(1300px) rotateX(" + (d * angle).toFixed(2) + "deg)"
+          + " translateZ(" + (-abs * 70).toFixed(1) + "px)"
+          + " scale(" + (1 - abs * 0.035).toFixed(4) + ")";
+        /* et il s'assombrit en s'éloignant : c'est ça qui donne la profondeur */
+        cadre.style.filter = "brightness(" + (1 - abs * 0.42).toFixed(3) + ")";
+      }
 
       /* l'image glisse dans le cadre, plus lentement que la page */
       img.style.transform = "translate3d(0," + (d * 3).toFixed(2) + "%,0)";
+    }
+
+    /* Une seule carte active à la fois : la plus proche du centre.
+       Le seuil est large pour que le relais d'une carte à l'autre soit
+       continu — sinon le texte se rallume une fraction de seconde entre
+       deux cartes et ça clignote.
+       C'est ce repère qui servira plus tard à lancer l'aperçu vidéo
+       sur cette carte uniquement. */
+    var nouvelle = (etroit && distanceProche < h * 0.5) ? proche : null;
+    if(nouvelle !== carteActive){
+      if(carteActive) carteActive.classList.remove("actif");
+      if(nouvelle) nouvelle.classList.add("actif");
+      carteActive = nouvelle;
     }
     allumer();
   }
