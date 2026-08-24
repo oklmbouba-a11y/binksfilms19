@@ -1,21 +1,23 @@
 /* ============================================================
    BINKSFILMS — LES FILMS
    ------------------------------------------------------------
-   Ne modifie pas ce fichier à la main.
-   Ouvre "admin.html", fais tes changements, clique sur
-   "Télécharger films.js", puis remplace ce fichier par celui
-   que tu viens de télécharger.
+   Fichier généré par admin.html. Ne le modifie pas à la main.
+   Ouvre admin.html, fais tes changements, clique sur
+   « Exporter films.js », puis remplace ce fichier.
+   Généré le 24/08/2026 03:24:01
    ============================================================ */
+window.FILMS_SCHEMA = 2;
 window.FILMS_DATA = [
   {
-    "slug": "fin-des-temps",
+    "slug": "saisai-feat-boro700-fin-des-temps",
     "yt": "hKaRJtDT1-M",
-    "artist": "Saisai",
-    "title": "Fin des temps (feat. Boro700)",
+    "artist": "Saisai Feat Boro700",
+    "title": "Fin des temps ",
     "sortie": "2026-08-14",
     "type": "Clip",
+    "status": "published",
     "archive": false,
-    "poster": "C:\\Users\\binks\\Documents\\site binksfilms fable 5\\deploiement\\images\\saisai boro 700 vf.mp4.00_02_47_07.Still003.jpg",
+    "poster": "images/saisai-fin-des-temps-feat-boro700-banner-2.jpg",
     "note": "",
     "lieu": "",
     "tournage": "",
@@ -23,10 +25,18 @@ window.FILMS_DATA = [
       [
         "Réalisation, image & montage",
         "BINKSFILMS"
+      ],
+      [
+        "Produced by",
+        "Tyrexotb‬"
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": {
+      "src": "videos/previews/saisai-fin-des-temps-feat-boro700-preview.mp4",
+      "poster": ""
+    }
   },
   {
     "slug": "tokio-hotel",
@@ -35,6 +45,7 @@ window.FILMS_DATA = [
     "title": "Tokio Hotel",
     "sortie": "2026-06-03",
     "type": "Clip",
+    "status": "published",
     "archive": false,
     "poster": "",
     "note": "",
@@ -47,7 +58,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "fiche-s-2",
@@ -56,6 +68,7 @@ window.FILMS_DATA = [
     "title": "Fiché S 2",
     "sortie": "2026-05-15",
     "type": "Clip",
+    "status": "archived",
     "archive": true,
     "poster": "",
     "note": "",
@@ -68,7 +81,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "pain-music-remix",
@@ -77,6 +91,7 @@ window.FILMS_DATA = [
     "title": "Pain Music Remix",
     "sortie": "2026-03-21",
     "type": "Clip",
+    "status": "published",
     "archive": false,
     "poster": "",
     "note": "",
@@ -89,7 +104,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "17h-dans-la-zone-4",
@@ -98,6 +114,7 @@ window.FILMS_DATA = [
     "title": "17h dans la Zone 4",
     "sortie": "2025-12-24",
     "type": "Clip",
+    "status": "published",
     "archive": false,
     "poster": "",
     "note": "",
@@ -110,7 +127,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "free-durk",
@@ -119,6 +137,7 @@ window.FILMS_DATA = [
     "title": "Free Durk",
     "sortie": "2025-12-13",
     "type": "Clip",
+    "status": "published",
     "archive": false,
     "poster": "",
     "note": "",
@@ -131,7 +150,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "yeah-yeah",
@@ -140,6 +160,7 @@ window.FILMS_DATA = [
     "title": "Yeah Yeah",
     "sortie": "2025-12-09",
     "type": "Clip",
+    "status": "published",
     "archive": false,
     "poster": "",
     "note": "",
@@ -152,7 +173,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "la-voix-episode-1",
@@ -161,6 +183,7 @@ window.FILMS_DATA = [
     "title": "La Voix — Épisode 1",
     "sortie": "2025-06-06",
     "type": "Clip",
+    "status": "archived",
     "archive": true,
     "poster": "",
     "note": "",
@@ -173,7 +196,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "freestyle-6",
@@ -182,6 +206,7 @@ window.FILMS_DATA = [
     "title": "Freestyle 6",
     "sortie": "2020-10-31",
     "type": "Clip",
+    "status": "published",
     "archive": false,
     "poster": "",
     "note": "",
@@ -194,7 +219,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "4-4-2",
@@ -203,6 +229,7 @@ window.FILMS_DATA = [
     "title": "4.4.2",
     "sortie": "2020-02-14",
     "type": "Clip",
+    "status": "published",
     "archive": false,
     "poster": "",
     "note": "",
@@ -215,7 +242,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "mmd",
@@ -224,6 +252,7 @@ window.FILMS_DATA = [
     "title": "M.M.D",
     "sortie": "2019-10-12",
     "type": "Clip",
+    "status": "published",
     "archive": false,
     "poster": "",
     "note": "",
@@ -236,7 +265,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "sombre-2",
@@ -245,6 +275,7 @@ window.FILMS_DATA = [
     "title": "Sombre 2",
     "sortie": "2018-08-18",
     "type": "Clip",
+    "status": "published",
     "archive": false,
     "poster": "",
     "note": "",
@@ -257,7 +288,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "zoner",
@@ -266,6 +298,7 @@ window.FILMS_DATA = [
     "title": "Zoner",
     "sortie": "2018-05-02",
     "type": "Clip",
+    "status": "published",
     "archive": false,
     "poster": "",
     "note": "",
@@ -278,7 +311,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "z-serie-5",
@@ -287,6 +321,7 @@ window.FILMS_DATA = [
     "title": "Z Série 5",
     "sortie": "2018-04-18",
     "type": "Clip",
+    "status": "published",
     "archive": false,
     "poster": "",
     "note": "",
@@ -299,7 +334,8 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   },
   {
     "slug": "gotham",
@@ -308,6 +344,7 @@ window.FILMS_DATA = [
     "title": "Gotham feat. Codé",
     "sortie": "2018-01-05",
     "type": "Clip",
+    "status": "archived",
     "archive": true,
     "poster": "",
     "note": "",
@@ -320,6 +357,7 @@ window.FILMS_DATA = [
       ]
     ],
     "contrechamp": null,
-    "bts": []
+    "bts": [],
+    "preview": null
   }
 ];
