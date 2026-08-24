@@ -4,7 +4,7 @@
    Fichier généré par admin.html. Ne le modifie pas à la main.
    Ouvre admin.html, fais tes changements, clique sur
    « Exporter films.js », puis remplace ce fichier.
-   Généré le 24/08/2026 03:24:01
+   Généré le 24/08/2026 03:38:39
    ============================================================ */
 window.FILMS_SCHEMA = 2;
 window.FILMS_DATA = [
@@ -34,7 +34,7 @@ window.FILMS_DATA = [
     "contrechamp": null,
     "bts": [],
     "preview": {
-      "src": "videos/previews/saisai-fin-des-temps-feat-boro700-preview.mp4",
+      "src": "videos/saisai-fin-des-temps-feat-boro700-preview.mp4",
       "poster": ""
     }
   },
