@@ -4,10 +4,33 @@
    Fichier généré par admin.html. Ne le modifie pas à la main.
    Ouvre admin.html, fais tes changements, clique sur
    « Exporter films.js », puis remplace ce fichier.
-   Généré le 24/08/2026 03:38:39
+   Généré le 24/08/2026 04:30:06
    ============================================================ */
 window.FILMS_SCHEMA = 2;
 window.FILMS_DATA = [
+  {
+    "slug": "code-les-hips-et-les-opps",
+    "yt": "JYxysRO5E7g",
+    "artist": "Codé",
+    "title": "les hips et les opps",
+    "sortie": "2022-05-11",
+    "type": "Clip",
+    "status": "published",
+    "archive": false,
+    "poster": "",
+    "note": "",
+    "lieu": "",
+    "tournage": "",
+    "credits": [
+      [
+        "Réalisation, image & montage",
+        "BINKSFILMS"
+      ]
+    ],
+    "contrechamp": null,
+    "bts": [],
+    "preview": null
+  },
   {
     "slug": "saisai-feat-boro700-fin-des-temps",
     "yt": "hKaRJtDT1-M",
@@ -34,7 +57,7 @@ window.FILMS_DATA = [
     "contrechamp": null,
     "bts": [],
     "preview": {
-      "src": "videos/saisai-fin-des-temps-feat-boro700-preview.mp4",
+      "src": "videos/previews/saisai-fin-des-temps-feat-boro700-preview.mp4",
       "poster": ""
     }
   },
