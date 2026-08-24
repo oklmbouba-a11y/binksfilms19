@@ -110,6 +110,14 @@ nav a:hover{color:var(--ivoire)}
 .film .thumb{--r:11px;position:relative;aspect-ratio:16/9;overflow:hidden;background:#111;border-radius:var(--r)}
 /* pas de zoom au survol : la parallaxe pilote déjà transform */
 .film .thumb img{width:100%;object-fit:cover}
+/* Boucle de preview du projet. Elle n'est révélée qu'au moment où elle
+   joue vraiment : si le fichier manque ou si le navigateur refuse la
+   lecture, la bannière reste, et rien ne clignote. */
+.film .thumb video.prev{
+  position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .5s ease;pointer-events:none;background:transparent;
+}
+.film.prev-on .thumb video.prev{opacity:1}
 /* voile monté du bas : il tient le texte sans noircir l'image */
 .film .voile{
   position:absolute;inset:0;pointer-events:none;
@@ -608,6 +616,8 @@ body.film main#home{display:none}
 .film.vu .cartel{opacity:1;transform:none}
 /* l'image est plus haute que son cadre et glisse : profondeur au scroll */
 .film .thumb img{height:116%;top:-8%;position:absolute;left:0;will-change:transform}
+/* la preview suit exactement le même cadrage que la bannière */
+.film .thumb video.prev{height:116%;top:-8%;will-change:transform}
 
 /* ---------- intro ---------- */
 #intro{position:fixed;inset:0;z-index:200;background:var(--noir);display:flex;align-items:center;justify-content:center;cursor:pointer}
@@ -625,6 +635,7 @@ body.intro{overflow:hidden}
   .film .thumb{clip-path:none}
   .film .cartel{opacity:1;transform:none}
   .film .thumb img{height:100%;top:0}
+  .film .thumb video.prev{display:none}
   #intro{display:none}
 }
 </style>
@@ -788,9 +799,21 @@ function dateLongue(f){
   if(p.length !== 3) return "";
   return parseInt(p[2],10) + " " + MOIS[parseInt(p[1],10)-1] + " " + p[0];
 }
+/* Un chemin d'image utilisable sur le web. Les chemins locaux d'un
+   ordinateur (C:\..., file://, antislashs) n'existent pas une fois le site
+   en ligne : on les ignore plutôt que d'afficher une image cassée. */
+function cheminImage(p){
+  p = String(p == null ? "" : p).trim();
+  if(!p) return "";
+  if(/^[a-zA-Z]:[\\/]/.test(p)) return "";
+  if(/^file:/i.test(p)) return "";
+  if(p.indexOf("\\") >= 0) return "";
+  return p;
+}
 /* La bannière : l'image perso si elle existe, sinon celle de YouTube. */
 function banniere(f){
-  return f.poster ? f.poster : "https://i.ytimg.com/vi/"+f.yt+"/maxresdefault.jpg";
+  var p = cheminImage(f.poster);
+  return p ? p : "https://i.ytimg.com/vi/"+f.yt+"/maxresdefault.jpg";
 }
 /* POUR ENRICHIR UN FILM — remplacer la ligne film(...) par un objet complet.
    Tous les champs sont facultatifs : ce qui manque ne s'affiche pas.
@@ -812,30 +835,171 @@ function banniere(f){
    Les images vont dans un dossier img/ à côté de ce fichier. */
 /* Les films viennent de films.js, modifiable sans code via admin.html.
    Les films archivés ne sont pas affichés. */
-var FILMS = (window.FILMS_DATA || []).filter(function(f){
-  return f && f.yt && !f.archive;
-}).map(function(f){
+/* Un film est en ligne s'il est publié. « status » est le champ moderne,
+   « archive » l'ancien : les deux sont lus, donc un films.js d'avant
+   continue de fonctionner sans rien changer. */
+function enLigne(f){
+  if(!f || !f.yt) return false;
+  if(f.status) return f.status === "published";
+  return !f.archive;
+}
+var FILMS = (window.FILMS_DATA || []).filter(enLigne).map(function(f){
+  /* Un crédit incomplet ne doit pas produire une ligne vide. */
+  var cred = (f.credits || []).filter(function(c){
+    return c && c.length >= 2 && String(c[0]).trim() && String(c[1]).trim();
+  });
+  /* Le contre-champ n'a de sens qu'avec ses deux images. */
+  var cc = null;
+  if(f.contrechamp){
+    var a = cheminImage(f.contrechamp.a), b = cheminImage(f.contrechamp.b);
+    if(a && b) cc = { a:a, b:b, legende:f.contrechamp.legende || "" };
+  }
+  /* Preview du projet : facultative. Une chaîne seule est acceptée
+     autant qu'un objet {src, poster}. Sans source valable : rien. */
+  var prev = null;
+  var ps = f.preview ? (typeof f.preview === "string" ? f.preview : f.preview.src) : "";
+  ps = cheminImage(ps);
+  if(ps) prev = { src: ps, poster: cheminImage(f.preview && f.preview.poster) };
   return {
     slug:f.slug, yt:f.yt, artist:f.artist||"", title:f.title||"",
-    sortie:f.sortie||"", type:f.type||"Clip", poster:f.poster||"",
+    sortie:f.sortie||"", type:f.type||"Clip", poster:cheminImage(f.poster),
     note:f.note||"", lieu:f.lieu||"", tournage:f.tournage||"",
-    credits:(f.credits && f.credits.length) ? f.credits : CREDITS,
-    contrechamp:f.contrechamp || null, bts:f.bts || []
+    credits: cred.length ? cred : CREDITS,
+    contrechamp: cc,
+    bts: (f.bts || []).map(cheminImage).filter(Boolean),
+    preview: prev
   };
 });
 var isFile = location.protocol === "file:";
 var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 var pad = function(n){ return String(n).padStart(2,"0"); };
 function esc(s){ return String(s).replace(/</g,"&lt;"); }
-/* certaines vidéos n'ont pas de maxresdefault : YouTube renvoie alors
-   soit une 404 (onerror), soit un placeholder gris 120x90 (onload) */
-function ytFallback(img,yt){
+/* ---------- Chaîne de secours des images ----------
+   Une bannière personnalisée absente ou cassée ne doit jamais laisser un
+   trou. Ordre : image perso → miniature YouTube (maxres puis hq) →
+   placeholder BINKSFILMS. Certaines vidéos n'ont pas de maxresdefault :
+   YouTube renvoie alors soit une 404 (onerror), soit une vignette grise
+   120x90 (onload) — les deux cas sont traités.
+   Étapes : 0 = image perso, 1 = maxresdefault, 2 = hqdefault, 3 = placeholder. */
+var PLACEHOLDER = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">'
+  + '<rect width="1280" height="720" fill="#0E0E0E"/>'
+  + '<text x="640" y="368" fill="#4A4744" font-family="Helvetica,Arial,sans-serif"'
+  + ' font-size="34" font-weight="700" letter-spacing="12" text-anchor="middle">BINKSFILMS</text>'
+  + '</svg>');
+function etapeSuivante(img){
+  var yt = img.getAttribute("data-yt") || "";
+  var e = parseInt(img.getAttribute("data-etape") || "0", 10);
   img.onload = img.onerror = null;
-  img.src = "https://i.ytimg.com/vi/"+yt+"/hqdefault.jpg";
+  /* image d'appoint (2e, 3e vue du fondu) : elle disparaît au lieu
+     d'imposer un placeholder au milieu de l'enchaînement */
+  if(img.getAttribute("data-appoint")){
+    if(img.parentNode) img.parentNode.removeChild(img);
+    return;
+  }
+  while(e < 3){
+    e++;
+    if(e === 1 && yt){ poserImage(img, "https://i.ytimg.com/vi/"+yt+"/maxresdefault.jpg", 1); return; }
+    if(e === 2 && yt){ poserImage(img, "https://i.ytimg.com/vi/"+yt+"/hqdefault.jpg", 2); return; }
+    if(e >= 3){ poserImage(img, PLACEHOLDER, 3); return; }
+  }
+}
+function poserImage(img, src, etape){
+  img.setAttribute("data-etape", String(etape));
+  if(etape >= 3){ img.onload = img.onerror = null; img.src = src; return; }
+  img.onerror = function(){ etapeSuivante(img); };
+  img.onload  = function(){
+    /* vignette grise de YouTube : 120x90 */
+    if(img.naturalWidth < 200 && /i\.ytimg\.com/.test(img.src)) etapeSuivante(img);
+    else img.onload = img.onerror = null;
+  };
+  img.src = src;
+}
+/* Branche la chaîne de secours sur les images posées par innerHTML. */
+function brancherVisuels(racine){
+  var imgs = (racine || document).querySelectorAll("img[data-repli]");
+  for(var i = 0; i < imgs.length; i++){
+    (function(img){
+      if(img.getAttribute("data-branche")) return;
+      img.setAttribute("data-branche", "1");
+      img.onerror = function(){ etapeSuivante(img); };
+      img.onload  = function(){
+        if(img.naturalWidth < 200 && /i\.ytimg\.com/.test(img.src)) etapeSuivante(img);
+        else img.onload = img.onerror = null;
+      };
+      /* image déjà en échec avant que le gestionnaire soit posé */
+      if(img.complete && (img.naturalWidth === 0 ||
+         (img.naturalWidth < 200 && /i\.ytimg\.com/.test(img.src)))) etapeSuivante(img);
+    })(imgs[i]);
+  }
 }
 function thumb(f){
-  var repli = f.poster ? '' : ' onload="if(this.naturalWidth<200)ytFallback(this,\''+f.yt+'\')" onerror="ytFallback(this,\''+f.yt+'\')"';
-  return '<img src="'+banniere(f)+'" alt="" loading="lazy"'+repli+'>';
+  /* étape 0 si l'image vient du dossier du site, 1 si elle vient déjà de YouTube */
+  var etape = f.poster ? 0 : 1;
+  var h = '<img src="'+banniere(f)+'" alt="" loading="lazy" data-repli="1"'
+        + ' data-yt="'+f.yt+'" data-etape="'+etape+'">';
+  /* La source n'est posée qu'au moment de jouer : aucune vidéo n'est
+     téléchargée tant que la carte n'est pas regardée.
+     Le poster reprend la bannière du film — pas d'image en plus à fournir. */
+  if(f.preview){
+    h += '<video class="prev" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"'
+       + ' poster="'+(f.preview.poster || banniere(f))+'"'
+       + ' data-src="'+f.preview.src+'"></video>';
+  }
+  return h;
+}
+/* ---------- boucles de preview des cartes ----------
+   Desktop : au survol. Téléphone : la carte au centre de l'écran, celle
+   que la parallaxe marque déjà « actif ». Muette, en boucle, jamais
+   plus d'une à la fois. Si le fichier manque, la vidéo se retire et la
+   bannière reste : aucun carré vide, aucune icône cassée. */
+var previewEnCours = null;
+function previewPossible(){
+  if(isFile || reduced) return false;
+  var co = navigator.connection;
+  if(co && (co.saveData || /(^|-)2g$/.test(co.effectiveType || ""))) return false;
+  return true;
+}
+function previewJouer(carte){
+  if(!carte || !previewPossible()) return;
+  var v = carte.querySelector("video.prev");
+  if(!v) return;
+  if(previewEnCours && previewEnCours !== v) previewArreter(previewEnCours.closest(".film"));
+  previewEnCours = v;
+  if(!v.getAttribute("src")){
+    v.setAttribute("src", v.getAttribute("data-src"));
+    v.addEventListener("error", function(){
+      /* fichier absent ou format refusé : on efface la vidéo, pas la carte */
+      carte.classList.remove("prev-on");
+      if(v.parentNode) v.parentNode.removeChild(v);
+      if(previewEnCours === v) previewEnCours = null;
+    });
+    v.addEventListener("playing", function(){ carte.classList.add("prev-on"); });
+  }
+  var p = v.play();
+  if(p && p.catch) p.catch(function(){ carte.classList.remove("prev-on"); });
+}
+function previewArreter(carte){
+  if(!carte) return;
+  var v = carte.querySelector("video.prev");
+  carte.classList.remove("prev-on");
+  if(v){ try{ v.pause(); }catch(e){} }
+  if(previewEnCours === v) previewEnCours = null;
+}
+function brancherPreviews(racine){
+  if(!previewPossible()) return;
+  /* le survol n'existe que là où il y a une vraie souris */
+  if(!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+  var cartes = racine.querySelectorAll(".film");
+  for(var i = 0; i < cartes.length; i++){
+    (function(c){
+      if(!c.querySelector("video.prev")) return;
+      c.addEventListener("mouseenter", function(){ previewJouer(c); });
+      c.addEventListener("mouseleave", function(){ previewArreter(c); });
+      c.addEventListener("focusin",  function(){ previewJouer(c); });
+      c.addEventListener("focusout", function(){ previewArreter(c); });
+    })(cartes[i]);
+  }
 }
 
 /* ================= GRILLE =================
@@ -870,6 +1034,8 @@ function accrochage(n){
       +   '</div>'
       + '</div></a>';
   }).join("");
+  brancherVisuels(document.getElementById("grid"));
+  brancherPreviews(document.getElementById("grid"));
 })();
 
 /* ================= LECTEUR ================= */
@@ -886,8 +1052,12 @@ function lecteur(f){
               "https://i.ytimg.com/vi/"+f.yt+"/hq2.jpg",
               "https://i.ytimg.com/vi/"+f.yt+"/hq3.jpg"];
   var h = vues.map(function(src,i){
-    var repli = (i===0 && !f.poster) ? ' onload="if(this.naturalWidth<200)ytFallback(this,\''+f.yt+'\')" onerror="ytFallback(this,\''+f.yt+'\')"' : '';
-    return '<img class="fr'+(i===0?" on":"")+'" src="'+src+'" alt=""'+repli+'>';
+    /* la première image suit la chaîne de secours complète ; les trois
+       vues d'appoint disparaissent simplement si YouTube ne les a pas */
+    var att = (i === 0)
+      ? ' data-repli="1" data-yt="'+f.yt+'" data-etape="'+(f.poster ? 0 : 1)+'"'
+      : ' data-repli="1" data-appoint="1"';
+    return '<img class="fr'+(i===0?" on":"")+'" src="'+src+'" alt=""'+att+'>';
   }).join("");
   /* réceptacle de l'aperçu vidéo : reste vide et invisible tant que
      la lecture n'a pas réellement démarré */
@@ -900,12 +1070,17 @@ function lecteur(f){
 function lancerApercu(){
   clearInterval(apercuTimer);
   if(reduced) return;
-  var frames = document.querySelectorAll(".player .fr");
-  if(frames.length < 2) return;
+  var joueur = document.querySelector(".player");
+  if(!joueur || joueur.querySelectorAll(".fr").length < 2) return;
   var n = 0;
+  /* on relit les images à chaque tour : une vue que YouTube n'a pas
+     fournie a pu être retirée entre-temps, le fondu ne doit pas
+     s'arrêter sur une image absente */
   apercuTimer = setInterval(function(){
-    if(!document.body.contains(frames[0])){ clearInterval(apercuTimer); return; }
-    frames[n].classList.remove("on");
+    if(!document.body.contains(joueur)){ clearInterval(apercuTimer); return; }
+    var frames = joueur.querySelectorAll(".fr");
+    if(frames.length < 2){ clearInterval(apercuTimer); return; }
+    for(var k = 0; k < frames.length; k++) frames[k].classList.remove("on");
     n = (n + 1) % frames.length;
     frames[n].classList.add("on");
   }, 2600);
@@ -1068,15 +1243,19 @@ function renderFilm(f,i){
   if(f.contrechamp){
     h += '<div class="f-sect"><span class="lab">Contre-champ</span>'
       + '<div class="cc" id="cc" tabindex="0" role="button" aria-label="Maintenir pour voir le contre-champ">'
-      + '<img src="'+f.contrechamp.a+'" alt="">'
-      + '<img class="b" src="'+f.contrechamp.b+'" alt="Derrière la caméra">'
+      + '<img src="'+f.contrechamp.a+'" alt="" data-repli="1" data-etape="2">'
+      + '<img class="b" src="'+f.contrechamp.b+'" alt="Derrière la caméra" data-repli="1" data-etape="2">'
       + '<span class="hint">Maintenir pour voir derrière</span></div>'
       + (f.contrechamp.legende ? '<p class="cc-leg voix">'+esc(f.contrechamp.legende)+'</p>' : '')
       + '</div>';
   }
   if(f.bts.length){
+    /* une image de tournage introuvable se retire d'elle-même :
+       la grille se referme, pas d'icône cassée */
     h += '<div class="f-sect"><span class="lab">Tournage</span><div class="bts">'
-      + f.bts.map(function(src){ return '<img src="'+src+'" alt="Image de tournage" loading="lazy">'; }).join("")
+      + f.bts.map(function(src){
+          return '<img src="'+src+'" alt="Image de tournage" loading="lazy" data-repli="1" data-appoint="1">';
+        }).join("")
       + '</div></div>';
   }
 
@@ -1090,6 +1269,7 @@ function renderFilm(f,i){
   }
 
   document.getElementById("film-view").innerHTML = h;
+  brancherVisuels(document.getElementById("film-view"));
   lancerApercu();                    /* images en fondu, tout de suite */
   lancerApercuVideo(f);              /* vidéo muette, dès qu'elle joue */
 
@@ -1889,6 +2069,9 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
 
       /* l'image glisse dans le cadre, plus lentement que la page */
       img.style.transform = "translate3d(0," + (d * 3).toFixed(2) + "%,0)";
+      /* la preview partage exactement le mouvement de la bannière */
+      var vprev = cadre.querySelector("video.prev");
+      if(vprev) vprev.style.transform = img.style.transform;
     }
 
     /* Une seule carte active à la fois : la plus proche du centre.
@@ -1899,8 +2082,8 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        sur cette carte uniquement. */
     var nouvelle = (etroit && distanceProche < h * 0.5) ? proche : null;
     if(nouvelle !== carteActive){
-      if(carteActive) carteActive.classList.remove("actif");
-      if(nouvelle) nouvelle.classList.add("actif");
+      if(carteActive){ carteActive.classList.remove("actif"); previewArreter(carteActive); }
+      if(nouvelle){ nouvelle.classList.add("actif"); previewJouer(nouvelle); }
       carteActive = nouvelle;
     }
     allumer();
