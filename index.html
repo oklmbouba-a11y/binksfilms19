@@ -619,15 +619,89 @@ body.film main#home{display:none}
 /* la preview suit exactement le même cadrage que la bannière */
 .film .thumb video.prev{height:116%;top:-8%;will-change:transform}
 
-/* ---------- intro ---------- */
-#intro{position:fixed;inset:0;z-index:200;background:var(--noir);display:flex;align-items:center;justify-content:center;cursor:pointer}
-#intro .lockup{text-align:center}
-#intro .lk-name{font-size:clamp(38px,9vw,104px);opacity:0;transform:translateY(16px);animation:introNom .9s cubic-bezier(.2,.75,.2,1) .15s forwards}
-#intro .lk-base{font-size:clamp(16px,3vw,32px);color:var(--gris);margin-top:10px;opacity:0;animation:introBase .8s ease .62s forwards}
-@keyframes introNom{to{opacity:1;transform:none}}
-@keyframes introBase{to{opacity:1;color:var(--ivoire)}}
-#intro.sort{opacity:0;transition:opacity .28s ease;pointer-events:none}
+/* ---------- intro ----------
+   Une couche d'entree posee au-dessus du site, rien de plus : la video
+   porte deja toute la direction artistique (ciel, lune, corbeaux), on
+   n'y ajoute donc aucun filtre, aucun grain, aucun overlay colore.
+   Deux elements a l'ecran : la video, et ENTER. */
+#intro{position:fixed;inset:0;z-index:200;background:var(--noir);overflow:hidden}
+/* le fond est noir des la premiere frame : jamais de flash blanc,
+   jamais le site qui se devine derriere */
 body.intro{overflow:hidden}
+
+#intro video{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center center;
+  opacity:0;transition:opacity .9s ease;
+  pointer-events:none;                 /* aucune interaction native du lecteur */
+}
+#intro.pret video{opacity:1}
+/* certains iOS reinjectent une barre de lecture : on la nie */
+#intro video::-webkit-media-controls,
+#intro video::-webkit-media-controls-enclosure,
+#intro video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
+
+/* voile bas : juste ce qu'il faut pour que ENTER tienne sur un ciel clair.
+   Presque imperceptible, et il ne touche pas le reste de l'image. */
+#intro .voile-bas{
+  position:absolute;inset:auto 0 0;height:34%;
+  background:linear-gradient(to top,rgba(10,10,10,.34),rgba(10,10,10,0));
+  pointer-events:none;
+}
+
+/* ENTER : capitales fines, tres espacees, un filet dessous.
+   Pas de cadre, pas de neon, pas de halo. */
+#intro .entrer{
+  position:absolute;left:50%;transform:translateX(-50%);
+  bottom:calc(8vh + env(safe-area-inset-bottom,0px));
+  display:flex;flex-direction:column;align-items:center;gap:13px;
+  background:none;border:0;padding:16px 20px;   /* zone tactile confortable */
+  opacity:0;transition:opacity 1.1s ease .12s;
+}
+#intro.pret .entrer{opacity:1}
+#intro .entrer .mot{
+  font-size:12px;font-weight:300;text-transform:uppercase;
+  letter-spacing:.42em;text-indent:.42em;    /* l'indent compense l'espace final */
+  color:#DAD7D1;
+  transition:letter-spacing .75s cubic-bezier(.2,.7,.2,1),color .75s ease;
+}
+#intro .entrer .filet{
+  display:block;width:66px;height:1px;background:rgba(237,235,230,.32);
+  transform:scaleX(.5);transform-origin:center;   /* il s'ouvre depuis son centre */
+  transition:transform .8s cubic-bezier(.2,.7,.2,1),background .75s ease;
+}
+@media(hover:hover){
+  #intro .entrer:hover .mot{letter-spacing:.52em;text-indent:.52em;color:#F2F0EC}
+  #intro .entrer:hover .filet{transform:scaleX(1);background:rgba(237,235,230,.5)}
+}
+#intro .entrer:focus-visible .filet{transform:scaleX(1)}
+
+/* grands ecrans : le mot respire un peu plus, sans jamais grossir */
+@media(min-width:1024px){
+  #intro .entrer .mot{font-size:13px}
+  #intro .entrer .filet{width:82px}
+}
+
+/* En portrait, un cadre plus etroit que le 16/9 de la source : « cover »
+   rogne alors sur les cotes, pas en hauteur. La lune est a 56 % de la
+   largeur, on cale donc le cadrage dessus pour ne jamais la perdre. */
+@media(orientation:portrait){
+  #intro video{object-position:56% center}
+}
+/* ecrans etroits : ENTER remonte pour rester loin du bord et des barres
+   systeme, et le lettrage se resserre juste ce qu'il faut */
+@media(max-width:640px){
+  #intro .entrer{bottom:calc(11vh + env(safe-area-inset-bottom,0px))}
+  #intro .entrer .mot{font-size:11px;letter-spacing:.38em;text-indent:.38em}
+  #intro .entrer .filet{width:54px}
+}
+
+/* sortie : la video et ENTER s'effacent vers le noir, puis le noir
+   s'efface a son tour sur le site. Environ 620 ms en tout. */
+#intro.sort video,#intro.sort .voile-bas,#intro.sort .entrer{
+  opacity:0;transition:opacity .26s ease;pointer-events:none;
+}
+#intro.fini{opacity:0;transition:opacity .34s ease;pointer-events:none}
 
 @media(prefers-reduced-motion:reduce){
   *{transition:none!important;animation:none!important}
@@ -636,18 +710,33 @@ body.intro{overflow:hidden}
   .film .cartel{opacity:1;transform:none}
   .film .thumb img{height:100%;top:0}
   .film .thumb video.prev{display:none}
-  #intro{display:none}
+  /* l'intro reste, mais figee : la video ne joue pas, ENTER fonctionne */
+  #intro video{opacity:1}
+  #intro .entrer{opacity:1}
 }
 </style>
 </head>
 <body>
 
-<div id="intro" aria-hidden="true">
-  <p class="lockup">
-    <span class="lk-name display">Binksfilms</span>
-    <span class="lk-base voix">Les beaux arts du ghetto</span>
-  </p>
+<div id="intro">
+  <video id="introvid" autoplay muted loop playsinline preload="auto" tabindex="-1"
+         disablepictureinpicture disableremoteplayback aria-hidden="true"></video>
+  <span class="voile-bas" aria-hidden="true"></span>
+  <button type="button" class="entrer" id="entrer" aria-label="Entrer sur le site">
+    <span class="mot">Enter</span>
+    <span class="filet" aria-hidden="true"></span>
+  </button>
 </div>
+<script>
+/* La video d'intro n'est demandee que si la porte va reellement s'ouvrir :
+   revenir sur une page pendant la meme visite ne retelecharge pas les
+   4,4 Mo. C'est ici et pas dans le script du bas parce que la requete
+   doit partir avant films.js, qui bloque l'analyse du document. */
+(function(){
+  try{ if(sessionStorage.getItem("bf.intro2")) return; }catch(e){}
+  document.getElementById("introvid").src = "videos/video%20intro.mp4";
+})();
+</script>
 
 <header id="hdr">
   <a class="lockup" href="#/" onclick="retourAccueil(event)" aria-label="BINKSFILMS — accueil">
@@ -1954,28 +2043,75 @@ function fqRep(i){
 addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
 
 /* ================= INTRO =================
-   Deux secondes, une seule fois par visite, et on peut la couper
-   d'un clic, d'une touche ou d'un scroll. Elle montre la marque,
-   pas une barre de chargement. */
+   Une seule fois par visite : le ciel en plein ecran, et ENTER.
+   Aucun minuteur ne fait entrer a la place du visiteur, c'est lui
+   qui pousse la porte. Tout le reste du site est deja charge derriere. */
 (function(){
   var el = document.getElementById("intro");
   if(!el) return;
-  if(reduced || sessionStorage.getItem("bf.intro")){ el.remove(); return; }
-  sessionStorage.setItem("bf.intro", "1");
+  var vid = document.getElementById("introvid");
+  var btn = document.getElementById("entrer");
+
+  /* deja entre pendant cette visite : on ne repasse pas par la porte */
+  var memoire = { lu:null, ecrire:function(){} };
+  try{ memoire.lu = sessionStorage.getItem("bf.intro2");
+       memoire.ecrire = function(){ sessionStorage.setItem("bf.intro2","1"); }; }catch(e){}
+  if(memoire.lu){ el.remove(); return; }
   document.body.classList.add("intro");
-  var fini = false;
-  function sortir(){
-    if(fini) return; fini = true;
-    el.classList.add("sort");
-    document.body.classList.remove("intro");
-    setTimeout(function(){ el.remove(); }, 300);
+
+  /* le site derriere est neutralise tant que l'intro est la */
+  var derriere = [].slice.call(document.querySelectorAll("#hdr, main, footer"));
+  derriere.forEach(function(n){ try{ n.inert = true; }catch(e){} });
+
+  /* ---- on ne revele qu'une fois l'image prete : sinon on reste sur noir,
+     sans roue de chargement ni pourcentage ---- */
+  var revele = false, parti = false, relancer = null;
+  function reveler(){
+    if(revele) return; revele = true;
+    el.classList.add("pret");
   }
-  var minuteur = setTimeout(sortir, 2000);
-  function couper(){ clearTimeout(minuteur); sortir(); }
-  el.addEventListener("click", couper);
-  addEventListener("keydown", couper, {once:true});
-  addEventListener("wheel", couper, {once:true, passive:true});
-  addEventListener("touchstart", couper, {once:true, passive:true});
+  vid.addEventListener("loadeddata", reveler);
+  vid.addEventListener("canplay", reveler);
+  /* si la video ne charge pas du tout, ENTER doit quand meme apparaitre */
+  vid.addEventListener("error", reveler, true);
+  setTimeout(reveler, 2600);
+
+  if(reduced){
+    /* mouvement reduit : le ciel est fixe, on montre une image, pas une boucle */
+    try{ vid.pause(); vid.currentTime = 0.1; }catch(e){}
+  } else {
+    relancer = function(){
+      if(parti || document.hidden) return;
+      var lu = vid.play();
+      /* autoplay refuse : la premiere image reste affichee, ENTER marche */
+      if(lu && lu.catch) lu.catch(function(){});
+    };
+    relancer();
+    /* onglet quitte puis retrouve : les navigateurs mettent la boucle en
+       pause, on la reprend la ou elle en etait */
+    document.addEventListener("visibilitychange", relancer);
+    /* et si la lecture automatique a ete refusee, le premier contact suffit */
+    el.addEventListener("pointerdown", relancer);
+  }
+
+  /* ---- la porte ---- */
+  function entrer(){
+    if(parti) return; parti = true;                 /* aucun double clic */
+    memoire.ecrire();
+    btn.disabled = true;
+    el.classList.add("sort");                       /* video + ENTER -> noir */
+    setTimeout(function(){ el.classList.add("fini"); }, 250);   /* noir -> site */
+    setTimeout(function(){
+      try{ vid.pause(); }catch(e){}
+      if(relancer) document.removeEventListener("visibilitychange", relancer);
+      el.remove();
+      document.body.classList.remove("intro");
+      derriere.forEach(function(n){ try{ n.inert = false; }catch(e){} });
+      /* la grille a pu etre construite pendant l'intro : on relance le guet */
+      if(window.__observerApparitions) window.__observerApparitions();
+    }, 620);
+  }
+  btn.addEventListener("click", entrer);
 })();
 
 /* ================= APPARITIONS AU SCROLL ================= */

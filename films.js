@@ -4,7 +4,7 @@
    Fichier généré par admin.html. Ne le modifie pas à la main.
    Ouvre admin.html, fais tes changements, clique sur
    « Exporter films.js », puis remplace ce fichier.
-   Généré le 24/08/2026 04:30:06
+   Généré le 24/08/2026 05:11:18
    ============================================================ */
 window.FILMS_SCHEMA = 2;
 window.FILMS_DATA = [
@@ -229,8 +229,8 @@ window.FILMS_DATA = [
     "title": "Freestyle 6",
     "sortie": "2020-10-31",
     "type": "Clip",
-    "status": "published",
-    "archive": false,
+    "status": "archived",
+    "archive": true,
     "poster": "",
     "note": "",
     "lieu": "",
@@ -275,8 +275,8 @@ window.FILMS_DATA = [
     "title": "M.M.D",
     "sortie": "2019-10-12",
     "type": "Clip",
-    "status": "published",
-    "archive": false,
+    "status": "archived",
+    "archive": true,
     "poster": "",
     "note": "",
     "lieu": "",
@@ -298,8 +298,8 @@ window.FILMS_DATA = [
     "title": "Sombre 2",
     "sortie": "2018-08-18",
     "type": "Clip",
-    "status": "published",
-    "archive": false,
+    "status": "archived",
+    "archive": true,
     "poster": "",
     "note": "",
     "lieu": "",
@@ -321,8 +321,8 @@ window.FILMS_DATA = [
     "title": "Zoner",
     "sortie": "2018-05-02",
     "type": "Clip",
-    "status": "published",
-    "archive": false,
+    "status": "archived",
+    "archive": true,
     "poster": "",
     "note": "",
     "lieu": "",
