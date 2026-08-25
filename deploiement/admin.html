@@ -1,0 +1,2956 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0A0A0A">
+<title>Admin — BINKSFILMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Instrument Serif sert uniquement à l'aperçu fidèle de la carte -->
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   BINKSFILMS — ADMIN
+   Une seule mission : gérer les réalisations du site.
+   Mobile d'abord. Aucune dépendance extérieure hors la police.
+   ============================================================ */
+:root{
+  --noir:#0A0A0A; --surface:#131313; --surface-2:#191919; --surface-3:#212121;
+  --ivoire:#EDEBE6; --gris:#8E8A84; --gris-2:#5C5955;
+  --rouge:#B11226; --rouge-clair:#E4586B; --vert:#4C9A6A; --vert-clair:#8FCFA6;
+  --ambre:#C9922F; --ambre-clair:#E5BE72;
+  --ligne:rgba(237,235,230,.13); --ligne-2:rgba(237,235,230,.06);
+  --tap:44px;
+  --sb:env(safe-area-inset-bottom,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--noir);color:var(--ivoire);
+  font-family:'Archivo','Helvetica Neue',Arial,sans-serif;
+  font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased;
+  overflow-wrap:break-word;
+}
+body.fige{overflow:hidden}
+/* Aucun élément ne doit élargir la page : tout ce qui est large se
+   replie ou défile dans son propre conteneur.
+   Surtout pas d'overflow-x:hidden ici — il casserait position:sticky,
+   donc la barre du haut et la barre d'actions du bas sur mobile. */
+html,body{max-width:100%}
+.hbar2,.resume,.chips{overscroll-behavior-x:contain}
+::selection{background:rgba(177,18,38,.5)}
+:focus-visible{outline:2px solid var(--ivoire);outline-offset:2px}
+button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none}
+img{display:block;max-width:100%}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 16px}
+@media(min-width:760px){.wrap{padding:0 26px}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- boutons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:var(--tap);padding:10px 16px;
+  border:1px solid var(--ligne);color:var(--ivoire);
+  font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;
+  transition:border-color .15s,background .15s,opacity .15s;white-space:nowrap;
+}
+.btn:hover{border-color:rgba(237,235,230,.45)}
+.btn:active{opacity:.7}
+.btn.plein{background:var(--ivoire);color:var(--noir);border-color:var(--ivoire)}
+.btn.plein:hover{opacity:.86}
+.btn.danger{color:var(--rouge-clair);border-color:rgba(177,18,38,.4)}
+.btn.danger:hover{border-color:var(--rouge)}
+.btn[disabled]{opacity:.35;cursor:not-allowed}
+.btn.petit{min-height:38px;padding:8px 12px;font-size:10.5px;letter-spacing:.1em}
+.btn.large{width:100%}
+
+/* ---------- barre du haut ---------- */
+header{position:sticky;top:0;z-index:30;background:rgba(10,10,10,.97);border-bottom:1px solid var(--ligne);backdrop-filter:blur(6px)}
+.hbar{display:flex;align-items:center;gap:12px;padding:11px 0;justify-content:space-between}
+.marque{font-weight:800;font-stretch:125%;font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;line-height:1.2}
+.marque span{display:block;color:var(--gris);font-weight:600;font-size:10px;letter-spacing:.16em}
+.hactions{display:flex;gap:8px;align-items:center}
+.pastille{
+  display:inline-flex;align-items:center;gap:7px;min-height:32px;padding:5px 11px;
+  border:1px solid var(--ligne);font-size:10.5px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;white-space:nowrap;
+}
+.pastille i{width:7px;height:7px;border-radius:50%;background:var(--gris);flex:none}
+.pastille .court{display:none}
+@media(max-width:620px){.pastille .long{display:none}.pastille .court{display:inline}}
+.pastille.ok{color:var(--vert-clair);border-color:rgba(76,154,106,.35)}
+.pastille.ok i{background:var(--vert)}
+.pastille.att{color:var(--ambre-clair);border-color:rgba(201,146,47,.4)}
+.pastille.att i{background:var(--ambre)}
+.hbar2{display:flex;gap:8px;padding-bottom:11px;overflow-x:auto;scrollbar-width:none}
+.hbar2::-webkit-scrollbar{display:none}
+@media(min-width:760px){
+  .hbar{padding:14px 0}
+  .marque{font-size:13px}
+  .marque span{display:inline;font-size:11px;margin-left:8px}
+}
+
+/* ---------- menu ••• ---------- */
+.menu{position:relative}
+.menu-pan{
+  position:absolute;right:0;top:calc(100% + 8px);z-index:40;min-width:240px;
+  background:var(--surface-2);border:1px solid var(--ligne);
+  display:none;flex-direction:column;padding:6px;
+  box-shadow:0 18px 50px rgba(0,0,0,.6);
+}
+.menu.on .menu-pan{display:flex}
+.menu-pan button{
+  text-align:left;min-height:var(--tap);padding:10px 12px;font-size:13.5px;
+  display:flex;align-items:center;gap:10px;
+}
+.menu-pan button:hover{background:var(--surface-3)}
+.menu-pan hr{border:none;border-top:1px solid var(--ligne-2);margin:5px 0}
+.menu-pan .cpt{margin-left:auto;font-size:11px;color:var(--gris);font-variant-numeric:tabular-nums}
+
+/* ---------- résumé ---------- */
+.resume{display:flex;gap:8px;margin-top:16px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.resume::-webkit-scrollbar{display:none}
+.stat{border:1px solid var(--ligne-2);background:var(--surface);padding:11px 14px;min-width:88px;flex:1 0 auto}
+.stat b{display:block;font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat span{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gris)}
+
+/* ---------- bandeaux ---------- */
+.bandeau{margin-top:16px;border:1px solid;padding:13px 15px;font-size:13.5px;display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.bandeau .txt{flex:1 1 240px;min-width:0}
+.bandeau.info{border-color:var(--ligne);background:var(--surface)}
+.bandeau.att{border-color:rgba(201,146,47,.45);color:var(--ambre-clair)}
+.bandeau.ko{border-color:rgba(177,18,38,.5);color:var(--rouge-clair)}
+.bandeau b{font-weight:700}
+
+/* ---------- outils : recherche / filtres / tri ---------- */
+.outils{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.rech{position:relative}
+.rech input{
+  width:100%;min-height:var(--tap);background:var(--surface);border:1px solid var(--ligne);
+  padding:11px 40px 11px 13px;font-size:16px;-webkit-appearance:none;border-radius:0;
+}
+.rech input:focus{outline:none;border-color:rgba(237,235,230,.45)}
+.rech button{position:absolute;right:2px;top:2px;bottom:2px;width:38px;color:var(--gris);font-size:16px}
+.chips{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  border:1px solid var(--ligne);padding:8px 13px;min-height:38px;
+  font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gris);white-space:nowrap;display:inline-flex;align-items:center;gap:6px;
+}
+.chip.on{color:var(--noir);background:var(--ivoire);border-color:var(--ivoire)}
+.chip .n{font-variant-numeric:tabular-nums;opacity:.7}
+.tri{display:flex;align-items:center;gap:9px}
+.tri label{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gris)}
+.tri select{
+  flex:1;min-height:40px;background:var(--surface);border:1px solid var(--ligne);
+  padding:8px 11px;font-size:14px;border-radius:0;
+}
+@media(min-width:760px){
+  .outils{flex-direction:row;align-items:center;flex-wrap:wrap}
+  .rech{flex:1 1 280px}
+  .tri{flex:0 0 auto}
+  .tri select{flex:0 0 auto;min-width:170px}
+}
+
+/* ---------- liste ---------- */
+.liste{margin:18px 0 100px;display:flex;flex-direction:column;gap:9px}
+.vide{border:1px dashed var(--ligne);padding:44px 20px;text-align:center;color:var(--gris);font-size:14px}
+.carte{border:1px solid var(--ligne);background:var(--surface);position:relative}
+.carte.brouillon{border-left:3px solid var(--ambre)}
+.carte.archive{opacity:.62;border-left:3px solid var(--gris-2)}
+.carte.glisse{opacity:.35}
+.carte.cible{border-color:var(--ivoire)}
+.ct{display:grid;grid-template-columns:104px 1fr;gap:10px 12px;padding:10px}
+.vign{position:relative;aspect-ratio:16/9;background:#000;overflow:hidden;border:1px solid var(--ligne-2)}
+.vign img{width:100%;height:100%;object-fit:cover}
+.vign .drapeau{
+  position:absolute;left:0;right:0;bottom:0;font-size:9px;letter-spacing:.08em;
+  text-transform:uppercase;text-align:center;padding:3px 2px;background:rgba(177,18,38,.9);color:#fff;
+}
+.vign .drapeau.att{background:rgba(201,146,47,.92);color:#1A1300}
+.txt-c{min-width:0}
+.c-art{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gris);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.c-tit{font-size:15.5px;font-weight:600;line-height:1.25;margin-top:2px}
+.c-meta{margin-top:5px;font-size:11.5px;color:var(--gris-2);display:flex;flex-wrap:wrap;gap:5px 9px;align-items:center}
+.etq{font-size:9.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:2px 6px;border:1px solid}
+.etq.pub{color:var(--vert-clair);border-color:rgba(76,154,106,.4)}
+.etq.bro{color:var(--ambre-clair);border-color:rgba(201,146,47,.45)}
+.etq.arc{color:var(--gris);border-color:var(--ligne)}
+.c-yt{font-family:Consolas,Menlo,monospace;font-size:10.5px;color:var(--gris-2)}
+.cmd{grid-column:1/-1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;
+  border-top:1px solid var(--ligne-2);padding-top:9px}
+.cmd .esp{flex:1}
+.ord{display:flex;gap:4px}
+.ord button{
+  width:40px;height:38px;border:1px solid var(--ligne);color:var(--gris);
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+}
+.ord button:hover{color:var(--ivoire);border-color:rgba(237,235,230,.4)}
+.ord button[disabled]{opacity:.25;cursor:not-allowed}
+.poignee{cursor:grab;color:var(--gris-2);padding:0 4px;align-self:center;display:none}
+@media(min-width:760px){
+  .ct{grid-template-columns:150px 1fr auto;align-items:center;padding:12px}
+  .cmd{grid-column:auto;border-top:none;padding-top:0;flex-wrap:nowrap}
+  .poignee{display:block}
+}
+
+/* ---------- panneau / modale ---------- */
+.pan{
+  position:fixed;inset:0;z-index:60;background:rgba(6,6,6,.8);
+  display:none;align-items:flex-end;justify-content:center;
+}
+.pan.on{display:flex}
+.pan-in{
+  background:var(--noir);border:1px solid var(--ligne);width:100%;max-width:820px;
+  max-height:94vh;max-height:94dvh;display:flex;flex-direction:column;
+}
+.pan-bar{
+  position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-bottom:1px solid var(--ligne);background:var(--noir);
+}
+.pan-bar h2{font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;flex:1;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pan-bar .x{width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-size:19px;color:var(--gris);flex:none}
+.pan-bar .x:hover{color:var(--ivoire)}
+.pan-corps{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px;flex:1}
+.pan-pied{
+  position:sticky;bottom:0;display:flex;gap:9px;padding:11px 14px calc(11px + var(--sb));
+  border-top:1px solid var(--ligne);background:var(--noir);flex-wrap:wrap;
+}
+.pan-pied .esp{flex:1}
+@media(min-width:760px){
+  .pan{align-items:center;padding:22px}
+  .pan-in{max-height:88vh}
+  .pan-corps{padding:20px 24px}
+  .pan-bar,.pan-pied{padding-left:24px;padding-right:24px}
+}
+.pan.plein .pan-in{max-width:1240px;height:94vh;height:94dvh}
+
+/* ---------- formulaire ---------- */
+.grp{border:1px solid var(--ligne-2);margin-bottom:9px;background:var(--surface)}
+.grp>summary{
+  list-style:none;cursor:pointer;min-height:var(--tap);display:flex;align-items:center;gap:9px;
+  padding:12px 14px;font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);
+}
+.grp>summary::-webkit-details-marker{display:none}
+.grp>summary::after{content:"+";margin-left:auto;font-size:16px;color:var(--gris-2);font-weight:400}
+.grp[open]>summary::after{content:"–"}
+.grp[open]>summary{color:var(--ivoire);border-bottom:1px solid var(--ligne-2)}
+.grp .corps{padding:16px 14px 18px}
+.grp .badge{font-size:9.5px;letter-spacing:.1em;padding:2px 6px;border:1px solid var(--ligne);color:var(--gris-2)}
+.grille{display:grid;gap:14px}
+@media(min-width:640px){.grille.deux{grid-template-columns:1fr 1fr}}
+.champ{display:flex;flex-direction:column;gap:6px;min-width:0}
+.champ label{font-size:10.5px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--gris)}
+.champ input,.champ textarea,.champ select{
+  width:100%;min-height:var(--tap);background:var(--noir);color:var(--ivoire);
+  border:1px solid var(--ligne);padding:11px 12px;
+  font-size:16px;border-radius:0;-webkit-appearance:none;appearance:none;transition:border-color .15s;
+}
+.champ select{background-image:none}
+.champ textarea{resize:vertical;min-height:96px;line-height:1.55}
+.champ input:focus,.champ textarea:focus,.champ select:focus{outline:none;border-color:rgba(237,235,230,.5)}
+.champ .note{font-size:11.5px;color:var(--gris-2);line-height:1.45}
+.champ .note b{color:var(--gris)}
+.champ.ko input,.champ.ko textarea{border-color:var(--rouge)}
+.champ .msg{font-size:11.5px;color:var(--rouge-clair)}
+.champ .msg.att{color:var(--ambre-clair)}
+.enligne{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* ---------- image ---------- */
+.img-c{border:1px solid var(--ligne);background:var(--noir);padding:10px;display:flex;gap:12px;align-items:flex-start}
+.img-c .apr{width:108px;flex:none;aspect-ratio:4/3;background:#000;border:1px solid var(--ligne-2);overflow:hidden;position:relative}
+.img-c .apr img{width:100%;height:100%;object-fit:cover}
+.img-c .apr .rien{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--gris-2);font-size:10px;letter-spacing:.1em;text-transform:uppercase;text-align:center;padding:4px}
+.img-c .det{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px}
+.img-c .nom{font-size:12.5px;word-break:break-all;line-height:1.4}
+.img-c .tech{font-size:11px;color:var(--gris-2);font-variant-numeric:tabular-nums}
+.img-c .st{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase}
+.img-c .st.ok{color:var(--vert-clair)}
+.img-c .st.att{color:var(--ambre-clair)}
+.img-c .st.ko{color:var(--rouge-clair)}
+.img-c .bts{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---------- galerie ---------- */
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:9px}
+.tuile{border:1px solid var(--ligne);background:var(--noir)}
+.tuile .apr{aspect-ratio:4/3;background:#000;position:relative;overflow:hidden}
+.tuile .apr img{width:100%;height:100%;object-fit:cover}
+.tuile .apr .rien{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--rouge-clair);font-size:10px;letter-spacing:.08em;text-transform:uppercase;text-align:center;padding:6px}
+.tuile .bas{display:flex;align-items:center;gap:2px;padding:5px}
+.tuile .bas .nm{flex:1;min-width:0;font-size:10.5px;color:var(--gris);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tuile .bas button{width:32px;height:32px;display:flex;align-items:center;justify-content:center;color:var(--gris);font-size:13px}
+.tuile .bas button:hover{color:var(--ivoire)}
+.tuile .bas button.sup:hover{color:var(--rouge-clair)}
+
+/* ---------- preview du projet ----------
+   L'aperçu de carte reprend les règles réelles de index.html
+   (16/9, arrondi, object-fit cover, image 116 % décalée de -8 %,
+   voile, cartel, et sur mobile le texte qui s'efface quand la carte
+   est au centre). Rien d'inventé ici : on relit ce que fait le site. */
+.prev-z{display:flex;flex-direction:column;gap:14px}
+.prev-lect{border:1px solid var(--ligne);background:#000}
+.prev-lect video{width:100%;max-height:44vh;display:block;background:#000;object-fit:contain}
+.prev-info{font-size:13px;font-variant-numeric:tabular-nums}
+.prev-reco{font-size:12.5px;line-height:1.45}
+.sim{background:var(--surface-2);padding:16px;border:1px solid var(--ligne-2);display:flex;justify-content:center}
+.sim .film-sim{width:100%;max-width:520px}
+.sim.mob .film-sim{max-width:330px}
+.thumb-sim{--r:11px;position:relative;aspect-ratio:16/9;overflow:hidden;background:#111;border-radius:var(--r)}
+.sim.mob .thumb-sim{--r:13px}
+.thumb-sim img,.thumb-sim video{position:absolute;left:0;top:-8%;width:100%;height:116%;object-fit:cover}
+.thumb-sim video{opacity:0;transition:opacity .45s ease}
+.thumb-sim.on video{opacity:1}
+.voile-sim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,
+  rgba(6,6,6,.94) 0%, rgba(6,6,6,.72) 22%, rgba(6,6,6,.3) 46%, rgba(6,6,6,0) 72%)}
+.cartel-sim{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:0 18px 15px;transition:opacity .4s,filter .4s}
+.cartel-sim .a{font-weight:800;font-stretch:112%;text-transform:uppercase;font-size:15px;line-height:1.1;text-shadow:0 1px 12px rgba(0,0,0,.55)}
+.cartel-sim .t{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:24px;line-height:1.1;margin-top:1px;text-shadow:0 1px 14px rgba(0,0,0,.6)}
+.cartel-sim .m{margin-top:8px;font-size:9.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:rgba(237,235,230,.55)}
+.sim.mob .cartel-sim{padding:0 20px 17px}
+.sim.mob .cartel-sim .a{font-size:16px}
+.sim.mob .cartel-sim .t{font-size:27px}
+.sim.mob .thumb-sim.on .cartel-sim{opacity:0;filter:blur(7px)}
+
+/* ---------- crédits ---------- */
+.cred{display:flex;flex-direction:column;gap:8px}
+.cred-l{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;align-items:center}
+.cred-l input{min-height:42px;font-size:15px}
+.cred-l .out{display:flex;gap:2px}
+.cred-l .out button{width:32px;height:42px;display:flex;align-items:center;justify-content:center;color:var(--gris-2);font-size:12px;border:1px solid var(--ligne-2)}
+.cred-l .out button:hover{color:var(--ivoire)}
+@media(max-width:520px){.cred-l{grid-template-columns:1fr auto}.cred-l input:first-child{grid-column:1/-1}}
+
+/* ---------- validation ---------- */
+.rap{display:flex;flex-direction:column;gap:8px}
+.rap .l{display:flex;gap:10px;padding:11px 12px;border:1px solid;font-size:13.5px;align-items:flex-start}
+.rap .l.ko{border-color:rgba(177,18,38,.45);color:var(--rouge-clair)}
+.rap .l.att{border-color:rgba(201,146,47,.4);color:var(--ambre-clair)}
+.rap .l .qui{font-weight:600;display:block;color:var(--ivoire);font-size:12.5px}
+.rap .l button{margin-left:auto;flex:none;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  border:1px solid currentColor;padding:5px 9px;min-height:32px}
+.titraille{font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);margin:16px 0 9px}
+.titraille:first-child{margin-top:0}
+
+/* ---------- code ---------- */
+textarea.code{
+  width:100%;height:46vh;background:#000;color:#B9D8C4;border:1px solid var(--ligne);
+  font-family:Consolas,Menlo,monospace;font-size:12px;line-height:1.5;padding:13px;resize:vertical;
+}
+
+/* ---------- aperçu ---------- */
+.apercu-h{flex:1;display:flex;flex-direction:column;min-height:0;background:#000}
+.apercu-h iframe{border:none;width:100%;height:100%;background:#000}
+.apercu-h .cadre{flex:1;display:flex;justify-content:center;overflow:hidden;padding:0}
+.apercu-h .cadre.mob{padding:14px;background:#141414}
+.apercu-h .cadre.mob iframe{width:390px;max-width:100%;border:1px solid var(--ligne)}
+.bascule{display:flex;border:1px solid var(--ligne)}
+.bascule button{padding:7px 13px;min-height:36px;font-size:10.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--gris)}
+.bascule button.on{background:var(--ivoire);color:var(--noir)}
+
+/* ---------- historique / dépôts ---------- */
+.ligne-l{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--ligne-2);background:var(--surface);flex-wrap:wrap}
+.ligne-l .txt{flex:1 1 190px;min-width:0}
+.ligne-l .t1{font-size:13.5px}
+.ligne-l .t2{font-size:11.5px;color:var(--gris-2)}
+
+/* ---------- toast ---------- */
+#toasts{position:fixed;left:12px;right:12px;bottom:calc(12px + var(--sb));z-index:90;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+@media(min-width:760px){#toasts{left:auto;right:24px;bottom:24px;width:min(400px,92vw)}}
+.toast{
+  background:var(--surface-2);border:1px solid var(--ligne);padding:12px 14px;font-size:13.5px;
+  box-shadow:0 14px 40px rgba(0,0,0,.55);animation:mont .18s ease-out;
+}
+.toast.ok{border-color:rgba(76,154,106,.5);color:var(--vert-clair)}
+.toast.ko{border-color:rgba(177,18,38,.55);color:var(--rouge-clair)}
+.toast.att{border-color:rgba(201,146,47,.5);color:var(--ambre-clair)}
+@keyframes mont{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#sauve{position:fixed;left:12px;bottom:calc(12px + var(--sb));z-index:80;font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--gris-2);pointer-events:none;transition:opacity .4s;opacity:0}
+#sauve.on{opacity:1}
+@media(min-width:760px){#sauve{left:26px;bottom:26px}}
+
+/* ---------- barre d'action collante (mobile) ---------- */
+.socle{
+  position:sticky;bottom:0;z-index:25;display:flex;gap:8px;
+  padding:9px 16px calc(9px + var(--sb));
+  background:rgba(10,10,10,.97);border-top:1px solid var(--ligne);backdrop-filter:blur(6px);
+}
+.socle .btn{flex:1}
+@media(min-width:760px){.socle{display:none}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="hbar">
+      <p class="marque">BINKSFILMS<span>Admin</span></p>
+      <div class="hactions">
+        <span class="pastille" id="etat"><i></i><span class="long" id="etat-t">…</span><span class="court" id="etat-c">…</span></span>
+        <div class="menu" id="menu">
+          <button class="btn petit" id="b-menu" aria-haspopup="true" aria-expanded="false" aria-label="Autres actions">•••</button>
+          <div class="menu-pan" role="menu">
+            <button data-act="depots" role="menuitem">Fichiers à déposer <span class="cpt" id="n-depots"></span></button>
+            <button data-act="zip" role="menuitem">Exporter le dossier (.zip)</button>
+            <button data-act="import" role="menuitem">Importer films.js</button>
+            <button data-act="fichier" role="menuitem">Voir le fichier généré</button>
+            <hr>
+            <button data-act="historique" role="menuitem">Historique &amp; restauration</button>
+            <button data-act="verif" role="menuitem">Vérifier tout</button>
+            <hr>
+            <button data-act="aide" role="menuitem">Comment publier</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hbar2">
+      <button class="btn plein" data-act="nouveau">+ Nouveau film</button>
+      <button class="btn" data-act="apercu-site">Prévisualiser</button>
+      <button class="btn" data-act="export">Exporter films.js</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="resume" id="resume"></div>
+  <div id="bandeaux"></div>
+
+  <div class="outils">
+    <div class="rech">
+      <label class="sr" for="q">Rechercher un film</label>
+      <input id="q" type="search" placeholder="Rechercher artiste, titre, année…" autocomplete="off">
+      <button type="button" id="q-vide" aria-label="Effacer la recherche" hidden>&#10005;</button>
+    </div>
+    <div class="tri">
+      <label for="tri">Tri</label>
+      <select id="tri">
+        <option value="ordre">Ordre du site</option>
+        <option value="recent">Plus récent</option>
+        <option value="ancien">Plus ancien</option>
+        <option value="artiste">Artiste (A→Z)</option>
+      </select>
+    </div>
+  </div>
+  <div class="chips" id="filtres"></div>
+
+  <div class="liste" id="liste"></div>
+</main>
+
+<div class="socle">
+  <button class="btn plein" data-act="nouveau">+ Film</button>
+  <button class="btn" data-act="export">Exporter</button>
+</div>
+
+<!-- panneaux -->
+<div class="pan" id="pan-editeur" role="dialog" aria-modal="true" aria-labelledby="ed-titre"></div>
+<div class="pan" id="pan-modale" role="dialog" aria-modal="true" aria-labelledby="md-titre"></div>
+
+<div id="toasts" aria-live="polite"></div>
+<div id="sauve"></div>
+
+<input type="file" id="f-image" accept="image/*" hidden>
+<input type="file" id="f-images" accept="image/*" multiple hidden>
+<input type="file" id="f-video" accept="video/*" hidden>
+<input type="file" id="f-import" accept=".js,.json,text/javascript,application/json" hidden>
+
+<script src="films.js"></script>
+<script>
+"use strict";
+/* ============================================================
+   1. OUTILS
+   ============================================================ */
+var MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août",
+            "septembre","octobre","novembre","décembre"];
+var TYPES = ["Clip","Studio session","Live","Interview","Documentaire",
+             "Making of","Publicité","Court-métrage","Aftermovie"];
+var POSTES = ["Réalisation","Réalisation, image & montage","Image","Cadre","Montage",
+              "Étalonnage","Assistant","Production","Photographie","Lumière","Direction artistique"];
+var DOSSIER_IMG = "images/";
+var DOSSIER_VID = "videos/";
+var SCHEMA = 2;
+
+function h(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function $(id){ return document.getElementById(id); }
+function uid(){ return "f" + Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function slugifier(s){
+  return String(s == null ? "" : s).toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g,"")
+    .replace(/[^a-z0-9]+/g,"-").replace(/-+/g,"-")
+    .replace(/^-+|-+$/g,"").slice(0,60);
+}
+function slugValide(s){ return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(String(s||"")); }
+function slugLibre(base, sauf){
+  base = base || "film";
+  var s = base, n = 2;
+  while(FILMS.some(function(f){ return f._id !== sauf && f.slug === s; })) s = base + "-" + (n++);
+  return s;
+}
+/* Reconnaît watch?v=, youtu.be, /embed/, /shorts/, /live/, un ID collé seul,
+   avec ou sans paramètres en plus. */
+function idYoutube(v){
+  v = String(v == null ? "" : v).trim();
+  if(!v) return "";
+  if(/^[\w-]{11}$/.test(v)) return v;
+  var m = v.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/|\/live\/|\/v\/)([\w-]{11})/);
+  if(m) return m[1];
+  m = v.match(/([\w-]{11})/);
+  return (m && /[?&\/]/.test(v)) ? m[1] : "";
+}
+function dateLongue(s){
+  var p = String(s || "").split("-");
+  if(p.length !== 3 || !MOIS[+p[1]-1]) return "";
+  return parseInt(p[2],10) + " " + MOIS[+p[1]-1] + " " + p[0];
+}
+function dateValide(s){
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(String(s||""))) return false;
+  var d = new Date(s + "T12:00:00");
+  return !isNaN(d.getTime()) && d.toISOString().slice(0,10) === s;
+}
+function poids(o){
+  if(o == null) return "";
+  if(o < 1024) return o + " o";
+  if(o < 1024*1024) return Math.round(o/1024) + " Ko";
+  return (o/1048576).toFixed(1).replace(".", ",") + " Mo";
+}
+function duree(s){
+  if(s == null || !isFinite(s)) return "";
+  if(s < 60) return (Math.round(s * 10) / 10).toString().replace(".", ",") + " s";
+  return Math.floor(s/60) + " min " + String(Math.round(s%60)).padStart(2,"0") + " s";
+}
+function heure(t){
+  var d = new Date(t);
+  return String(d.getHours()).padStart(2,"0") + ":" + String(d.getMinutes()).padStart(2,"0");
+}
+function quand(t){
+  var d = new Date(t), j = new Date();
+  var meme = d.toDateString() === j.toDateString();
+  return (meme ? "aujourd’hui " : d.getDate() + " " + MOIS[d.getMonth()] + " ") + heure(t);
+}
+/* Un chemin local d'ordinateur n'existe plus une fois le site en ligne. */
+function cheminLocal(p){
+  p = String(p == null ? "" : p).trim();
+  if(!p) return false;
+  return /^[a-zA-Z]:[\\/]/.test(p) || /^file:/i.test(p) || p.indexOf("\\") >= 0;
+}
+function cheminDistant(p){ return /^https?:\/\//i.test(String(p||"")); }
+/* Nom de fichier propre : minuscules, sans accent, sans espace, une extension. */
+function nomPropre(nom, ext){
+  var base = String(nom||"").replace(/\.[a-z0-9]+$/i,"");
+  base = slugifier(base) || "image";
+  return base + "." + String(ext||"jpg").toLowerCase().replace(/[^a-z0-9]/g,"");
+}
+function extDe(nom, mime){
+  var m = String(nom||"").match(/\.([a-z0-9]+)$/i);
+  if(m) return m[1].toLowerCase() === "jpeg" ? "jpg" : m[1].toLowerCase();
+  var t = String(mime||"").split("/")[1] || "jpg";
+  return t === "jpeg" ? "jpg" : t;
+}
+function nomFichier(p){ return String(p||"").split("/").pop(); }
+/* Les hébergeurs mettent les médias en cache très longtemps (un an dans
+   vercel.json). Réutiliser un nom de fichier ferait afficher l'ancienne
+   image pendant des mois : on propose donc toujours un nom encore libre. */
+function nomLibre(dossier, base, ext){
+  var pris = {};
+  Object.keys(Media.tout()).forEach(function(c){ pris[c] = 1; });
+  cheminsMedias().forEach(function(x){ pris[x.chemin] = 1; });
+  var n = 1, essai = base;
+  while(pris[dossier + essai + "." + ext]){ n++; essai = base + "-" + n; }
+  return essai;
+}
+
+function toast(msg, genre){
+  var d = document.createElement("div");
+  d.className = "toast " + (genre || "");
+  d.textContent = msg;
+  $("toasts").appendChild(d);
+  setTimeout(function(){
+    d.style.opacity = "0";
+    setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); }, 400);
+  }, genre === "ko" ? 6500 : 4200);
+}
+
+/* ============================================================
+   2. STOCKAGE DES IMAGES (IndexedDB)
+   Les images choisies dans l'admin ne sont pas encore dans le projet.
+   On les garde ici pour l'aperçu et pour pouvoir les télécharger.
+   Si IndexedDB est indisponible (Safari privé), tout continue de
+   fonctionner : on perd seulement l'aperçu local.
+   ============================================================ */
+var Media = (function(){
+  var base = null, dispo = true;
+  var urls = {};      /* chemin -> objectURL */
+  var index = {};     /* chemin -> métadonnées, tenu en mémoire */
+
+  function ouvrir(){
+    if(base) return Promise.resolve(base);
+    if(!dispo || !window.indexedDB) return Promise.reject(new Error("indexedDB indisponible"));
+    return new Promise(function(res, rej){
+      var r, fini = false;
+      /* une base bloquée ou lente ne doit jamais retenir l'admin :
+         au pire on perd les aperçus locaux, pas la page */
+      var minuteur = setTimeout(function(){
+        /* un retard n'est pas un refus : on abandonne cette tentative
+           sans condamner IndexedDB pour toute la session */
+        if(!fini){ fini = true; rej(new Error("indexedDB ne répond pas")); }
+      }, 5000);
+      function fin(f){ return function(v){ if(fini) return; fini = true; clearTimeout(minuteur); f(v); }; }
+      try { r = indexedDB.open("bf-admin", 1); }
+      catch(e){ clearTimeout(minuteur); fini = true; dispo = false; return rej(e); }
+      r.onupgradeneeded = function(e){
+        var d = e.target.result;
+        if(!d.objectStoreNames.contains("fichiers")) d.createObjectStore("fichiers", {keyPath:"chemin"});
+      };
+      /* si l'ouverture arrive après le délai, on la garde quand même */
+      r.addEventListener("success", function(){ if(!base){ base = r.result; dispo = true; } });
+      r.onsuccess  = fin(function(){ base = r.result; dispo = true; res(base); });
+      r.onerror    = fin(function(){ dispo = false; rej(r.error); });
+      r.onblocked  = fin(function(){ dispo = false; rej(new Error("indexedDB bloqué")); });
+    });
+  }
+  function tx(mode){
+    return ouvrir().then(function(d){ return d.transaction("fichiers", mode).objectStore("fichiers"); });
+  }
+  function attendre(req){
+    return new Promise(function(res, rej){
+      req.onsuccess = function(){ res(req.result); };
+      req.onerror = function(){ rej(req.error); };
+    });
+  }
+  return {
+    get dispo(){ return dispo; },
+    charger: function(){
+      return tx("readonly").then(function(s){ return attendre(s.getAll()); })
+        .then(function(t){
+          index = {};
+          (t||[]).forEach(function(o){ index[o.chemin] = o; });
+          return index;
+        })
+        .catch(function(){ index = {}; return index; });
+    },
+    infos: function(chemin){ return index[chemin] || null; },
+    tout: function(){ return index; },
+    a: function(chemin){ return !!index[chemin]; },
+    /* Le fichier est disponible tout de suite : l'écriture sur disque se
+       fait derrière, sans faire attendre l'interface. Si elle échoue,
+       le média reste utilisable pour cette session et on le dit. */
+    poser: function(o){
+      index[o.chemin] = o;
+      if(urls[o.chemin]){ URL.revokeObjectURL(urls[o.chemin]); delete urls[o.chemin]; }
+      tx("readwrite").then(function(s){ return attendre(s.put(o)); })
+        .catch(function(){
+          toast("Le navigateur n’a pas pu garder « " + o.nom + " » d’une session à l’autre. "
+            + "Le fichier reste utilisable maintenant : exporte le dossier avant de fermer l’onglet.", "att");
+        });
+      return Promise.resolve(o);
+    },
+    retirer: function(chemin){
+      delete index[chemin];
+      if(urls[chemin]){ URL.revokeObjectURL(urls[chemin]); delete urls[chemin]; }
+      return tx("readwrite").then(function(s){ return attendre(s.delete(chemin)); }).catch(function(){});
+    },
+    url: function(chemin){
+      var o = index[chemin];
+      if(!o || !o.blob) return "";
+      if(!urls[chemin]) urls[chemin] = URL.createObjectURL(o.blob);
+      return urls[chemin];
+    }
+  };
+})();
+
+/* Existence réelle du fichier dans le projet : on essaie de le charger.
+   Une image et une vidéo ne se testent pas de la même façon. */
+var cacheChemins = {};
+function fichierExiste(chemin, genre){
+  if(!chemin || cheminLocal(chemin)) return Promise.resolve(false);
+  var cle = (genre || "image") + "|" + chemin;
+  if(cacheChemins[cle]) return cacheChemins[cle];
+  cacheChemins[cle] = new Promise(function(res){
+    var fini = false;
+    var t = setTimeout(function(){ if(!fini){ fini = true; res(false); } }, 8000);
+    function ok(v){ if(!fini){ fini = true; clearTimeout(t); res(v); } }
+    var url = chemin + (chemin.indexOf("?") < 0 ? "?v=" + Date.now() : "");
+    if(genre === "video"){
+      var v = document.createElement("video");
+      v.preload = "metadata"; v.muted = true;
+      v.onloadedmetadata = function(){ ok(true); v.src = ""; };
+      v.onerror = function(){ ok(false); };
+      v.src = url;
+    } else {
+      var img = new Image();
+      img.onload  = function(){ ok(img.naturalWidth > 0); };
+      img.onerror = function(){ ok(false); };
+      img.src = url;
+    }
+  });
+  return cacheChemins[cle];
+}
+/* Poids d'un fichier déjà en ligne, quand le serveur veut bien le dire.
+   Silencieux en cas d'échec : c'est un confort, pas une donnée vitale. */
+function poidsDistant(url){
+  if(!url || url.indexOf("blob:") === 0 || url.indexOf("data:") === 0 || location.protocol === "file:")
+    return Promise.resolve(null);
+  return fetch(url, {method:"HEAD"})
+    .then(function(r){
+      var n = r.headers.get("content-length");
+      return (r.ok && n) ? parseInt(n, 10) : null;
+    })
+    .catch(function(){ return null; });
+}
+function oublierChemin(chemin){
+  delete cacheChemins["image|" + chemin];
+  delete cacheChemins["video|" + chemin];
+}
+/* État d'un média : où il est, et s'il est utilisable en ligne.
+   « a-deposer » = choisi ici, pas encore dans le projet. La distinction
+   est tenue partout : on ne fait jamais croire qu'un fichier local est
+   déjà sur le site. */
+function etatMedia(chemin, genre){
+  chemin = String(chemin || "").trim();
+  if(!chemin) return Promise.resolve({etat:"vide"});
+  if(cheminLocal(chemin)) return Promise.resolve({etat:"local-invalide"});
+  if(cheminDistant(chemin)){
+    return fichierExiste(chemin, genre).then(function(ok){
+      return {etat: ok ? "distant" : "absent", url: chemin};
+    });
+  }
+  return fichierExiste(chemin, genre).then(function(ok){
+    var r = ok ? {etat:"projet", url:chemin}
+      : Media.a(chemin) ? {etat:"a-deposer", url:Media.url(chemin), infos:Media.infos(chemin)}
+      : {etat:"absent"};
+    etatsMedia[chemin] = r.etat;
+    return r;
+  });
+}
+function etatImage(chemin){ return etatMedia(chemin, "image"); }
+
+/* ============================================================
+   3. DONNÉES
+   ============================================================ */
+var CLE_ETAT = "bf.admin.v1.etat";
+var CLE_SNAP = "bf.admin.v1.snapshots";
+var FILMS = [];
+var refExport = "";     /* signature des données au dernier export/import */
+var vue = { q:"", filtre:"tous", tri:"ordre" };
+var editionId = null;
+
+/* Un film propre, quels que soient les manques du fichier d'origine. */
+function normaliser(f, i){
+  f = f || {};
+  var statut = f.status;
+  if(statut !== "published" && statut !== "draft" && statut !== "archived"){
+    statut = f.archive ? "archived" : "published";      /* ancien format */
+  }
+  var credits = (f.credits || []).map(function(c){
+    if(Array.isArray(c)) return [String(c[0]||"").trim(), String(c[1]||"").trim()];
+    if(c && typeof c === "object") return [String(c.poste||c.role||"").trim(), String(c.nom||c.name||"").trim()];
+    return ["",""];
+  }).filter(function(c){ return c[0] || c[1]; });
+  var cc = null;
+  if(f.contrechamp && (f.contrechamp.a || f.contrechamp.b || f.contrechamp.legende)){
+    cc = {
+      a: String(f.contrechamp.a || ""),
+      b: String(f.contrechamp.b || ""),
+      legende: String(f.contrechamp.legende || "")
+    };
+  }
+  /* preview : une chaîne seule est acceptée autant qu'un objet */
+  var prev = null;
+  var ps = f.preview ? (typeof f.preview === "string" ? f.preview : f.preview.src) : "";
+  if(String(ps || "").trim()){
+    prev = {
+      src: String(ps).trim(),
+      poster: String((f.preview && f.preview.poster) || "").trim()
+    };
+  }
+  return {
+    _id: uid(),
+    _slugManuel: true,
+    slug: String(f.slug || "").trim() || slugifier((f.artist||"") + "-" + (f.title||"")) || ("film-" + (i+1)),
+    yt: String(f.yt || "").trim(),
+    artist: String(f.artist || ""),
+    title: String(f.title || ""),
+    sortie: String(f.sortie || ""),
+    type: String(f.type || "") || "Clip",
+    status: statut,
+    poster: String(f.poster || ""),
+    note: String(f.note || ""),
+    lieu: String(f.lieu || ""),
+    tournage: String(f.tournage || ""),
+    credits: credits,
+    contrechamp: cc,
+    bts: (f.bts || []).map(function(s){ return String(s||"").trim(); }).filter(Boolean),
+    preview: prev
+  };
+}
+/* Ce qui part dans films.js. « archive » reste écrit pour qu'un ancien
+   index.html continue de masquer brouillons et archives. */
+function pourExport(f){
+  var cc = null;
+  if(f.contrechamp && f.contrechamp.a && f.contrechamp.b){
+    cc = {a:f.contrechamp.a, b:f.contrechamp.b, legende:f.contrechamp.legende || ""};
+  }
+  return {
+    slug: f.slug,
+    yt: f.yt,
+    artist: f.artist,
+    title: f.title,
+    sortie: f.sortie || "",
+    type: f.type || "Clip",
+    status: f.status,
+    archive: f.status !== "published",
+    poster: f.poster || "",
+    note: f.note || "",
+    lieu: f.lieu || "",
+    tournage: f.tournage || "",
+    credits: f.credits.filter(function(c){ return c[0] && c[1]; }),
+    contrechamp: cc,
+    bts: (f.bts || []).filter(Boolean),
+    /* poster vide = la bannière du film sert de frame d'attente */
+    preview: (f.preview && f.preview.src) ? {src:f.preview.src, poster:f.preview.poster || ""} : null
+  };
+}
+function signature(liste){
+  return JSON.stringify((liste || FILMS).map(pourExport));
+}
+function modifie(){ return signature() !== refExport; }
+function filmParId(id){
+  for(var i = 0; i < FILMS.length; i++) if(FILMS[i]._id === id) return FILMS[i];
+  return null;
+}
+function indexDe(id){
+  for(var i = 0; i < FILMS.length; i++) if(FILMS[i]._id === id) return i;
+  return -1;
+}
+
+/* ============================================================
+   4. SAUVEGARDE LOCALE + HISTORIQUE
+   Sauvegarder ici, ce n'est PAS publier : c'est seulement ne rien
+   perdre si l'onglet se ferme.
+   ============================================================ */
+var minuteurSauve = null;
+function sauverBientot(){
+  clearTimeout(minuteurSauve);
+  minuteurSauve = setTimeout(sauver, 500);
+}
+function sauver(){
+  try{
+    localStorage.setItem(CLE_ETAT, JSON.stringify({
+      v: SCHEMA, films: FILMS.map(pourExport), refExport: refExport, t: Date.now()
+    }));
+    var s = $("sauve");
+    s.textContent = "Sauvegardé automatiquement · " + heure(Date.now());
+    s.classList.add("on");
+    clearTimeout(s.__t);
+    s.__t = setTimeout(function(){ s.classList.remove("on"); }, 2600);
+  }catch(e){
+    toast("Sauvegarde locale impossible (mémoire du navigateur pleine ou bloquée). Exporte films.js pour ne rien perdre.", "att");
+  }
+}
+function lireEtat(){
+  try{ return JSON.parse(localStorage.getItem(CLE_ETAT) || "null"); }catch(e){ return null; }
+}
+function snapshots(){
+  try{ return JSON.parse(localStorage.getItem(CLE_SNAP) || "[]"); }catch(e){ return []; }
+}
+function snapshot(label){
+  try{
+    var l = snapshots();
+    l.unshift({ t:Date.now(), label:label, films:FILMS.map(pourExport) });
+    localStorage.setItem(CLE_SNAP, JSON.stringify(l.slice(0,8)));
+  }catch(e){ /* mémoire pleine : l'historique est un confort, pas une donnée */ }
+}
+
+/* ============================================================
+   5. VALIDATION
+   Erreurs = bloquantes. Avertissements = à toi de voir.
+   ============================================================ */
+function valider(){
+  var erreurs = [], avert = [];
+  var vusSlug = {}, vusYt = {};
+  FILMS.forEach(function(f){
+    var qui = [f.artist, f.title].filter(Boolean).join(" — ") || "Film sans nom";
+    function E(m, champ){ erreurs.push({id:f._id, qui:qui, msg:m, champ:champ}); }
+    function A(m, champ){ avert.push({id:f._id, qui:qui, msg:m, champ:champ}); }
+
+    if(!String(f.artist||"").trim()) E("Artiste manquant.", "artist");
+    if(!String(f.title||"").trim())  E("Titre manquant.", "title");
+    if(!f.yt) E("Aucune vidéo YouTube.", "yt");
+    else if(!/^[\w-]{11}$/.test(f.yt)) E("Identifiant YouTube invalide : " + f.yt, "yt");
+    if(!f.sortie) E("Date de sortie manquante.", "sortie");
+    else if(!dateValide(f.sortie)) E("Date de sortie invalide : " + f.sortie, "sortie");
+    if(!slugValide(f.slug)) E("Adresse de page invalide : " + (f.slug || "(vide)"), "slug");
+
+    if(f.slug){
+      if(vusSlug[f.slug]) E("Deux films ont la même adresse : " + f.slug, "slug");
+      vusSlug[f.slug] = 1;
+    }
+    if(f.yt){
+      if(vusYt[f.yt]) E("Cette vidéo YouTube est déjà utilisée par un autre film.", "yt");
+      vusYt[f.yt] = 1;
+    }
+    if(cheminLocal(f.poster)) A("La bannière pointe vers un fichier de ton ordinateur — le site l’ignore.", "poster");
+    else if(!f.poster) A("Pas de bannière personnalisée (l’image YouTube sera utilisée).", "poster");
+    if(!String(f.note||"").trim()) A("Pas de description.", "note");
+    if(!f.credits.filter(function(c){ return c[0] && c[1]; }).length) A("Aucun crédit.", "credits");
+    if(f.contrechamp && !(f.contrechamp.a && f.contrechamp.b))
+      A("Contre-champ incomplet : il faut les deux images pour qu’il s’affiche.", "contrechamp");
+    (f.bts||[]).forEach(function(p){
+      if(cheminLocal(p)) A("Une image de tournage pointe vers un fichier de ton ordinateur.", "bts");
+    });
+    /* --- preview du projet : toujours facultative --- */
+    if(f.preview && f.preview.src){
+      var s = f.preview.src;
+      if(cheminLocal(s)) A("La preview pointe vers un fichier de ton ordinateur — inutilisable en ligne.", "preview");
+      else {
+        var i = Media.infos(s);
+        if(!i && !cheminDistant(s) && etatsMedia[s] === "absent")
+          A("Preview introuvable : " + nomFichier(s), "preview");
+        if(i){
+          if(i.taille > 12*1024*1024) A("Preview de " + poids(i.taille) + " — optimisation recommandée.", "preview");
+          if(i.duree && i.duree > 15) A("Preview de " + duree(i.duree) + " — longue pour une boucle de carte.", "preview");
+          if(i.jouable === false) A("Format de preview mal supporté par les navigateurs : " + nomFichier(s), "preview");
+        }
+      }
+    }
+  });
+  return {erreurs:erreurs, avert:avert};
+}
+/* Tous les médias cités par les films, avec leur nature. */
+function cheminsMedias(){
+  var l = [];
+  function a(p, genre){ if(p && !l.some(function(x){ return x.chemin === p; })) l.push({chemin:p, genre:genre}); }
+  FILMS.forEach(function(f){
+    a(f.poster, "image");
+    if(f.contrechamp){ a(f.contrechamp.a, "image"); a(f.contrechamp.b, "image"); }
+    (f.bts||[]).forEach(function(p){ a(p, "image"); });
+    if(f.preview){ a(f.preview.src, "video"); a(f.preview.poster, "image"); }
+  });
+  return l;
+}
+/* Médias choisis ici et pas encore déposés dans le projet. */
+function aDeposer(){
+  var tout = Media.tout();
+  var utilises = cheminsMedias().map(function(x){ return x.chemin; });
+  return Object.keys(tout).filter(function(c){ return utilises.indexOf(c) >= 0; });
+}
+/* Dernier état connu de chaque chemin, alimenté par les rendus.
+   Sert aux avertissements sans relancer une vérification réseau. */
+var etatsMedia = {};
+
+/* ============================================================
+   6. RENDU — en-tête, résumé, liste
+   ============================================================ */
+function compte(){
+  var c = {published:0, draft:0, archived:0};
+  FILMS.forEach(function(f){ c[f.status] = (c[f.status] || 0) + 1; });
+  c.total = FILMS.length;
+  return c;
+}
+function dessinerEntete(){
+  var c = compte();
+  $("resume").innerHTML =
+      '<div class="stat"><b>' + c.published + '</b><span>Publiés</span></div>'
+    + '<div class="stat"><b>' + c.draft + '</b><span>Brouillons</span></div>'
+    + '<div class="stat"><b>' + c.archived + '</b><span>Archivés</span></div>'
+    + '<div class="stat"><b>' + c.total + '</b><span>Total</span></div>';
+
+  var m = modifie();
+  var p = $("etat");
+  p.className = "pastille " + (m ? "att" : "ok");
+  $("etat-t").textContent = m ? "Modifications non exportées" : "À jour";
+  $("etat-c").textContent = m ? "À exporter" : "À jour";
+
+  var d = aDeposer().length;
+  $("n-depots").textContent = d ? d : "";
+
+  /* filtres avec compteurs */
+  var fs = [
+    ["tous","Tous",c.total],
+    ["published","Publiés",c.published],
+    ["draft","Brouillons",c.draft],
+    ["archived","Archivés",c.archived]
+  ];
+  var types = {};
+  FILMS.forEach(function(f){ types[f.type] = (types[f.type]||0) + 1; });
+  Object.keys(types).sort().forEach(function(t){ fs.push(["type:"+t, t, types[t]]); });
+  $("filtres").innerHTML = fs.map(function(x){
+    return '<button class="chip' + (vue.filtre === x[0] ? " on" : "") + '" data-act="filtre" data-v="' + h(x[0]) + '"'
+         + ' aria-pressed="' + (vue.filtre === x[0]) + '">' + h(x[1]) + ' <span class="n">' + x[2] + '</span></button>';
+  }).join("");
+
+  dessinerBandeaux();
+}
+function dessinerBandeaux(){
+  var b = [];
+  var v = valider();
+  if(v.erreurs.length){
+    b.push('<div class="bandeau ko"><span class="txt"><b>' + v.erreurs.length + ' erreur'
+      + (v.erreurs.length > 1 ? "s" : "") + '</b> — l’export est bloqué tant qu’elles ne sont pas corrigées.</span>'
+      + '<button class="btn petit" data-act="verif">Voir</button></div>');
+  }
+  var d = aDeposer().length;
+  if(d){
+    b.push('<div class="bandeau info"><span class="txt"><b>' + d + ' fichier'
+      + (d > 1 ? "s" : "") + '</b> choisi' + (d > 1 ? "s" : "") + ' dans l’admin '
+      + (d > 1 ? "ne sont" : "n’est") + ' pas encore dans le projet.</span>'
+      + '<button class="btn petit" data-act="depots">Voir</button>'
+      + '<button class="btn petit" data-act="zip">Exporter le dossier (.zip)</button></div>');
+  }
+  $("bandeaux").innerHTML = b.join("");
+}
+
+function listeVisible(){
+  var l = FILMS.slice();
+  var q = vue.q.trim().toLowerCase();
+  if(vue.filtre.indexOf("type:") === 0){
+    var t = vue.filtre.slice(5);
+    l = l.filter(function(f){ return f.type === t; });
+  } else if(vue.filtre !== "tous"){
+    l = l.filter(function(f){ return f.status === vue.filtre; });
+  }
+  if(q){
+    l = l.filter(function(f){
+      return (f.artist + " " + f.title + " " + f.type + " " + f.sortie + " " + f.slug + " " + f.lieu)
+        .toLowerCase().indexOf(q) >= 0;
+    });
+  }
+  if(vue.tri === "recent")  l.sort(function(a,b){ return (b.sortie||"").localeCompare(a.sortie||""); });
+  if(vue.tri === "ancien")  l.sort(function(a,b){ return (a.sortie||"").localeCompare(b.sortie||""); });
+  if(vue.tri === "artiste") l.sort(function(a,b){ return (a.artist||"").localeCompare(b.artist||"", "fr"); });
+  return l;
+}
+var ETQ = {published:["pub","Publié"], draft:["bro","Brouillon"], archived:["arc","Archivé"]};
+
+function dessinerListe(){
+  var l = listeVisible();
+  var manuel = (vue.tri === "ordre");
+  var boite = $("liste");
+  if(!l.length){
+    boite.innerHTML = '<div class="vide">' +
+      (FILMS.length ? "Aucun film ne correspond." : "Aucun film pour l’instant. Commence par « + Nouveau film ».") +
+      '</div>';
+    return;
+  }
+  boite.innerHTML = l.map(function(f){
+    var e = ETQ[f.status];
+    var i = indexDe(f._id);
+    var cls = "carte " + (f.status === "draft" ? "brouillon" : f.status === "archived" ? "archive" : "");
+    var vg = f.poster && !cheminLocal(f.poster)
+      ? f.poster
+      : (f.yt ? "https://i.ytimg.com/vi/" + f.yt + "/hqdefault.jpg" : "");
+    return '<article class="' + cls + '" data-id="' + f._id + '"' + (manuel ? ' draggable="true"' : '') + '>'
+      + '<div class="ct">'
+      +   '<div class="vign" data-vign="' + h(f._id) + '">'
+      +     (vg ? '<img src="' + h(vg) + '" alt="" loading="lazy" data-yt="' + h(f.yt) + '">' : '')
+      +   '</div>'
+      +   '<div class="txt-c">'
+      +     '<p class="c-art">' + (h(f.artist) || "<em>artiste manquant</em>") + '</p>'
+      +     '<p class="c-tit">' + (h(f.title) || "<em>titre manquant</em>") + '</p>'
+      +     '<p class="c-meta">'
+      +       '<span class="etq ' + e[0] + '">' + e[1] + '</span>'
+      +       '<span>' + h(f.type || "—") + '</span>'
+      +       '<span>' + (dateLongue(f.sortie) || "date à remplir") + '</span>'
+      +       (f.yt ? '<span class="c-yt">' + h(f.yt) + '</span>' : '')
+      +     '</p>'
+      +   '</div>'
+      +   '<div class="cmd">'
+      +   '<span class="poignee" aria-hidden="true" title="Glisser pour déplacer">⠿</span>'
+      +   (manuel
+          ? '<span class="ord"><button data-act="monter" data-id="' + f._id + '" aria-label="Monter"'
+            + (i === 0 ? " disabled" : "") + '>&uarr;</button>'
+            + '<button data-act="descendre" data-id="' + f._id + '" aria-label="Descendre"'
+            + (i === FILMS.length-1 ? " disabled" : "") + '>&darr;</button></span>'
+          : '')
+      +   '<button class="btn petit" data-act="editer" data-id="' + f._id + '">Modifier</button>'
+      +   '<button class="btn petit" data-act="apercu" data-id="' + f._id + '">Aperçu</button>'
+      +   '<span class="esp"></span>'
+      +   '<button class="btn petit" data-act="plus" data-id="' + f._id + '" aria-label="Autres actions">•••</button>'
+      +   '</div>'
+      + '</div>'
+      + '</article>';
+  }).join("");
+  brancherVignettes(boite);
+}
+/* Vignette : image du projet, sinon aperçu local, sinon YouTube, sinon rien.
+   Une image cassée est signalée AVANT publication. */
+function brancherVignettes(racine){
+  var cases = racine.querySelectorAll(".vign[data-vign]");
+  Array.prototype.forEach.call(cases, function(box){
+    var f = filmParId(box.getAttribute("data-vign"));
+    if(!f) return;
+    var img = box.querySelector("img");
+    var yt  = f.yt ? "https://i.ytimg.com/vi/" + f.yt + "/hqdefault.jpg" : "";
+    function poser(src){ if(img){ img.src = src; } }
+    function drapeau(t, genre){
+      var d = document.createElement("span");
+      d.className = "drapeau" + (genre ? " " + genre : "");
+      d.textContent = t;
+      box.appendChild(d);
+    }
+    if(!f.poster){ if(img && yt) poser(yt); return; }
+    etatImage(f.poster).then(function(r){
+      if(r.etat === "projet" || r.etat === "distant"){ poser(r.url); return; }
+      if(r.etat === "a-deposer"){ poser(r.url); drapeau("à déposer", "att"); return; }
+      if(yt) poser(yt);
+      drapeau(r.etat === "local-invalide" ? "chemin local" : "bannière introuvable");
+    });
+  });
+}
+function dessiner(){
+  dessinerEntete();
+  dessinerListe();
+  sauverBientot();
+}
+/* Les previews ne sont pas affichées dans la liste : on vérifie
+   quand même leur présence, sinon un avertissement « introuvable »
+   ne pourrait jamais apparaître avant l'export. */
+function sonderPreviews(){
+  var l = FILMS.filter(function(f){ return f.preview && f.preview.src && !cheminLocal(f.preview.src); });
+  if(!l.length) return;
+  Promise.all(l.map(function(f){ return etatMedia(f.preview.src, "video"); }))
+    .then(function(){ dessinerBandeaux(); });
+}
+
+/* ============================================================
+   7. ACTIONS SUR LES FILMS
+   ============================================================ */
+function nouveauFilm(donnees){
+  var f = normaliser(donnees || {}, FILMS.length);
+  f._slugManuel = false;
+  return f;
+}
+function deplacer(id, sens){
+  var i = indexDe(id);
+  var j = i + sens;
+  if(i < 0 || j < 0 || j >= FILMS.length) return;
+  var x = FILMS.splice(i,1)[0];
+  FILMS.splice(j,0,x);
+  dessiner();
+}
+function changerStatut(id, statut){
+  var f = filmParId(id);
+  if(!f) return;
+  f.status = statut;
+  dessiner();
+  toast(f.title + " — " + ETQ[statut][1].toLowerCase() + ".", "ok");
+}
+function dupliquer(id){
+  var f = filmParId(id);
+  if(!f) return;
+  /* On reprend ce qui se répète d'un projet à l'autre, jamais ce qui
+     doit être unique : vidéo, adresse, titre, date, images. */
+  var d = normaliser({
+    artist: f.artist,
+    title: "",
+    type: f.type,
+    lieu: f.lieu,
+    credits: f.credits.map(function(c){ return [c[0], c[1]]; }),
+    status: "draft"
+  }, FILMS.length);
+  d._slugManuel = false;
+  d.slug = slugLibre(slugifier(f.artist + "-copie"), d._id);
+  var i = indexDe(id);
+  FILMS.splice(i + 1, 0, d);
+  dessiner();
+  ouvrirEditeur(d._id);
+  toast("Copie créée en brouillon. Ajoute la vidéo et le titre.", "ok");
+}
+function supprimer(id){
+  var f = filmParId(id);
+  if(!f) return;
+  var nom = [f.artist, f.title].filter(Boolean).join(" — ") || "ce film";
+  if(!confirm("Supprimer définitivement « " + nom + " » ?\n\n"
+    + "Cette action est irréversible.\n"
+    + "Pour simplement le retirer du site en le gardant, utilise plutôt Archiver.")) return;
+  snapshot("Avant suppression de " + nom);
+  FILMS.splice(indexDe(id), 1);
+  if(editionId === id) fermerEditeur();
+  dessiner();
+  toast("Film supprimé. Une sauvegarde est disponible dans l’historique.", "att");
+}
+
+/* ============================================================
+   8. PANNEAUX : socle commun
+   ============================================================ */
+var pileFocus = [];
+function ouvrirPan(el, html, plein){
+  var dejaOuvert = el.classList.contains("on");
+  el.innerHTML = html;
+  el.classList.toggle("plein", !!plein);
+  el.classList.add("on");
+  document.body.classList.add("fige");
+  if(!dejaOuvert) pileFocus.push(document.activeElement);
+  var p = el.querySelector("[autofocus]") || el.querySelector(".pan-bar .x");
+  if(p) setTimeout(function(){ try{ p.focus(); }catch(e){} }, 30);
+}
+function fermerPan(el){
+  el.classList.remove("on");
+  el.innerHTML = "";
+  if(!$("pan-editeur").classList.contains("on") && !$("pan-modale").classList.contains("on")){
+    document.body.classList.remove("fige");
+  }
+  var f = pileFocus.pop();
+  if(f && f.focus) try{ f.focus(); }catch(e){}
+}
+function cadre(titre, corps, pied, opts){
+  opts = opts || {};
+  return '<div class="pan-in" role="document">'
+    + '<div class="pan-bar"><h2 id="' + (opts.idTitre || "md-titre") + '">' + h(titre) + '</h2>'
+    + (opts.extra || "")
+    + '<button class="x" data-act="fermer" aria-label="Fermer">&#10005;</button></div>'
+    + '<div class="pan-corps">' + corps + '</div>'
+    + (pied ? '<div class="pan-pied">' + pied + '</div>' : '')
+    + '</div>';
+}
+function modale(titre, corps, pied, plein){
+  ouvrirPan($("pan-modale"), cadre(titre, corps, pied), plein);
+}
+function fermerModale(){
+  var pan = $("pan-modale");
+  /* on rend la mémoire des fichiers en cours de préparation */
+  [pan.__prep, pan.__vprep].forEach(function(p){
+    if(p && p.info && p.info.url) { try{ URL.revokeObjectURL(p.info.url); }catch(e){} }
+  });
+  pan.__prep = null; pan.__vprep = null;
+  fermerPan(pan);
+}
+
+/* ============================================================
+   9. ÉDITEUR D'UN FILM
+   ============================================================ */
+function champ(k, label, val, opts){
+  opts = opts || {};
+  var id = "c-" + k;
+  var t = opts.type || "text";
+  var el;
+  if(t === "textarea"){
+    el = '<textarea id="' + id + '" data-k="' + k + '"' + (opts.rows ? ' rows="' + opts.rows + '"' : '')
+       + (opts.ph ? ' placeholder="' + h(opts.ph) + '"' : '') + '>' + h(val) + '</textarea>';
+  } else if(t === "select"){
+    el = '<select id="' + id + '" data-k="' + k + '">'
+       + opts.options.map(function(o){
+           return '<option value="' + h(o[0]) + '"' + (String(val) === o[0] ? " selected" : "") + '>' + h(o[1]) + '</option>';
+         }).join("")
+       + '</select>';
+  } else {
+    el = '<input id="' + id + '" type="' + t + '" data-k="' + k + '" value="' + h(val) + '"'
+       + (opts.ph ? ' placeholder="' + h(opts.ph) + '"' : '')
+       + (opts.liste ? ' list="' + opts.liste + '"' : '')
+       + (opts.mode ? ' inputmode="' + opts.mode + '"' : '')
+       + ' autocomplete="off">';
+  }
+  return '<div class="champ" data-champ="' + k + '">'
+    + '<label for="' + id + '">' + h(label) + '</label>' + el
+    + (opts.note ? '<span class="note">' + opts.note + '</span>' : '')
+    + '<span class="msg" data-msg="' + k + '"></span>'
+    + '</div>';
+}
+function blocImage(k, label, note){
+  return '<div class="champ"><label>' + h(label) + '</label>'
+    + '<div class="img-c" data-img="' + k + '">'
+    +   '<div class="apr"><span class="rien">aucune</span></div>'
+    +   '<div class="det"><p class="nom">Aucune image</p><p class="tech"></p><p class="st"></p>'
+    +     '<div class="bts"><button type="button" class="btn petit" data-act="img-choisir" data-k="' + k + '">Choisir une image</button></div>'
+    +   '</div>'
+    + '</div>'
+    + (note ? '<span class="note">' + note + '</span>' : '')
+    + '</div>';
+}
+function ligneCredit(i, c){
+  return '<div class="cred-l" data-cred="' + i + '">'
+    + '<input type="text" value="' + h(c[0]) + '" data-cred-k="poste" placeholder="Poste" list="l-postes" aria-label="Poste">'
+    + '<input type="text" value="' + h(c[1]) + '" data-cred-k="nom" placeholder="Nom" aria-label="Nom">'
+    + '<span class="out">'
+    +   '<button type="button" data-act="cred-monter" data-i="' + i + '" aria-label="Monter ce crédit">&uarr;</button>'
+    +   '<button type="button" data-act="cred-descendre" data-i="' + i + '" aria-label="Descendre ce crédit">&darr;</button>'
+    +   '<button type="button" data-act="cred-sup" data-i="' + i + '" aria-label="Retirer ce crédit">&#10005;</button>'
+    + '</span></div>';
+}
+function corpsEditeur(f){
+  var v = valider();
+  var mesErr = v.erreurs.filter(function(e){ return e.id === f._id; });
+  var typesOpt = TYPES.slice();
+  FILMS.forEach(function(x){ if(x.type && typesOpt.indexOf(x.type) < 0) typesOpt.push(x.type); });
+
+  return ''
+  + '<datalist id="l-types">' + typesOpt.map(function(t){ return '<option value="' + h(t) + '">'; }).join("") + '</datalist>'
+  + '<datalist id="l-postes">' + POSTES.map(function(t){ return '<option value="' + h(t) + '">'; }).join("") + '</datalist>'
+  + (mesErr.length
+      ? '<div class="bandeau ko" style="margin:0 0 12px"><span class="txt">'
+        + mesErr.map(function(e){ return h(e.msg); }).join("<br>") + '</span></div>'
+      : '')
+
+  + '<details class="grp" open><summary>Essentiel</summary><div class="corps">'
+  +   '<div class="grille">'
+  +     champ("yt", "Lien ou identifiant YouTube", f.yt, {
+          ph:"https://youtu.be/…",
+          note:"Colle le lien complet, l’identifiant est reconnu tout seul."
+        })
+  +   '</div>'
+  +   '<div class="grille deux" style="margin-top:14px">'
+  +     champ("artist", "Artiste", f.artist, {ph:"Fono M"})
+  +     champ("title", "Titre", f.title, {ph:"Free Durk"})
+  +     champ("sortie", "Date de sortie", f.sortie, {type:"date"})
+  +     champ("type", "Type de projet", f.type, {liste:"l-types", ph:"Clip"})
+  +   '</div>'
+  +   '<div class="grille" style="margin-top:14px">'
+  +     champ("status", "État", f.status, {type:"select", options:[
+          ["published","Publié — visible sur le site"],
+          ["draft","Brouillon — pas encore en ligne"],
+          ["archived","Archivé — retiré du site, conservé ici"]
+        ]})
+  +   '</div>'
+  + '</div></details>'
+
+  + '<details class="grp"><summary>Présentation</summary><div class="corps">'
+  +   blocImage("poster", "Bannière",
+        "Sans bannière, le site utilise l’image YouTube. Une bannière introuvable ne casse rien : le site retombe sur YouTube.")
+  +   '<div class="grille" style="margin-top:14px">'
+  +     champ("note", "Description", f.note, {type:"textarea", rows:4,
+          ph:"Deux ou trois phrases, écrites comme tu parles.",
+          note:"Laisser vide n’affiche rien sur le site."})
+  +   '</div>'
+  + '</div></details>'
+
+  + '<details class="grp"><summary>Preview du projet <span class="badge">facultatif</span></summary><div class="corps">'
+  +   '<div class="prev-z" data-prev></div>'
+  + '</div></details>'
+
+  + '<details class="grp"><summary>Informations</summary><div class="corps">'
+  +   '<div class="grille deux">'
+  +     champ("lieu", "Lieu", f.lieu, {ph:"Évry"})
+  +     champ("tournage", "Date de tournage", f.tournage, {ph:"14 novembre 2025, 03h12"})
+  +   '</div>'
+  +   '<p class="titraille">Crédits</p>'
+  +   '<div class="cred" data-creds>'
+  +     f.credits.map(function(c,i){ return ligneCredit(i,c); }).join("")
+  +   '</div>'
+  +   '<div style="margin-top:10px"><button type="button" class="btn petit" data-act="cred-ajouter">+ Ajouter un crédit</button></div>'
+  + '</div></details>'
+
+  + '<details class="grp"><summary>Contre-champ <span class="badge">facultatif</span></summary><div class="corps">'
+  +   '<div class="grille deux">'
+  +     blocImage("cc_a", "Le plan du film")
+  +     blocImage("cc_b", "Derrière la caméra")
+  +   '</div>'
+  +   '<div class="grille" style="margin-top:14px">'
+  +     champ("cc_legende", "Légende", (f.contrechamp||{}).legende || "", {
+          note:"Le contre-champ ne s’affiche sur le site que si les <b>deux</b> images sont présentes."
+        })
+  +   '</div>'
+  + '</div></details>'
+
+  + '<details class="grp"><summary>Images de tournage <span class="badge" data-cpt-bts>' + (f.bts||[]).length + '</span></summary><div class="corps">'
+  +   '<div class="gal" data-gal></div>'
+  +   '<div style="margin-top:12px"><button type="button" class="btn petit" data-act="gal-ajouter">+ Ajouter des images</button></div>'
+  + '</div></details>'
+
+  + '<details class="grp"><summary>Paramètres</summary><div class="corps">'
+  +   '<div class="grille">'
+  +     champ("slug", "Adresse de la page", f.slug, {
+          note:'Apparaît dans le lien : <b>#/film/' + h(f.slug) + '</b>'
+        })
+  +   '</div>'
+  +   '<div class="enligne" style="margin-top:10px">'
+  +     '<button type="button" class="btn petit" data-act="slug-auto">Regénérer depuis artiste + titre</button>'
+  +   '</div>'
+  + '</div></details>';
+}
+function ouvrirEditeur(id, section){
+  var f = filmParId(id);
+  if(!f) return;
+  editionId = id;
+  var titre = [f.artist, f.title].filter(Boolean).join(" — ") || "Nouveau film";
+  ouvrirPan($("pan-editeur"), cadre(titre, corpsEditeur(f),
+      '<button class="btn petit" data-act="apercu" data-id="' + id + '">Aperçu</button>'
+    + '<button class="btn petit" data-act="plus" data-id="' + id + '">•••</button>'
+    + '<span class="esp"></span>'
+    + '<button class="btn plein" data-act="fermer">Terminé</button>',
+    {idTitre:"ed-titre"}));
+  rafraichirImages();
+  dessinerGalerie();
+  dessinerPreview();
+  if(section){
+    /* « Corriger » depuis la vérification : on ouvre le bon volet et on
+       amène le champ concerné sous les yeux. */
+    var sel = {
+      credits: "[data-creds]",
+      bts: "[data-gal]",
+      preview: "[data-prev]",
+      contrechamp: '[data-img="cc_a"]'
+    }[section] || '[data-champ="' + section + '"], [data-img="' + section + '"]';
+    var pan = $("pan-editeur");
+    var groupe = null;
+    Array.prototype.forEach.call(pan.querySelectorAll(".grp"), function(x){
+      if(x.querySelector(sel)){ x.open = true; if(!groupe) groupe = x; }
+    });
+    var cible = pan.querySelector('[data-champ="' + section + '"] input, [data-champ="' + section + '"] textarea');
+    setTimeout(function(){
+      if(cible){ try{ cible.focus(); }catch(e){} cible.scrollIntoView({block:"center"}); }
+      else if(groupe) groupe.scrollIntoView({block:"start"});
+    }, 80);
+  }
+}
+function fermerEditeur(){
+  editionId = null;
+  fermerPan($("pan-editeur"));
+  dessiner();
+}
+function filmEnCours(){ return filmParId(editionId); }
+
+/* Valeur d'un champ de l'éditeur vers le film. */
+function majChamp(k, val){
+  var f = filmEnCours();
+  if(!f) return;
+  if(k === "yt"){
+    var id = idYoutube(val);
+    var msg = $("pan-editeur").querySelector('[data-msg="yt"]');
+    if(!val.trim()){ f.yt = ""; if(msg) msg.textContent = ""; }
+    else if(!id){
+      if(msg) msg.textContent = "Lien YouTube non reconnu.";
+    } else {
+      var double = FILMS.some(function(x){ return x._id !== f._id && x.yt === id; });
+      f.yt = id;
+      if(msg){
+        msg.className = "msg" + (double ? "" : " att");
+        msg.textContent = double ? "Cette vidéo est déjà utilisée par un autre film."
+                                 : "Identifiant reconnu : " + id;
+      }
+    }
+  }
+  else if(k === "cc_legende"){
+    var cc = f.contrechamp || {a:"",b:"",legende:""};
+    cc.legende = val;
+    f.contrechamp = (cc.a || cc.b || cc.legende) ? cc : null;
+  }
+  else if(k === "slug"){
+    f._slugManuel = true;
+    f.slug = slugifier(val);
+    var m2 = $("pan-editeur").querySelector('[data-msg="slug"]');
+    if(m2){
+      var dbl = FILMS.some(function(x){ return x._id !== f._id && x.slug === f.slug; });
+      m2.className = "msg";
+      m2.textContent = !f.slug ? "L’adresse ne peut pas être vide."
+                     : dbl ? "Un autre film utilise déjà cette adresse."
+                     : "";
+    }
+  }
+  else if(k === "status"){ f.status = val; }
+  else { f[k] = val; }
+
+  /* Slug automatique tant qu'il n'a pas été touché à la main. */
+  if((k === "artist" || k === "title") && !f._slugManuel){
+    f.slug = slugLibre(slugifier(f.artist + "-" + f.title) || "film", f._id);
+    var e = $("pan-editeur").querySelector('[data-k="slug"]');
+    if(e) e.value = f.slug;
+  }
+  var t = $("ed-titre");
+  if(t) t.textContent = [f.artist, f.title].filter(Boolean).join(" — ") || "Nouveau film";
+  dessinerEntete();
+  sauverBientot();
+}
+/* Le slug d'un film publié a pu être partagé : on ne le change pas par accident. */
+function garderSlug(input){
+  var f = filmEnCours();
+  if(!f || f.status !== "published" || input.dataset.ok) return true;
+  var ok = confirm("Modifier cette adresse peut casser les liens déjà partagés vers ce film.\n\n"
+    + "Adresse actuelle : #/film/" + f.slug + "\n\nModifier quand même ?");
+  if(ok){ input.dataset.ok = "1"; return true; }
+  input.value = f.slug;
+  input.blur();
+  return false;
+}
+
+/* ---------- crédits ---------- */
+function relireCredits(){
+  var f = filmEnCours();
+  if(!f) return;
+  var l = [];
+  Array.prototype.forEach.call($("pan-editeur").querySelectorAll("[data-cred]"), function(row){
+    l.push([
+      row.querySelector('[data-cred-k="poste"]').value.trim(),
+      row.querySelector('[data-cred-k="nom"]').value.trim()
+    ]);
+  });
+  f.credits = l;
+  sauverBientot();
+}
+function dessinerCredits(){
+  var f = filmEnCours();
+  var b = $("pan-editeur").querySelector("[data-creds]");
+  if(!f || !b) return;
+  b.innerHTML = f.credits.map(function(c,i){ return ligneCredit(i,c); }).join("");
+}
+
+/* ---------- galerie ---------- */
+function dessinerGalerie(){
+  var f = filmEnCours();
+  var g = $("pan-editeur").querySelector("[data-gal]");
+  if(!f || !g) return;
+  var cpt = $("pan-editeur").querySelector("[data-cpt-bts]");
+  if(cpt) cpt.textContent = f.bts.length;
+  if(!f.bts.length){
+    g.innerHTML = '<p class="note" style="color:var(--gris-2);font-size:12.5px">Aucune image de tournage.</p>';
+    return;
+  }
+  g.innerHTML = f.bts.map(function(p, i){
+    return '<div class="tuile" data-t="' + i + '">'
+      + '<div class="apr"><span class="rien">vérification…</span></div>'
+      + '<div class="bas"><span class="nm" title="' + h(p) + '">' + h(nomFichier(p)) + '</span>'
+      +   '<button type="button" data-act="bts-gauche" data-i="' + i + '" aria-label="Déplacer avant">&larr;</button>'
+      +   '<button type="button" data-act="bts-droite" data-i="' + i + '" aria-label="Déplacer après">&rarr;</button>'
+      +   '<button type="button" class="sup" data-act="bts-sup" data-i="' + i + '" aria-label="Retirer">&#10005;</button>'
+      + '</div></div>';
+  }).join("");
+  f.bts.forEach(function(p, i){
+    etatImage(p).then(function(r){
+      var box = g.querySelector('[data-t="' + i + '"] .apr');
+      if(!box) return;
+      if(r.url){
+        box.innerHTML = '<img src="' + h(r.url) + '" alt="" loading="lazy">'
+          + (r.etat === "a-deposer" ? '<span class="rien" style="top:auto;background:rgba(201,146,47,.9);color:#1A1300;height:18px;font-size:9px">à déposer</span>' : '');
+      } else {
+        box.innerHTML = '<span class="rien">' + (r.etat === "local-invalide" ? "chemin local" : "introuvable") + '</span>';
+      }
+    });
+  });
+}
+
+/* ---------- preview du projet ----------
+   Facultative : un film se publie très bien sans elle. Quand elle
+   existe, on la regarde tout de suite dans une carte réelle. */
+var PLACEHOLDER = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">'
+  + '<rect width="1280" height="720" fill="#0E0E0E"/>'
+  + '<text x="640" y="368" fill="#4A4744" font-family="Helvetica,Arial,sans-serif"'
+  + ' font-size="34" font-weight="700" letter-spacing="12" text-anchor="middle">BINKSFILMS</text></svg>');
+
+/* Le poster de la carte suit l'ordre du site : bannière, puis YouTube,
+   puis placeholder. Aucune image supplémentaire à fournir. */
+function posterCarte(f){
+  var yt = f.yt ? "https://i.ytimg.com/vi/" + f.yt + "/maxresdefault.jpg" : PLACEHOLDER;
+  var perso = (f.preview && f.preview.poster) || f.poster;
+  if(!perso || cheminLocal(perso)) return Promise.resolve(yt);
+  return etatImage(perso).then(function(r){ return r.url || yt; });
+}
+function recoVideo(info){
+  var lourd = info.file.size > 12*1024*1024;
+  var longue = info.duree > 15;
+  var grand = info.w > 1920;
+  if(lourd || grand) return {niveau:"opt", txt:"Preview lourde — une version plus légère chargerait mieux sur mobile."};
+  if(longue) return {niveau:"duree", txt:duree(info.duree) + " — relativement long pour une boucle de carte."};
+  return {niveau:"ok", txt:"Déjà adaptée au web — conserver l’original."};
+}
+function ligneTechVideo(i){
+  if(!i) return "";
+  return [
+    String(extDe(i.nom, i.type)).toUpperCase(),
+    (i.w && i.h) ? (i.w + " × " + i.h) : null,
+    i.duree ? duree(i.duree) : null,
+    poids(i.taille)
+  ].filter(Boolean).join(" · ");
+}
+function dessinerPreview(){
+  var f = filmEnCours();
+  var z = $("pan-editeur").querySelector("[data-prev]");
+  if(!f || !z) return;
+
+  if(!f.preview || !f.preview.src){
+    z.innerHTML = '<p class="note">Une petite boucle muette, jouée sur la carte du portfolio : au survol sur ordinateur, '
+      + 'et sur téléphone quand la carte arrive au centre de l’écran.</p>'
+      + '<p class="note">Sans preview, la carte garde simplement sa bannière. Rien d’obligatoire.</p>'
+      + '<div><button type="button" class="btn petit" data-act="prev-choisir">Choisir une vidéo</button></div>';
+    return;
+  }
+  var src = f.preview.src;
+  z.innerHTML = '<div class="prev-lect"><video data-prev-v controls muted loop playsinline preload="metadata"></video></div>'
+    + '<p class="nom" style="font-size:12.5px;word-break:break-all">' + h(src) + '</p>'
+    + '<p class="prev-info" data-prev-tech>Lecture des informations…</p>'
+    + '<p class="st" data-prev-etat></p>'
+    + '<p class="prev-reco" data-prev-reco></p>'
+    + '<div class="enligne" data-prev-btns>'
+    +   '<button type="button" class="btn petit" data-act="prev-choisir">Remplacer</button>'
+    +   '<button type="button" class="btn petit" data-act="prev-verifier">Revérifier</button>'
+    +   '<button type="button" class="btn petit danger" data-act="prev-supprimer">Supprimer la preview</button>'
+    + '</div>'
+    + '<div class="sim-h enligne" style="margin-top:6px">'
+    +   '<span class="titraille" style="margin:0">Dans la carte du portfolio</span>'
+    +   '<span class="bascule" role="group" aria-label="Format de carte">'
+    +     '<button type="button" data-act="sim-desk" class="on">Desktop</button>'
+    +     '<button type="button" data-act="sim-mob">Mobile</button></span>'
+    + '</div>'
+    + '<div class="sim" data-sim>'
+    +   '<div class="film-sim"><div class="thumb-sim" data-sim-t>'
+    +     '<img alt="" data-sim-img>'
+    +     '<video data-sim-v muted loop playsinline preload="metadata"></video>'
+    +     '<span class="voile-sim"></span>'
+    +     '<div class="cartel-sim">'
+    +       '<p class="a">' + (h(f.artist) || "Artiste") + '</p>'
+    +       '<p class="t">' + (h(f.title) || "Titre") + '</p>'
+    +       '<p class="m">' + h(f.type || "Clip") + ' · ' + h((f.sortie||"").slice(0,4) || "----") + '</p>'
+    +     '</div>'
+    +   '</div></div>'
+    + '</div>'
+    + '<p class="note">Le cadrage, l’arrondi et le voile sont ceux du site. En mobile, le texte s’efface quand la boucle joue, comme sur le vrai portfolio.</p>';
+
+  posterCarte(f).then(function(u){
+    var img = z.querySelector("[data-sim-img]");
+    if(img) img.src = u;
+  });
+
+  var tech = z.querySelector("[data-prev-tech]");
+  var etat = z.querySelector("[data-prev-etat]");
+  var reco = z.querySelector("[data-prev-reco]");
+  etatMedia(src, "video").then(function(r){
+    var i = r.infos || Media.infos(src);
+    tech.textContent = i ? ligneTechVideo(i) : "Informations indisponibles (fichier déjà dans le projet).";
+    if(r.etat === "projet"){ etat.className = "st ok"; etat.textContent = "Dans le projet"; }
+    else if(r.etat === "distant"){ etat.className = "st ok"; etat.textContent = "Adresse externe"; }
+    else if(r.etat === "a-deposer"){
+      etat.className = "st att";
+      etat.textContent = "Choisie ici — pas encore dans le projet";
+      var b = z.querySelector("[data-prev-btns]");
+      if(b) b.insertAdjacentHTML("afterbegin",
+        '<button type="button" class="btn petit" data-act="prev-telecharger">Télécharger le fichier</button>');
+    }
+    else if(r.etat === "local-invalide"){
+      etat.className = "st ko";
+      etat.textContent = "Chemin de ton ordinateur — inutilisable en ligne";
+    }
+    else { etat.className = "st ko"; etat.textContent = "Preview introuvable — la carte gardera sa bannière"; }
+
+    if(i){
+      var rc = recoVideo({file:{size:i.taille}, duree:i.duree, w:i.w, h:i.h});
+      reco.style.color = rc.niveau === "ok" ? "var(--vert-clair)" : "var(--ambre-clair)";
+      reco.textContent = rc.txt;
+      if(i.audio === true) reco.textContent += " Une piste audio est présente : elle sera ignorée (la carte joue en muet).";
+    }
+    var v1 = z.querySelector("[data-prev-v]"), v2 = z.querySelector("[data-sim-v]");
+    if(r.url){
+      /* fichier déjà dans le projet : on mesure le fichier lui-même */
+      if(!i){
+        v1.addEventListener("loadedmetadata", function(){
+          var infoLue = {w:v1.videoWidth, h:v1.videoHeight, duree:v1.duration};
+          poidsDistant(r.url).then(function(t){
+            tech.textContent = [
+              String(extDe(src, "")).toUpperCase(),
+              infoLue.w + " × " + infoLue.h,
+              duree(infoLue.duree),
+              t ? poids(t) : null
+            ].filter(Boolean).join(" · ");
+            var rc2 = recoVideo({file:{size:t || 0}, duree:infoLue.duree, w:infoLue.w, h:infoLue.h});
+            reco.style.color = rc2.niveau === "ok" ? "var(--vert-clair)" : "var(--ambre-clair)";
+            reco.textContent = rc2.txt;
+          });
+        });
+      }
+      v1.src = r.url;
+      v2.src = r.url;
+      v2.addEventListener("playing", function(){ z.querySelector("[data-sim-t]").classList.add("on"); });
+      v2.addEventListener("error", function(){ z.querySelector("[data-sim-t]").classList.remove("on"); });
+      var p = v2.play();
+      if(p && p.catch) p.catch(function(){});
+    } else {
+      v1.parentNode.innerHTML = '<p class="note" style="padding:14px">Fichier non disponible : rien à lire.</p>';
+    }
+  });
+}
+/* Analyse d'une vidéo choisie : dimensions, durée, poids, lisibilité. */
+function lireVideo(file){
+  return new Promise(function(res, rej){
+    var url = URL.createObjectURL(file);
+    var v = document.createElement("video");
+    v.preload = "metadata"; v.muted = true; v.playsInline = true;
+    var fait = false;
+    v.onloadedmetadata = function(){
+      if(fait) return;
+      fait = true;
+      res({
+        file:file, url:url, v:v,
+        w:v.videoWidth, h:v.videoHeight, duree:v.duration,
+        jouable: !!document.createElement("video").canPlayType(file.type || "video/mp4"),
+        audio: (v.audioTracks && typeof v.audioTracks.length === "number") ? v.audioTracks.length > 0
+             : (typeof v.mozHasAudio === "boolean" ? v.mozHasAudio : null)
+      });
+    };
+    v.onerror = function(){
+      if(fait) return;
+      fait = true;
+      URL.revokeObjectURL(url);
+      rej(new Error("Ce fichier n’a pas pu être lu comme une vidéo par le navigateur."));
+    };
+    v.src = url;
+  });
+}
+function ouvrirPreparationVideo(info){
+  var rc = recoVideo(info);
+  var ext = extDe(info.file.name, info.file.type);
+  var f = filmEnCours();
+  var nomBase = (f ? slugifier(f.artist + "-" + f.title) : "") || slugifier(info.file.name) || "preview";
+  nomBase = nomLibre(DOSSIER_VID, nomBase + "-preview", ext);
+
+  var corps = ''
+  + '<div class="prev-lect" style="margin-bottom:12px"><video src="' + info.url + '" controls muted loop playsinline preload="metadata"></video></div>'
+  + '<p style="font-size:12.5px;color:var(--gris);word-break:break-all">' + h(info.file.name) + '</p>'
+  + '<p style="margin-top:6px;font-size:15px;font-variant-numeric:tabular-nums">'
+  +   h(String(ext).toUpperCase()) + ' · ' + info.w + ' × ' + info.h + ' · ' + duree(info.duree) + ' · ' + poids(info.file.size) + '</p>'
+  + '<p style="margin-top:8px;font-size:13px;color:' + (rc.niveau === "ok" ? "var(--vert-clair)" : "var(--ambre-clair)") + '">' + h(rc.txt) + '</p>'
+  + (info.jouable ? '' : '<p style="margin-top:6px;font-size:13px;color:var(--rouge-clair)">Ce format n’est pas lu par tous les navigateurs. Le MP4 (H.264) est le plus sûr.</p>')
+  + (info.audio === true ? '<p class="note" style="margin-top:6px">Une piste audio est présente. Elle ne sera pas jouée (la carte est muette), mais elle alourdit le fichier.</p>' : '')
+
+  + '<p class="titraille">Que faire de ce fichier ?</p>'
+  + '<div class="grille">'
+  +   '<label class="ligne-l" style="cursor:pointer"><input type="radio" name="vtrait" value="garder" checked style="width:20px;height:20px;flex:none">'
+  +     '<span class="txt"><span class="t1">Garder l’original</span>'
+  +     '<span class="t2">Aucun réencodage. Le fichier part tel qu’il est sorti de ton montage.</span></span></label>'
+  + '</div>'
+  + '<div class="bandeau info" style="margin-top:12px"><span class="txt">'
+  + '<b>Pourquoi pas d’optimisation ici :</b> un navigateur ne sait pas réencoder une vidéo proprement sans embarquer '
+  + 'plusieurs dizaines de mégaoctets d’outillage. Plutôt que de dégrader ta preview en douce, l’admin te la laisse intacte. '
+  + 'Si elle est trop lourde, réexporte-la depuis ton montage : <b>MP4 H.264, 1080p max, sans piste audio, 2 à 4 Mbit/s, 4 à 8 secondes</b>.'
+  + '</span></div>'
+
+  + '<p class="titraille">Nom du fichier dans le projet</p>'
+  + '<div class="champ">'
+  +   '<label for="vp-nom" class="sr">Nom du fichier</label>'
+  +   '<div class="enligne"><span class="note" style="font-size:13px">' + h(DOSSIER_VID) + '</span>'
+  +   '<input id="vp-nom" type="text" value="' + h(nomBase) + '" style="flex:1;min-width:140px" autocomplete="off"></div>'
+  +   '<span class="note">Extension conservée : <b id="vp-final"></b></span>'
+  + '</div>';
+
+  modale("Préparer la preview", corps,
+    '<button class="btn" data-act="vprep-annuler">Annuler</button><span class="esp"></span>'
+    + '<button class="btn plein" data-act="vprep-ok">Utiliser cette vidéo</button>');
+
+  var pan = $("pan-modale");
+  pan.__vprep = {info:info, ext:ext};
+  majFinalVideo();
+}
+function validerPreparationVideo(){
+  var pan = $("pan-modale");
+  var p = pan.__vprep;
+  if(!p) return;
+  var f = filmEnCours();
+  if(!f){ fermerModale(); return; }
+  var nom = nomPropre(pan.querySelector("#vp-nom").value, p.ext);
+  var chemin = DOSSIER_VID + nom;
+  Media.poser({
+    chemin: chemin, blob: p.info.file, nom: nom, type: p.info.file.type || "video/mp4",
+    w: p.info.w, h: p.info.h, duree: p.info.duree, taille: p.info.file.size,
+    audio: p.info.audio, jouable: p.info.jouable, genre: "video", t: Date.now()
+  }).then(function(){
+    oublierChemin(chemin);
+    f.preview = {src: chemin, poster: (f.preview && f.preview.poster) || ""};
+    URL.revokeObjectURL(p.info.url);
+    fermerModale();
+    dessinerPreview();
+    dessinerEntete();
+    sauverBientot();
+    toast("Preview enregistrée — " + p.info.w + " × " + p.info.h + " · " + duree(p.info.duree)
+      + " · " + poids(p.info.file.size) + " (original conservé).", "ok");
+  });
+}
+
+/* ---------- champs image ---------- */
+function cheminDe(k){
+  var f = filmEnCours();
+  if(!f) return "";
+  if(k === "poster") return f.poster;
+  if(k === "cc_a") return (f.contrechamp || {}).a || "";
+  if(k === "cc_b") return (f.contrechamp || {}).b || "";
+  return "";
+}
+function poserChemin(k, chemin){
+  var f = filmEnCours();
+  if(!f) return;
+  if(k === "poster"){ f.poster = chemin; }
+  else if(k === "cc_a" || k === "cc_b"){
+    var cc = f.contrechamp || {a:"",b:"",legende:""};
+    cc[k === "cc_a" ? "a" : "b"] = chemin;
+    f.contrechamp = (cc.a || cc.b || cc.legende) ? cc : null;
+  }
+  rafraichirImages();
+  dessinerEntete();
+  sauverBientot();
+}
+function rafraichirImages(){
+  var pan = $("pan-editeur");
+  Array.prototype.forEach.call(pan.querySelectorAll("[data-img]"), function(box){
+    var k = box.getAttribute("data-img");
+    var chemin = cheminDe(k);
+    var apr = box.querySelector(".apr"), nom = box.querySelector(".nom");
+    var tech = box.querySelector(".tech"), st = box.querySelector(".st"), bts = box.querySelector(".bts");
+    if(!chemin){
+      apr.innerHTML = '<span class="rien">aucune</span>';
+      nom.textContent = "Aucune image";
+      tech.textContent = ""; st.textContent = ""; st.className = "st";
+      bts.innerHTML = '<button type="button" class="btn petit" data-act="img-choisir" data-k="' + k + '">Choisir une image</button>';
+      return;
+    }
+    nom.textContent = chemin;
+    bts.innerHTML = '<button type="button" class="btn petit" data-act="img-choisir" data-k="' + k + '">Remplacer</button>'
+      + '<button type="button" class="btn petit" data-act="img-retirer" data-k="' + k + '">Retirer</button>';
+    etatImage(chemin).then(function(r){
+      if(r.url) apr.innerHTML = '<img src="' + h(r.url) + '" alt="">';
+      else apr.innerHTML = '<span class="rien">introuvable</span>';
+      var i = r.infos;
+      tech.textContent = i ? (String(extDe(i.nom, i.type)).toUpperCase() + " · " + i.w + " × " + i.h + " · " + poids(i.taille)) : "";
+      /* image déjà dans le projet : on la mesure telle qu'elle est en ligne */
+      if(!i && r.url){
+        var im = apr.querySelector("img");
+        if(im) im.addEventListener("load", function(){
+          poidsDistant(r.url).then(function(t){
+            tech.textContent = [
+              String(extDe(chemin, "")).toUpperCase(),
+              im.naturalWidth + " × " + im.naturalHeight,
+              t ? poids(t) : null
+            ].filter(Boolean).join(" · ");
+            if(t && t > 600*1024){
+              tech.textContent += " — image lourde, optimisation recommandée";
+            }
+          });
+        });
+      }
+      if(r.etat === "projet"){ st.className = "st ok"; st.textContent = "Dans le projet"; }
+      else if(r.etat === "distant"){ st.className = "st ok"; st.textContent = "Adresse externe"; }
+      else if(r.etat === "a-deposer"){
+        st.className = "st att";
+        st.textContent = "À déposer dans le projet";
+        bts.insertAdjacentHTML("beforeend",
+          '<button type="button" class="btn petit" data-act="img-telecharger" data-k="' + k + '">Télécharger le fichier</button>');
+      }
+      else if(r.etat === "local-invalide"){
+        st.className = "st ko";
+        st.textContent = "Chemin de ton ordinateur — inutilisable en ligne";
+        bts.insertAdjacentHTML("beforeend",
+          '<button type="button" class="btn petit" data-act="img-reparer" data-k="' + k + '">Corriger</button>');
+      }
+      else {
+        st.className = "st ko";
+        st.textContent = "Fichier non disponible dans le projet";
+      }
+    });
+  });
+}
+
+/* ============================================================
+   10. CHOIX ET PRÉPARATION D'UNE IMAGE
+   Rien n'est réencodé sans un choix explicite.
+   ============================================================ */
+var enAttenteImage = null;   /* {k:"poster"} ou {gal:true} */
+
+function lireImage(file){
+  return new Promise(function(res, rej){
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function(){
+      res({file:file, url:url, w:img.naturalWidth, h:img.naturalHeight});
+    };
+    img.onerror = function(){ URL.revokeObjectURL(url); rej(new Error("Fichier image illisible")); };
+    img.src = url;
+  });
+}
+function webpDispo(){
+  try{
+    var c = document.createElement("canvas"); c.width = c.height = 1;
+    return c.toDataURL("image/webp").indexOf("image/webp") === 5;
+  }catch(e){ return false; }
+}
+var WEBP = webpDispo();
+
+function recommandation(info){
+  var gros = info.file.size > 600*1024;
+  var large = info.w > 2400;
+  if(gros && large) return {niveau:"opt", txt:"Image lourde et très grande — optimisation et redimensionnement recommandés."};
+  if(gros) return {niveau:"opt", txt:"Image lourde — optimisation recommandée."};
+  if(large) return {niveau:"taille", txt:"Très grandes dimensions — redimensionnement recommandé."};
+  return {niveau:"garder", txt:"Déjà optimisée — aucune compression recommandée."};
+}
+function suggererNom(info, k){
+  var f = filmEnCours();
+  var base = f ? slugifier(f.artist + "-" + f.title) : slugifier(info.file.name);
+  var suffixe = k === "poster" ? "-banner" : k === "cc_a" ? "-plan" : k === "cc_b" ? "-derriere" : "-tournage";
+  if(!base) base = slugifier(info.file.name.replace(/\.[a-z0-9]+$/i,"")) || "image";
+  return base + suffixe;
+}
+function ouvrirPreparation(infos, k, indexLot){
+  indexLot = indexLot || 0;
+  var info = infos[indexLot];
+  var reco = recommandation(info);
+  var ext = extDe(info.file.name, info.file.type);
+  var nomBase = nomLibre(DOSSIER_IMG, suggererNom(info, k) + (infos.length > 1 ? "-" + (indexLot + 1) : ""), ext);
+  var lot = infos.length > 1 ? " (" + (indexLot+1) + "/" + infos.length + ")" : "";
+
+  var corps = ''
+  + '<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start">'
+  +   '<div style="flex:0 0 190px;max-width:100%;border:1px solid var(--ligne);background:#000">'
+  +     '<img src="' + info.url + '" alt="" style="width:100%;height:auto">'
+  +   '</div>'
+  +   '<div style="flex:1 1 220px;min-width:0">'
+  +     '<p style="font-size:12.5px;word-break:break-all;color:var(--gris)">' + h(info.file.name) + '</p>'
+  +     '<p style="margin-top:6px;font-size:15px;font-variant-numeric:tabular-nums">'
+  +       h(String(ext).toUpperCase()) + ' · ' + info.w + ' × ' + info.h + ' · ' + poids(info.file.size) + '</p>'
+  +     '<p style="margin-top:8px;font-size:13px;color:' + (reco.niveau === "garder" ? "var(--vert-clair)" : "var(--ambre-clair)") + '">'
+  +       h(reco.txt) + '</p>'
+  +     '<p class="note" style="margin-top:6px">Une recommandation, pas une obligation. Le choix reste le tien.</p>'
+  +   '</div>'
+  + '</div>'
+
+  + '<p class="titraille">Que faire de ce fichier ?</p>'
+  + '<div class="grille">'
+  +   '<label class="ligne-l" style="cursor:pointer"><input type="radio" name="trait" value="garder" '
+  +     (reco.niveau === "garder" ? "checked" : "") + ' style="width:20px;height:20px;flex:none">'
+  +     '<span class="txt"><span class="t1">Garder l’original</span>'
+  +     '<span class="t2">Aucun réencodage, aucune perte. Les pixels ne sont pas touchés.</span></span></label>'
+  +   '<label class="ligne-l" style="cursor:pointer"><input type="radio" name="trait" value="preparer" '
+  +     (reco.niveau !== "garder" ? "checked" : "") + ' style="width:20px;height:20px;flex:none">'
+  +     '<span class="txt"><span class="t1">Optimiser pour le web</span>'
+  +     '<span class="t2">Compression et/ou redimensionnement, réglés ci-dessous.</span></span></label>'
+  + '</div>'
+
+  + '<div id="reglages" style="margin-top:14px;border:1px solid var(--ligne-2);padding:14px;background:var(--surface)">'
+  +   '<label class="enligne" style="cursor:pointer"><input type="checkbox" id="op-comp" '
+  +     (reco.niveau === "opt" ? "checked" : "") + ' style="width:20px;height:20px"> <span>Compresser</span></label>'
+  +   '<div style="margin:10px 0 16px;padding-left:28px">'
+  +     '<label class="note" for="op-q">Qualité <b id="op-qv">82</b> %</label>'
+  +     '<input id="op-q" type="range" min="50" max="95" value="82" style="width:100%;min-height:auto">'
+  +     '<div class="champ" style="margin-top:10px"><label for="op-fmt">Format</label>'
+  +       '<select id="op-fmt">'
+  +         '<option value="garder">Garder ' + h(String(ext).toUpperCase()) + '</option>'
+  +         (WEBP ? '<option value="webp">Convertir en WebP (plus léger)</option>' : '')
+  +         '<option value="jpg">Convertir en JPG</option>'
+  +       '</select></div>'
+  +   '</div>'
+  +   '<label class="enligne" style="cursor:pointer"><input type="checkbox" id="op-red" '
+  +     (info.w > 2400 ? "checked" : "") + ' style="width:20px;height:20px"> <span>Redimensionner</span></label>'
+  +   '<div style="margin:10px 0 0;padding-left:28px">'
+  +     '<div class="champ"><label for="op-larg">Largeur maximale (px)</label>'
+  +     '<input id="op-larg" type="number" inputmode="numeric" value="' + Math.min(info.w, 1920) + '" min="200" max="6000"></div>'
+  +     '<p class="note" style="margin-top:6px">Compression et redimensionnement sont indépendants : tu peux faire l’un sans l’autre.</p>'
+  +   '</div>'
+  + '</div>'
+
+  + '<p class="titraille">Nom du fichier dans le projet</p>'
+  + '<div class="champ">'
+  +   '<label for="op-nom" class="sr">Nom du fichier</label>'
+  +   '<div class="enligne"><span class="note" style="font-size:13px">' + h(DOSSIER_IMG) + '</span>'
+  +   '<input id="op-nom" type="text" value="' + h(nomBase) + '" style="flex:1;min-width:140px" autocomplete="off"></div>'
+  +   '<span class="note">Extension ajoutée automatiquement. Pas d’espace, pas d’accent : <b id="op-final"></b></span>'
+  + '</div>';
+
+  var pied = '<button class="btn" data-act="prep-annuler">Annuler</button><span class="esp"></span>'
+    + '<button class="btn plein" data-act="prep-ok">Utiliser cette image</button>';
+
+  modale("Préparer l’image" + lot, corps, pied);
+
+  var pan = $("pan-modale");
+  pan.__prep = {infos:infos, i:indexLot, k:k, info:info, ext:ext};
+  majFinalImage();
+}
+/* Le nom affiché doit toujours être celui qui sera réellement écrit :
+   l'extension ne change que si une conversion est demandée. */
+function extFinaleImage(){
+  var pan = $("pan-modale");
+  if(!pan.__prep) return "";
+  var mode = pan.querySelector('input[name="trait"]:checked');
+  var comp = pan.querySelector("#op-comp"), fmt = pan.querySelector("#op-fmt");
+  if(!mode || !comp || !fmt) return pan.__prep.ext;
+  var actif = mode.value === "preparer" && comp.checked && fmt.value !== "garder";
+  return actif ? fmt.value : pan.__prep.ext;
+}
+function majFinalImage(){
+  var pan = $("pan-modale");
+  if(!pan.__prep) return;
+  var mode = pan.querySelector('input[name="trait"]:checked');
+  var nom = pan.querySelector("#op-nom"), fin = pan.querySelector("#op-final");
+  var reglages = pan.querySelector("#reglages"), q = pan.querySelector("#op-q"), qv = pan.querySelector("#op-qv");
+  if(!mode || !nom || !fin || !reglages) return;
+  if(q && qv) qv.textContent = q.value;
+  fin.textContent = DOSSIER_IMG + nomPropre(nom.value, extFinaleImage());
+  reglages.style.display = (mode.value === "preparer") ? "" : "none";
+}
+function majFinalVideo(){
+  var pan = $("pan-modale");
+  if(!pan.__vprep) return;
+  var nom = pan.querySelector("#vp-nom"), fin = pan.querySelector("#vp-final");
+  if(!nom || !fin) return;
+  fin.textContent = DOSSIER_VID + nomPropre(nom.value, pan.__vprep.ext);
+}
+/* Fabrique le fichier final selon les choix. Sans choix explicite,
+   on renvoie l'original tel quel — octet pour octet. */
+function preparerFichier(info, choix){
+  if(!choix.compresser && !choix.redimensionner){
+    return Promise.resolve({blob:info.file, w:info.w, h:info.h, type:info.file.type});
+  }
+  return new Promise(function(res, rej){
+    var img = new Image();
+    img.onload = function(){
+      var w = info.w, ht = info.h;
+      if(choix.redimensionner && choix.largeur && info.w > choix.largeur){
+        w = Math.round(choix.largeur);
+        ht = Math.round(info.h * (w / info.w));
+      }
+      var c = document.createElement("canvas");
+      c.width = w; c.height = ht;
+      var ctx = c.getContext("2d");
+      ctx.drawImage(img, 0, 0, w, ht);
+      var type = choix.compresser
+        ? (choix.format === "webp" ? "image/webp" : choix.format === "jpg" ? "image/jpeg" : (info.file.type || "image/jpeg"))
+        : (info.file.type && info.file.type !== "image/gif" ? info.file.type : "image/png");
+      if(type === "image/png" && choix.compresser) type = "image/jpeg";
+      var q = choix.compresser ? (choix.qualite / 100) : 0.98;
+      c.toBlob(function(b){
+        if(!b) return rej(new Error("Conversion impossible"));
+        res({blob:b, w:w, h:ht, type:type});
+      }, type, q);
+    };
+    img.onerror = function(){ rej(new Error("Image illisible")); };
+    img.src = info.url;
+  });
+}
+function validerPreparation(){
+  var pan = $("pan-modale");
+  var p = pan.__prep;
+  if(!p) return;
+  var mode = pan.querySelector('input[name="trait"]:checked').value;
+  var comp = mode === "preparer" && pan.querySelector("#op-comp").checked;
+  var red  = mode === "preparer" && pan.querySelector("#op-red").checked;
+  var fmt  = pan.querySelector("#op-fmt").value;
+  var choix = {
+    compresser: comp,
+    redimensionner: red,
+    qualite: parseInt(pan.querySelector("#op-q").value, 10) || 82,
+    largeur: parseInt(pan.querySelector("#op-larg").value, 10) || 1920,
+    format: comp ? fmt : "garder"
+  };
+  var nom = nomPropre(pan.querySelector("#op-nom").value, extFinaleImage());
+  var chemin = DOSSIER_IMG + nom;
+
+  preparerFichier(p.info, choix).then(function(r){
+    var infosF = {
+      chemin: chemin, blob: r.blob, nom: nom, type: r.type,
+      w: r.w, h: r.h, taille: r.blob.size, t: Date.now()
+    };
+    return Media.poser(infosF).then(function(){
+      oublierChemin(chemin);
+      if(p.k === "gal"){
+        var f = filmEnCours();
+        if(f && f.bts.indexOf(chemin) < 0) f.bts.push(chemin);
+        dessinerGalerie();
+      } else {
+        poserChemin(p.k, chemin);
+      }
+      var gain = p.info.file.size - r.blob.size;
+      toast(nom + " — " + r.w + " × " + r.h + " · " + poids(r.blob.size)
+        + (choix.compresser || choix.redimensionner
+            ? (gain > 0 ? " (" + poids(gain) + " gagnés)" : "")
+            : " (original conservé)"), "ok");
+      URL.revokeObjectURL(p.info.url);
+      /* lot d'images : on enchaîne */
+      if(p.i + 1 < p.infos.length){ ouvrirPreparation(p.infos, p.k, p.i + 1); }
+      else { fermerModale(); dessinerEntete(); }
+    });
+  }).catch(function(e){
+    toast("Impossible de préparer cette image : " + e.message, "ko");
+  });
+}
+
+/* ============================================================
+   11. APERÇU
+   On réutilise le vrai index.html : aucune deuxième mise en scène
+   à maintenir. Les données courantes y sont injectées.
+   ============================================================ */
+var urlApercu = null;
+function donneesApercu(){
+  var l = FILMS.map(pourExport);
+  /* les images pas encore déposées sont montrées depuis la mémoire locale */
+  var remap = {};
+  Object.keys(Media.tout()).forEach(function(c){ remap[c] = Media.url(c); });
+  function r(p){ return (p && remap[p]) ? remap[p] : p; }
+  l.forEach(function(f){
+    f.poster = r(f.poster);
+    if(f.contrechamp){ f.contrechamp.a = r(f.contrechamp.a); f.contrechamp.b = r(f.contrechamp.b); }
+    f.bts = (f.bts||[]).map(r);
+    if(f.preview){ f.preview.src = r(f.preview.src); f.preview.poster = r(f.preview.poster); }
+  });
+  return l;
+}
+function ouvrirApercu(id){
+  var f = id ? filmParId(id) : null;
+  var base = location.href.replace(/[^\/]*$/, "");
+  var corps = '<div class="apercu-h"><div class="cadre" id="ap-cadre">'
+    + '<div style="margin:auto;color:var(--gris);font-size:13px;padding:30px;text-align:center">Chargement de l’aperçu…</div>'
+    + '</div></div>';
+  var extra = '<span class="bascule" role="group" aria-label="Format d’aperçu">'
+    + '<button data-act="ap-desk" class="on">Desktop</button>'
+    + '<button data-act="ap-mob">Mobile</button></span>';
+  ouvrirPan($("pan-modale"), '<div class="pan-in" role="document">'
+    + '<div class="pan-bar"><h2 id="md-titre">Aperçu — ' + h(f ? ([f.artist,f.title].filter(Boolean).join(" — ")) : "le site") + '</h2>'
+    + extra + '<button class="x" data-act="fermer" aria-label="Fermer">&#10005;</button></div>'
+    + '<div class="pan-corps" style="padding:0;display:flex;flex-direction:column">' + corps + '</div>'
+    + '</div>', true);
+
+  fetch("index.html", {cache:"no-store"})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.text(); })
+    .then(function(txt){
+      if(txt.indexOf('<script src="films.js"><\/script>') < 0) throw new Error("index.html inattendu");
+      var inject = '<base href="' + base + '">\n<script>window.FILMS_SCHEMA=' + SCHEMA
+        + ';window.FILMS_DATA=' + JSON.stringify(donneesApercu()).replace(/<\//g,"<\\/") + ';<\/script>';
+      txt = txt.replace('<script src="films.js"><\/script>', inject);
+      if(urlApercu) URL.revokeObjectURL(urlApercu);
+      var blob = new Blob([txt], {type:"text/html;charset=utf-8"});
+      urlApercu = URL.createObjectURL(blob);
+      var cadreEl = $("ap-cadre");
+      if(!cadreEl) return;
+      cadreEl.innerHTML = '<iframe id="ap-if" title="Aperçu du site" src="' + urlApercu
+        + (f ? "#/film/" + encodeURIComponent(f.slug) : "#/") + '"></iframe>';
+    })
+    .catch(function(){
+      var cadreEl = $("ap-cadre");
+      if(!cadreEl) return;
+      cadreEl.innerHTML = '<div style="margin:auto;padding:30px;max-width:460px;text-align:center;color:var(--gris);font-size:13.5px">'
+        + '<p>L’aperçu fidèle a besoin que la page soit servie par un serveur (Vercel, Hostinger, ou un serveur local).</p>'
+        + '<p style="margin-top:10px">Ouverte directement depuis un dossier, cette page ne peut pas lire <b>index.html</b>.</p>'
+        + '<p style="margin-top:14px"><a class="btn petit" href="index.html' + (f ? "#/film/" + encodeURIComponent(f.slug) : "") + '" target="_blank" rel="noopener">Ouvrir le site dans un onglet</a></p>'
+        + '<p class="note" style="margin-top:8px">L’onglet affichera le dernier films.js exporté, pas tes modifications en cours.</p>'
+        + '</div>';
+    });
+}
+
+/* ============================================================
+   12. EXPORT / IMPORT / FICHIER
+   ============================================================ */
+function fabriquer(){
+  var propre = FILMS.map(pourExport);
+  return "/* ============================================================\n"
+       + "   BINKSFILMS — LES FILMS\n"
+       + "   ------------------------------------------------------------\n"
+       + "   Fichier généré par admin.html. Ne le modifie pas à la main.\n"
+       + "   Ouvre admin.html, fais tes changements, clique sur\n"
+       + "   « Exporter films.js », puis remplace ce fichier.\n"
+       + "   Généré le " + new Date().toLocaleString("fr-FR") + "\n"
+       + "   ============================================================ */\n"
+       + "window.FILMS_SCHEMA = " + SCHEMA + ";\n"
+       + "window.FILMS_DATA = " + JSON.stringify(propre, null, 2) + ";\n";
+}
+function telechargerBlob(blob, nom){
+  var a = document.createElement("a");
+  var url = URL.createObjectURL(blob);
+  a.href = url; a.download = nom; a.rel = "noopener";
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+}
+function exporter(){
+  var v = valider();
+  if(v.erreurs.length){
+    ouvrirVerification("L’export est bloqué : corrige d’abord les erreurs.");
+    return;
+  }
+  if(v.avert.length){
+    ouvrirVerification(null, true);
+    return;
+  }
+  faireExport();
+}
+function faireExport(){
+  var blob = new Blob([fabriquer()], {type:"text/javascript;charset=utf-8"});
+  telechargerBlob(blob, "films.js");
+  snapshot("Export films.js");
+  refExport = signature();
+  sauver();
+  dessiner();
+  fermerModale();
+  var d = aDeposer().length;
+  toast("films.js exporté." + (d ? " Pense aussi aux " + d + " image" + (d>1?"s":"") + " à déposer." : ""), "ok");
+}
+function voirFichier(){
+  var txt = fabriquer();
+  modale("films.js",
+    '<p class="note" style="margin-bottom:10px">Le filet de sécurité si le téléchargement échoue : copie ce contenu et colle-le dans ton fichier <b>films.js</b>.</p>'
+    + '<textarea class="code" id="code" readonly spellcheck="false">' + h(txt) + '</textarea>',
+    '<button class="btn plein" data-act="copier">Copier le contenu</button>'
+    + '<button class="btn" data-act="telecharger">Télécharger</button>'
+    + '<span class="esp"></span><button class="btn" data-act="fermer">Fermer</button>');
+}
+function copierCode(){
+  var t = $("code");
+  if(!t) return;
+  t.removeAttribute("readonly");
+  t.select(); t.setSelectionRange(0, 999999);
+  var ok = false;
+  try{ ok = document.execCommand("copy"); }catch(e){}
+  t.setAttribute("readonly","readonly");
+  if(ok){ toast("Contenu copié.", "ok"); return; }
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(t.value)
+      .then(function(){ toast("Contenu copié.", "ok"); })
+      .catch(function(){ toast("Copie refusée par le navigateur — sélectionne le texte et copie à la main.", "att"); });
+  } else {
+    toast("Copie impossible — sélectionne le texte et copie à la main.", "att");
+  }
+}
+/* Lit un films.js (ou un .json) sans exécuter son contenu. */
+function analyserImport(txt){
+  var s = String(txt || "");
+  var d = s.indexOf("FILMS_DATA");
+  var debut = s.indexOf("[", d >= 0 ? d : 0);
+  if(debut < 0) throw new Error("Aucune liste de films trouvée dans ce fichier.");
+  var fin = s.lastIndexOf("]");
+  if(fin <= debut) throw new Error("Le fichier semble incomplet.");
+  var brut = s.slice(debut, fin + 1);
+  var liste;
+  try{ liste = JSON.parse(brut); }
+  catch(e){ throw new Error("Le contenu n’est pas lisible. Le fichier a-t-il été modifié à la main ?"); }
+  if(!Array.isArray(liste)) throw new Error("Ce fichier ne contient pas une liste de films.");
+  return liste;
+}
+function ouvrirImport(){
+  modale("Importer films.js",
+    '<p style="font-size:14px">Reconstruit l’admin à partir d’un fichier <b>films.js</b> existant : nouvel ordinateur, autre navigateur, cache effacé, ou modifications faites ailleurs.</p>'
+    + '<div class="bandeau att" style="margin-top:14px"><span class="txt">'
+    + '<b>Ce qui va se passer :</b> les ' + FILMS.length + ' film' + (FILMS.length>1?"s":"")
+    + ' actuellement dans cette admin seront remplacés par ceux du fichier. '
+    + 'Une sauvegarde de l’état actuel est gardée dans l’historique.</span></div>'
+    + '<p class="note" style="margin-top:12px">Les images déjà choisies dans cette admin et pas encore déposées restent disponibles si leur chemin est le même.</p>',
+    '<button class="btn" data-act="fermer">Annuler</button><span class="esp"></span>'
+    + '<button class="btn plein" data-act="import-choisir">Choisir le fichier</button>');
+}
+function importer(txt, nom){
+  var liste;
+  try{ liste = analyserImport(txt); }
+  catch(e){ toast(e.message, "ko"); return; }
+  snapshot("Avant import de " + (nom || "films.js"));
+  FILMS = liste.map(normaliser);
+  refExport = signature();
+  sauver();
+  fermerModale();
+  dessiner();
+  toast(FILMS.length + " film" + (FILMS.length>1?"s":"") + " importé" + (FILMS.length>1?"s":"") + ".", "ok");
+}
+
+/* ---------- vérification ---------- */
+function ouvrirVerification(entete, proposerExport){
+  var v = valider();
+  var corps = "";
+  if(entete) corps += '<div class="bandeau ko" style="margin:0 0 14px"><span class="txt">' + h(entete) + '</span></div>';
+  if(!v.erreurs.length && !v.avert.length){
+    corps += '<div class="bandeau info"><span class="txt">Tout est en ordre. Rien à signaler.</span></div>';
+  }
+  if(v.erreurs.length){
+    corps += '<p class="titraille">Erreurs bloquantes — ' + v.erreurs.length + '</p><div class="rap">'
+      + v.erreurs.map(function(e){
+          return '<div class="l ko"><span><span class="qui">' + h(e.qui) + '</span>' + h(e.msg) + '</span>'
+            + '<button data-act="aller" data-id="' + e.id + '" data-c="' + h(e.champ) + '">Corriger</button></div>';
+        }).join("") + '</div>';
+  }
+  if(v.avert.length){
+    corps += '<p class="titraille">Avertissements — ' + v.avert.length + '</p>'
+      + '<p class="note" style="margin:-4px 0 10px">Ils n’empêchent pas l’export. À toi de voir si c’est volontaire.</p>'
+      + '<div class="rap">'
+      + v.avert.map(function(e){
+          return '<div class="l att"><span><span class="qui">' + h(e.qui) + '</span>' + h(e.msg) + '</span>'
+            + '<button data-act="aller" data-id="' + e.id + '" data-c="' + h(e.champ) + '">Ouvrir</button></div>';
+        }).join("") + '</div>';
+  }
+  var pied = '<button class="btn" data-act="fermer">Fermer</button><span class="esp"></span>'
+    + (v.erreurs.length ? '' : '<button class="btn plein" data-act="export-force">Exporter films.js</button>');
+  modale("Vérification", corps, pied);
+}
+
+/* ---------- fichiers à déposer ---------- */
+function ouvrirDepots(){
+  var l = aDeposer();
+  var corps = l.length
+    ? '<p style="font-size:14px">Ces fichiers sont utilisés par tes films mais ne sont <b>pas encore dans le projet</b>. '
+      + 'Un navigateur ne peut pas les y mettre tout seul : c’est toi qui les déposes, comme films.js.</p>'
+      + '<p class="note" style="margin-top:8px">Le plus simple : <b>Exporter le dossier (.zip)</b> depuis la barre du haut — '
+      + 'il contient films.js <i>et</i> ces fichiers, déjà rangés aux bons chemins.</p>'
+      + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">'
+      + l.map(function(c){
+          var i = Media.infos(c) || {};
+          var estV = (i.genre === "video");
+          var apercu = estV
+            ? '<span style="width:64px;height:48px;border:1px solid var(--ligne-2);flex:none;display:flex;align-items:center;justify-content:center;font-size:9px;letter-spacing:.1em;color:var(--gris-2)">VIDÉO</span>'
+            : '<img src="' + h(Media.url(c)) + '" alt="" style="width:64px;height:48px;object-fit:cover;border:1px solid var(--ligne-2);flex:none">';
+          var tech = estV ? ligneTechVideo(i)
+            : (String(extDe(i.nom, i.type)).toUpperCase() + " · " + i.w + " × " + i.h + " · " + poids(i.taille));
+          return '<div class="ligne-l">' + apercu
+            + '<span class="txt"><span class="t1" style="word-break:break-all">' + h(c) + '</span>'
+            + '<span class="t2">' + h(tech) + '</span></span>'
+            + '<button class="btn petit" data-act="dep-un" data-c="' + h(c) + '">Télécharger</button>'
+            + '</div>';
+        }).join("")
+      + '</div>'
+    : '<div class="bandeau info"><span class="txt">Aucun fichier en attente : tous les médias utilisés sont déjà dans le projet.</span></div>';
+  modale("Fichiers à déposer", corps,
+    (l.length ? '<button class="btn plein" data-act="zip">Exporter le dossier (.zip)</button>'
+              + '<button class="btn" data-act="dep-tout">Un par un</button>' : '')
+    + '<span class="esp"></span><button class="btn" data-act="fermer">Fermer</button>');
+}
+function telechargerMedia(chemin){
+  var i = Media.infos(chemin);
+  if(!i || !i.blob){ toast("Fichier introuvable en mémoire.", "ko"); return; }
+  telechargerBlob(i.blob, i.nom || nomFichier(chemin));
+}
+
+/* ============================================================
+   12 bis. EXPORT DU DOSSIER (.zip)
+   Un ZIP « stocké » (sans compression) écrit à la main : une centaine
+   de lignes, aucune bibliothèque. Les médias sont déjà compressés,
+   il n'y a rien à gagner à les recompresser.
+   Le but : que les chemins écrits dans films.js correspondent
+   vraiment aux fichiers livrés.
+   ============================================================ */
+var TABLE_CRC = (function(){
+  var t = new Uint32Array(256), c, n, k;
+  for(n = 0; n < 256; n++){
+    c = n;
+    for(k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+    t[n] = c >>> 0;
+  }
+  return t;
+})();
+function crc32(u8){
+  var c = 0xFFFFFFFF;
+  for(var i = 0; i < u8.length; i++) c = TABLE_CRC[(c ^ u8[i]) & 0xFF] ^ (c >>> 8);
+  return (c ^ 0xFFFFFFFF) >>> 0;
+}
+function dosDate(d){
+  return {
+    heure: ((d.getHours() << 11) | (d.getMinutes() << 5) | (Math.floor(d.getSeconds()/2))) & 0xFFFF,
+    jour:  (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF
+  };
+}
+function fabriquerZip(entrees){
+  var enc = new TextEncoder();
+  var d = dosDate(new Date());
+  var parts = [], central = [], offset = 0, i;
+  for(i = 0; i < entrees.length; i++){
+    var nom = enc.encode(entrees[i].nom);
+    var data = entrees[i].data;
+    var crc = crc32(data);
+    var lh = new Uint8Array(30 + nom.length);
+    var dv = new DataView(lh.buffer);
+    dv.setUint32(0, 0x04034b50, true);
+    dv.setUint16(4, 20, true);
+    dv.setUint16(6, 0x0800, true);      /* noms en UTF-8 */
+    dv.setUint16(8, 0, true);           /* stocké, pas compressé */
+    dv.setUint16(10, d.heure, true);
+    dv.setUint16(12, d.jour, true);
+    dv.setUint32(14, crc, true);
+    dv.setUint32(18, data.length, true);
+    dv.setUint32(22, data.length, true);
+    dv.setUint16(26, nom.length, true);
+    dv.setUint16(28, 0, true);
+    lh.set(nom, 30);
+    parts.push(lh, data);
+
+    var ch = new Uint8Array(46 + nom.length);
+    var cv = new DataView(ch.buffer);
+    cv.setUint32(0, 0x02014b50, true);
+    cv.setUint16(4, 20, true);
+    cv.setUint16(6, 20, true);
+    cv.setUint16(8, 0x0800, true);
+    cv.setUint16(10, 0, true);
+    cv.setUint16(12, d.heure, true);
+    cv.setUint16(14, d.jour, true);
+    cv.setUint32(16, crc, true);
+    cv.setUint32(20, data.length, true);
+    cv.setUint32(24, data.length, true);
+    cv.setUint16(28, nom.length, true);
+    cv.setUint32(42, offset, true);
+    ch.set(nom, 46);
+    central.push(ch);
+    offset += lh.length + data.length;
+  }
+  var tailleC = central.reduce(function(a, x){ return a + x.length; }, 0);
+  var fin = new Uint8Array(22);
+  var fv = new DataView(fin.buffer);
+  fv.setUint32(0, 0x06054b50, true);
+  fv.setUint16(8, entrees.length, true);
+  fv.setUint16(10, entrees.length, true);
+  fv.setUint32(12, tailleC, true);
+  fv.setUint32(16, offset, true);
+  return new Blob(parts.concat(central, [fin]), {type:"application/zip"});
+}
+function blobEnU8(blob){
+  if(blob.arrayBuffer) return blob.arrayBuffer().then(function(ab){ return new Uint8Array(ab); });
+  return new Promise(function(res, rej){
+    var r = new FileReader();
+    r.onload = function(){ res(new Uint8Array(r.result)); };
+    r.onerror = function(){ rej(new Error("lecture impossible")); };
+    r.readAsArrayBuffer(blob);
+  });
+}
+function exporterZip(){
+  var v = valider();
+  if(v.erreurs.length){ ouvrirVerification("L’export est bloqué : corrige d’abord les erreurs."); return; }
+  var l = aDeposer();
+  var enc = new TextEncoder();
+  var entrees = [{nom:"films.js", data: enc.encode(fabriquer())}];
+  Promise.all(l.map(function(c){
+    var i = Media.infos(c);
+    if(!i || !i.blob) return null;
+    return blobEnU8(i.blob).then(function(u8){ return {nom:c, data:u8}; });
+  }).filter(Boolean)).then(function(fichiers){
+    fichiers.forEach(function(f){ entrees.push(f); });
+    var blob = fabriquerZip(entrees);
+    telechargerBlob(blob, "binksfilms-medias.zip");
+    snapshot("Export du dossier (.zip)");
+    refExport = signature();
+    sauver(); dessiner(); fermerModale();
+    toast("Dossier exporté (" + entrees.length + " fichier" + (entrees.length>1?"s":"")
+      + ", " + poids(blob.size) + "). Décompresse-le à la racine du site.", "ok");
+  }).catch(function(e){
+    toast("Le ZIP n’a pas pu être fabriqué : " + e.message + ". Utilise le téléchargement un par un.", "ko");
+  });
+}
+
+/* ---------- historique ---------- */
+function ouvrirHistorique(){
+  var l = snapshots();
+  var corps = l.length
+    ? '<p class="note" style="margin-bottom:12px">Quelques sauvegardes récentes, gardées dans ce navigateur. Restaurer remplace la liste actuelle.</p>'
+      + '<div style="display:flex;flex-direction:column;gap:8px">'
+      + l.map(function(s, i){
+          return '<div class="ligne-l"><span class="txt"><span class="t1">' + h(s.label || "Sauvegarde") + '</span>'
+            + '<span class="t2">' + quand(s.t) + ' · ' + s.films.length + ' film' + (s.films.length>1?"s":"") + '</span></span>'
+            + '<button class="btn petit" data-act="restaurer" data-i="' + i + '">Restaurer</button></div>';
+        }).join("")
+      + '</div>'
+    : '<div class="bandeau info"><span class="txt">Aucune sauvegarde pour l’instant. Il s’en crée une à chaque export, import ou suppression.</span></div>';
+  modale("Historique", corps, '<span class="esp"></span><button class="btn" data-act="fermer">Fermer</button>');
+}
+function restaurer(i){
+  var l = snapshots();
+  var s = l[i];
+  if(!s) return;
+  if(!confirm("Restaurer « " + (s.label || "cette sauvegarde") + " » du " + quand(s.t) + " ?\n\n"
+    + "Les " + FILMS.length + " film(s) actuellement dans l’admin seront remplacés.")) return;
+  snapshot("Avant restauration");
+  FILMS = s.films.map(normaliser);
+  sauver();
+  fermerModale();
+  dessiner();
+  toast("Sauvegarde restaurée. Pense à exporter films.js pour la mettre en ligne.", "ok");
+}
+
+/* ---------- aide ---------- */
+function ouvrirAide(){
+  modale("Comment publier",
+    '<ol style="margin-left:18px;font-size:14.5px;display:flex;flex-direction:column;gap:10px">'
+    + '<li>Tu modifies ici : ajouter, corriger, archiver, réordonner. Tout est sauvegardé automatiquement <b>dans ce navigateur</b> — ce n’est pas encore en ligne.</li>'
+    + '<li>S’il y a de nouveaux médias (bannières, images de tournage, previews) : <b>Exporter le dossier (.zip)</b> — '
+    + 'il contient films.js et les fichiers, déjà rangés dans <b>' + h(DOSSIER_IMG) + '</b> et <b>' + h(DOSSIER_VID) + '</b>.</li>'
+    + '<li>Sinon, <b>Exporter films.js</b> suffit.</li>'
+    + '<li>Tu déposes le contenu dans le dépôt du site (en gardant les dossiers), puis tu publies.</li>'
+    + '<li>Le site se met à jour. L’état repasse à <b>À jour</b> ici.</li>'
+    + '</ol>'
+    + '<p class="titraille">Bon à savoir</p>'
+    + '<ul style="margin-left:18px;font-size:13.5px;color:var(--gris);display:flex;flex-direction:column;gap:8px">'
+    + '<li><b>Brouillon</b> et <b>Archivé</b> ne s’affichent pas sur le site, mais restent ici.</li>'
+    + '<li>La <b>preview</b> est la petite boucle muette de la carte : au survol sur ordinateur, au centre de l’écran sur téléphone. Toujours facultative.</li>'
+    + '<li>Un fichier choisi ici <b>n’est pas encore sur le site</b> tant que tu ne l’as pas déposé. L’admin le dit clairement plutôt que de faire semblant.</li>'
+    + '<li>Une bannière manquante ou cassée ne casse jamais le site : il retombe sur l’image YouTube.</li>'
+    + '<li>Cette page n’est pas protégée par mot de passe. Elle ne peut rien publier toute seule : elle produit seulement un fichier.</li>'
+    + '</ul>',
+    '<span class="esp"></span><button class="btn" data-act="fermer">Fermer</button>');
+}
+
+/* ---------- menu ••• d'un film ---------- */
+function ouvrirPlus(id){
+  var f = filmParId(id);
+  if(!f) return;
+  var nom = [f.artist, f.title].filter(Boolean).join(" — ") || "Ce film";
+  var b = [];
+  b.push('<button class="btn large" data-act="dupliquer" data-id="' + id + '">Dupliquer</button>');
+  if(f.status !== "published") b.push('<button class="btn large" data-act="statut" data-id="' + id + '" data-s="published">Publier</button>');
+  if(f.status !== "draft")     b.push('<button class="btn large" data-act="statut" data-id="' + id + '" data-s="draft">Repasser en brouillon</button>');
+  if(f.status !== "archived")  b.push('<button class="btn large" data-act="statut" data-id="' + id + '" data-s="archived">Archiver</button>');
+  b.push('<button class="btn large danger" data-act="supprimer" data-id="' + id + '">Supprimer définitivement</button>');
+  modale(nom,
+    '<div style="display:flex;flex-direction:column;gap:9px">' + b.join("") + '</div>'
+    + '<p class="note" style="margin-top:14px">Pour retirer un projet du site en le gardant, <b>Archiver</b> est le bon geste. '
+    + 'La suppression, elle, ne se rattrape que par l’historique.</p>',
+    '<span class="esp"></span><button class="btn" data-act="fermer">Fermer</button>');
+}
+
+/* ---------- nouveau film ---------- */
+function ouvrirNouveau(){
+  modale("Nouveau film",
+    '<div class="grille">'
+    + '<div class="champ"><label for="n-url">Lien ou identifiant YouTube</label>'
+    + '<input id="n-url" type="text" inputmode="url" placeholder="https://youtu.be/…" autocomplete="off" autofocus>'
+    + '<span class="note">watch?v=, youtu.be, /shorts/, /embed/ ou l’identifiant seul.</span>'
+    + '<span class="msg" id="n-msg"></span></div>'
+    + '</div>'
+    + '<div class="grille deux" style="margin-top:14px">'
+    + '<div class="champ"><label for="n-artist">Artiste</label><input id="n-artist" type="text" autocomplete="off"></div>'
+    + '<div class="champ"><label for="n-title">Titre</label><input id="n-title" type="text" autocomplete="off"></div>'
+    + '<div class="champ"><label for="n-date">Date de sortie</label><input id="n-date" type="date"></div>'
+    + '<div class="champ"><label for="n-type">Type</label><input id="n-type" type="text" list="l-types2" value="Clip" autocomplete="off"></div>'
+    + '</div>'
+    + '<datalist id="l-types2">' + TYPES.map(function(t){ return '<option value="' + h(t) + '">'; }).join("") + '</datalist>'
+    + '<div class="champ" style="margin-top:14px"><label for="n-statut">Ajouter comme</label>'
+    + '<select id="n-statut"><option value="draft">Brouillon — je finis plus tard</option>'
+    + '<option value="published">Publié — visible dès le prochain export</option></select></div>'
+    + '<p class="note" style="margin-top:12px">L’adresse de la page est créée automatiquement à partir de l’artiste et du titre.</p>',
+    '<button class="btn" data-act="fermer">Annuler</button><span class="esp"></span>'
+    + '<button class="btn plein" data-act="creer">Créer le film</button>');
+}
+function creer(){
+  var pan = $("pan-modale");
+  var url = pan.querySelector("#n-url").value;
+  var yt = idYoutube(url);
+  var msg = pan.querySelector("#n-msg");
+  if(!yt){ msg.textContent = "Lien YouTube non reconnu."; pan.querySelector("#n-url").focus(); return; }
+  var deja = FILMS.filter(function(f){ return f.yt === yt; })[0];
+  if(deja){
+    msg.textContent = "Cette vidéo est déjà dans la liste : " + (deja.artist + " — " + deja.title) + ".";
+    return;
+  }
+  var artist = pan.querySelector("#n-artist").value.trim();
+  var title  = pan.querySelector("#n-title").value.trim();
+  if(!artist || !title){ msg.textContent = "Il me faut au moins l’artiste et le titre."; return; }
+  var f = nouveauFilm({
+    yt: yt, artist: artist, title: title,
+    sortie: pan.querySelector("#n-date").value,
+    type: pan.querySelector("#n-type").value.trim() || "Clip",
+    status: pan.querySelector("#n-statut").value,
+    credits: [["Réalisation, image & montage","BINKSFILMS"]]
+  });
+  f.slug = slugLibre(slugifier(artist + "-" + title) || "film", f._id);
+  FILMS.unshift(f);
+  fermerModale();
+  dessiner();
+  ouvrirEditeur(f._id);
+  toast("Film créé. Complète-le, puis exporte films.js.", "ok");
+}
+
+/* ============================================================
+   13. ÉVÉNEMENTS
+   Tout passe par la délégation : aucun écouteur par carte, la liste
+   reste légère même avec deux cents films.
+   ============================================================ */
+function acte(e){
+  var b = e.target.closest("[data-act]");
+  if(!b) return;
+  var a = b.getAttribute("data-act");
+  var id = b.getAttribute("data-id");
+  var k  = b.getAttribute("data-k");
+
+  switch(a){
+    case "fermer":
+      if(b.closest("#pan-editeur")) fermerEditeur(); else fermerModale();
+      return;
+    case "nouveau": ouvrirNouveau(); return;
+    case "creer": creer(); return;
+    case "export": exporter(); return;
+    case "zip": exporterZip(); return;
+    case "export-force": faireExport(); return;
+    case "verif": ouvrirVerification(); return;
+    case "fichier": voirFichier(); return;
+    case "copier": copierCode(); return;
+    case "telecharger": telechargerBlob(new Blob([fabriquer()], {type:"text/javascript;charset=utf-8"}), "films.js"); return;
+    case "import": ouvrirImport(); return;
+    case "import-choisir": $("f-import").click(); return;
+    case "historique": ouvrirHistorique(); return;
+    case "restaurer": restaurer(parseInt(b.getAttribute("data-i"),10)); return;
+    case "depots": ouvrirDepots(); return;
+    case "dep-un": telechargerMedia(b.getAttribute("data-c")); return;
+    case "dep-tout":
+      aDeposer().forEach(function(c, i){ setTimeout(function(){ telechargerMedia(c); }, i * 350); });
+      return;
+    case "aide": ouvrirAide(); return;
+    case "apercu-site": ouvrirApercu(null); return;
+    case "apercu": ouvrirApercu(id); return;
+    case "ap-desk":
+      $("ap-cadre").className = "cadre";
+      b.classList.add("on"); b.nextElementSibling.classList.remove("on"); return;
+    case "ap-mob":
+      $("ap-cadre").className = "cadre mob";
+      b.classList.add("on"); b.previousElementSibling.classList.remove("on"); return;
+    case "filtre":
+      vue.filtre = b.getAttribute("data-v"); dessinerEntete(); dessinerListe(); return;
+    case "editer": fermerModale(); ouvrirEditeur(id); return;
+    case "plus": ouvrirPlus(id); return;
+    case "monter": deplacer(id, -1); return;
+    case "descendre": deplacer(id, 1); return;
+    case "statut": fermerModale(); changerStatut(id, b.getAttribute("data-s")); return;
+    case "dupliquer": fermerModale(); dupliquer(id); return;
+    case "supprimer": fermerModale(); supprimer(id); return;
+    case "aller":
+      fermerModale();
+      ouvrirEditeur(id, b.getAttribute("data-c"));
+      return;
+
+    /* --- éditeur --- */
+    case "slug-auto": {
+      var f0 = filmEnCours();
+      if(!f0) return;
+      var nv = slugLibre(slugifier(f0.artist + "-" + f0.title) || "film", f0._id);
+      if(f0.status === "published" && f0.slug !== nv &&
+         !confirm("Modifier cette adresse peut casser les liens déjà partagés.\n\n"
+           + f0.slug + "  →  " + nv + "\n\nContinuer ?")) return;
+      f0.slug = nv; f0._slugManuel = false;
+      var el = $("pan-editeur").querySelector('[data-k="slug"]');
+      if(el) el.value = nv;
+      sauverBientot();
+      toast("Adresse regénérée : " + nv, "ok");
+      return;
+    }
+    case "img-choisir":
+      enAttenteImage = {k:k};
+      $("f-image").value = "";
+      $("f-image").click();
+      return;
+    case "img-retirer": poserChemin(k, ""); return;
+    case "img-telecharger": telechargerMedia(cheminDe(k)); return;
+    case "img-reparer": {
+      /* Un chemin d'ordinateur dont le fichier existe déjà dans images/ :
+         on propose le chemin relatif qui, lui, fonctionne en ligne. */
+      var ancien = cheminDe(k);
+      var base = nomFichier(ancien.replace(/\\/g, "/"));
+      var candidat = DOSSIER_IMG + base;
+      fichierExiste(candidat).then(function(ok){
+        if(ok && confirm("Ce fichier existe déjà dans le projet :\n\n" + candidat
+          + "\n\nUtiliser ce chemin (il fonctionne en ligne) ?")){
+          poserChemin(k, candidat);
+          toast("Chemin corrigé.", "ok");
+        } else if(!ok && confirm("Ce chemin pointe vers ton ordinateur et ne peut pas fonctionner en ligne.\n\n"
+          + "Le retirer ? Tu pourras choisir l’image proprement juste après.")){
+          poserChemin(k, "");
+        }
+      });
+      return;
+    }
+    case "cred-ajouter": {
+      var f1 = filmEnCours();
+      if(!f1) return;
+      f1.credits.push(["",""]);
+      dessinerCredits();
+      var champs = $("pan-editeur").querySelectorAll("[data-cred] input");
+      if(champs.length) champs[champs.length - 2].focus();
+      sauverBientot();
+      return;
+    }
+    case "cred-sup": {
+      var f2 = filmEnCours();
+      f2.credits.splice(parseInt(b.getAttribute("data-i"),10), 1);
+      dessinerCredits(); sauverBientot(); return;
+    }
+    case "cred-monter": case "cred-descendre": {
+      var f3 = filmEnCours();
+      var i3 = parseInt(b.getAttribute("data-i"),10);
+      var j3 = i3 + (a === "cred-monter" ? -1 : 1);
+      if(j3 < 0 || j3 >= f3.credits.length) return;
+      var x3 = f3.credits.splice(i3,1)[0];
+      f3.credits.splice(j3,0,x3);
+      dessinerCredits(); sauverBientot(); return;
+    }
+    case "gal-ajouter":
+      enAttenteImage = {k:"gal"};
+      $("f-images").value = "";
+      $("f-images").click();
+      return;
+
+    /* --- preview --- */
+    case "prev-choisir":
+      $("f-video").value = "";
+      $("f-video").click();
+      return;
+    case "prev-supprimer": {
+      var fp = filmEnCours();
+      if(!fp || !fp.preview) return;
+      if(!confirm("Supprimer la preview de ce film ?\n\n"
+        + "Le film n’est pas touché : sa carte reprendra simplement sa bannière.")) return;
+      fp.preview = null;
+      dessinerPreview(); dessinerEntete(); sauverBientot();
+      toast("Preview retirée — la carte revient à la bannière.", "ok");
+      return;
+    }
+    case "prev-verifier": {
+      var fv = filmEnCours();
+      if(!fv || !fv.preview) return;
+      oublierChemin(fv.preview.src);
+      dessinerPreview();
+      toast("Vérification relancée.", "ok");
+      return;
+    }
+    case "prev-telecharger": {
+      var fd = filmEnCours();
+      if(fd && fd.preview) telechargerMedia(fd.preview.src);
+      return;
+    }
+    case "sim-desk": case "sim-mob": {
+      var sim = $("pan-editeur").querySelector("[data-sim]");
+      if(!sim) return;
+      sim.classList.toggle("mob", a === "sim-mob");
+      var grp = b.parentNode;
+      Array.prototype.forEach.call(grp.children, function(x){ x.classList.remove("on"); });
+      b.classList.add("on");
+      return;
+    }
+    case "vprep-annuler": {
+      var vp = $("pan-modale").__vprep;
+      if(vp && vp.info) URL.revokeObjectURL(vp.info.url);
+      fermerModale(); return;
+    }
+    case "vprep-ok": validerPreparationVideo(); return;
+    case "bts-sup": {
+      var f4 = filmEnCours();
+      f4.bts.splice(parseInt(b.getAttribute("data-i"),10), 1);
+      dessinerGalerie(); dessinerEntete(); sauverBientot(); return;
+    }
+    case "bts-gauche": case "bts-droite": {
+      var f5 = filmEnCours();
+      var i5 = parseInt(b.getAttribute("data-i"),10);
+      var j5 = i5 + (a === "bts-gauche" ? -1 : 1);
+      if(j5 < 0 || j5 >= f5.bts.length) return;
+      var x5 = f5.bts.splice(i5,1)[0];
+      f5.bts.splice(j5,0,x5);
+      dessinerGalerie(); sauverBientot(); return;
+    }
+    case "prep-annuler": {
+      var p = $("pan-modale").__prep;
+      if(p && p.info) URL.revokeObjectURL(p.info.url);
+      fermerModale(); return;
+    }
+    case "prep-ok": validerPreparation(); return;
+  }
+}
+document.addEventListener("click", acte);
+
+/* Les modales de préparation se redessinent : un seul écouteur posé ici,
+   plutôt qu'un nouveau à chaque ouverture. */
+["input","change"].forEach(function(ev){
+  $("pan-modale").addEventListener(ev, function(){ majFinalImage(); majFinalVideo(); });
+});
+
+/* saisie dans l'éditeur */
+$("pan-editeur").addEventListener("input", function(e){
+  var t = e.target;
+  if(t.hasAttribute("data-k")) majChamp(t.getAttribute("data-k"), t.value);
+  else if(t.hasAttribute("data-cred-k")) relireCredits();
+});
+$("pan-editeur").addEventListener("change", function(e){
+  var t = e.target;
+  if(t.hasAttribute("data-k")) majChamp(t.getAttribute("data-k"), t.value);
+});
+$("pan-editeur").addEventListener("focusin", function(e){
+  if(e.target.getAttribute("data-k") === "slug") garderSlug(e.target);
+});
+
+/* recherche / tri */
+$("q").addEventListener("input", function(){
+  vue.q = this.value;
+  $("q-vide").hidden = !this.value;
+  dessinerListe();
+});
+$("q-vide").addEventListener("click", function(){
+  $("q").value = ""; vue.q = ""; this.hidden = true; dessinerListe(); $("q").focus();
+});
+$("tri").addEventListener("change", function(){ vue.tri = this.value; dessinerListe(); });
+
+/* menu ••• de la barre */
+$("b-menu").addEventListener("click", function(e){
+  e.stopPropagation();
+  var m = $("menu");
+  var on = m.classList.toggle("on");
+  this.setAttribute("aria-expanded", on ? "true" : "false");
+});
+document.addEventListener("click", function(e){
+  var m = $("menu");
+  if(m.classList.contains("on") && !m.contains(e.target)){
+    m.classList.remove("on");
+    $("b-menu").setAttribute("aria-expanded","false");
+  }
+});
+
+/* Échap ferme le panneau du dessus */
+document.addEventListener("keydown", function(e){
+  if(e.key !== "Escape") return;
+  if($("menu").classList.contains("on")){ $("menu").classList.remove("on"); return; }
+  if($("pan-modale").classList.contains("on")){ fermerModale(); return; }
+  if($("pan-editeur").classList.contains("on")) fermerEditeur();
+});
+/* clic sur le fond d'un panneau */
+["pan-modale","pan-editeur"].forEach(function(idp){
+  $(idp).addEventListener("mousedown", function(e){
+    if(e.target === this){ idp === "pan-modale" ? fermerModale() : fermerEditeur(); }
+  });
+});
+
+/* fichiers */
+$("f-image").addEventListener("change", function(){
+  var file = this.files && this.files[0];
+  if(!file || !enAttenteImage) return;
+  var k = enAttenteImage.k;
+  lireImage(file)
+    .then(function(info){ ouvrirPreparation([info], k, 0); })
+    .catch(function(){ toast("Ce fichier n’a pas pu être lu comme une image.", "ko"); });
+});
+$("f-images").addEventListener("change", function(){
+  var files = Array.prototype.slice.call(this.files || []);
+  if(!files.length) return;
+  Promise.all(files.map(function(f){ return lireImage(f).catch(function(){ return null; }); }))
+    .then(function(l){
+      l = l.filter(Boolean);
+      if(!l.length){ toast("Aucune image lisible dans la sélection.", "ko"); return; }
+      ouvrirPreparation(l, "gal", 0);
+    });
+});
+$("f-video").addEventListener("change", function(){
+  var file = this.files && this.files[0];
+  if(!file) return;
+  if(file.size > 200*1024*1024){
+    toast("Ce fichier fait " + poids(file.size) + " : beaucoup trop lourd pour une boucle de carte. Réexporte-le plus court et plus léger.", "ko");
+    return;
+  }
+  lireVideo(file)
+    .then(ouvrirPreparationVideo)
+    .catch(function(e){ toast(e.message, "ko"); });
+});
+$("f-import").addEventListener("change", function(){
+  var file = this.files && this.files[0];
+  if(!file) return;
+  var nom = file.name;
+  var r = new FileReader();
+  r.onload = function(){ importer(String(r.result), nom); };
+  r.onerror = function(){ toast("Fichier illisible.", "ko"); };
+  r.readAsText(file);
+  this.value = "";
+});
+
+/* glisser-déposer sur ordinateur — les flèches restent la voie sûre */
+(function(){
+  var src = null;
+  var liste = $("liste");
+  liste.addEventListener("dragstart", function(e){
+    var c = e.target.closest(".carte");
+    if(!c || vue.tri !== "ordre"){ e.preventDefault(); return; }
+    src = c.getAttribute("data-id");
+    c.classList.add("glisse");
+    try{ e.dataTransfer.setData("text/plain", src); e.dataTransfer.effectAllowed = "move"; }catch(x){}
+  });
+  liste.addEventListener("dragover", function(e){
+    if(!src) return;
+    e.preventDefault();
+    var c = e.target.closest(".carte");
+    Array.prototype.forEach.call(liste.querySelectorAll(".cible"), function(x){ x.classList.remove("cible"); });
+    if(c && c.getAttribute("data-id") !== src) c.classList.add("cible");
+  });
+  liste.addEventListener("drop", function(e){
+    e.preventDefault();
+    var c = e.target.closest(".carte");
+    if(!src || !c) return;
+    var cible = c.getAttribute("data-id");
+    if(cible === src) return;
+    var i = indexDe(src), j = indexDe(cible);
+    var x = FILMS.splice(i,1)[0];
+    FILMS.splice(j,0,x);
+    src = null;
+    dessiner();
+  });
+  liste.addEventListener("dragend", function(){
+    src = null;
+    Array.prototype.forEach.call(liste.querySelectorAll(".glisse,.cible"), function(x){
+      x.classList.remove("glisse"); x.classList.remove("cible");
+    });
+  });
+})();
+
+/* on prévient avant de perdre un travail non exporté */
+addEventListener("beforeunload", function(e){
+  if(modifie()){ e.preventDefault(); e.returnValue = ""; }
+});
+
+/* ============================================================
+   14. DÉMARRAGE
+   Le fichier films.js du projet est la référence. Le travail local
+   n'écrase jamais silencieusement une version plus récente.
+   ============================================================ */
+function demarrer(){
+  var duFichier = Array.isArray(window.FILMS_DATA) ? window.FILMS_DATA : null;
+  var sigFichier = duFichier ? JSON.stringify(duFichier.map(function(f){ return pourExport(normaliser(f,0)); })) : "";
+  var local = lireEtat();
+
+  if(!duFichier && !local){
+    FILMS = [];
+    refExport = signature();
+    dessiner();
+    $("bandeaux").innerHTML = '<div class="bandeau ko"><span class="txt">'
+      + '<b>films.js n’a pas été chargé.</b> Ouvre cette page depuis le même dossier que films.js, '
+      + 'ou importe un fichier films.js existant.</span>'
+      + '<button class="btn petit" data-act="import">Importer</button></div>';
+    return;
+  }
+  if(local && Array.isArray(local.films)){
+    FILMS = local.films.map(normaliser);
+    refExport = local.refExport || signature();
+    var travailEnCours = signature() !== refExport;
+    /* Le fichier du projet a changé ailleurs depuis la dernière session ? */
+    if(duFichier && sigFichier !== refExport){
+      dessiner(); sonderPreviews();
+      $("bandeaux").insertAdjacentHTML("afterbegin",
+        '<div class="bandeau att"><span class="txt"><b>films.js du projet a changé</b> depuis ta dernière session ici'
+        + (travailEnCours ? ", et tu as des modifications locales non exportées" : "") + '. Que garder ?</span>'
+        + '<button class="btn petit" data-act="prendre-fichier">Le fichier du projet</button>'
+        + '<button class="btn petit" data-act="garder-local">Mon travail local</button></div>');
+      return;
+    }
+    dessiner(); sonderPreviews();
+    if(travailEnCours) toast("Travail local retrouvé — pense à exporter films.js quand tu as fini.", "att");
+    return;
+  }
+  FILMS = duFichier.map(normaliser);
+  refExport = signature();
+  dessiner();
+  sonderPreviews();
+}
+/* les deux réponses possibles au conflit fichier / local */
+document.addEventListener("click", function(e){
+  var b = e.target.closest("[data-act]");
+  if(!b) return;
+  var a = b.getAttribute("data-act");
+  if(a === "prendre-fichier"){
+    snapshot("Avant reprise du films.js du projet");
+    FILMS = (window.FILMS_DATA || []).map(normaliser);
+    refExport = signature();
+    sauver(); dessiner();
+    toast("Données reprises depuis films.js.", "ok");
+  }
+  if(a === "garder-local"){
+    refExport = "";                 /* le travail local diffère du site : à exporter */
+    dessiner();
+    toast("Travail local gardé. Exporte films.js pour mettre le site à jour.", "att");
+  }
+});
+
+/* La liste des films s'affiche tout de suite. Les aperçus des médias
+   gardés en mémoire arrivent après, sans rien retenir. */
+demarrer();
+Media.charger().then(function(){
+  dessinerEntete();
+  if(editionId){ rafraichirImages(); dessinerGalerie(); dessinerPreview(); }
+}, function(){
+  toast("Le navigateur refuse la mémoire locale des images : les aperçus des fichiers pas encore déposés ne s’afficheront pas. Le reste fonctionne.", "att");
+});
+</script>
+</body>
+</html>

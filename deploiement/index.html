@@ -1,0 +1,2284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Le site est déjà sombre : sans ces deux lignes, certains navigateurs
+     mobiles appliquent leur « mode sombre forcé » et inversent tout,
+     ce qui donne un fond blanc avec du texte gris illisible. -->
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0A0A0A">
+<title>BINKSFILMS — Les Beaux Arts du Ghetto</title>
+<meta name="description" content="BINKSFILMS — réalisateur. Clips et images, réalisés, filmés et montés par la même personne.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230A0A0A'/%3E%3Ctext x='32' y='45' font-family='Arial Black,Arial' font-size='38' font-weight='900' fill='%23EDEBE6' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme:dark;          /* on assume le thème : pas d'inversion automatique */
+  --noir:#0A0A0A;
+  --ivoire:#EDEBE6;
+  --gris:#8E8A84;
+  --gris-2:#5C5955;
+  --rouge:#B11226;
+  --ligne:rgba(237,235,230,.12);
+  --ligne-2:rgba(237,235,230,.06);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:auto;background:var(--noir)}   /* fond explicite, pas seulement hérité */
+body{
+  background:var(--noir);
+  color:var(--ivoire);
+  font-family:'Archivo','Helvetica Neue',Arial,sans-serif;
+  font-size:16px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(177,18,38,.5);color:#fff}
+:focus-visible{outline:1px solid var(--rouge);outline-offset:3px}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;color:inherit}
+img,video{display:block;max-width:100%}
+section[id]{scroll-margin-top:76px}
+
+.wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+@media(min-width:1024px){.wrap{padding:0 48px}}
+
+.display{font-weight:800;font-stretch:125%;text-transform:uppercase;letter-spacing:-.01em;line-height:.94}
+.voix{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:400}
+.lab{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gris)}
+
+/* ---------- LE BLOC DE MARQUE ----------
+   Le nom en grotesque lourde et élargie, la phrase en italique de
+   labeur juste dessous : les deux moitiés de « les beaux arts du
+   ghetto » sont dans les deux polices. On ne l'explique jamais,
+   on le répète — header, accueil, générique de fin. */
+.lockup{display:block}
+.lk-name{display:block;font-weight:800;font-stretch:125%;text-transform:uppercase;letter-spacing:-.01em;line-height:.92}
+.lk-base{display:block;font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:300;line-height:1.2}
+
+/* ---------- header ---------- */
+header{
+  position:fixed;inset:0 0 auto;z-index:40;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  padding:18px 24px;
+  background:linear-gradient(to bottom,rgba(10,10,10,.78),transparent);
+  transition:background .3s;
+}
+@media(min-width:1024px){header{padding:22px 48px}}
+header.sc{background:rgba(10,10,10,.94)}
+header .lk-name{font-size:13px;letter-spacing:.26em}
+header .lk-base{font-size:11.5px;color:var(--gris);margin-top:1px;letter-spacing:.01em}
+nav{display:flex;gap:26px}
+nav a{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris);transition:color .25s}
+nav a:hover{color:var(--ivoire)}
+@media(max-width:600px){
+  header{padding:14px 20px}
+  header .lk-name{font-size:11px;letter-spacing:.18em}
+  header .lk-base{font-size:10px}
+  nav{gap:13px}
+  nav a{font-size:9.5px;letter-spacing:.08em}
+}
+@media(max-width:400px){
+  header{padding:12px 16px;gap:10px}
+  header .lk-name{font-size:10px;letter-spacing:.13em}
+  header .lk-base{font-size:9px}
+  nav{gap:10px}
+  nav a{font-size:9px;letter-spacing:.04em}
+}
+
+/* ---------- accueil ---------- */
+#hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;overflow:hidden}
+#herovid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1s}
+#hero .scrim{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,10,10,.3) 0%,rgba(10,10,10,.08) 36%,rgba(10,10,10,.52) 76%,rgba(10,10,10,.86) 100%)}
+#hero .inner{position:relative;z-index:1;width:100%;padding-bottom:62px}
+#hero .lk-name{font-size:clamp(44px,9.6vw,128px)}
+#hero .lk-base{font-size:clamp(21px,3.7vw,46px);margin-top:12px;color:var(--ivoire)}
+#hero .role{margin-top:22px;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gris)}
+
+/* ---------- films ---------- */
+#films{padding:130px 0 40px}
+.sect-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:56px}
+.sect-head h2{font-weight:800;font-stretch:125%;font-size:13px;letter-spacing:.24em;text-transform:uppercase}
+.sect-head .count{font-size:11px;letter-spacing:.14em;color:var(--gris);font-variant-numeric:tabular-nums}
+#grid{display:grid;grid-template-columns:1fr 1fr;gap:72px 28px}
+@media(max-width:760px){#grid{grid-template-columns:1fr}}
+.film{grid-column:span 1;text-align:left;background:none;border:none;padding:0;display:block;width:100%}
+.film.w{grid-column:1 / -1}
+/* La bannière. Arrondi net et discret — assez pour se voir, assez peu
+   pour ne pas faire bouton d'application. */
+.film .thumb{--r:11px;position:relative;aspect-ratio:16/9;overflow:hidden;background:#111;border-radius:var(--r)}
+/* pas de zoom au survol : la parallaxe pilote déjà transform */
+.film .thumb img{width:100%;object-fit:cover}
+/* Boucle de preview du projet. Elle n'est révélée qu'au moment où elle
+   joue vraiment : si le fichier manque ou si le navigateur refuse la
+   lecture, la bannière reste, et rien ne clignote. */
+.film .thumb video.prev{
+  position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;
+  opacity:0;transition:opacity .5s ease;pointer-events:none;background:transparent;
+}
+.film.prev-on .thumb video.prev{opacity:1}
+/* voile monté du bas : il tient le texte sans noircir l'image */
+.film .voile{
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to top,
+    rgba(6,6,6,.94) 0%, rgba(6,6,6,.72) 22%, rgba(6,6,6,.3) 46%, rgba(6,6,6,0) 72%);
+}
+.film .cartel{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:0 18px 15px}
+/* Le nom porte, le titre chante, la fiche se tait.
+   Le nom en grotesque massive, le titre dans une serif de titrage à fort
+   contraste : deux voix nettement différentes, mais du même monde. */
+.film .artiste{
+  font-weight:800;font-stretch:112%;text-transform:uppercase;
+  font-size:15px;letter-spacing:.005em;line-height:1.1;
+  text-shadow:0 1px 12px rgba(0,0,0,.55);
+}
+.film .titre{
+  margin-top:1px;
+  font-family:'Instrument Serif','Newsreader',Georgia,serif;
+  font-style:italic;font-weight:400;
+  font-size:24px;line-height:1.1;letter-spacing:.005em;color:var(--ivoire);
+  text-shadow:0 1px 14px rgba(0,0,0,.6);
+}
+.film .meta{
+  margin-top:8px;
+  font-size:9.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(237,235,230,.55);font-variant-numeric:tabular-nums;
+}
+.film .artiste span{background-image:linear-gradient(var(--ivoire),var(--ivoire));background-size:0 1px;background-position:0 100%;background-repeat:no-repeat;transition:background-size .35s}
+.film:hover .artiste span{background-size:100% 1px}
+
+/* ---------- la grille sur téléphone ----------
+   Format d'affiche plutôt que vignette 16/9, espacement resserré :
+   on voit la carte en cours et on devine celle d'avant et d'après.
+   (Placé après les règles de base, sinon elles l'emportent.) */
+@media(max-width:760px){
+  #grid{gap:34px}
+  .film .thumb{--r:13px}
+  .film .cartel{padding:0 20px 17px}
+  .film .artiste{font-size:16px}
+  .film .titre{font-size:27px}
+  .film .meta{margin-top:9px}
+
+  /* Bannière au centre de l'écran : le texte se floute puis s'efface,
+     l'image reste seule. Il revient net dès qu'elle n'est plus au centre. */
+  .film .cartel,.film .voile{transition:opacity .4s ease,filter .4s ease,transform .4s ease}
+  /* .vu.actif : la règle de dévoilement remet l'opacité à 1 plus loin
+     dans la feuille, il faut donc être plus spécifique qu'elle */
+  .film.vu.actif .cartel{opacity:0;filter:blur(7px);transform:translateY(5px)}
+  .film.vu.actif .voile{opacity:.35}
+}
+
+/* ---------- réalisateur ---------- */
+#binks{padding:160px 0 0}
+#binks .cols{display:grid;gap:52px;align-items:start;margin-top:56px}
+@media(min-width:900px){#binks .cols{grid-template-columns:5fr 4fr;gap:80px}}
+/* Le mot découpé dans la vidéo.
+   Un aplat noir portant du texte blanc, en fusion « multiply », posé sur
+   la vidéo : le noir reste noir, le blanc laisse passer l'image. Si le
+   navigateur ignore mix-blend-mode, on garde du texte blanc sur noir. */
+/* Un rouge profond sert de plancher : la vidéo est passée en noir et
+   blanc puis fusionnée en « screen » par-dessus. Là où le plan est
+   sombre il reste du rouge, là où il est clair le rouge s'éclaircit.
+   Les lettres gardent donc toujours une valeur lisible. */
+.mot-video{position:relative;isolation:isolate;background:#8C1020;overflow:hidden}
+.mot-video video{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  mix-blend-mode:screen;
+  filter:grayscale(1) brightness(1.05) contrast(1.35);
+}
+/* Troisième passe : « lighten » remonte le noir absolu du masque à la
+   couleur exacte de la page. Le rectangle disparaît, il ne reste que
+   le mot. Les lettres, elles, sont plus claires : elles ne bougent pas. */
+.mot-video .voile{position:absolute;inset:0;background:var(--noir);mix-blend-mode:lighten;pointer-events:none}
+/* par défaut : mot plein, lisible même si rien ne charge.
+   Serré au maximum pour que les lettres occupent toute la surface —
+   c'est ce qui rend l'image vraiment visible à l'intérieur. */
+.mot-video h2{
+  position:relative;margin:0;padding:0;
+  color:var(--ivoire);
+  /* taille de secours : le script la recalcule pour remplir la ligne pile */
+  font-size:clamp(30px,9vw,132px);
+  line-height:1.02;letter-spacing:-.022em;   /* assez haut pour l'accent du É */
+  text-align:center;white-space:nowrap;
+}
+/* le plancher rouge est toujours là : la découpe peut s'appliquer
+   d'emblée, sans attendre le chargement d'une image */
+.mot-video h2{background:#000;color:#fff;mix-blend-mode:multiply}
+@supports not (mix-blend-mode:multiply){
+  .mot-video{background:none}
+  .mot-video video{display:none}
+  .mot-video h2{background:none;color:var(--ivoire);mix-blend-mode:normal}
+}
+/* Deux voix : la grotesque pour les faits, la serif pour ce qui se dit.
+   C'est ce contraste qui fait la personnalité du bloc — pas la taille. */
+#binks .txt p{
+  margin-top:26px;max-width:30em;
+  font-family:'Newsreader',Georgia,'Times New Roman',serif;
+  font-size:20px;line-height:1.62;color:var(--ivoire);
+}
+/* le chiffre porte par l'échelle, pas par un bloc de statistiques */
+#binks .txt p.lead{
+  margin-top:0;max-width:none;
+  font-family:'Archivo','Helvetica Neue',Arial,sans-serif;
+  font-weight:800;font-stretch:112%;text-transform:uppercase;
+  font-size:clamp(26px,3.4vw,44px);line-height:1.02;letter-spacing:-.02em;
+}
+/* l'aparté, dans la voix : en serif italique, plus bas, plus calme */
+#binks .txt p.lead em{
+  display:block;margin-top:10px;
+  font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:300;
+  font-size:clamp(19px,2.2vw,28px);line-height:1.25;letter-spacing:0;
+  text-transform:none;color:var(--gris);
+}
+/* Quelqu'un qui parle, pas une plaque : minuscules, corps modeste,
+   graisse normale, aucun interlettrage. Les capitales et l'interlettrage
+   font une déclaration ; ici on veut une voix. Chaque mot s'allume au
+   défilement — les mots arrivent comme on les dirait. */
+#binks .voix-bloc{margin-top:48px}
+#binks .voix-bloc p{
+  margin:0;max-width:31em;
+  font-family:'Archivo','Helvetica Neue',Arial,sans-serif;
+  font-weight:400;font-stretch:100%;
+  font-size:17px;letter-spacing:-.004em;line-height:1.68;
+  color:var(--ivoire);
+}
+#binks .voix-bloc p + p{margin-top:22px}
+#binks .voix-bloc .mot{display:inline-block;opacity:.16}
+/* la chute : un ton plus haut que la voix, jamais plus qu'un ton —
+   sinon elle écrase ce qu'elle est censée conclure */
+#binks .txt p.clos{
+  margin-top:44px;max-width:none;
+  font-style:italic;font-weight:300;
+  font-size:clamp(18px,1.8vw,22px);line-height:1.45;
+  color:var(--gris);
+}
+@media(max-width:560px){
+  #binks .voix-bloc p{font-size:16px;line-height:1.66}
+}
+@media(prefers-reduced-motion:reduce){
+  #binks .voix-bloc .mot{opacity:1}
+}
+#binks figure{margin:0}
+#binks figure img{width:100%;height:auto}
+#binks figcaption{margin-top:12px;font-size:13px;color:var(--gris-2)}
+
+/* ---------- contact ---------- */
+/* une seule colonne : l'ordre de lecture 1-2-3 est garanti à toute taille */
+#contact{padding:160px 0 0}
+#contact h2{font-size:clamp(34px,5.4vw,64px)}
+#contact .intro{margin-top:26px;font-size:17.5px;line-height:1.7;max-width:30em}
+/* second niveau : présent, mais volontairement sous le bouton principal */
+.direct{margin-top:52px;display:flex;flex-direction:column;align-items:flex-start;gap:10px}
+.direct .aussi{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gris-2)}
+.direct a.mail{
+  font-weight:800;font-stretch:112%;text-transform:lowercase;
+  font-size:clamp(17px,2.1vw,24px);letter-spacing:-.01em;line-height:1.15;
+  border-bottom:2px solid var(--ligne);padding-bottom:6px;
+  transition:border-color .3s;overflow-wrap:anywhere;
+}
+.direct a.mail:hover{border-color:var(--ivoire)}
+
+/* les réseaux : des prolongements, pas des boutons — troisième niveau */
+.ailleurs{margin-top:30px;border-top:1px solid var(--ligne-2);padding-top:24px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.ailleurs a{
+  display:inline-flex;align-items:baseline;gap:9px;
+  font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--gris);transition:color .25s;
+}
+.ailleurs a:hover{color:var(--ivoire)}
+/* flèche simple pivotée : le caractère « ↗ » a une variante emoji et
+   certains téléphones l'affichent en carré bleu. Celui-ci n'en a pas. */
+.ailleurs a i{
+  display:inline-block;font-style:normal;font-size:12px;line-height:1;
+  transform:rotate(-45deg);transform-origin:center;transition:transform .25s;
+}
+.ailleurs a:hover i{transform:rotate(-45deg) translateX(3px)}
+.ailleurs a em{font-style:normal;font-weight:400;font-size:12.5px;letter-spacing:.02em;text-transform:none;color:var(--gris-2)}
+footer .ailleurs{margin-top:30px;border:0;padding-top:0;flex-direction:row;gap:28px;justify-content:center;align-items:baseline}
+
+/* les deux entrées : parler d'un projet / questions */
+.entrees{margin-top:44px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+.gros-cta{
+  display:inline-flex;align-items:center;gap:18px;
+  background:var(--ivoire);color:var(--noir);border:0;font-family:inherit;
+  font-size:clamp(13px,1.7vw,16px);font-weight:800;font-stretch:110%;
+  letter-spacing:.14em;text-transform:uppercase;
+  padding:22px 32px;transition:opacity .25s;
+}
+.gros-cta:hover{opacity:.84}
+.gros-cta i{font-style:normal;transition:transform .25s}
+.gros-cta:hover i{transform:translateX(5px)}
+.petit-cta{
+  background:none;border:0;border-bottom:1px solid var(--ligne);
+  font-family:inherit;font-size:12px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--gris);padding:0 0 5px;
+  transition:color .25s,border-color .25s;
+}
+.petit-cta:hover{color:var(--ivoire);border-color:var(--ivoire)}
+@media(max-width:560px){.gros-cta{width:100%;justify-content:space-between}}
+
+/* ---------- superposition : devis & questions ---------- */
+.ov{position:fixed;inset:0;z-index:100;background:var(--noir);display:none;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.ov.on{display:block}
+/* pas de délai de 300 ms au tap, pas de flash bleu : les gros choix
+   tactiles doivent répondre au doigt comme une vraie application */
+.ov button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.ov-bar{
+  position:sticky;top:0;z-index:2;background:var(--noir);
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:16px 20px;border-bottom:1px solid var(--ligne-2);
+}
+@media(min-width:900px){.ov-bar{padding:20px 48px}}
+.ov-bar button{background:none;border:0;font-family:inherit;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris);padding:7px 0;transition:color .25s}
+.ov-bar button:hover{color:var(--ivoire)}
+.ov-bar button.vide{visibility:hidden}
+.ov-step{font-size:11px;font-weight:600;letter-spacing:.2em;color:var(--gris-2);font-variant-numeric:tabular-nums}
+/* la marge du bas tient compte de la barre du navigateur mobile et de
+   l'encoche : aucune étape ne finit cachée derrière l'interface du téléphone */
+.ov-body{max-width:700px;margin:0 auto;padding:42px 20px calc(58px + env(safe-area-inset-bottom))}
+@media(min-width:900px){.ov-body{padding:62px 24px 110px}}
+/* le piège à robots : invisible, et surtout impossible à atteindre au clavier */
+.hp{position:absolute;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none}
+
+.dv-q{font-weight:800;font-stretch:125%;text-transform:uppercase;letter-spacing:-.01em;line-height:1.02;font-size:clamp(26px,5.2vw,44px)}
+.dv-sub{margin-top:13px;font-size:15px;color:var(--gris);max-width:34em}
+
+.dv-opts{margin-top:32px;display:flex;flex-direction:column;gap:9px}
+.opt{
+  display:block;width:100%;text-align:left;background:none;
+  border:1px solid var(--ligne);color:var(--ivoire);font-family:inherit;
+  font-size:15px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:19px 20px;transition:border-color .2s,background .2s,color .2s;
+}
+.opt:hover{border-color:rgba(237,235,230,.42)}
+.opt.on{background:var(--ivoire);color:var(--noir);border-color:var(--ivoire)}
+.opt small{display:block;margin-top:6px;font-size:11.5px;font-weight:500;letter-spacing:.06em;text-transform:none;color:var(--gris)}
+.opt.on small{color:rgba(10,10,10,.6)}
+
+.dv-chips{margin-top:32px;display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  background:none;border:1px solid var(--ligne);color:var(--ivoire);font-family:inherit;
+  font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  padding:14px 18px;min-height:46px;transition:border-color .2s,background .2s,color .2s;
+}
+.chip:hover{border-color:rgba(237,235,230,.42)}
+.chip.on{background:var(--ivoire);color:var(--noir);border-color:var(--ivoire)}
+
+/* petit intertitre à l'intérieur d'un écran (« je te réponds par ») */
+.dv-mini{margin-top:34px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris)}
+.dv-mini+.dv-chips{margin-top:12px}
+
+.dv-champ{margin-top:26px;display:flex;flex-direction:column;gap:8px}
+.dv-champ label{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris)}
+.dv-champ input,.dv-champ textarea{
+  width:100%;background:transparent;color:var(--ivoire);
+  border:0;border-bottom:1px solid var(--ligne);font-family:inherit;font-size:16px;
+  padding:11px 0;border-radius:0;-webkit-appearance:none;appearance:none;transition:border-color .25s;
+}
+.dv-champ textarea{resize:vertical;min-height:96px;line-height:1.6}
+.dv-champ input:focus,.dv-champ textarea:focus{outline:none;border-bottom-color:var(--ivoire)}
+.dv-champ input::placeholder,.dv-champ textarea::placeholder{color:var(--gris-2)}
+
+.dv-suite{margin-top:36px;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+.suivant{
+  background:var(--ivoire);color:var(--noir);border:0;font-family:inherit;
+  font-size:12.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  padding:17px 32px;transition:opacity .25s;
+}
+.suivant:hover{opacity:.84}
+.suivant[disabled]{opacity:.26;cursor:not-allowed}
+.passer{background:none;border:0;font-family:inherit;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gris);transition:color .25s}
+.passer:hover{color:var(--ivoire)}
+.dv-err{margin-top:16px;font-size:13.5px;color:var(--rouge);display:none}
+.dv-err.on{display:block}
+/* mobile : tout se fait au pouce, sans changer de main.
+   Le bouton d'avancement reste collé au bas de l'écran — il ne part
+   jamais sous la ligne de flottaison, même quand la liste d'options
+   dépasse la hauteur du téléphone. */
+@media(max-width:560px){
+  .ov-body{padding-top:34px}
+  .dv-q{font-size:clamp(26px,7.4vw,34px)}
+  .dv-opts{gap:7px}
+  .opt{padding:16px 18px}
+  .dv-suite{
+    position:sticky;bottom:0;z-index:1;margin:26px -20px 0;
+    padding:14px 20px calc(14px + env(safe-area-inset-bottom));
+    background:linear-gradient(to top,var(--noir) 62%,rgba(10,10,10,0));
+  }
+  .dv-suite:empty{display:none}      /* écrans qui enchaînent sans bouton */
+  .dv-suite .suivant{width:100%;text-align:center}
+}
+
+/* calendrier */
+.cal{margin-top:30px;border:1px solid var(--ligne);padding:15px}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.cal-mois{font-size:12.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.cal-head button{background:none;border:1px solid var(--ligne);color:var(--gris);font-family:inherit;font-size:13px;line-height:1;padding:8px 13px;transition:.2s}
+.cal-head button:hover:not([disabled]){color:var(--ivoire);border-color:rgba(237,235,230,.42)}
+.cal-head button[disabled]{opacity:.22;cursor:not-allowed}
+.cal-jours,.cal-grille{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal-jours span{text-align:center;font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--gris-2);padding-bottom:7px}
+.cal-grille button{
+  aspect-ratio:1;min-height:42px;background:none;border:1px solid transparent;color:var(--ivoire);
+  font-family:inherit;font-size:13.5px;font-variant-numeric:tabular-nums;transition:.15s;
+  touch-action:manipulation;
+}
+.cal-grille button:hover:not([disabled]){border-color:rgba(237,235,230,.38)}
+.cal-grille button[disabled]{color:var(--gris-2);opacity:.32;cursor:default}
+.cal-grille button.on{background:var(--ivoire);color:var(--noir);font-weight:700}
+.cal-grille i{display:block;aspect-ratio:1}
+
+/* écran final */
+.dv-fin{padding:12vh 0 0}
+.dv-fin h3{font-weight:800;font-stretch:125%;text-transform:uppercase;font-size:clamp(40px,10vw,90px);line-height:.94;letter-spacing:-.02em}
+.dv-fin p{margin-top:24px;font-size:17px;color:var(--gris);max-width:30em}
+.dv-fin .relire{margin-top:40px}
+/* filet tant que l'envoi direct n'est pas branché : la demande, copiable */
+.dv-recap{
+  margin-top:28px;width:100%;min-height:220px;background:transparent;color:var(--gris);
+  border:1px solid var(--ligne);border-radius:0;font-family:inherit;font-size:13.5px;
+  line-height:1.75;padding:16px;resize:vertical;-webkit-appearance:none;appearance:none;
+}
+.dv-recap:focus{outline:none;border-color:rgba(237,235,230,.42)}
+
+/* questions (FAQ) */
+.faq-liste{margin-top:34px;border-top:1px solid var(--ligne-2)}
+.faq-q{
+  display:block;width:100%;text-align:left;background:none;border:0;
+  border-bottom:1px solid var(--ligne-2);color:var(--ivoire);font-family:inherit;
+  font-size:15.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  padding:23px 0;transition:color .25s;
+}
+.faq-q:hover{color:var(--gris)}
+.faq-rep p{margin-top:26px;font-size:19px;line-height:1.6;max-width:32em}
+.faq-rep p+p{margin-top:15px;font-size:16px;color:var(--gris)}
+
+/* ---------- générique de fin ---------- */
+/* de l'air, pas du vide : 72 + 48 au lieu de 170 + 110 */
+footer{margin-top:72px;border-top:1px solid var(--ligne-2);padding:48px 24px 44px;text-align:center}
+footer .lk-name{font-size:13px;letter-spacing:.26em}
+footer .lk-base{font-size:15px;color:var(--gris);margin-top:6px}
+footer .legal{margin-top:34px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gris-2)}
+
+/* ---------- page film ---------- */
+/* Sur la page film, les gris secondaires montent d'un cran : au telephone,
+   le texte gris disparaissait presque. La hierarchie ne bouge pas
+   (ivoire principal -> gris secondaire -> noir), elle devient lisible.
+   Porte par body.film : l'accueil garde exactement ses valeurs. */
+body.film{
+  --gris:#ABA69F;
+  --gris-2:#7C7770;
+  --ligne:rgba(237,235,230,.17);
+  --ligne-2:rgba(237,235,230,.10);
+}
+/* on garde les marges latérales de .wrap : seul le haut est redéfini */
+#film-view{display:none;min-height:100svh;padding-top:120px}
+#film-view.on{display:block}
+body.film main#home{display:none}
+.back{display:inline-flex;align-items:center;gap:9px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris);transition:color .35s ease}
+.back .ar{font-style:normal;display:inline-block;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+.player{position:relative;aspect-ratio:16/9;background:#000;margin-top:26px;overflow:hidden}
+.player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+/* les images de l'aperçu, en fondu lent */
+.player .fr{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease}
+.player .fr.on{opacity:1}
+/* l'aperçu vidéo : invisible tant qu'il ne joue pas réellement */
+.player .apercu{position:absolute;inset:0;overflow:hidden;opacity:0;transition:opacity .9s ease;pointer-events:none}
+.player.apercu-on .apercu{opacity:1}
+.player.apercu-on .fr{opacity:0}
+.player .apercu iframe{position:absolute;inset:0;width:100%;height:100%;border:0;transform:scale(1.06);transform-origin:center}
+/* lecture lancée : le même lecteur passe au premier plan, avec ses commandes */
+.player.lecture .apercu{opacity:1;pointer-events:auto;z-index:2}
+.player.lecture .apercu iframe{transform:none}
+.player.lecture .fr,.player.lecture .lire{opacity:0;pointer-events:none}
+/* le bouton */
+.lire{position:absolute;inset:0;width:100%;height:100%;border:0;background:none;padding:0;cursor:pointer}
+.lire .ombre{position:absolute;inset:0;background:rgba(10,10,10,.3);transition:background .3s}
+.lire:hover .ombre{background:rgba(10,10,10,.12)}
+.lire .play{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:68px;height:68px;border-radius:50%;
+  border:1px solid rgba(237,235,230,.45);background:rgba(10,10,10,.58);
+  display:flex;align-items:center;justify-content:center;transition:border-color .3s,background .3s;
+}
+.lire:hover .play{border-color:rgba(237,235,230,.95);background:rgba(10,10,10,.72)}
+.lire .play i{margin-left:5px;width:0;height:0;border-top:11px solid transparent;border-bottom:11px solid transparent;border-left:17px solid var(--rouge)}
+.lire-txt{
+  position:absolute;left:50%;top:calc(50% + 52px);transform:translateX(-50%);
+  font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(237,235,230,.72);white-space:nowrap;transition:color .3s;
+}
+.lire:hover .lire-txt{color:var(--ivoire)}
+.f-head{margin-top:44px;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px 24px}
+.f-head .eyebrow{font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gris);font-variant-numeric:tabular-nums}
+.f-title{margin-top:14px;font-size:clamp(30px,5.6vw,72px);max-width:16em;overflow-wrap:break-word}
+.f-meta{margin-top:34px;display:flex;flex-direction:column;gap:8px;max-width:60ch}
+.f-meta .row{display:flex;gap:18px;font-size:14px;color:var(--gris)}
+.f-meta .row b{color:var(--ivoire);font-weight:600;min-width:150px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;line-height:1.5;padding-top:2px;overflow-wrap:break-word}
+/* la valeur prend le reste et se replie : un credit long ne pousse jamais la ligne */
+.f-meta .row>span{flex:1 1 auto;min-width:0;overflow-wrap:break-word}
+.f-meta a.yt{border-bottom:1px solid var(--ligne);transition:color .3s ease,border-color .3s ease}
+.f-meta a.yt .fl{display:inline-block;font-style:normal;transform:rotate(-45deg);line-height:1;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+.f-note{margin-top:44px;max-width:34em}
+.f-note p{font-size:20px;line-height:1.6}
+.f-sect{margin-top:70px}
+.f-sect .lab{display:block;margin-bottom:18px}
+.cc{position:relative;aspect-ratio:16/9;overflow:hidden;background:#111;user-select:none;-webkit-user-select:none;cursor:pointer}
+.cc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cc img.b{opacity:0}
+.cc.hold img.b{opacity:1}
+.cc .hint{position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(237,235,230,.6)}
+.cc-leg{margin-top:12px;font-size:15px;color:var(--gris)}
+.bts{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+@media(max-width:640px){.bts{grid-template-columns:repeat(2,1fr)}}
+.bts img{width:100%;aspect-ratio:4/3;object-fit:cover}
+/* ---- precedent / suivant ----
+   Entierement deduit de l'ordre reel de FILMS : aucun lien n'est ecrit a la
+   main, un film ajoute prend sa place tout seul.
+   Mobile : deux zones empilees, tres aerees, separees par un filet infime.
+   Desktop : gauche / droite, sans cloison verticale. */
+.f-nav{margin-top:84px;border-top:1px solid var(--ligne-2);display:grid;grid-template-columns:1fr}
+.f-nav a{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:11px;padding:26px 0 30px;min-width:0}
+.f-nav .next{border-top:1px solid var(--ligne-2)}
+/* le filet qui s'allonge, pose exactement sur la ligne du dessus */
+.f-nav a::after{content:"";position:absolute;left:0;top:-1px;height:1px;width:0;background:var(--ivoire);opacity:.55;transition:width .55s cubic-bezier(.2,.7,.2,1)}
+.f-nav .dir{display:inline-flex;align-items:center;gap:10px;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gris-2);transition:color .35s ease}
+.f-nav .ar{font-style:normal;display:inline-block;transition:transform .4s cubic-bezier(.2,.7,.2,1)}
+/* deux lignes au maximum : un titre a rallonge ne desequilibre jamais le bloc */
+.f-nav .nt{font-size:16px;font-weight:600;line-height:1.3;color:var(--gris);transition:color .35s ease;overflow-wrap:break-word;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+@media(min-width:760px){
+  .f-nav{margin-top:118px;grid-template-columns:1fr 1fr;column-gap:56px}
+  .f-nav a{padding:32px 0 36px}
+  .f-nav .next{border-top:0;align-items:flex-end;text-align:right}
+  .f-nav .next::after{left:auto;right:0}
+  .f-nav .nt{font-size:17px}
+}
+
+/* ---- micro-interactions ----
+   Au pointeur : au survol. Au doigt : au contact, sans etat qui reste colle. */
+@media(hover:hover){
+  .back:hover{color:var(--ivoire)}
+  .back:hover .ar{transform:translateX(-4px)}
+  .f-meta a.yt:hover{color:var(--ivoire);border-color:var(--ivoire)}
+  .f-meta a.yt:hover .fl{transform:rotate(-45deg) translate(3px,0)}
+  .f-nav a:hover .nt{color:var(--ivoire)}
+  .f-nav a:hover .dir{color:var(--gris)}
+  .f-nav a:hover::after{width:100%}
+  .f-nav .prev:hover .ar{transform:translateX(-4px)}
+  .f-nav .next:hover .ar{transform:translateX(4px)}
+}
+.back:active,.back:focus-visible{color:var(--ivoire)}
+.back:active .ar,.back:focus-visible .ar{transform:translateX(-4px)}
+.f-meta a.yt:active,.f-meta a.yt:focus-visible{color:var(--ivoire);border-color:var(--ivoire)}
+.f-meta a.yt:active .fl,.f-meta a.yt:focus-visible .fl{transform:rotate(-45deg) translate(3px,0)}
+.f-nav a:active .nt,.f-nav a:focus-visible .nt{color:var(--ivoire)}
+.f-nav a:active .dir,.f-nav a:focus-visible .dir{color:var(--gris)}
+.f-nav a:active::after,.f-nav a:focus-visible::after{width:100%}
+.f-nav .prev:active .ar,.f-nav .prev:focus-visible .ar{transform:translateX(-4px)}
+.f-nav .next:active .ar,.f-nav .next:focus-visible .ar{transform:translateX(4px)}
+
+/* ---- le blanc du haut, sur mobile ----
+   On garde la respiration, on rapproche seulement l'entree du contenu
+   d'environ un quart. Le desktop garde ses 120px intacts. */
+@media(max-width:759px){
+  #film-view{padding-top:90px}
+  .player{margin-top:18px}
+  .f-head{margin-top:36px}
+  .f-meta{margin-top:28px}
+}
+@media(max-width:420px){
+  .f-meta .row{gap:14px}
+  /* sous 420px, l'intitule ne prend jamais plus de la moitie de la ligne :
+     la valeur garde toujours de quoi respirer */
+  .f-meta .row b{min-width:112px;max-width:48%}
+}
+
+/* ---------- le cut ---------- */
+#cut{position:fixed;inset:0;z-index:90;background:#000;opacity:0;pointer-events:none}
+#cut.on{opacity:1}
+#cut.off{transition:opacity .12s ease}
+
+/* ---------- apparitions au scroll ----------
+   Les images se dévoilent par un volet qui monte, comme un rideau ;
+   les textes montent d'un cran. Rien ne clignote, rien ne rebondit. */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .85s cubic-bezier(.2,.7,.2,1),transform .85s cubic-bezier(.2,.7,.2,1)}
+.rv.vu{opacity:1;transform:none}
+/* le volet doit garder l'arrondi, sinon il recarre les angles */
+.film .thumb{
+  clip-path:inset(100% 0 0 0 round var(--r));transition:clip-path 1.05s cubic-bezier(.2,.75,.2,1);
+  transform-origin:center center;will-change:transform;backface-visibility:hidden;
+}
+.film.vu .thumb{clip-path:inset(0 0 0 0 round var(--r))}
+/* la grille devient un espace : les cadres y basculent en profondeur */
+#grid{perspective:1300px;perspective-origin:50% 50%}
+.film .cartel{opacity:0;transform:translateY(14px);transition:opacity .7s ease .18s,transform .7s cubic-bezier(.2,.7,.2,1) .18s}
+.film.vu .cartel{opacity:1;transform:none}
+/* l'image est plus haute que son cadre et glisse : profondeur au scroll */
+.film .thumb img{height:116%;top:-8%;position:absolute;left:0;will-change:transform}
+/* la preview suit exactement le même cadrage que la bannière */
+.film .thumb video.prev{height:116%;top:-8%;will-change:transform}
+
+/* ---------- intro ----------
+   Une couche d'entree posee au-dessus du site, rien de plus : la video
+   porte deja toute la direction artistique (ciel, lune, corbeaux), on
+   n'y ajoute donc aucun filtre, aucun grain, aucun overlay colore.
+   Deux elements a l'ecran : la video, et ENTER. */
+#intro{position:fixed;inset:0;z-index:200;background:var(--noir);overflow:hidden}
+/* le fond est noir des la premiere frame : jamais de flash blanc,
+   jamais le site qui se devine derriere */
+body.intro{overflow:hidden}
+
+#intro video{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center center;
+  opacity:0;transition:opacity .9s ease;
+  pointer-events:none;                 /* aucune interaction native du lecteur */
+}
+#intro.pret video{opacity:1}
+/* certains iOS reinjectent une barre de lecture : on la nie */
+#intro video::-webkit-media-controls,
+#intro video::-webkit-media-controls-enclosure,
+#intro video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
+
+/* voile bas : juste ce qu'il faut pour que ENTER tienne sur un ciel clair.
+   Presque imperceptible, et il ne touche pas le reste de l'image. */
+#intro .voile-bas{
+  position:absolute;inset:auto 0 0;height:34%;
+  background:linear-gradient(to top,rgba(10,10,10,.34),rgba(10,10,10,0));
+  pointer-events:none;
+}
+
+/* ENTER : capitales fines, tres espacees, un filet dessous.
+   Pas de cadre, pas de neon, pas de halo. */
+#intro .entrer{
+  position:absolute;left:50%;transform:translateX(-50%);
+  bottom:calc(8vh + env(safe-area-inset-bottom,0px));
+  display:flex;flex-direction:column;align-items:center;gap:13px;
+  background:none;border:0;padding:16px 20px;   /* zone tactile confortable */
+  opacity:0;transition:opacity 1.1s ease .12s;
+}
+#intro.pret .entrer{opacity:1}
+#intro .entrer .mot{
+  font-size:12px;font-weight:300;text-transform:uppercase;
+  letter-spacing:.42em;text-indent:.42em;    /* l'indent compense l'espace final */
+  color:#DAD7D1;
+  transition:letter-spacing .75s cubic-bezier(.2,.7,.2,1),color .75s ease;
+}
+#intro .entrer .filet{
+  display:block;width:66px;height:1px;background:rgba(237,235,230,.32);
+  transform:scaleX(.5);transform-origin:center;   /* il s'ouvre depuis son centre */
+  transition:transform .8s cubic-bezier(.2,.7,.2,1),background .75s ease;
+}
+@media(hover:hover){
+  #intro .entrer:hover .mot{letter-spacing:.52em;text-indent:.52em;color:#F2F0EC}
+  #intro .entrer:hover .filet{transform:scaleX(1);background:rgba(237,235,230,.5)}
+}
+#intro .entrer:focus-visible .filet{transform:scaleX(1)}
+
+/* grands ecrans : le mot respire un peu plus, sans jamais grossir */
+@media(min-width:1024px){
+  #intro .entrer .mot{font-size:13px}
+  #intro .entrer .filet{width:82px}
+}
+
+/* En portrait, un cadre plus etroit que le 16/9 de la source : « cover »
+   rogne alors sur les cotes, pas en hauteur. La lune est a 56 % de la
+   largeur, on cale donc le cadrage dessus pour ne jamais la perdre. */
+@media(orientation:portrait){
+  #intro video{object-position:56% center}
+}
+/* ecrans etroits : ENTER remonte pour rester loin du bord et des barres
+   systeme, et le lettrage se resserre juste ce qu'il faut */
+@media(max-width:640px){
+  #intro .entrer{bottom:calc(11vh + env(safe-area-inset-bottom,0px))}
+  #intro .entrer .mot{font-size:11px;letter-spacing:.38em;text-indent:.38em}
+  #intro .entrer .filet{width:54px}
+}
+
+/* sortie : la video et ENTER s'effacent vers le noir, puis le noir
+   s'efface a son tour sur le site. Environ 620 ms en tout. */
+#intro.sort video,#intro.sort .voile-bas,#intro.sort .entrer{
+  opacity:0;transition:opacity .26s ease;pointer-events:none;
+}
+#intro.fini{opacity:0;transition:opacity .34s ease;pointer-events:none}
+
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+  .rv{opacity:1;transform:none}
+  .film .thumb{clip-path:none}
+  .film .cartel{opacity:1;transform:none}
+  .film .thumb img{height:100%;top:0}
+  .film .thumb video.prev{display:none}
+  /* l'intro reste, mais figee : la video ne joue pas, ENTER fonctionne */
+  #intro video{opacity:1}
+  #intro .entrer{opacity:1}
+}
+</style>
+</head>
+<body>
+
+<div id="intro">
+  <video id="introvid" autoplay muted loop playsinline preload="auto" tabindex="-1"
+         disablepictureinpicture disableremoteplayback aria-hidden="true"></video>
+  <span class="voile-bas" aria-hidden="true"></span>
+  <button type="button" class="entrer" id="entrer" aria-label="Entrer sur le site">
+    <span class="mot">Enter</span>
+    <span class="filet" aria-hidden="true"></span>
+  </button>
+</div>
+<script>
+/* La video d'intro n'est demandee que si la porte va reellement s'ouvrir :
+   revenir sur une page pendant la meme visite ne retelecharge pas les
+   4,4 Mo. C'est ici et pas dans le script du bas parce que la requete
+   doit partir avant films.js, qui bloque l'analyse du document. */
+(function(){
+  try{ if(sessionStorage.getItem("bf.intro2")) return; }catch(e){}
+  document.getElementById("introvid").src = "videos/video%20intro.mp4";
+})();
+</script>
+
+<header id="hdr">
+  <a class="lockup" href="#/" onclick="retourAccueil(event)" aria-label="BINKSFILMS — accueil">
+    <span class="lk-name">Binksfilms</span>
+    <span class="lk-base">Les beaux arts du ghetto</span>
+  </a>
+  <nav aria-label="Navigation">
+    <a href="#films">Films</a>
+    <a href="#binks">Réalisateur</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main id="home">
+
+  <section id="hero">
+    <video id="herovid" autoplay muted loop playsinline preload="metadata" aria-hidden="true">
+      <source src="videos/hero-loop.mp4" type="video/mp4">
+    </video>
+    <div class="scrim" aria-hidden="true"></div>
+    <div class="inner wrap">
+      <h1 class="lockup">
+        <span class="lk-name">Binksfilms</span>
+        <span class="lk-base">Les beaux arts du ghetto</span>
+      </h1>
+      <p class="role">Réalisateur</p>
+    </div>
+  </section>
+
+  <section id="films">
+    <div class="wrap">
+      <div class="sect-head rv">
+        <h2>Films</h2>
+        <span class="count" id="count"></span>
+      </div>
+      <div id="grid"></div>
+    </div>
+  </section>
+
+  <section id="binks">
+    <!-- le mot en bandeau pleine largeur : les images passent à travers
+         les lettres, et il y a assez de surface pour qu'on les voie -->
+    <div class="wrap">
+      <div class="mot-video rv">
+        <video id="motvid" src="videos/hero-loop.mp4" muted loop playsinline autoplay preload="metadata" aria-hidden="true"></video>
+        <h2 class="display"><span>Réalisateur</span></h2>
+        <span class="voile" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="wrap cols">
+      <div class="txt">
+        <p class="lead rv">Plus de 100 projets.<em>J’ai arrêté de compter.</em></p>
+        <!-- ses mots, marqués par un filet : on entend qui parle -->
+        <div class="voix-bloc rv">
+          <p>Quand j’ai envie de faire un truc, je le fais. Les codes, je les regarde après. J’essaie, je cherche, je pousse les idées jusqu’à tomber sur des choses que j’avais parfois même pas prévues.</p>
+          <p>Ça fait plus de 10 ans que je filme. Projet après projet, j’ai appris en faisant.</p>
+        </div>
+        <p class="clos rv">BinksFilms s’est construit comme ça&nbsp;:<br>en faisant, encore et encore.</p>
+      </div>
+      <figure class="rv">
+        <!-- width et height doivent correspondre aux vraies dimensions du
+             fichier : sinon le navigateur réserve la mauvaise place et la
+             page saute au chargement. À remettre à jour si tu changes la photo. -->
+        <img src="real-web.webp" width="1920" height="2566" alt="BinksFilms, réalisateur" loading="lazy">
+      </figure>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="wrap">
+      <h2 class="display rv">Contact</h2>
+      <p class="intro rv">Chaque projet est différent. Quelques infos me suffisent pour comprendre le tien et te faire une proposition adaptée.</p>
+
+      <!-- 1 — l'action principale -->
+      <div class="entrees">
+        <button class="gros-cta" onclick="ouvrirDevis()">Parler d’un projet <i>&rarr;</i></button>
+        <button class="petit-cta" onclick="ouvrirQuestions()">Questions fréquentes</button>
+      </div>
+
+      <!-- 2 — la voie directe -->
+      <div class="direct">
+        <p class="aussi">Ou directement</p>
+        <a class="mail" href="mailto:binksfilms@gmail.com">binksfilms@gmail.com</a>
+      </div>
+
+      <!-- 3 — les prolongements. Mêmes adresses répétées dans le générique de fin. -->
+      <div class="ailleurs">
+        <a href="https://instagram.com/binksfilms" target="_blank" rel="noopener">Instagram <i>&#8594;</i> <em>coulisses &amp; sorties</em></a>
+        <a href="https://youtube.com/@binksfilms" target="_blank" rel="noopener">YouTube <i>&#8594;</i> <em>les films en entier</em></a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<main id="film-view" class="wrap" aria-live="polite"></main>
+
+<footer>
+  <a class="lockup" href="#/" onclick="retourAccueil(event)">
+    <span class="lk-name">Binksfilms</span>
+    <span class="lk-base">Les beaux arts du ghetto</span>
+  </a>
+  <div class="ailleurs">
+    <a href="https://instagram.com/binksfilms" target="_blank" rel="noopener">Instagram <i>&#8594;</i></a>
+    <a href="https://youtube.com/@binksfilms" target="_blank" rel="noopener">YouTube <i>&#8594;</i></a>
+  </div>
+  <p class="legal">© 2026 — BINKSFILMS</p>
+</footer>
+
+<div id="cut" aria-hidden="true"></div>
+
+<!-- Les films sont dans films.js — modifiable sans code depuis admin.html -->
+<script src="films.js"></script>
+
+<div class="ov" id="devis" role="dialog" aria-modal="true" aria-label="Parler d’un projet">
+  <div class="ov-bar">
+    <button id="dv-retour" onclick="dvRetour()">&larr; Retour</button>
+    <span class="ov-step" id="dv-step"></span>
+    <button onclick="fermerOv()">Fermer &#10005;</button>
+  </div>
+  <div class="ov-body" id="dv-body"></div>
+  <!-- Piège à robots : invisible et hors tabulation, donc jamais rempli par
+       un humain. Si quelque chose écrit dedans, la demande n'est pas envoyée. -->
+  <input class="hp" id="dv-hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+</div>
+
+<div class="ov" id="questions" role="dialog" aria-modal="true" aria-label="Questions fréquentes">
+  <div class="ov-bar">
+    <button id="fq-retour" class="vide" onclick="fqListe()">&larr; Retour</button>
+    <span class="ov-step">Questions</span>
+    <button onclick="fermerOv()">Fermer &#10005;</button>
+  </div>
+  <div class="ov-body" id="fq-body"></div>
+</div>
+
+<script>
+/* ================= DONNÉES =================
+   Chaque film peut recevoir, quand la matière existe :
+   lieu, date, note (ta voix, 1 à 3 phrases),
+   contrechamp {a, b, legende}  — a = le plan, b = derrière la caméra,
+   bts [ ...images ], credits [ [poste, nom], ... ].
+   Un champ absent n'affiche simplement rien. */
+var MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+var CREDITS = [["Réalisation, image & montage","BINKSFILMS"]];
+function annee(f){ return (f.sortie||"").slice(0,4); }
+function dateLongue(f){
+  var p = (f.sortie||"").split("-");
+  if(p.length !== 3) return "";
+  return parseInt(p[2],10) + " " + MOIS[parseInt(p[1],10)-1] + " " + p[0];
+}
+/* Un chemin d'image utilisable sur le web. Les chemins locaux d'un
+   ordinateur (C:\..., file://, antislashs) n'existent pas une fois le site
+   en ligne : on les ignore plutôt que d'afficher une image cassée. */
+function cheminImage(p){
+  p = String(p == null ? "" : p).trim();
+  if(!p) return "";
+  if(/^[a-zA-Z]:[\\/]/.test(p)) return "";
+  if(/^file:/i.test(p)) return "";
+  if(p.indexOf("\\") >= 0) return "";
+  return p;
+}
+/* La bannière : l'image perso si elle existe, sinon celle de YouTube. */
+function banniere(f){
+  var p = cheminImage(f.poster);
+  return p ? p : "https://i.ytimg.com/vi/"+f.yt+"/maxresdefault.jpg";
+}
+/* POUR ENRICHIR UN FILM — remplacer la ligne film(...) par un objet complet.
+   Tous les champs sont facultatifs : ce qui manque ne s'affiche pas.
+   Exemple :
+
+   Object.assign(film("tokio-hotel","NZ6eu93tG4M","Fulltrap & Laskiiz","Tokio Hotel"), {
+     lieu: "Évry",
+     date: "14 novembre 2025, 03h12",
+     note: "Le générateur a lâché à 3h. On a fini aux phares de voiture.",
+     contrechamp: {
+       a: "img/tokio-plan.jpg",       // le plan du clip
+       b: "img/tokio-derriere.jpg",   // au même moment, derrière la caméra
+       legende: "Trois personnes et un téléphone."
+     },
+     bts: ["img/tokio-1.jpg","img/tokio-2.jpg"],
+     credits: [["Réalisation, image & montage","BINKSFILMS"],["Assistant","Prénom Nom"]]
+   }),
+
+   Les images vont dans un dossier img/ à côté de ce fichier. */
+/* Les films viennent de films.js, modifiable sans code via admin.html.
+   Les films archivés ne sont pas affichés. */
+/* Un film est en ligne s'il est publié. « status » est le champ moderne,
+   « archive » l'ancien : les deux sont lus, donc un films.js d'avant
+   continue de fonctionner sans rien changer. */
+function enLigne(f){
+  if(!f || !f.yt) return false;
+  if(f.status) return f.status === "published";
+  return !f.archive;
+}
+var FILMS = (window.FILMS_DATA || []).filter(enLigne).map(function(f){
+  /* Un crédit incomplet ne doit pas produire une ligne vide. */
+  var cred = (f.credits || []).filter(function(c){
+    return c && c.length >= 2 && String(c[0]).trim() && String(c[1]).trim();
+  });
+  /* Le contre-champ n'a de sens qu'avec ses deux images. */
+  var cc = null;
+  if(f.contrechamp){
+    var a = cheminImage(f.contrechamp.a), b = cheminImage(f.contrechamp.b);
+    if(a && b) cc = { a:a, b:b, legende:f.contrechamp.legende || "" };
+  }
+  /* Preview du projet : facultative. Une chaîne seule est acceptée
+     autant qu'un objet {src, poster}. Sans source valable : rien. */
+  var prev = null;
+  var ps = f.preview ? (typeof f.preview === "string" ? f.preview : f.preview.src) : "";
+  ps = cheminImage(ps);
+  if(ps) prev = { src: ps, poster: cheminImage(f.preview && f.preview.poster) };
+  return {
+    slug:f.slug, yt:f.yt, artist:f.artist||"", title:f.title||"",
+    sortie:f.sortie||"", type:f.type||"Clip", poster:cheminImage(f.poster),
+    note:f.note||"", lieu:f.lieu||"", tournage:f.tournage||"",
+    credits: cred.length ? cred : CREDITS,
+    contrechamp: cc,
+    bts: (f.bts || []).map(cheminImage).filter(Boolean),
+    preview: prev
+  };
+});
+var isFile = location.protocol === "file:";
+var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var pad = function(n){ return String(n).padStart(2,"0"); };
+function esc(s){ return String(s).replace(/</g,"&lt;"); }
+/* ---------- Chaîne de secours des images ----------
+   Une bannière personnalisée absente ou cassée ne doit jamais laisser un
+   trou. Ordre : image perso → miniature YouTube (maxres puis hq) →
+   placeholder BINKSFILMS. Certaines vidéos n'ont pas de maxresdefault :
+   YouTube renvoie alors soit une 404 (onerror), soit une vignette grise
+   120x90 (onload) — les deux cas sont traités.
+   Étapes : 0 = image perso, 1 = maxresdefault, 2 = hqdefault, 3 = placeholder. */
+var PLACEHOLDER = "data:image/svg+xml;charset=utf-8,"+encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720">'
+  + '<rect width="1280" height="720" fill="#0E0E0E"/>'
+  + '<text x="640" y="368" fill="#4A4744" font-family="Helvetica,Arial,sans-serif"'
+  + ' font-size="34" font-weight="700" letter-spacing="12" text-anchor="middle">BINKSFILMS</text>'
+  + '</svg>');
+function etapeSuivante(img){
+  var yt = img.getAttribute("data-yt") || "";
+  var e = parseInt(img.getAttribute("data-etape") || "0", 10);
+  img.onload = img.onerror = null;
+  /* image d'appoint (2e, 3e vue du fondu) : elle disparaît au lieu
+     d'imposer un placeholder au milieu de l'enchaînement */
+  if(img.getAttribute("data-appoint")){
+    if(img.parentNode) img.parentNode.removeChild(img);
+    return;
+  }
+  while(e < 3){
+    e++;
+    if(e === 1 && yt){ poserImage(img, "https://i.ytimg.com/vi/"+yt+"/maxresdefault.jpg", 1); return; }
+    if(e === 2 && yt){ poserImage(img, "https://i.ytimg.com/vi/"+yt+"/hqdefault.jpg", 2); return; }
+    if(e >= 3){ poserImage(img, PLACEHOLDER, 3); return; }
+  }
+}
+function poserImage(img, src, etape){
+  img.setAttribute("data-etape", String(etape));
+  if(etape >= 3){ img.onload = img.onerror = null; img.src = src; return; }
+  img.onerror = function(){ etapeSuivante(img); };
+  img.onload  = function(){
+    /* vignette grise de YouTube : 120x90 */
+    if(img.naturalWidth < 200 && /i\.ytimg\.com/.test(img.src)) etapeSuivante(img);
+    else img.onload = img.onerror = null;
+  };
+  img.src = src;
+}
+/* Branche la chaîne de secours sur les images posées par innerHTML. */
+function brancherVisuels(racine){
+  var imgs = (racine || document).querySelectorAll("img[data-repli]");
+  for(var i = 0; i < imgs.length; i++){
+    (function(img){
+      if(img.getAttribute("data-branche")) return;
+      img.setAttribute("data-branche", "1");
+      img.onerror = function(){ etapeSuivante(img); };
+      img.onload  = function(){
+        if(img.naturalWidth < 200 && /i\.ytimg\.com/.test(img.src)) etapeSuivante(img);
+        else img.onload = img.onerror = null;
+      };
+      /* image déjà en échec avant que le gestionnaire soit posé */
+      if(img.complete && (img.naturalWidth === 0 ||
+         (img.naturalWidth < 200 && /i\.ytimg\.com/.test(img.src)))) etapeSuivante(img);
+    })(imgs[i]);
+  }
+}
+function thumb(f){
+  /* étape 0 si l'image vient du dossier du site, 1 si elle vient déjà de YouTube */
+  var etape = f.poster ? 0 : 1;
+  var h = '<img src="'+banniere(f)+'" alt="" loading="lazy" data-repli="1"'
+        + ' data-yt="'+f.yt+'" data-etape="'+etape+'">';
+  /* La source n'est posée qu'au moment de jouer : aucune vidéo n'est
+     téléchargée tant que la carte n'est pas regardée.
+     Le poster reprend la bannière du film — pas d'image en plus à fournir. */
+  if(f.preview){
+    h += '<video class="prev" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"'
+       + ' poster="'+(f.preview.poster || banniere(f))+'"'
+       + ' data-src="'+f.preview.src+'"></video>';
+  }
+  return h;
+}
+/* ---------- boucles de preview des cartes ----------
+   Desktop : au survol. Téléphone : la carte au centre de l'écran, celle
+   que la parallaxe marque déjà « actif ». Muette, en boucle, jamais
+   plus d'une à la fois. Si le fichier manque, la vidéo se retire et la
+   bannière reste : aucun carré vide, aucune icône cassée. */
+var previewEnCours = null;
+function previewPossible(){
+  if(isFile || reduced) return false;
+  var co = navigator.connection;
+  if(co && (co.saveData || /(^|-)2g$/.test(co.effectiveType || ""))) return false;
+  return true;
+}
+function previewJouer(carte){
+  if(!carte || !previewPossible()) return;
+  var v = carte.querySelector("video.prev");
+  if(!v) return;
+  if(previewEnCours && previewEnCours !== v) previewArreter(previewEnCours.closest(".film"));
+  previewEnCours = v;
+  if(!v.getAttribute("src")){
+    v.setAttribute("src", v.getAttribute("data-src"));
+    v.addEventListener("error", function(){
+      /* fichier absent ou format refusé : on efface la vidéo, pas la carte */
+      carte.classList.remove("prev-on");
+      if(v.parentNode) v.parentNode.removeChild(v);
+      if(previewEnCours === v) previewEnCours = null;
+    });
+    v.addEventListener("playing", function(){ carte.classList.add("prev-on"); });
+  }
+  var p = v.play();
+  if(p && p.catch) p.catch(function(){ carte.classList.remove("prev-on"); });
+}
+function previewArreter(carte){
+  if(!carte) return;
+  var v = carte.querySelector("video.prev");
+  carte.classList.remove("prev-on");
+  if(v){ try{ v.pause(); }catch(e){} }
+  if(previewEnCours === v) previewEnCours = null;
+}
+function brancherPreviews(racine){
+  if(!previewPossible()) return;
+  /* le survol n'existe que là où il y a une vraie souris */
+  if(!matchMedia("(hover:hover) and (pointer:fine)").matches) return;
+  var cartes = racine.querySelectorAll(".film");
+  for(var i = 0; i < cartes.length; i++){
+    (function(c){
+      if(!c.querySelector("video.prev")) return;
+      c.addEventListener("mouseenter", function(){ previewJouer(c); });
+      c.addEventListener("mouseleave", function(){ previewArreter(c); });
+      c.addEventListener("focusin",  function(){ previewJouer(c); });
+      c.addEventListener("focusout", function(){ previewArreter(c); });
+    })(cartes[i]);
+  }
+}
+
+/* ================= GRILLE =================
+   Accrochage : une grande toutes les cinq, le reste par paires.
+   Règle de sûreté : jamais une carte seule en fin de rangée — la
+   dernière passe en pleine largeur. Vaut pour n'importe quel nombre
+   de films, donc rien à retoucher quand la liste s'allonge. */
+function accrochage(n){
+  var w = [], col = 0, i;
+  for(i = 0; i < n; i++) w[i] = (i % 5 === 0);
+  for(i = 0; i < n; i++){
+    if(w[i]) col = 0;
+    else col = col ? 0 : 1;
+  }
+  if(col === 1) w[n-1] = true;
+  return w;
+}
+(function(){
+  var n = FILMS.length, w = accrochage(n);
+  document.getElementById("count").textContent = pad(n) + " films";
+  document.getElementById("grid").innerHTML = FILMS.map(function(f,i){
+    /* Le texte vit dans la bannière, pas sous elle. Mêmes informations,
+       simplement posées sur l'image avec un voile pour la lisibilité. */
+    return '<a class="film'+(w[i]?" w":"")+'" href="#/film/'+f.slug+'">'
+      + '<div class="thumb">'
+      +   thumb(f)
+      +   '<span class="voile" aria-hidden="true"></span>'
+      +   '<div class="cartel">'
+      +     '<p class="artiste"><span>'+esc(f.artist)+'</span></p>'
+      +     '<p class="titre">'+esc(f.title)+'</p>'
+      +     '<p class="meta">'+f.type+' &middot; '+annee(f)+'</p>'
+      +   '</div>'
+      + '</div></a>';
+  }).join("");
+  brancherVisuels(document.getElementById("grid"));
+  brancherPreviews(document.getElementById("grid"));
+})();
+
+/* ================= LECTEUR ================= */
+/* Aperçu : quatre images du film qui se fondent lentement l'une dans l'autre.
+   Aucune iframe tant qu'on n'a pas cliqué — donc rien qui puisse être bloqué
+   à l'arrivée, aucun habillage YouTube, et ça marche même hors ligne.
+   Le lecteur réel ne se charge qu'au clic. */
+var apercuTimer = null;
+function lecteur(f){
+  var label = esc(f.artist+" — "+f.title);
+  /* première image = la bannière (perso ou YouTube), puis 3 vues du film */
+  var vues = [banniere(f),
+              "https://i.ytimg.com/vi/"+f.yt+"/hq1.jpg",
+              "https://i.ytimg.com/vi/"+f.yt+"/hq2.jpg",
+              "https://i.ytimg.com/vi/"+f.yt+"/hq3.jpg"];
+  var h = vues.map(function(src,i){
+    /* la première image suit la chaîne de secours complète ; les trois
+       vues d'appoint disparaissent simplement si YouTube ne les a pas */
+    var att = (i === 0)
+      ? ' data-repli="1" data-yt="'+f.yt+'" data-etape="'+(f.poster ? 0 : 1)+'"'
+      : ' data-repli="1" data-appoint="1"';
+    return '<img class="fr'+(i===0?" on":"")+'" src="'+src+'" alt=""'+att+'>';
+  }).join("");
+  /* réceptacle de l'aperçu vidéo : reste vide et invisible tant que
+     la lecture n'a pas réellement démarré */
+  if(!isFile && !reduced) h += '<div class="apercu"><div id="apercu-hote"></div></div>';
+  h += '<button class="lire" onclick="lireFilm(this,\''+f.yt+'\',\''+label.replace(/'/g,"’")+'\')" aria-label="Lire '+label+'">'
+     + '<span class="ombre"></span><span class="play"><i></i></span>'
+     + '<span class="lire-txt">'+(isFile ? "Voir sur YouTube" : "Lire le film")+'</span></button>';
+  return h;
+}
+function lancerApercu(){
+  clearInterval(apercuTimer);
+  if(reduced) return;
+  var joueur = document.querySelector(".player");
+  if(!joueur || joueur.querySelectorAll(".fr").length < 2) return;
+  var n = 0;
+  /* on relit les images à chaque tour : une vue que YouTube n'a pas
+     fournie a pu être retirée entre-temps, le fondu ne doit pas
+     s'arrêter sur une image absente */
+  apercuTimer = setInterval(function(){
+    if(!document.body.contains(joueur)){ clearInterval(apercuTimer); return; }
+    var frames = joueur.querySelectorAll(".fr");
+    if(frames.length < 2){ clearInterval(apercuTimer); return; }
+    for(var k = 0; k < frames.length; k++) frames[k].classList.remove("on");
+    n = (n + 1) % frames.length;
+    frames[n].classList.add("on");
+  }, 2600);
+}
+
+/* ---------- aperçu vidéo, muet et en boucle ----------
+   On passe par l'API YouTube pour connaître l'état réel du lecteur :
+   la vidéo n'est révélée qu'au moment où elle joue vraiment. Si la
+   lecture automatique est refusée, ou si l'API est bloquée, rien ne
+   s'affiche et les images fixes continuent — jamais de logo YouTube
+   ni de rectangle vide. */
+var apercuPlayer = null, ytPret = false, ytFile = [];
+function chargerYT(){
+  if(document.getElementById("yt-api")) return;
+  var s = document.createElement("script");
+  s.id = "yt-api";
+  s.src = "https://www.youtube.com/iframe_api";
+  document.head.appendChild(s);
+}
+window.onYouTubeIframeAPIReady = function(){
+  ytPret = true;
+  ytFile.forEach(function(fn){ fn(); });
+  ytFile = [];
+};
+function stopApercuVideo(){
+  if(apercuPlayer){
+    try{ apercuPlayer.destroy(); }catch(e){}
+    apercuPlayer = null;
+  }
+}
+function lancerApercuVideo(f){
+  stopApercuVideo();
+  if(isFile || reduced) return;
+  /* on n'impose pas un chargement vidéo à quelqu'un en connexion lente
+     ou en mode économie de données : les images fixes suffisent */
+  var co = navigator.connection;
+  if(co && (co.saveData || /(^|-)2g$/.test(co.effectiveType || ""))) return;
+  function creer(){
+    var hote = document.getElementById("apercu-hote");
+    if(!hote) return;                          /* on a changé de page entre-temps */
+    apercuPlayer = new YT.Player("apercu-hote", {
+      videoId: f.yt,
+      /* controls:1 dès le départ pour que ce MÊME lecteur serve ensuite à la
+         lecture complète. Pendant l'aperçu il ne reçoit aucun clic
+         (pointer-events:none), donc ses commandes ne s'affichent pas. */
+      playerVars: {
+        autoplay:1, mute:1, controls:1, loop:1, playlist:f.yt,
+        start:12, modestbranding:1, rel:0, playsinline:1,
+        iv_load_policy:3
+      },
+      events: {
+        onReady: function(e){
+          e.target.mute();
+          e.target.playVideo();
+          /* seconde tentative : le premier appel arrive parfois avant que
+             le lecteur soit vraiment prêt à démarrer */
+          setTimeout(function(){
+            var p = document.querySelector(".player");
+            /* surtout pas si le visiteur a déjà lancé la lecture :
+               on lui couperait le son */
+            if(p && p.classList.contains("lecture")) return;
+            if(apercuPlayer === e.target && e.target.getPlayerState() !== 1){
+              e.target.mute(); e.target.playVideo();
+            }
+          }, 1200);
+        },
+        onStateChange: function(e){
+          var p = document.querySelector(".player");
+          if(!p) return;
+          /* une fois la vraie lecture lancée, on ne masque plus rien :
+             le spectateur doit pouvoir mettre en pause tranquillement */
+          if(p.classList.contains("lecture")) return;
+          if(e.data === YT.PlayerState.PLAYING){
+            p.classList.add("apercu-on");
+            clearInterval(apercuTimer);        /* la vidéo remplace les images */
+          }
+          else if(e.data === YT.PlayerState.BUFFERING){
+            /* passager : on ne change rien pour éviter un clignotement */
+          }
+          else {
+            /* pause, arrêt ou fin : on masque AVANT que YouTube n'affiche
+               son titre, sa chaîne et ses suggestions par-dessus le film */
+            p.classList.remove("apercu-on");
+            lancerApercu();                    /* les images fixes reprennent */
+            if(e.data === YT.PlayerState.ENDED){
+              try{ e.target.seekTo(12); e.target.playVideo(); }catch(err){}
+            }
+          }
+        },
+        onError: function(){ stopApercuVideo(); }
+      }
+    });
+  }
+  if(ytPret) creer(); else { ytFile.push(creer); chargerYT(); }
+}
+function lireFilm(btn,yt,title){
+  if(isFile){                       /* en fichier local, YouTube refuse l'intégration */
+    open("https://www.youtube.com/watch?v="+yt, "_blank", "noopener");
+    return;
+  }
+  clearInterval(apercuTimer);
+  var p = btn.parentNode;
+
+  /* Le lecteur de l'aperçu est déjà chargé et déjà autorisé à jouer :
+     on lui rend le son et les commandes au lieu d'en créer un nouveau.
+     Créer une iframe dans le clic obligeait à appuyer deux fois sur
+     mobile, le navigateur refusant de démarrer une iframe toute neuve. */
+  if(apercuPlayer && apercuPlayer.playVideo){
+    p.classList.add("lecture");
+    try{
+      apercuPlayer.unMute();
+      apercuPlayer.setVolume(100);
+      apercuPlayer.seekTo(0, true);
+      apercuPlayer.playVideo();
+    }catch(e){}
+    return;
+  }
+
+  /* pas d'aperçu (mouvement réduit, connexion lente) : lecteur classique */
+  p.classList.remove("apercu-on");
+  p.innerHTML = '<iframe class="plein" src="https://www.youtube-nocookie.com/embed/'+yt+'?autoplay=1&rel=0&playsinline=1" title="'+title+'" '
+    + 'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+}
+
+/* ================= PAGE FILM =================
+   Modele unique : toutes les pages de detail passent ici, quel que soit le
+   type de projet (clip, studio session, interview, documentaire, making of,
+   pub...). On ne touche jamais un film en particulier, on touche ce modele. */
+/* « Artiste — Titre », sans tiret orphelin si l'un des deux manque. */
+function intitule(f){
+  return [f.artist, f.title].filter(Boolean).join(" — ");
+}
+/* Un voisin de navigation. Le sens vaut "prev" ou "next". */
+function lienVoisin(sens, f, mot){
+  var fleche = '<i class="ar">'+(sens === "prev" ? "&larr;" : "&rarr;")+'</i>';
+  var lab = sens === "prev" ? fleche+'<span>'+mot+'</span>' : '<span>'+mot+'</span>'+fleche;
+  return '<a class="'+sens+'" href="#/film/'+f.slug+'">'
+    + '<span class="dir">'+lab+'</span>'
+    + '<span class="nt">'+esc(intitule(f))+'</span></a>';
+}
+function renderFilm(f,i){
+  var n = FILMS.length;
+  /* type et date : un champ vide ne laisse pas de tiret en l'air */
+  var oeil = [f.type, dateLongue(f)].filter(Boolean).join(" — ");
+  var h = '<a class="back" href="#/"><i class="ar">&larr;</i><span>Retour</span></a>'
+    + '<div class="player">'+lecteur(f)+'</div>'
+    + '<div class="f-head"><span class="eyebrow">'+esc(oeil)+'</span>'
+    + '<span class="eyebrow">'+pad(i+1)+' / '+pad(n)+'</span></div>'
+    + '<h1 class="f-title display">'+esc(intitule(f))+'</h1>'
+    + '<div class="f-meta">'
+    + f.credits.map(function(c){ return '<div class="row"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>'; }).join("")
+    + (f.lieu ? '<div class="row"><b>Lieu</b><span>'+esc(f.lieu)+'</span></div>' : '')
+    + (f.tournage ? '<div class="row"><b>Tournage</b><span>'+esc(f.tournage)+'</span></div>' : '')
+    + (dateLongue(f) ? '<div class="row"><b>Sortie</b><span>'+dateLongue(f)+'</span></div>' : '')
+    + '<div class="row"><b>Voir</b><span><a class="yt" href="https://www.youtube.com/watch?v='+f.yt+'" target="_blank" rel="noopener">YouTube <i class="fl">&#8594;</i></a></span></div>'
+    + '</div>';
+
+  if(f.note) h += '<div class="f-note"><p class="voix">'+esc(f.note)+'</p></div>';
+
+  if(f.contrechamp){
+    h += '<div class="f-sect"><span class="lab">Contre-champ</span>'
+      + '<div class="cc" id="cc" tabindex="0" role="button" aria-label="Maintenir pour voir le contre-champ">'
+      + '<img src="'+f.contrechamp.a+'" alt="" data-repli="1" data-etape="2">'
+      + '<img class="b" src="'+f.contrechamp.b+'" alt="Derrière la caméra" data-repli="1" data-etape="2">'
+      + '<span class="hint">Maintenir pour voir derrière</span></div>'
+      + (f.contrechamp.legende ? '<p class="cc-leg voix">'+esc(f.contrechamp.legende)+'</p>' : '')
+      + '</div>';
+  }
+  if(f.bts.length){
+    /* une image de tournage introuvable se retire d'elle-même :
+       la grille se referme, pas d'icône cassée */
+    h += '<div class="f-sect"><span class="lab">Tournage</span><div class="bts">'
+      + f.bts.map(function(src){
+          return '<img src="'+src+'" alt="Image de tournage" loading="lazy" data-repli="1" data-appoint="1">';
+        }).join("")
+      + '</div></div>';
+  }
+
+  /* Les deux voisins sortent de l'ordre reel de FILMS, en boucle.
+     Un film seul n'a pas de voisin : on n'affiche alors rien. */
+  if(n > 1){
+    h += '<nav class="f-nav" aria-label="Autres films">'
+      + lienVoisin("prev", FILMS[(i-1+n)%n], "Précédent")
+      + lienVoisin("next", FILMS[(i+1)%n],   "Suivant")
+      + '</nav>';
+  }
+
+  document.getElementById("film-view").innerHTML = h;
+  brancherVisuels(document.getElementById("film-view"));
+  lancerApercu();                    /* images en fondu, tout de suite */
+  lancerApercuVideo(f);              /* vidéo muette, dès qu'elle joue */
+
+  var cc = document.getElementById("cc");
+  if(cc){
+    var on  = function(e){ e.preventDefault(); cc.classList.add("hold"); };
+    var off = function(){ cc.classList.remove("hold"); };
+    cc.addEventListener("pointerdown",on);
+    cc.addEventListener("pointerup",off);
+    cc.addEventListener("pointerleave",off);
+    cc.addEventListener("keydown",function(e){ if(e.key===" "||e.key==="Enter"){ on(e); } });
+    cc.addEventListener("keyup",off);
+  }
+}
+
+/* ================= ROUTEUR =================
+   On retient la position de l'accueil avant d'ouvrir un film,
+   et on y revient exactement au retour. */
+var homeY = 0;
+function showRoute(first){
+  var m = location.hash.match(/^#\/film\/([\w-]+)/);
+  var body = document.body, view = document.getElementById("film-view");
+  var etaitFilm = body.classList.contains("film");
+
+  if(m){
+    var i = -1;
+    for(var k=0;k<FILMS.length;k++){ if(FILMS[k].slug === m[1]){ i = k; break; } }
+    if(i > -1){
+      if(!etaitFilm) homeY = scrollY;      /* on quitte l'accueil */
+      renderFilm(FILMS[i], i);
+      body.classList.add("film");
+      view.classList.add("on");
+      document.title = FILMS[i].artist+" — "+FILMS[i].title+" · BINKSFILMS";
+      scrollTo(0,0);
+      return;
+    }
+  }
+
+  stopApercuVideo();                 /* on quitte la page film : plus rien ne tourne */
+  clearInterval(apercuTimer);
+  body.classList.remove("film");
+  view.classList.remove("on");
+  view.innerHTML = "";
+  document.title = "BINKSFILMS — Les Beaux Arts du Ghetto";
+  if(first) return;
+
+  var ancre = location.hash.replace("#","");
+  var cible = ancre && ancre.charAt(0) !== "/" ? document.getElementById(ancre) : null;
+  if(cible) cible.scrollIntoView();                 /* clic sur Films / Réalisateur / Contact */
+  else if(etaitFilm) scrollTo(0, homeY);            /* retour depuis un film : pile où on était */
+  else scrollTo(0,0);
+}
+/* Le logo ramène toujours à l'accueil, même si l'adresse est déjà « #/ » :
+   sans ça, le navigateur n'émet aucun événement et il ne se passe rien. */
+function retourAccueil(e){
+  e.preventDefault();
+  if(document.body.classList.contains("film")){
+    location.hash = "#/";                       /* on quitte la page film */
+  } else if(location.hash){
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+  /* coupe franche plutôt qu'un long glissement : c'est le langage du site */
+  if(reduced){ scrollTo(0,0); return; }
+  cut(function(){ scrollTo(0,0); });
+}
+function cut(fn){
+  if(reduced){ fn(); return; }
+  var c = document.getElementById("cut");
+  c.classList.remove("off");
+  c.classList.add("on");
+  setTimeout(function(){
+    fn();
+    c.classList.add("off");
+    c.classList.remove("on");
+  }, 100);
+}
+var lastWasFilm = /^#\/film\//.test(location.hash);
+addEventListener("hashchange", function(){
+  var isFilm = /^#\/film\//.test(location.hash);
+  if(isFilm || lastWasFilm) cut(showRoute); else showRoute();
+  lastWasFilm = isFilm;
+});
+showRoute(true);
+
+/* ================= DEVIS =================
+
+   ┌───────────────────────────────────────────────────────────────────┐
+   │  POUR RECEVOIR LES DEMANDES DIRECTEMENT — À FAIRE UNE SEULE FOIS  │
+   │                                                                   │
+   │  1. compte gratuit sur formspree.io                               │
+   │  2. « New form » → destinataire : binksfilms@gmail.com            │
+   │  3. Formspree affiche une URL du type                             │
+   │        https://formspree.io/f/abcdwxyz                            │
+   │  4. colle-la entre les guillemets de ENVOI_URL, juste en dessous  │
+   │  5. remets le site en ligne, envoie une demande de test et valide │
+   │     l'email de confirmation que Formspree envoie la 1re fois      │
+   │                                                                   │
+   │  Tant que la ligne est vide le formulaire marche quand même : à   │
+   │  la fin, la demande s'affiche, copiable — rien n'est perdu, mais  │
+   │  rien ne part tout seul. Une fois l'URL collée, l'envoi est       │
+   │  direct et la personne ne quitte jamais le site.                  │
+   └───────────────────────────────────────────────────────────────────┘ */
+var ENVOI_URL = "";
+var MAIL = "binksfilms@gmail.com";
+
+/* --- petits utilitaires --- */
+function val(x){ return typeof x === "function" ? x() : x; }
+function esc(s){
+  return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function att(s){ return esc(s).replace(/"/g,"&quot;"); }
+
+/* --- les enveloppes de budget : une grille par type de projet ---
+   Ce ne sont pas des tarifs fixes. Ça sert à comprendre l'ordre de
+   grandeur du client avant de faire un devis sur mesure. */
+var BUDGETS = {
+  clip:  ["650 — 900 €","900 — 1 500 €","1 500 — 2 500 €","2 500 € ET PLUS","À DÉFINIR"],
+  pub:   ["900 — 1 500 €","1 500 — 2 500 €","2 500 — 5 000 €","5 000 € ET PLUS","À DÉFINIR"],
+  photo: ["250 — 400 €","400 — 650 €","650 — 1 000 €","1 000 € ET PLUS","À DÉFINIR"],
+  cover: ["150 — 250 €","250 — 400 €","400 — 650 €","650 € ET PLUS","À DÉFINIR"],
+  doc:   ["800 — 1 500 €","1 500 — 2 500 €","2 500 — 4 000 €","4 000 € ET PLUS","À DÉFINIR"],
+  itw:   ["400 — 650 €","650 — 900 €","900 — 1 500 €","1 500 € ET PLUS","À DÉFINIR"],
+  autre: ["MOINS DE 500 €","500 — 1 000 €","1 000 — 2 500 €","2 500 € ET PLUS","À DÉFINIR"]
+};
+var BUDGET_SOUS = {
+  clip:  "Les clips démarrent à 650 €. C’est une enveloppe, pas un tarif : le devis dépend de ce qu’il faut mettre en place.",
+  pub:   "Selon la production et la diffusion, un projet commercial peut demander un traitement particulier.",
+  cover: "Une cover faite à partir d’une photo que tu fournis et un shooting complet avec direction artistique et retouche, ce n’est pas la même enveloppe.",
+  photo: "Une fourchette suffit — le devis dépend du temps, du lieu et de la retouche.",
+  doc:   "Une fourchette suffit — le devis dépend du tournage et du montage.",
+  itw:   "Une fourchette suffit — le devis dépend du format et du dispositif.",
+  autre: "Une fourchette suffit. Le devis final est fait sur mesure."
+};
+/* les coordonnées : un seul canal, un seul champ */
+var CHAMP_CANAL = {
+  "INSTAGRAM": {cle:"coord", label:"Instagram", ph:"@toncompte", brut:true},
+  "EMAIL":     {cle:"coord", label:"Email", ph:"toi@mail.com", type:"email", inputmode:"email", autoc:"email", brut:true},
+  "TÉLÉPHONE": {cle:"coord", label:"Téléphone", ph:"06 00 00 00 00", type:"tel", inputmode:"tel", autoc:"tel"}
+};
+
+/* --- banque de questions : ajouter une question = ajouter une entrée --- */
+var Q = {
+  type: {
+    q:"C’est quoi le projet ?", libelle:"Projet", mode:"un",
+    opts:["CLIP","PHOTO","COVER / VISUEL","PUB / COMMERCIAL","DOCUMENTAIRE","INTERVIEW / SESSION","AUTRE"]
+  },
+
+  /* ---- clip ---- */
+  morceau: {
+    q:"Le morceau est prêt ?", libelle:"Morceau", mode:"un",
+    opts:["TERMINÉ","EN COURS","PAS ENCORE"],
+    champ:{ cle:"lien_son", recap:"Lien", label:"Lien du son (facultatif)",
+            ph:"YouTube, SoundCloud, Spotify, Drive, Dropbox, WeTransfer…", brut:true,
+            si:function(v){ return v === "TERMINÉ" || v === "EN COURS"; } }
+  },
+  avancement: {
+    q:"Où t’en es ?", libelle:"Avancement", mode:"un",
+    opts:[
+      {v:"J’AI JUSTE LE SON",   d:"tout reste à inventer"},
+      {v:"J’AI UNE IDÉE",       d:"une direction, pas encore un concept"},
+      {v:"LE CONCEPT EST PRÊT", d:"il faut le tourner"},
+      {v:"TOUT EST CALÉ",       d:"lieu, équipe, date"}
+    ]
+  },
+  besoins: {
+    q:"Tu veux quoi ?", sub:"Plusieurs choix possibles.", libelle:"Besoins", mode:"multi",
+    excl:"TOUT LE PROJET",
+    opts:[
+      {v:"TOUT LE PROJET", d:"de l’idée au montage final"},
+      "RÉALISATION","CONCEPT & DA","TOURNAGE","MONTAGE","VFX","TEASER","PHOTOS"
+    ]
+  },
+
+  /* ---- pub / commercial ---- */
+  marque: {
+    q:"C’est pour qui ?", libelle:"Marque / produit", mode:"texte", obligatoire:true,
+    champ:{ cle:"marque_nom", label:"Marque ou produit", ph:"Nom de la marque, du produit…" }
+  },
+  diffusion: {
+    q:"Ça part où ?", sub:"Plusieurs choix possibles.", libelle:"Diffusion", mode:"multi", puces:true,
+    opts:["RÉSEAUX SOCIAUX","SPOT TV","SITE / E-COMMERCE","ÉVÉNEMENT","LANCEMENT PRODUIT","INTERNE"]
+  },
+
+  /* ---- photo ---- */
+  shooting: {
+    q:"Quel type de shooting ?", libelle:"Shooting", mode:"un",
+    opts:["PORTRAIT","COVER / POCHETTE","RÉSEAUX","ÉVÉNEMENT","PHOTOS DE PLATEAU","AUTRE"]
+  },
+  personnes: {
+    q:"Combien de personnes ?", libelle:"Personnes", mode:"un",
+    opts:["UNE SEULE","2 À 5","PLUS DE 5"]
+  },
+  photo_besoins: {
+    q:"Il te faut quoi en plus ?", sub:"Plusieurs choix possibles.", libelle:"Besoins",
+    mode:"multi", excl:"JUSTE LES PHOTOS",
+    opts:[
+      {v:"JUSTE LES PHOTOS", d:"je shoote, je livre"},
+      "RETOUCHE","DIRECTION ARTISTIQUE","MISE EN SCÈNE","REPÉRAGE DU LIEU","PHOTOS + VIDÉO"
+    ]
+  },
+
+  /* ---- cover / visuel ---- */
+  cover_base: {
+    q:"Tu pars de quoi ?", libelle:"Point de départ", mode:"un",
+    opts:[
+      {v:"J’AI DÉJÀ LA PHOTO", d:"il reste à la traiter et à composer"},
+      {v:"IL FAUT SHOOTER",    d:"photo + cover"},
+      {v:"J’AI UNE RÉFÉRENCE", d:"une direction en tête"},
+      {v:"PAGE BLANCHE",       d:"on part de zéro"}
+    ]
+  },
+  cover_besoins: {
+    q:"Tu veux quoi ?", sub:"Plusieurs choix possibles.", libelle:"Besoins",
+    mode:"multi", excl:"TOUT LE PROJET",
+    opts:[
+      {v:"TOUT LE PROJET", d:"de la photo au fichier final"},
+      "SHOOTING","DIRECTION ARTISTIQUE","RETOUCHE","TYPO / TITRE","DÉCLINAISONS RÉSEAUX"
+    ]
+  },
+
+  /* ---- documentaire ---- */
+  sujet: {
+    q:"C’est sur quoi ?", libelle:"Sujet", mode:"texte", obligatoire:true,
+    champ:{ cle:"sujet_txt", label:"Le sujet", ph:"En une phrase." }
+  },
+  etat_doc: {
+    q:"Où en est le projet ?", libelle:"État", mode:"un",
+    opts:["UNE IDÉE","EN PRÉPARATION","TOURNAGE COMMENCÉ","RUSHES À MONTER"]
+  },
+
+  /* ---- interview / session ---- */
+  format_itw: {
+    q:"Quel format ?", libelle:"Format", mode:"un",
+    opts:["INTERVIEW","SESSION LIVE","FREESTYLE","PODCAST","AUTRE"]
+  },
+
+  /* ---- autre ---- */
+  libre_autre: {
+    q:"Raconte.", libelle:"Le projet", mode:"texte", obligatoire:true,
+    champ:{ cle:"autre_txt", label:"Le projet", ph:"Ce que tu as en tête.", long:true }
+  },
+
+  /* ---- communs à toutes les branches ---- */
+  date: {
+    q:"Date de tournage", sub:"Choisis un jour, ou dis-moi que c’est ouvert.",
+    libelle:"Date", mode:"date"
+  },
+  lieu: {
+    q:"Ça se passe où ?",
+    sub:"Île-de-France, ailleurs en France, à l’étranger — je me déplace selon le projet.",
+    libelle:"Lieu", mode:"un",
+    opts:["PARIS / ÎLE-DE-FRANCE","AILLEURS EN FRANCE","ÉTRANGER","À DÉFINIR"],
+    champ:{ cle:"ville", recap:"Ville", label:"Ville ou lieu (facultatif)",
+            ph:"Ex : Évry, un parking, un rooftop…",
+            si:function(v){ return v !== "À DÉFINIR"; } }
+  },
+  budget: {
+    q:"Budget envisagé", libelle:"Budget", mode:"un",
+    sub:function(){ return BUDGET_SOUS[branche()] || BUDGET_SOUS.autre; },
+    opts:function(){ return BUDGETS[branche()] || BUDGETS.autre; }
+  },
+  direction: {
+    q:"Tu vois ça comment ?",
+    sub:"Plusieurs choix possibles. C’est l’énergie qui m’intéresse — la direction se construit ensuite ensemble.",
+    libelle:"Direction", mode:"multi", puces:true,
+    opts:["BRUT","CINÉMATIQUE","SOMBRE","ÉNERGIQUE","POSÉ","NARRATIF","EXPÉRIMENTAL","JE TE LAISSE PROPOSER"]
+  },
+  contact: {
+    q:"Je te réponds où ?", libelle:"Contact", mode:"contact",
+    opts:["INSTAGRAM","EMAIL","TÉLÉPHONE"]
+  },
+  plus: {
+    q:"Dernier mot ?",
+    sub:"Tu as des références ou un truc à ajouter ? Entièrement facultatif — tu peux envoyer directement.",
+    libelle:"Références", mode:"plus"
+  }
+};
+
+/* --- parcours : ajouter une branche = ajouter une liste --- */
+var PARCOURS = {
+  clip:  ["type","morceau","avancement","besoins","date","lieu","budget","direction","contact","plus"],
+  photo: ["type","shooting","personnes","photo_besoins","date","lieu","budget","direction","contact","plus"],
+  cover: ["type","cover_base","cover_besoins","date","budget","direction","contact","plus"],
+  pub:   ["type","marque","diffusion","besoins","date","lieu","budget","direction","contact","plus"],
+  doc:   ["type","sujet","etat_doc","besoins","date","lieu","budget","contact","plus"],
+  itw:   ["type","format_itw","besoins","date","lieu","budget","direction","contact","plus"],
+  autre: ["type","libre_autre","besoins","date","lieu","budget","contact","plus"]
+};
+var CLE_TYPE = {
+  "CLIP":"clip", "PHOTO":"photo", "COVER / VISUEL":"cover", "PUB / COMMERCIAL":"pub",
+  "DOCUMENTAIRE":"doc", "INTERVIEW / SESSION":"itw", "AUTRE":"autre"
+};
+
+var REP = {}, SAUT = {}, LISTE = [], IDX = 0, calY = 0, calM = 0, DEBUT = 0, ENVOI_EN_COURS = false;
+/* nom propre pour le calendrier — ne pas réutiliser MOIS, qui sert aux
+   dates de sortie des films et s'écrit en minuscules */
+var MOIS_CAL = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
+
+function branche(){ return CLE_TYPE[REP.type] || "clip"; }
+function parcoursComplet(){ return (PARCOURS[branche()] || PARCOURS.clip).slice(); }
+/* SAUT = ce que la FAQ a déjà renseigné. On ne le redemande pas,
+   mais ça reste dans la demande envoyée. */
+function listeCourante(){
+  LISTE = parcoursComplet().filter(function(k){ return !SAUT[k]; });
+}
+
+function ouvrirDevis(pre){
+  REP = {}; SAUT = {}; IDX = 0; calY = 0; calM = 0;
+  ENVOI_EN_COURS = false; DEBUT = Date.now();
+  if(pre) for(var k in pre){ REP[k] = pre[k]; SAUT[k] = 1; }
+  listeCourante();
+  var hp = document.getElementById("dv-hp"); if(hp) hp.value = "";
+  document.getElementById("questions").classList.remove("on");
+  document.getElementById("devis").classList.add("on");
+  document.body.style.overflow = "hidden";
+  dessiner();
+}
+function fermerOv(){
+  document.getElementById("devis").classList.remove("on");
+  document.getElementById("questions").classList.remove("on");
+  document.body.style.overflow = "";
+}
+function dvRetour(){ if(IDX > 0){ IDX--; dessiner(); } }
+function suivant(){
+  if(LISTE[IDX] === "type") listeCourante();   /* le type vient de changer : on reconstruit */
+  if(IDX < LISTE.length - 1){ IDX++; dessiner(); } else { envoyer(); }
+}
+
+/* --- rendu --- */
+function dessiner(garderScroll){
+  var q = Q[LISTE[IDX]], k = LISTE[IDX];
+  var corps = document.getElementById("dv-body");
+  var scroll = corps.parentNode.scrollTop;
+  document.getElementById("dv-step").textContent = pad(IDX+1) + " / " + pad(LISTE.length);
+  document.getElementById("dv-retour").className = IDX === 0 ? "vide" : "";
+
+  var sub = val(q.sub);
+  var h = '<p class="dv-q">'+q.q+'</p>' + (sub ? '<p class="dv-sub">'+sub+'</p>' : '');
+
+  if(q.mode === "un"){
+    h += '<div class="dv-opts">' + val(q.opts).map(function(o,i){
+      var v = o.v || o, d = o.d ? '<small>'+o.d+'</small>' : '';
+      return '<button type="button" class="opt'+(REP[k]===v?" on":"")+'" data-i="'+i+'">'+v+d+'</button>';
+    }).join("") + '</div>';
+    if(q.champ && q.champ.si && REP[k] && q.champ.si(REP[k])) h += champHtml(q.champ);
+  }
+  else if(q.mode === "multi"){
+    var sel = REP[k] || [];
+    if(q.puces){                                  /* libellés courts : en puces, pas en lignes */
+      h += '<div class="dv-chips">' + q.opts.map(function(o,i){
+        var v = o.v || o;
+        return '<button type="button" class="chip'+(sel.indexOf(v)>-1?" on":"")+'" data-m="'+i+'">'+v+'</button>';
+      }).join("") + '</div>';
+    } else {
+      h += '<div class="dv-opts">' + q.opts.map(function(o,i){
+        var v = o.v || o, d = o.d ? '<small>'+o.d+'</small>' : '';
+        return '<button type="button" class="opt'+(sel.indexOf(v)>-1?" on":"")+'" data-m="'+i+'">'+v+d+'</button>';
+      }).join("") + '</div>';
+    }
+  }
+  else if(q.mode === "texte"){
+    h += champHtml(q.champ);
+  }
+  else if(q.mode === "date"){
+    h += '<div class="cal" id="cal"></div>'
+      + '<div class="dv-chips">'
+      + ["JE SUIS FLEXIBLE","DATE À DÉFINIR"].map(function(v,i){
+          return '<button type="button" class="chip'+(REP.date===v?" on":"")+'" data-d="'+i+'">'+v+'</button>';
+        }).join("") + '</div>';
+  }
+  else if(q.mode === "contact"){
+    h += champHtml({cle:"nom", label:"Nom / blaze", ph:"Comment je t’appelle ?", autoc:"name"})
+      +  '<p class="dv-mini">Je te réponds par</p>'
+      +  '<div class="dv-chips">' + q.opts.map(function(v,i){
+           return '<button type="button" class="chip'+(REP.canal===v?" on":"")+'" data-c="'+i+'">'+v+'</button>';
+         }).join("") + '</div>';
+    if(REP.canal && CHAMP_CANAL[REP.canal]) h += champHtml(CHAMP_CANAL[REP.canal]);
+  }
+  else if(q.mode === "plus"){
+    h += champHtml({cle:"refs", label:"Références",
+                    ph:"Instagram, Pinterest, YouTube, TikTok, Drive…", long:true, brut:true})
+      +  champHtml({cle:"mot", label:"Un truc à ajouter", ph:"", long:true});
+  }
+
+  h += '<p class="dv-err" id="dv-err"></p><div class="dv-suite">';
+  var dernier = IDX === LISTE.length - 1;
+  /* pas de bouton quand un clic suffit : choix unique et date enchaînent seuls */
+  var autonome = q.mode === "date" || (q.mode === "un" && !(q.champ && q.champ.si && REP[k] && q.champ.si(REP[k])));
+  if(!autonome){
+    h += '<button type="button" class="suivant" id="dv-next">'+(dernier ? "Envoyer mon projet &rarr;" : "Continuer &rarr;")+'</button>';
+  }
+  h += '</div>';
+
+  corps.innerHTML = h;
+  corps.parentNode.scrollTop = garderScroll ? scroll : 0;
+  if(q.mode === "date") majCal();
+
+  /* mémoriser la saisie au fil de la frappe : rien ne se perd au retour */
+  corps.querySelectorAll("[data-champ]").forEach(function(el){
+    el.addEventListener("input", function(){
+      REP[el.dataset.champ] = el.value.trim();
+      var e = document.getElementById("dv-err"); if(e) e.classList.remove("on");
+    });
+  });
+  var next = document.getElementById("dv-next");
+  if(next) next.addEventListener("click", valider);
+
+  corps.querySelectorAll(".opt[data-i]").forEach(function(b){
+    b.addEventListener("click", function(){ clicUn(q, k, +b.dataset.i); });
+  });
+  /* multi : on bascule la classe sur place — pas de re-rendu, donc pas de
+     saut de scroll quand on coche plusieurs réponses à la suite */
+  corps.querySelectorAll("[data-m]").forEach(function(b){
+    b.addEventListener("click", function(){ clicMulti(q, k, +b.dataset.m, corps); });
+  });
+  corps.querySelectorAll(".chip[data-c]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var choisi = q.opts[+b.dataset.c];
+      if(REP.canal !== choisi){ REP.canal = choisi; REP.coord = ""; }
+      dessiner(true);
+      var champ = document.querySelector('#dv-body [data-champ="coord"]');
+      if(champ) champ.focus();
+    });
+  });
+  corps.querySelectorAll(".chip[data-d]").forEach(function(b){
+    b.addEventListener("click", function(){
+      REP.date = ["JE SUIS FLEXIBLE","DATE À DÉFINIR"][+b.dataset.d];
+      dessiner(); setTimeout(suivant, 170);
+    });
+  });
+}
+function champHtml(c){
+  var brut = c.brut ? ' autocapitalize="off" autocorrect="off" spellcheck="false"' : '';
+  var el = c.long
+    ? '<textarea data-champ="'+c.cle+'" rows="3" placeholder="'+att(c.ph||"")+'"'+brut+'>'+esc(REP[c.cle]||"")+'</textarea>'
+    : '<input type="'+(c.type||"text")+'" data-champ="'+c.cle+'" value="'+att(REP[c.cle]||"")+'"'
+      + (c.inputmode ? ' inputmode="'+c.inputmode+'"' : '')
+      + ' autocomplete="'+(c.autoc||"off")+'"' + brut
+      + ' placeholder="'+att(c.ph||"")+'">';
+  return '<div class="dv-champ"><label>'+esc(c.label)+'</label>'+el+'</div>';
+}
+function clicUn(q, k, i){
+  var opts = val(q.opts), v = opts[i].v || opts[i];
+  var avant = REP[k];
+  REP[k] = v;
+  if(k === "type"){
+    /* changer de type change la grille de budget : on ne garde pas une
+       tranche qui n'existe plus dans la nouvelle branche */
+    if(avant && avant !== v) delete REP.budget;
+    listeCourante();
+  }
+  var reste = q.champ && q.champ.si && q.champ.si(v);
+  dessiner();
+  if(!reste) setTimeout(suivant, 170);       /* choix unique : on enchaîne */
+}
+function clicMulti(q, k, i, corps){
+  var v = q.opts[i].v || q.opts[i];
+  var sel = (REP[k] || []).slice();
+  if(q.excl && v === q.excl){ sel = sel.indexOf(v) > -1 ? [] : [v]; }
+  else {
+    if(q.excl) sel = sel.filter(function(x){ return x !== q.excl; });
+    var p = sel.indexOf(v);
+    if(p > -1) sel.splice(p,1); else sel.push(v);
+  }
+  REP[k] = sel;
+  corps.querySelectorAll("[data-m]").forEach(function(b){
+    var o = q.opts[+b.dataset.m], ov = o.v || o;
+    b.classList.toggle("on", sel.indexOf(ov) > -1);
+  });
+  var e = document.getElementById("dv-err"); if(e) e.classList.remove("on");
+}
+function erreur(msg){
+  var e = document.getElementById("dv-err");
+  if(!e) return;
+  e.textContent = msg; e.classList.add("on");
+  e.scrollIntoView({block:"nearest"});
+}
+function valider(){
+  var q = Q[LISTE[IDX]], k = LISTE[IDX];
+  if(q.mode === "multi" && !(REP[k] && REP[k].length)) return erreur("Choisis au moins une réponse.");
+  if(q.mode === "texte" && q.obligatoire && !(REP[q.champ.cle] || "").length) return erreur("Il me faut cette info.");
+  if(q.mode === "contact"){
+    if(!(REP.nom || "").length) return erreur("Dis-moi comment t’appeler.");
+    if(!REP.canal) return erreur("Choisis par où je te réponds.");
+    if(!(REP.coord || "").length) return erreur("Il me manque ton " + REP.canal.toLowerCase() + ".");
+    if(REP.canal === "EMAIL" && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(REP.coord)) return erreur("Cette adresse a l’air incomplète.");
+    if(REP.canal === "TÉLÉPHONE" && REP.coord.replace(/\D/g,"").length < 9) return erreur("Ce numéro a l’air incomplet.");
+  }
+  suivant();
+}
+
+/* --- calendrier --- */
+function majCal(){
+  var c = document.getElementById("cal"); if(!c) return;
+  var auj = new Date(); auj.setHours(0,0,0,0);
+  if(!calY){ calY = auj.getFullYear(); calM = auj.getMonth(); }
+  var premier = new Date(calY, calM, 1);
+  var decal = (premier.getDay() + 6) % 7;                 /* semaine à lundi */
+  var nb = new Date(calY, calM+1, 0).getDate();
+  var passe = (calY === auj.getFullYear() && calM === auj.getMonth());
+
+  var h = '<div class="cal-head"><button type="button" id="cal-p" aria-label="Mois précédent"'+(passe?' disabled':'')+'>&larr;</button>'
+        + '<span class="cal-mois">'+MOIS_CAL[calM]+' '+calY+'</span>'
+        + '<button type="button" id="cal-n" aria-label="Mois suivant">&rarr;</button></div>'
+        + '<div class="cal-jours">'+["L","M","M","J","V","S","D"].map(function(j){return '<span>'+j+'</span>';}).join("")+'</div>'
+        + '<div class="cal-grille">';
+  for(var i=0;i<decal;i++) h += '<i></i>';
+  for(var d=1; d<=nb; d++){
+    var jour = new Date(calY, calM, d);
+    var off = jour < auj;                                  /* une date passée n'est pas cliquable */
+    var txt = d + " " + MOIS_CAL[calM].toLowerCase() + " " + calY;
+    h += '<button type="button" data-j="'+d+'"'+(off?' disabled':'')+(REP.date===txt?' class="on"':'')+'>'+d+'</button>';
+  }
+  c.innerHTML = h + '</div>';
+
+  c.querySelector("#cal-p").addEventListener("click", function(){
+    calM--; if(calM<0){ calM=11; calY--; } majCal();
+  });
+  c.querySelector("#cal-n").addEventListener("click", function(){
+    calM++; if(calM>11){ calM=0; calY++; } majCal();
+  });
+  c.querySelectorAll("[data-j]").forEach(function(b){
+    if(b.disabled) return;
+    b.addEventListener("click", function(){
+      REP.date = b.dataset.j + " " + MOIS_CAL[calM].toLowerCase() + " " + calY;
+      dessiner(); setTimeout(suivant, 170);
+    });
+  });
+}
+
+/* --- la demande, lisible ligne par ligne --- */
+function donnees(){
+  var d = {};
+  parcoursComplet().forEach(function(k){
+    var q = Q[k], v = REP[k];
+    if(!q || q.mode === "plus" || q.mode === "contact") return;
+    if(q.mode === "texte"){ if(REP[q.champ.cle]) d[q.libelle] = REP[q.champ.cle]; return; }
+    if(v == null || v === "" || (Array.isArray(v) && !v.length)) return;
+    d[q.libelle] = Array.isArray(v) ? v.join(", ") : v;
+    /* le champ conditionnel reste collé à sa question */
+    if(q.champ && REP[q.champ.cle]) d[q.champ.recap || q.champ.label] = REP[q.champ.cle];
+  });
+  d["Nom"] = REP.nom || "";
+  d["Contact"] = REP.canal || "";
+  if(REP.canal && CHAMP_CANAL[REP.canal]) d[CHAMP_CANAL[REP.canal].label] = REP.coord || "";
+  if(REP.refs) d["Références"] = REP.refs;
+  if(REP.mot)  d["Note"] = REP.mot;
+  return d;
+}
+function texteDemande(d){
+  return Object.keys(d).map(function(k){ return k + " : " + d[k]; }).join("\n");
+}
+
+function ecranFin(titre, texte, extra){
+  var corps = document.getElementById("dv-body");
+  document.getElementById("dv-step").textContent = "";
+  document.getElementById("dv-retour").className = "vide";
+  corps.innerHTML =
+      '<div class="dv-fin"><h3>'+titre+'</h3><p>'+texte+'</p>' + (extra||"")
+    + '<div class="relire"><button type="button" class="petit-cta" onclick="fermerOv()">Revenir au site</button></div></div>';
+  corps.parentNode.scrollTop = 0;
+}
+
+/* --- envoi --- */
+function envoyer(){
+  if(ENVOI_EN_COURS) return;
+  var d = donnees();
+  /* anti-spam invisible : le champ piège n'est jamais vu par un humain,
+     et personne ne remplit huit écrans en trois secondes. */
+  var hp = document.getElementById("dv-hp");
+  if((hp && hp.value) || (Date.now() - DEBUT) < 3000){
+    ecranFin("Bien reçu.", "Je regarde ton projet et je reviens vers toi.");
+    return;
+  }
+  if(!ENVOI_URL){ finSansEnvoi(d); return; }
+
+  var btn = document.getElementById("dv-next");
+  ENVOI_EN_COURS = true;
+  if(btn){ btn.disabled = true; btn.innerHTML = "Envoi…"; }
+
+  var charge = { _subject: "Projet " + (REP.type||"") + (REP.nom ? " — " + REP.nom : ""), _gotcha: "" };
+  for(var k in d) charge[k] = d[k];
+  if(REP.canal === "EMAIL" && REP.coord) charge._replyto = REP.coord;
+
+  fetch(ENVOI_URL, {
+    method:"POST",
+    headers:{"Accept":"application/json","Content-Type":"application/json"},
+    body: JSON.stringify(charge)
+  }).then(function(r){
+    if(!r.ok) throw 0;
+    ENVOI_EN_COURS = false;
+    ecranFin("Bien reçu.", "Je regarde ton projet et je reviens vers toi.");
+  }).catch(function(){
+    ENVOI_EN_COURS = false;
+    erreur("L’envoi n’est pas passé. Réessaie, ou écris-moi à " + MAIL + ".");
+    if(btn){ btn.disabled = false; btn.innerHTML = "Envoyer mon projet &rarr;"; }
+  });
+}
+/* Filet tant que ENVOI_URL est vide : la demande ne part pas toute seule,
+   mais elle est là, complète et copiable. Aucun mailto n'est déclenché. */
+function finSansEnvoi(d){
+  var t = texteDemande(d);
+  ecranFin("Presque.",
+    "L’envoi direct n’est pas encore branché. Copie ta demande et envoie-la à " + MAIL + " — je te réponds pareil.",
+    '<textarea class="dv-recap" id="dv-recap" readonly>'+esc(t)+'</textarea>'
+    + '<div class="dv-suite"><button type="button" class="suivant" id="dv-copie">Copier ma demande</button></div>');
+  var b = document.getElementById("dv-copie");
+  b.addEventListener("click", function(){
+    var z = document.getElementById("dv-recap");
+    z.focus(); z.select(); z.setSelectionRange(0, t.length);
+    var ok = false;
+    try { ok = document.execCommand("copy"); } catch(e){}
+    if(ok){ b.textContent = "Copié"; }
+    else if(navigator.clipboard){ navigator.clipboard.writeText(t).then(function(){ b.textContent = "Copié"; }); }
+    else { b.textContent = "Sélectionne et copie"; }
+  });
+}
+
+/* ================= QUESTIONS FRÉQUENTES =================
+   Chaque réponse mène au formulaire, déjà configuré : ce qui vient
+   d'être dit ici n'est pas redemandé là-bas. */
+var FAQ = [
+  { q:"C’est combien un clip ?",
+    r:["Les clips démarrent à 650 €.",
+       "Le tarif dépend ensuite du projet, de l’idée et de ce qu’il faut mettre en place."],
+    cta:"Parler de mon clip", pre:{type:"CLIP"} },
+
+  { q:"Je n’ai pas encore d’idée",
+    r:["Ce n’est pas un problème — c’est même le cas le plus fréquent.",
+       "Tu arrives avec le son, on construit le projet ensemble."],
+    cta:"Construire le projet ensemble",
+    pre:{type:"CLIP", avancement:"J’AI JUSTE LE SON", besoins:["TOUT LE PROJET"]} },
+
+  { q:"Tu te déplaces ?",
+    r:["Oui. BinksFilms se déplace en Île-de-France, ailleurs en France et à l’étranger selon le projet."],
+    cta:"Parler d’un projet", pre:null },
+
+  { q:"Tu fais seulement des clips ?",
+    r:["Non.",
+       "Clips, photo, cover / visuel, pub et commercial, documentaire, interview et session — et les autres projets image."],
+    cta:"Parler d’un projet", pre:null },
+
+  { q:"C’est quoi le délai ?",
+    r:["Le délai dépend du projet, de la préparation et de la post-production.",
+       "On le cale ensemble avant de commencer."],
+    cta:"Parler d’un projet", pre:null },
+
+  { q:"Tu fais le montage ?",
+    r:["Oui. Réalisation, image et montage, c’est la même personne.",
+       "Pour du montage seul à partir de rushes déjà tournés, écris-moi : on regarde selon le projet."],
+    cta:"Parler d’un projet", pre:null }
+];
+function ouvrirQuestions(){
+  document.getElementById("devis").classList.remove("on");
+  document.getElementById("questions").classList.add("on");
+  document.body.style.overflow = "hidden";
+  fqListe();
+}
+function fqListe(){
+  var corps = document.getElementById("fq-body");
+  document.getElementById("fq-retour").className = "vide";
+  corps.innerHTML =
+      '<p class="dv-q">Questions</p><div class="faq-liste">'
+    + FAQ.map(function(f,i){ return '<button type="button" class="faq-q" data-f="'+i+'">'+f.q+'</button>'; }).join("")
+    + '</div>';
+  corps.parentNode.scrollTop = 0;
+  corps.querySelectorAll(".faq-q").forEach(function(b){
+    b.addEventListener("click", function(){ fqRep(+b.dataset.f); });
+  });
+}
+function fqRep(i){
+  var f = FAQ[i], corps = document.getElementById("fq-body");
+  document.getElementById("fq-retour").className = "";
+  corps.innerHTML =
+      '<p class="dv-q">'+f.q+'</p><div class="faq-rep">'
+    + f.r.map(function(p){ return '<p>'+p+'</p>'; }).join("") + '</div>'
+    + '<div class="dv-suite"><button type="button" class="suivant" id="fq-cta">'+f.cta+' &rarr;</button></div>';
+  corps.parentNode.scrollTop = 0;
+  document.getElementById("fq-cta").addEventListener("click", function(){ ouvrirDevis(f.pre); });
+}
+
+addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
+
+/* ================= INTRO =================
+   Une seule fois par visite : le ciel en plein ecran, et ENTER.
+   Aucun minuteur ne fait entrer a la place du visiteur, c'est lui
+   qui pousse la porte. Tout le reste du site est deja charge derriere. */
+(function(){
+  var el = document.getElementById("intro");
+  if(!el) return;
+  var vid = document.getElementById("introvid");
+  var btn = document.getElementById("entrer");
+
+  /* deja entre pendant cette visite : on ne repasse pas par la porte */
+  var memoire = { lu:null, ecrire:function(){} };
+  try{ memoire.lu = sessionStorage.getItem("bf.intro2");
+       memoire.ecrire = function(){ sessionStorage.setItem("bf.intro2","1"); }; }catch(e){}
+  if(memoire.lu){ el.remove(); return; }
+  document.body.classList.add("intro");
+
+  /* le site derriere est neutralise tant que l'intro est la */
+  var derriere = [].slice.call(document.querySelectorAll("#hdr, main, footer"));
+  derriere.forEach(function(n){ try{ n.inert = true; }catch(e){} });
+
+  /* ---- on ne revele qu'une fois l'image prete : sinon on reste sur noir,
+     sans roue de chargement ni pourcentage ---- */
+  var revele = false, parti = false, relancer = null;
+  function reveler(){
+    if(revele) return; revele = true;
+    el.classList.add("pret");
+  }
+  vid.addEventListener("loadeddata", reveler);
+  vid.addEventListener("canplay", reveler);
+  /* si la video ne charge pas du tout, ENTER doit quand meme apparaitre */
+  vid.addEventListener("error", reveler, true);
+  setTimeout(reveler, 2600);
+
+  if(reduced){
+    /* mouvement reduit : le ciel est fixe, on montre une image, pas une boucle */
+    try{ vid.pause(); vid.currentTime = 0.1; }catch(e){}
+  } else {
+    relancer = function(){
+      if(parti || document.hidden) return;
+      var lu = vid.play();
+      /* autoplay refuse : la premiere image reste affichee, ENTER marche */
+      if(lu && lu.catch) lu.catch(function(){});
+    };
+    relancer();
+    /* onglet quitte puis retrouve : les navigateurs mettent la boucle en
+       pause, on la reprend la ou elle en etait */
+    document.addEventListener("visibilitychange", relancer);
+    /* et si la lecture automatique a ete refusee, le premier contact suffit */
+    el.addEventListener("pointerdown", relancer);
+  }
+
+  /* ---- la porte ---- */
+  function entrer(){
+    if(parti) return; parti = true;                 /* aucun double clic */
+    memoire.ecrire();
+    btn.disabled = true;
+    el.classList.add("sort");                       /* video + ENTER -> noir */
+    setTimeout(function(){ el.classList.add("fini"); }, 250);   /* noir -> site */
+    setTimeout(function(){
+      try{ vid.pause(); }catch(e){}
+      if(relancer) document.removeEventListener("visibilitychange", relancer);
+      el.remove();
+      document.body.classList.remove("intro");
+      derriere.forEach(function(n){ try{ n.inert = false; }catch(e){} });
+      /* la grille a pu etre construite pendant l'intro : on relance le guet */
+      if(window.__observerApparitions) window.__observerApparitions();
+    }, 620);
+  }
+  btn.addEventListener("click", entrer);
+})();
+
+/* ================= APPARITIONS AU SCROLL ================= */
+(function(){
+  if(reduced) return;
+  var io = new IntersectionObserver(function(entrees){
+    entrees.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add("vu"); io.unobserve(e.target); }
+    });
+  }, { rootMargin: "0px 0px -6% 0px", threshold: 0.06 });
+
+  function observer(){
+    document.querySelectorAll(".rv:not(.vu), .film:not(.vu)").forEach(function(el){ io.observe(el); });
+  }
+  observer();
+  window.__observerApparitions = observer;   /* la grille est construite en JS */
+
+  /* Le texte s'allume mot par mot au défilement : chaque mot passe de
+     l'ombre à la pleine lumière selon sa hauteur dans l'écran. */
+  var mots = [];
+  (function decouper(){
+    document.querySelectorAll("#binks .voix-bloc p").forEach(function(p){
+      var texte = p.textContent.trim();
+      p.innerHTML = texte.split(/\s+/).map(function(m){
+        return '<span class="mot">' + m.replace(/&/g,"&amp;").replace(/</g,"&lt;") + "</span>";
+      }).join(" ");
+    });
+    mots = [].slice.call(document.querySelectorAll("#binks .voix-bloc .mot"));
+  })();
+  function allumer(){
+    if(!mots.length) return;
+    /* Fenêtre volontairement plus courte que le bloc : sans ça tous les
+       mots s'allument ensemble et l'effet ne se voit pas. */
+    var debut = innerHeight * 0.74;      /* le mot commence à s'éclairer ici */
+    var fin   = innerHeight * 0.63;      /* et il est plein ici */
+    for(var i = 0; i < mots.length; i++){
+      var r = mots[i].getBoundingClientRect();
+      if(r.bottom < 0 || r.top > innerHeight){ continue; }
+      var p = (debut - r.top) / (debut - fin);
+      mots[i].style.opacity = Math.max(0.13, Math.min(1, p)).toFixed(3);
+    }
+  }
+
+  /* Parallaxe : l'image glisse dans son cadre, plus lentement que la page.
+     Une seule boucle d'animation, et seulement sur les cartes visibles. */
+  var cartes = [], enCours = false;
+  function recenser(){ cartes = [].slice.call(document.querySelectorAll(".film .thumb img")); }
+  var carteActive = null;
+  function placer(){
+    enCours = false;
+    var h = innerHeight, milieuEcran = h / 2;
+    var etroit = innerWidth <= 760;
+    var angle = etroit ? 5 : 11;          /* plus discret sur petit écran */
+    var proche = null, distanceProche = Infinity;
+
+    for(var i = 0; i < cartes.length; i++){
+      var img = cartes[i], cadre = img.parentNode;
+      var r = cadre.getBoundingClientRect();
+      if(r.bottom < -250 || r.top > h + 250) continue;   /* hors écran : on saute */
+
+      var milieu = r.top + r.height / 2;
+      /* d = -1 tout en haut de l'écran, 0 au centre, +1 tout en bas */
+      var d = (milieu - milieuEcran) / (h / 2);
+      if(d < -1.4) d = -1.4; else if(d > 1.4) d = 1.4;
+      var abs = Math.abs(d);
+
+      if(etroit){
+        /* Sur téléphone la bannière grandit en approchant du centre.
+           C'est l'échelle qui fait la hiérarchie, pas la bascule.
+           L'assombrissement va sur l'image et non sur le cadre : sinon
+           il éteindrait aussi le texte des bannières en attente. */
+        var prox = 1 - Math.min(1, abs / 0.85);        /* 1 au centre, 0 loin */
+        cadre.style.transform =
+          "perspective(1400px) rotateX(" + (d * angle).toFixed(2) + "deg)"
+          + " scale(" + (0.93 + prox * 0.07).toFixed(4) + ")";
+        cadre.style.filter = "";
+        img.style.filter = "brightness(" + (0.72 + prox * 0.28).toFixed(3) + ")";
+        var distance = Math.abs(milieu - milieuEcran);
+        if(distance < distanceProche){ distanceProche = distance; proche = cadre.parentNode; }
+      } else {
+        /* Le cadre bascule dans la profondeur : couché quand il arrive par
+           le bas, droit au centre, il repart en arrière vers le haut. */
+        cadre.style.transform =
+          "perspective(1300px) rotateX(" + (d * angle).toFixed(2) + "deg)"
+          + " translateZ(" + (-abs * 70).toFixed(1) + "px)"
+          + " scale(" + (1 - abs * 0.035).toFixed(4) + ")";
+        /* et il s'assombrit en s'éloignant : c'est ça qui donne la profondeur */
+        cadre.style.filter = "brightness(" + (1 - abs * 0.42).toFixed(3) + ")";
+        img.style.filter = "";          /* on nettoie si on vient du mobile */
+      }
+
+      /* l'image glisse dans le cadre, plus lentement que la page */
+      img.style.transform = "translate3d(0," + (d * 3).toFixed(2) + "%,0)";
+      /* la preview partage exactement le mouvement de la bannière */
+      var vprev = cadre.querySelector("video.prev");
+      if(vprev) vprev.style.transform = img.style.transform;
+    }
+
+    /* Une seule carte active à la fois : la plus proche du centre.
+       Le seuil est large pour que le relais d'une carte à l'autre soit
+       continu — sinon le texte se rallume une fraction de seconde entre
+       deux cartes et ça clignote.
+       C'est ce repère qui servira plus tard à lancer l'aperçu vidéo
+       sur cette carte uniquement. */
+    var nouvelle = (etroit && distanceProche < h * 0.5) ? proche : null;
+    if(nouvelle !== carteActive){
+      if(carteActive){ carteActive.classList.remove("actif"); previewArreter(carteActive); }
+      if(nouvelle){ nouvelle.classList.add("actif"); previewJouer(nouvelle); }
+      carteActive = nouvelle;
+    }
+    allumer();
+  }
+  function auScroll(){ if(!enCours){ enCours = true; requestAnimationFrame(placer); } }
+  addEventListener("scroll", auScroll, {passive:true});
+  addEventListener("resize", function(){ recenser(); auScroll(); }, {passive:true});
+  window.__recenserParallaxe = function(){ recenser(); placer(); };
+  recenser(); placer();
+})();
+
+/* ================= DIVERS ================= */
+(function(){
+  var v = document.getElementById("herovid");
+  if(v){
+    v.addEventListener("canplay",function(){ v.style.opacity = "1"; v.play().catch(function(){}); });
+    v.addEventListener("error",function(){ v.remove(); },true);
+  }
+  /* le mot « Réalisateur » découpé dans la vidéo : on n'active la découpe
+     qu'une fois la lecture confirmée, sinon le mot serait noir sur noir */
+  /* Le mot occupe exactement la largeur disponible, quel que soit l'écran.
+     Une taille en vw ne peut pas y arriver : la marge est en pixels, pas
+     en pourcentage. On mesure, puis on règle. */
+  (function(){
+    var boite = document.querySelector(".mot-video");
+    if(!boite) return;
+    var h2 = boite.querySelector("h2");
+    var mot = h2.querySelector("span");        /* on mesure le texte, pas le bloc */
+    function ajuster(){
+      var dispo = boite.clientWidth;
+      if(!dispo || !mot) return;
+      h2.style.fontSize = "100px";
+      var largeur = mot.getBoundingClientRect().width;
+      if(largeur > 0) h2.style.fontSize = (100 * dispo / largeur) + "px";
+    }
+    ajuster();
+    addEventListener("resize", ajuster, {passive:true});
+    /* les polices arrivent après : on recalcule quand elles sont prêtes */
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(ajuster);
+  })();
+
+  var mv = document.getElementById("motvid");
+  if(mv){
+    var boite = mv.parentNode;
+    var lancer = function(){ mv.play().catch(function(){}); };
+    lancer();
+    /* on relance quand la section arrive à l'écran : les navigateurs
+       mettent en pause les vidéos hors champ */
+    if(window.IntersectionObserver){
+      var io2 = new IntersectionObserver(function(es){
+        es.forEach(function(e){ if(e.isIntersecting) lancer(); else mv.pause(); });
+      }, {threshold:0.15});
+      io2.observe(boite);
+    }
+  }
+
+  var hdr = document.getElementById("hdr");
+  addEventListener("scroll",function(){ hdr.classList.toggle("sc", scrollY > 60); },{passive:true});
+})();
+</script>
+</body>
+</html>
