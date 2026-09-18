@@ -1,119 +1,108 @@
-# Rapport de mission — `experience-direction`
+# Rapport de mission — La signature (direction C, fiche film)
 
-**Date :** 2026-09-18
-**Agent :** Claude Code (Opus 5)
-**Mission :** `next-task.md` — traduire l'ADN en directions concurrentes
-**Périmètre :** skill uniquement. Aucun fichier du site modifié.
+**Date :** 2026-09-18 · **Agent :** Claude Code (Opus 5)
+**Mode :** autonomie déléguée — direction choisie et implémentée sans arbitrage
+**Périmètre :** `index.html` uniquement
 
 ---
 
-## 1. Ce que fait le skill
+## 1. Ce qui a été fait
 
-`binksfilms-dna` dit ce qui est BINKSFILMS. `experience-direction` dit **comment
-passer d'un objectif à une proposition défendable** — et comment en tenir deux ou
-trois de front assez longtemps pour que le choix soit réel.
+Premier usage réel d'`experience-direction`, mené jusqu'au site.
 
-Il produit un brief, jamais du code.
+**Terrain rectifié en cours de route.** L'archive était le terrain recommandé ;
+la baseline l'a invalidée — 7 films archivés ne portant qu'un artiste, un titre,
+une date, un type et une ligne de crédit, un seul type dans tout le catalogue,
+et aucun champ de support, caméra, format ou lieu dans le schéma. Sept titres
+rangés par date font une liste, pas une archive. `open-territories.md` a été
+corrigé : il promettait une donnée qui n'existe pas.
 
-| Section | Ce qu'elle apporte |
+**Terrain retenu : la fiche film.** Baseline : 9 fiches sur 10 sont identiques —
+lecteur, titre, une ligne de crédit, navigation. Et cette ligne est la même sur
+les dix.
+
+**Direction retenue : C — Une seule paire de mains.** Le crédit commun quitte le
+tableau et devient une signature en bas de page, hors du bloc que le routeur
+reconstruit. D'une fiche à l'autre, tout change sauf elle.
+
+---
+
+## 2. Le mécanisme, vérifié
+
+Navigation de « Free Durk » vers « Yeah Yeah » par le lien « suivant » :
+
+| | |
 |---|---|
-| §1 Observer avant de théoriser | La baseline doit être **falsifiable**. Quatre natures d'observation : spatiale, éditoriale, comportementale, temporelle |
-| §2 Deux ou trois directions | **Test de divergence** : elles doivent être en désaccord sur *ce qu'elles sacrifient*, pas sur un réglage |
-| §3 L'ambition | **Porte d'ambition** — un mécanisme, pas une déclaration. Détail ci-dessous |
-| §4 Ce que contient une direction | 14 points, dont 5 ajoutés pour la rendre exécutable |
-| §5 Trois natures de question | Observation / argument / œil, avec la règle qui les relie |
-| §6 Présenter et laisser choisir | Même soin partout, recommander clairement, dire ce qui inquiète |
-| §7 Interdits | Réduits à trois, spécifiques à ce skill |
+| Titre | change |
+| Crédits | changent |
+| Signature — nœud DOM | **identique** |
+| Signature — contenu | **identique** |
+| Signature — position | **identique** |
 
-Référence : `references/worked-example.md` — la mission B-009 de bout en bout,
-plus une esquisse de direction candidate LAB.
+Rien n'est animé. C'est l'absence de recomposition qui produit l'effet.
 
----
-
-## 2. La porte d'ambition
-
-C'est la pièce centrale, et elle est née d'un défaut que la relecture a trouvé.
-
-**Premier jet :** « au moins une direction doit être ambitieuse », suivi de cinq
-questions. Le critique a montré que c'était une déclaration sans mécanisme — un
-agent prudent pouvait la satisfaire en habillant une direction sage — alors que
-le §2 d'à côté, lui, a un test qu'on peut rater.
-
-**Corrigé :** au moins une direction doit se **déclarer candidate LAB** et
-répondre par écrit, dans la direction elle-même, aux questions 1 et 3 du filtre 2
-de `binksfilms-dna` §7 :
-
-1. *Comment cette mécanique s'appelle-t-elle ?* Un nom que le métier emploie déjà
-   — « galerie plein écran », « sélecteur de qualité » — et la porte n'est pas
-   franchie.
-2. *Qu'apprend-on du travail après l'avoir vécue ?* Un accès n'est pas une
-   compréhension.
-
-**Un jeu où aucune direction ne franchit cette porte est à refaire.**
-
-Le renommage ne la franchit pas : les deux questions portent sur la mécanique et
-sur ce qu'elle révèle, pas sur l'intensité technique.
+**La constante est déduite, pas écrite en dur** : le crédit que tous les films
+portent à l'identique, calculé au démarrage. Si un film arrive avec d'autres
+crédits, la constante n'existe plus, la signature disparaît et les crédits
+reprennent leur place ordinaire. C'était la condition de repli du brief.
 
 ---
 
-## 3. Corrections après relecture par `innovation-critic`
+## 3. Trois corrections pendant l'implémentation
 
-Verdict REFINE, 3 MAJOR, 4 MINOR. J'ai vérifié ses affirmations factuelles — il
-avait raison, y compris sur un arrondi que j'avais fait en ma faveur.
+Aucune n'était dans le brief.
 
-| Grief | Action |
+1. **La signature recouvrait le lien « Suivant ».** Le calcul de collision ne
+   l'avait pas vu, la capture d'écran si. `#film-view` et le pied de page
+   réservent désormais la place qu'elle occupe.
+2. **`aria-hidden` faisait perdre le crédit d'auteur.** Le crédit étant retiré du
+   tableau, le masquer aux lecteurs d'écran l'aurait supprimé au lieu de le
+   déplacer. Attribut retiré.
+3. **Fragile au-dessus d'un contre-champ clair.** Elle reçoit le même dégradé que
+   l'en-tête fixe, retourné — le site résout déjà ce cas ainsi.
+
+---
+
+## 4. Tests
+
+| Test | Résultat |
 |---|---|
-| **MAJOR** — §3 déclarait l'ambition sans porte falsifiable, et dupliquait la doctrine de `binksfilms-dna` §8 bis sans en posséder le mécanisme | Porte d'ambition adossée au filtre 2. §3 possède désormais le mécanisme ; la doctrine reste chez `binksfilms-dna` et n'est plus recopiée |
-| **MAJOR** — un brief n'était pas exécutable : rien sur le périmètre, les états à écrire, l'observable de réussite, ni ce que l'idée exige du rendu | Points 10 à 13 ajoutés au §4. Le point 13 dit ce que l'idée **réclame** (traitement par pixel ? composition image par image ?) sans nommer de couche — le choix reste à l'exécutant |
-| **MAJOR** — le §5 imposait d'étiqueter les questions ouvertes, mais le format du brief n'avait aucun emplacement pour elles | Point 14 ajouté |
-| **MINOR** — le §1 généralisait depuis un cas géométrique ; sur « refais la section Contact » un agent aurait fabriqué des chiffres | Réécrit en **observation falsifiable**, avec quatre natures dont la mesure est la forme forte |
-| **MINOR** — le §5 était une taxonomie sans règle de frontière | Ajout : *on mesure d'abord ; c'est quand les mesures convergent que la question devient une question d'œil.* La mesure est ce qui **prouve** qu'une question appartient à l'œil |
-| **MINOR** — le seul exemple étant une correction défensive, tout le document penchait vers la prudence | Ajout d'une esquisse de direction candidate LAB en fin de référence — « les générations » — présentée **avec ce qui peut la tuer** |
-| **POLISH** — « quatre cartes à l'écran » là où la mesure disait 3,66 | Corrigé. Un document dont l'autorité repose sur la mesure n'arrondit pas en sa faveur |
-| **POLISH** — §7 répétait l'ouverture du document et des règles déjà portées par `CLAUDE.md` | Réduit de cinq interdits à trois |
+| Persistance entre fiches | nœud, contenu et position identiques |
+| Film à deux crédits | « Produced » reste au tableau, seule la constante migre |
+| Accueil | signature absente |
+| Mobile 375×812 | aucun débordement |
+| Collisions bas de page | 0 |
+| Collisions à mi-défilement | 0 |
+| Écart au pied de page | 61 px (13 px avant correction) |
+| Desktop | grille 16/9, rayon 11 px, parallaxe inchangés |
+| Erreurs JS | 0 |
+| `films.js` · `admin.html` · `vercel.json` | intacts |
 
 ---
 
-## 4. Les deux ajustements demandés dans `binksfilms-dna`
+## 5. Ce que je n'ai pas tranché
 
-Faits, tous deux issus de `next-task.md` :
+**Si l'idée fonctionne.** C'est une question d'œil, au sens
+d'`experience-direction` §5, et elle appartient au propriétaire. Le test :
+parcourir trois fiches d'affilée par les liens précédent/suivant. Si au troisième
+film on n'a pas compris qu'une seule personne a tout fait, la direction a échoué
+et le repli est la direction A du brief.
 
-**§8 bis — L'ambition.** Section courte ajoutée : l'anti-DNA porte sur le cliché,
-jamais sur l'intensité. Motion avancée, compositing, 3D, rendu temps réel,
-shaders : pleinement ouverts. Ce qui est refusé reste le générique, le gratuit,
-le répétitif, le mal intégré. *Effet maximal possible, cliché minimal possible.*
+Le risque annoncé au brief tient toujours : une idée fondée sur la répétition
+devient pénible dès qu'elle se souligne. Trop discrète, elle ne se voit pas ;
+trop présente, elle insiste. Je ne peux pas juger ça depuis des mesures.
 
-**`built-expression.md` §2 bis.** Le format d'affiche mobile n'est plus une
-intention non réalisée — il est implémenté depuis aujourd'hui. Le passage est
-réécrit en `[vérifié]`, avec les chiffres et la raison géométrique.
-
----
-
-## 5. Fichiers
-
-**Créés :** `.claude/skills/experience-direction/SKILL.md` (217 l.) et
-`references/worked-example.md` (174 l.).
-**Modifiés :** `binksfilms-dna/SKILL.md` (+ §8 bis),
-`binksfilms-dna/references/built-expression.md`.
-**Site :** aucun fichier touché.
+**Je n'ai pas lancé `innovation-critic`** sur ce travail. Il juge bien un
+document contre du code — il l'a prouvé trois fois — mais la question ici est de
+savoir si un effet se produit à l'œil sur trois pages consécutives. C'est du
+ressort du propriétaire, pas d'une relecture de fichiers.
 
 ---
 
-## 6. Ce qui reste ouvert
+## 6. Leçon pour `experience-direction`
 
-- Le skill n'a **jamais servi**. Sa valeur se prouvera au premier brief réel, et
-  c'est à ce moment qu'on saura si la porte d'ambition tient ou se contourne.
-- Son unique exemple complet reste une correction. L'esquisse LAB ajoutée n'est
-  pas un cas mené jusqu'au bout — le prochain vrai jeu de directions devrait
-  compléter ou remplacer cette référence.
-- **B-010** — le déséquilibre de masse signalé sur `binksfilms-dna` vaut aussi
-  ici, dans une moindre mesure : 217 lignes de méthode pour un skill qui exige
-  des briefs courts.
+Les trois écarts viennent du même angle mort : **un brief qui pose un élément
+persistant doit dire ce qu'il recouvre.** Le point 12 couvre les états de média,
+pas les collisions d'un élément fixe avec le contenu. À ajouter.
 
----
-
-## 7. Suite
-
-Selon `next-task.md` : premières propositions créatives réelles, puis un premier
-prototype visible. Le terrain reste à choisir — c'est la première occasion
-d'exercer ce skill pour de vrai.
+BINKSFILMS — première direction créative livrée.

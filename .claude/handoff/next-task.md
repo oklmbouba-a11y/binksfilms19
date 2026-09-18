@@ -1,69 +1,75 @@
 # Prochaine étape — BINKSFILMS
 
 **Mise à jour :** 2026-09-18 · **Proposé par :** Claude Code
+**Mode en vigueur :** autonomie déléguée par le propriétaire
 
 ---
 
-## Fait
+## Fait aujourd'hui
 
-- **B-009** — format d'affiche mobile, en 3/4. Livré et vérifié.
-- **`binksfilms-dna` V1.1** — trois niveaux de vérité, double filtre, §8 bis sur
-  l'ambition.
-- **`experience-direction`** — livré. Porte d'ambition adossée au filtre 2,
-  brief en 14 points dont 5 pour le rendre exécutable, exemple travaillé réel.
-
-Phase 2 du blueprint close, à l'affinage d'`innovation-critic` près.
-
----
-
-## Immédiat — le premier vrai jeu de directions
-
-C'est l'objectif du propriétaire : sortir de la préparation, produire des
-propositions visibles. Et c'est la première occasion d'exercer
-`experience-direction` pour de vrai — jusqu'ici il n'a jamais servi.
-
-**Le terrain reste à choisir.** Trois candidats, par ordre de maturité :
-
-1. **La section Contact.** Territoire le plus concret, baseline éditoriale et
-   comportementale plutôt que géométrique — ce qui éprouvera le §1 du skill
-   ailleurs que sur du chiffre.
-2. **L'archive consultable.** La donnée existe déjà (`archive: true` conserve
-   sans montrer), `binksfilms-dna` a une tension fondatrice dédiée
-   (*mémoire × consultation*) et `open-territories.md` §2 a déjà testé un axe.
-   Le terrain le plus riche, et le plus ambitieux.
-3. **La fiche film.** Le contre-champ y existe enfin ; c'est là que le
-   dispositif signature peut gagner en portée.
-
-**Recommandation : l'archive.** C'est le seul des trois où une direction
-candidate LAB s'impose naturellement plutôt que de devoir être forcée pour
-satisfaire la porte du §3.
+- **B-009** — format d'affiche mobile, en 3/4.
+- **`binksfilms-dna` V1.1** — trois niveaux de vérité, double filtre, ambition.
+- **`experience-direction`** — livré, avec sa porte d'ambition.
+- **Brief de la fiche film** — trois directions, C retenue.
+- **La signature** — direction C implémentée et vérifiée. Première direction
+  créative du projet arrivée jusqu'au site.
 
 ---
 
-## Puis — affinage d'`innovation-critic`
+## Immédiat — regarder la signature
 
-Trois relectures, trois fois des défauts réels trouvés et vérifiés contre le
-code. Son prompt lui demande encore de juger à l'intuition. Lui donner
-`binksfilms-dna` §7 (double filtre) et `experience-direction` §3 (porte
-d'ambition) comme standards. Modification courte, gain déjà démontré.
+C'est une **question d'œil**, au sens d'`experience-direction` §5, et elle
+appartient au propriétaire :
+
+1. **L'effet se produit-il ?** Il faut parcourir trois fiches d'affilée par les
+   liens précédent/suivant. Si au troisième film on n'a pas compris qu'une seule
+   personne a tout fait, la direction a échoué.
+2. **La retenue tient-elle ?** C'était le risque annoncé au brief : une idée
+   fondée sur la répétition devient pénible dès qu'elle se souligne. Trop
+   discrète et elle ne se voit pas ; trop présente et elle insiste.
+3. **La position et l'échelle** — bas de page, 10 px, gris. À juger, pas à
+   argumenter.
+
+Si la retenue ne tient pas, le repli est la direction **A** du brief, qui reste
+disponible.
+
+---
+
+## Leçon à reporter dans `experience-direction`
+
+Les trois écarts survenus à l'implémentation venaient tous du même angle mort :
+**un brief qui pose un élément persistant doit dire ce qu'il recouvre.** Le point
+12 (« les états à écrire ») couvre les états de média, pas les collisions d'un
+élément fixe avec le contenu. Une ligne à ajouter.
+
+---
+
+## Ensuite
+
+- **Affinage d'`innovation-critic`** — trois relectures, trois fois des défauts
+  réels vérifiés contre le code. Lui donner `binksfilms-dna` §7 et
+  `experience-direction` §3 comme standards.
+- **Un deuxième jeu de directions**, une fois la signature jugée. La fiche film
+  a d'autres angles ; la section Contact n'a jamais été pensée comme une
+  expérience.
 
 ---
 
 ## Dette
 
-- **B-011** — preview du clip Skinny Bastard à 10,4 Mo. Le propriétaire la
-  recompressera dans son logiciel de montage ; viser 3–4 Mo, même nom, même
-  dossier.
-- **B-012** — cinq doublons média (~16 Mo) à supprimer une fois les copies
-  validées.
-- **B-010** — déséquilibre de masse dans `binksfilms-dna`, et dans une moindre
-  mesure dans `experience-direction`.
+- **B-011** — preview à 10,4 Mo, le propriétaire la recompressera (3–4 Mo, même
+  nom, même dossier).
+- **B-012** — cinq doublons média (~16 Mo).
+- **B-010** — déséquilibre de masse des skills.
 - **B-006** — `GUIDE-DEPLOIEMENT.md` désynchronisé.
+- **Date erronée** — le clip Skinny Bastard est daté 2000-09-02 et l'affiche en
+  ligne. Tous les autres films sont entre 2018 et 2026. À corriger dans
+  `admin.html`.
 
 ---
 
 ## Contenu, quand le propriétaire aura la matière
 
-Bannières et contre-champs sur 3 ou 4 films, passe courte. Il s'en occupe
-manuellement. Aujourd'hui 8 cartes sur 10 restent des miniatures YouTube, et le
-format d'affiche ne donnera sa pleine mesure qu'avec des images cadrées pour lui.
+Bannières et contre-champs sur 3 ou 4 films. 8 cartes sur 10 restent des
+miniatures YouTube, et le format d'affiche ne donnera sa pleine mesure qu'avec
+des images cadrées pour lui.

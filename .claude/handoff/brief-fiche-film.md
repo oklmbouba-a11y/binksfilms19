@@ -1,7 +1,7 @@
 # Brief d'expérience — la fiche film
 
 **Date :** 2026-09-18 · **Skill :** `experience-direction` · **Premier usage réel**
-**Statut :** en attente du choix du propriétaire
+**Statut :** **C retenue et implémentée** le 2026-09-18 — décision déléguée à Claude Code (« sois autonome »)
 
 ---
 
@@ -213,3 +213,30 @@ Et une réserve d'honnêteté : C fonctionne aujourd'hui **parce que** les créd
 sont pauvres. Si le catalogue se remplit de crédits variés — monteurs, chefs
 opérateurs, producteurs — la constante s'effrite et la direction perd son sujet.
 Elle est juste maintenant ; elle n'est pas éternelle.
+
+---
+
+## Suite donnée
+
+**C retenue**, conformément à la recommandation, le propriétaire ayant délégué la
+décision.
+
+Implémentée le jour même. Trois écarts au brief, tous apparus à la mise en œuvre
+et tous documentés dans le rapport :
+
+1. la signature recouvrait le lien « Suivant » — une réserve de place a été
+   ajoutée sous la fiche et sous le pied de page ;
+2. posée d'abord en `aria-hidden`, elle aurait fait perdre le crédit d'auteur aux
+   lecteurs d'écran puisqu'il est retiré du tableau — attribut supprimé ;
+3. au-dessus d'un contre-champ clair elle devenait fragile — elle reçoit le même
+   dégradé que l'en-tête fixe, retourné.
+
+Aucun de ces trois points n'était dans le brief. Le point 12 (« les états à
+écrire ») les aurait partiellement anticipés s'il avait couvert la collision d'un
+élément fixe avec le contenu : **c'est une leçon à reporter dans
+`experience-direction`** — un brief qui pose un élément persistant doit dire ce
+qu'il recouvre.
+
+Les directions **A** et **B** ne sont pas mortes. A reste la fondation possible
+si C devait être retirée ; B attend des bannières sur les 8 films qui n'en ont
+pas encore.

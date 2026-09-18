@@ -525,6 +525,10 @@ footer .ailleurs{margin-top:30px;border:0;padding-top:0;flex-direction:row;gap:2
 /* ---------- générique de fin ---------- */
 /* de l'air, pas du vide : 72 + 48 au lieu de 170 + 110 */
 footer{margin-top:72px;border-top:1px solid var(--ligne-2);padding:48px 24px 44px;text-align:center}
+/* Sur une fiche, la signature est posée en bas de l'écran : le pied de
+   page doit lui laisser de l'air, sinon son « © BINKSFILMS » et le crédit
+   d'auteur se retrouvent collés et se lisent comme un doublon. */
+body.film footer{padding-bottom:calc(92px + env(safe-area-inset-bottom,0px))}
 footer .lk-name{font-size:13px;letter-spacing:.26em}
 footer .lk-base{font-size:15px;color:var(--gris);margin-top:6px}
 footer .legal{margin-top:34px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gris-2)}
@@ -541,7 +545,10 @@ body.film{
   --ligne-2:rgba(237,235,230,.10);
 }
 /* on garde les marges latérales de .wrap : seul le haut est redéfini */
-#film-view{display:none;min-height:100svh;padding-top:120px}
+/* La réserve du bas appartient à la signature : elle est fixe, donc le
+   dernier bloc de la fiche doit pouvoir passer dessous sans jamais la
+   toucher. Sans ça, « Suivant » finit recouvert. */
+#film-view{display:none;min-height:100svh;padding-top:120px;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 #film-view.on{display:block}
 body.film main#home{display:none}
 .back{display:inline-flex;align-items:center;gap:9px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris);transition:color .35s ease}
@@ -664,6 +671,29 @@ body.film main#home{display:none}
   /* sous 420px, l'intitule ne prend jamais plus de la moitie de la ligne :
      la valeur garde toujours de quoi respirer */
   .f-meta .row b{min-width:112px;max-width:48%}
+}
+
+/* ---------- la signature ----------
+   Tout change d'une fiche à l'autre — l'artiste, l'année, la lumière —
+   sauf cette ligne, qui reste exactement au même endroit. Elle vit hors
+   du bloc que le routeur reconstruit : elle ne se recompose pas, elle ne
+   s'anime pas, elle ne se signale pas. C'est ce silence qui la rend
+   lisible au troisième film. */
+#signature{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  padding:26px 24px calc(16px + env(safe-area-inset-bottom,0px));
+  display:none;pointer-events:none;
+  font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gris-2);
+  /* Le même dégradé que l'en-tête, retourné : elle reste lisible au-dessus
+     d'un contre-champ clair sans jamais poser de caisson ni de barre. */
+  background:linear-gradient(to top,rgba(10,10,10,.82),rgba(10,10,10,0));
+}
+@media(min-width:1024px){#signature{padding:0 48px calc(20px + env(safe-area-inset-bottom,0px))}}
+body.film #signature.on{display:block}
+#signature b{font-weight:600;color:var(--gris)}   /* le nom porte un ton plus haut que le poste */
+@media(max-width:560px){
+  #signature{font-size:9px;letter-spacing:.14em;padding-left:20px;padding-right:20px}
 }
 
 /* ---------- le cut ---------- */
@@ -925,6 +955,14 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
 </footer>
 
 <div id="cut" aria-hidden="true"></div>
+<!-- La signature. Posée hors de #film-view pour que le routeur ne la
+     reconstruise jamais : c'est précisément ce qui fait qu'elle ne bouge
+     pas quand on passe d'un film au suivant. Remplie une seule fois au
+     démarrage, et seulement si une constante existe.
+     Pas d'aria-hidden : elle porte le crédit d'auteur, qui a été retiré du
+     tableau de la fiche. L'y masquer aux lecteurs d'écran ferait perdre
+     l'information au lieu de la déplacer. -->
+<div id="signature"></div>
 
 <!-- Les films sont dans films.js — modifiable sans code depuis admin.html -->
 <script src="films.js"></script>
@@ -1036,6 +1074,41 @@ var FILMS = (window.FILMS_DATA || []).filter(enLigne).map(function(f){
     preview: prev
   };
 });
+/* ---------- la constante ----------
+   Sur tout le catalogue, une ligne de crédit ne change jamais : la même
+   personne a réalisé, filmé et monté chaque film. Ailleurs, une colonne
+   identique serait un défaut de remplissage ; ici c'est le fait le plus
+   vrai de la collection, et la fiche film s'en sert comme d'une signature.
+   Elle n'est pas écrite en dur : on la déduit. Le jour où un film arrive
+   avec d'autres crédits, la constante n'existe plus, la signature
+   disparaît d'elle-même et les crédits reprennent leur place ordinaire.
+   Une exception ne casse pas la règle : elle l'annule proprement. */
+var CONSTANTE = (function(){
+  if(FILMS.length < 3) return null;        /* trop peu pour qu'une constante veuille dire quelque chose */
+  function cles(f){
+    return (f.credits || []).map(function(c){ return c[0] + " " + c[1]; });
+  }
+  /* chaque crédit du premier film est un candidat ; on garde celui que
+     tous les autres portent aussi, à l'identique */
+  var candidats = cles(FILMS[0]);
+  for(var i = 1; i < FILMS.length && candidats.length; i++){
+    var presentes = cles(FILMS[i]);
+    candidats = candidats.filter(function(k){ return presentes.indexOf(k) > -1; });
+  }
+  if(!candidats.length) return null;       /* un seul film sans elle, et il n'y a plus de constante */
+  var p = candidats[0].split(" ");
+  return { poste: p[0], nom: p[1], cle: candidats[0] };
+})();
+
+/* Posée une seule fois. Sans constante, l'élément reste vide et le CSS ne
+   l'affiche pas : la fiche retrouve exactement son comportement d'avant. */
+(function(){
+  var sig = document.getElementById("signature");
+  if(!sig || !CONSTANTE) return;
+  sig.innerHTML = esc(CONSTANTE.poste) + " &mdash; <b>" + esc(CONSTANTE.nom) + "</b>";
+  sig.classList.add("on");
+})();
+
 var isFile = location.protocol === "file:";
 var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 var pad = function(n){ return String(n).padStart(2,"0"); };
@@ -1406,7 +1479,11 @@ function renderFilm(f,i){
     + '<span class="eyebrow">'+pad(i+1)+' / '+pad(n)+'</span></div>'
     + '<h1 class="f-title display">'+intituleColore(f)+'</h1>'
     + '<div class="f-meta">'
-    + f.credits.map(function(c){ return '<div class="row"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>'; }).join("")
+    /* la constante ne figure pas dans le tableau : elle est déjà signée
+       en bas de page, et l'y répéter annulerait l'effet */
+    + f.credits.filter(function(c){
+        return !CONSTANTE || (c[0] + " " + c[1]) !== CONSTANTE.cle;
+      }).map(function(c){ return '<div class="row"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>'; }).join("")
     + (f.lieu ? '<div class="row"><b>Lieu</b><span>'+esc(f.lieu)+'</span></div>' : '')
     + (f.tournage ? '<div class="row"><b>Tournage</b><span>'+esc(f.tournage)+'</span></div>' : '')
     + (dateLongue(f) ? '<div class="row"><b>Sortie</b><span>'+dateLongue(f)+'</span></div>' : '')

@@ -8,6 +8,33 @@ Format : ID · date · décision · raison · conséquence · statut.
 
 ---
 
+## D-017 — La signature : la répétition des crédits devient le sujet
+**Date :** 2026-09-18 · **Statut :** ACTIVE
+
+Sur la fiche film, le crédit que tous les films portent à l'identique —
+« Réalisation, image & montage — BINKSFILMS » — est retiré du tableau et posé en
+bas de page, hors du bloc reconstruit par le routeur. D'une fiche à l'autre, tout
+change sauf elle.
+
+**Raison :** dix films, une seule ligne de crédit commune. Ailleurs cette colonne
+identique serait un défaut de remplissage à masquer ; ici c'est la démonstration
+de ce que la section Réalisateur se contente d'affirmer. La direction ne demande
+aucune donnée nouvelle, aucun média, et un coût de performance nul — elle
+transforme la pauvreté du catalogue en argument.
+
+**La constante est déduite, jamais écrite en dur.** Si un film arrive avec
+d'autres crédits, elle n'existe plus, la signature disparaît d'elle-même et les
+crédits reprennent leur place ordinaire. Une exception annule la règle
+proprement au lieu de la casser.
+
+**Conséquence, et limite assumée :** cette direction fonctionne *parce que* les
+crédits sont pauvres. Si le catalogue se remplit de monteurs, de chefs
+opérateurs, de producteurs, la constante s'effrite et la direction perd son
+sujet — elle se retirera alors toute seule, par construction. Elle est juste
+maintenant ; elle n'est pas éternelle.
+
+---
+
 ## D-016 — L'ambition se gouverne par une porte, pas par une consigne
 **Date :** 2026-09-18 · **Statut :** ACTIVE · **Met en œuvre :** D-014
 
