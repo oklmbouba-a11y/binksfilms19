@@ -1,111 +1,119 @@
-# Rapport de mission — Format d'affiche sur mobile (B-009)
+# Rapport de mission — `experience-direction`
 
 **Date :** 2026-09-18
 **Agent :** Claude Code (Opus 5)
-**Mode :** EXPERIMENTAL — première modification de `index.html`
-**Direction retenue par le propriétaire :** A — tenir l'intention du format d'affiche
+**Mission :** `next-task.md` — traduire l'ADN en directions concurrentes
+**Périmètre :** skill uniquement. Aucun fichier du site modifié.
 
 ---
 
-## 1. Le diagnostic
+## 1. Ce que fait le skill
 
-Le commentaire de la grille mobile annonçait « format d'affiche plutôt que
-vignette 16/9 » sans que le CSS ne l'applique : `.film .thumb` gardait
-`aspect-ratio:16/9`, et le bloc `@media(max-width:760px)` ne changeait que le
-rayon, l'espacement et les corps de texte.
+`binksfilms-dna` dit ce qui est BINKSFILMS. `experience-direction` dit **comment
+passer d'un objectif à une proposition défendable** — et comment en tenir deux ou
+trois de front assez longtemps pour que le choix soit réel.
 
-La baseline a montré que ce n'était pas une lubie esthétique mais une contrainte
-géométrique. **En 16/9 pleine largeur sur un téléphone, une carte plafonne à
-211 px de haut.** Une carte par écran est arithmétiquement impossible dans ce
-format.
+Il produit un brief, jamais du code.
 
-| Sur 375 × 812 | Avant | Après |
-|---|---|---|
-| Image de la carte | 304 × 166 px | **327 × 436 px** |
-| Part de la hauteur d'écran | 20 % | 50 % |
-| Cartes visibles simultanément | 3,66 | **1,73** |
-| Cartel dans l'image | 53 % | **21 %** |
-| Luminosité — carte centrée | 0,99 | 1,00 |
-| Luminosité — voisines | 0,81 / 0,83 | **0,82** |
-| Hauteur de page (10 films) | 5 355 px | 7 875 px |
-
-Le dispositif d'échelle et de luminosité — du bon travail — n'avait simplement
-pas la place de fonctionner : quatre cartes à l'écran, toutes éclairées à 82 %
-les unes des autres.
-
----
-
-## 2. Ce qui a changé
-
-**Deux modifications, toutes deux confinées au mobile.**
-
-`.film .thumb` passe en `aspect-ratio:3/4` dans la requête `max-width:760px`.
-L'image garde toute sa largeur et se recadre en hauteur : on perd le haut et le
-bas du plan, jamais les côtés — le recadrage le moins destructeur pour une image
-de clip, où le sujet est centré.
-
-Le plancher de luminosité des cartes hors centre passe de **0,72 à 0,82**, dans
-la branche `etroit` du parallaxe. C'est une conséquence directe de la première :
-à 0,72, une carte occupant la moitié de l'écran sur un plan déjà sombre se
-réduisait à une dalle noire. L'écart avec la carte centrée reste parfaitement
-lisible.
-
----
-
-## 3. Fichiers
-
-`index.html` — deux blocs touchés, commentés sur place.
-Aucun autre fichier modifié. `films.js`, `admin.html`, `vercel.json` intacts.
-Sauvegarde de l'état antérieur conservée hors dépôt le temps de la mission.
-
----
-
-## 4. Tests
-
-| Test | Résultat |
+| Section | Ce qu'elle apporte |
 |---|---|
-| Ratio appliqué en mobile | 3/4 confirmé (0,750) |
-| Débordement horizontal | aucun |
-| Dévoilement par volet | intact — cartes `vu`, `clip-path: inset(0)` |
-| Preview sur carte centrée | joue (`prev-on`, `paused: false`) |
-| Cartel au centre | s'efface comme prévu |
-| **Desktop — ratio** | **`16 / 9` inchangé** |
-| **Desktop — rayon** | **11 px inchangé** |
-| **Desktop — parallaxe** | luminosité toujours sur le cadre, image à `none` — comportement d'origine |
-| Mouvement réduit | couvert par `if(reduced) return` ; le CSS dédié n'entre pas en conflit avec le format d'affiche |
+| §1 Observer avant de théoriser | La baseline doit être **falsifiable**. Quatre natures d'observation : spatiale, éditoriale, comportementale, temporelle |
+| §2 Deux ou trois directions | **Test de divergence** : elles doivent être en désaccord sur *ce qu'elles sacrifient*, pas sur un réglage |
+| §3 L'ambition | **Porte d'ambition** — un mécanisme, pas une déclaration. Détail ci-dessous |
+| §4 Ce que contient une direction | 14 points, dont 5 ajoutés pour la rendre exécutable |
+| §5 Trois natures de question | Observation / argument / œil, avec la règle qui les relie |
+| §6 Présenter et laisser choisir | Même soin partout, recommander clairement, dire ce qui inquiète |
+| §7 Interdits | Réduits à trois, spécifiques à ce skill |
+
+Référence : `references/worked-example.md` — la mission B-009 de bout en bout,
+plus une esquisse de direction candidate LAB.
 
 ---
 
-## 5. Coût assumé
+## 2. La porte d'ambition
 
-**La page s'allonge de 47 %** — 7 875 px contre 5 355 pour dix films, et ça
-croîtra linéairement avec le catalogue. C'est le prix d'une carte par écran, et
-c'est le choix de la direction A.
+C'est la pièce centrale, et elle est née d'un défaut que la relecture a trouvé.
 
-Si le catalogue double, il faudra sans doute une pagination ou un chargement
-progressif. Pas aujourd'hui.
+**Premier jet :** « au moins une direction doit être ambitieuse », suivi de cinq
+questions. Le critique a montré que c'était une déclaration sans mécanisme — un
+agent prudent pouvait la satisfaire en habillant une direction sage — alors que
+le §2 d'à côté, lui, a un test qu'on peut rater.
+
+**Corrigé :** au moins une direction doit se **déclarer candidate LAB** et
+répondre par écrit, dans la direction elle-même, aux questions 1 et 3 du filtre 2
+de `binksfilms-dna` §7 :
+
+1. *Comment cette mécanique s'appelle-t-elle ?* Un nom que le métier emploie déjà
+   — « galerie plein écran », « sélecteur de qualité » — et la porte n'est pas
+   franchie.
+2. *Qu'apprend-on du travail après l'avoir vécue ?* Un accès n'est pas une
+   compréhension.
+
+**Un jeu où aucune direction ne franchit cette porte est à refaire.**
+
+Le renommage ne la franchit pas : les deux questions portent sur la mécanique et
+sur ce qu'elle révèle, pas sur l'intensité technique.
 
 ---
 
-## 6. Ratio — tranché
+## 3. Corrections après relecture par `innovation-critic`
 
-**3/4**, choisi par le propriétaire après avoir regardé les deux.
+Verdict REFINE, 3 MAJOR, 4 MINOR. J'ai vérifié ses affirmations factuelles — il
+avait raison, y compris sur un arrondi que j'avais fait en ma faveur.
 
-| | 4/5 (essayé) | **3/4 (retenu)** |
-|---|---|---|
-| Carte | 327 × 409 | **327 × 436** |
-| Cartes par écran | 1,83 | **1,73** |
-| Cartel dans l'image | 22 % | **21 %** |
-| Hauteur de page | 7 603 px | **7 875 px** |
+| Grief | Action |
+|---|---|
+| **MAJOR** — §3 déclarait l'ambition sans porte falsifiable, et dupliquait la doctrine de `binksfilms-dna` §8 bis sans en posséder le mécanisme | Porte d'ambition adossée au filtre 2. §3 possède désormais le mécanisme ; la doctrine reste chez `binksfilms-dna` et n'est plus recopiée |
+| **MAJOR** — un brief n'était pas exécutable : rien sur le périmètre, les états à écrire, l'observable de réussite, ni ce que l'idée exige du rendu | Points 10 à 13 ajoutés au §4. Le point 13 dit ce que l'idée **réclame** (traitement par pixel ? composition image par image ?) sans nommer de couche — le choix reste à l'exécutant |
+| **MAJOR** — le §5 imposait d'étiqueter les questions ouvertes, mais le format du brief n'avait aucun emplacement pour elles | Point 14 ajouté |
+| **MINOR** — le §1 généralisait depuis un cas géométrique ; sur « refais la section Contact » un agent aurait fabriqué des chiffres | Réécrit en **observation falsifiable**, avec quatre natures dont la mesure est la forme forte |
+| **MINOR** — le §5 était une taxonomie sans règle de frontière | Ajout : *on mesure d'abord ; c'est quand les mesures convergent que la question devient une question d'œil.* La mesure est ce qui **prouve** qu'une question appartient à l'œil |
+| **MINOR** — le seul exemple étant une correction défensive, tout le document penchait vers la prudence | Ajout d'une esquisse de direction candidate LAB en fin de référence — « les générations » — présentée **avec ce qui peut la tuer** |
+| **POLISH** — « quatre cartes à l'écran » là où la mesure disait 3,66 | Corrigé. Un document dont l'autorité repose sur la mesure n'arrondit pas en sa faveur |
+| **POLISH** — §7 répétait l'ouverture du document et des règles déjà portées par `CLAUDE.md` | Réduit de cinq interdits à trois |
 
-L'écart est mince sur le papier ; c'est à l'œil qu'il se décide, et c'était la
-bonne manière de trancher.
+---
 
-## 7. Ce que ça implique pour la suite
+## 4. Les deux ajustements demandés dans `binksfilms-dna`
 
-Le format d'affiche **suppose des bannières cadrées pour lui**. Aujourd'hui 8
-cartes sur 10 affichent une miniature YouTube 16/9 recadrée au centre : ça tient,
-mais ce n'est pas choisi. Le propriétaire a indiqué qu'il mettrait les bannières
-à jour manuellement — c'est ce qui donnera sa pleine valeur à ce changement.
+Faits, tous deux issus de `next-task.md` :
 
-Prochaine mission selon `next-task.md` : `experience-direction`.
+**§8 bis — L'ambition.** Section courte ajoutée : l'anti-DNA porte sur le cliché,
+jamais sur l'intensité. Motion avancée, compositing, 3D, rendu temps réel,
+shaders : pleinement ouverts. Ce qui est refusé reste le générique, le gratuit,
+le répétitif, le mal intégré. *Effet maximal possible, cliché minimal possible.*
+
+**`built-expression.md` §2 bis.** Le format d'affiche mobile n'est plus une
+intention non réalisée — il est implémenté depuis aujourd'hui. Le passage est
+réécrit en `[vérifié]`, avec les chiffres et la raison géométrique.
+
+---
+
+## 5. Fichiers
+
+**Créés :** `.claude/skills/experience-direction/SKILL.md` (217 l.) et
+`references/worked-example.md` (174 l.).
+**Modifiés :** `binksfilms-dna/SKILL.md` (+ §8 bis),
+`binksfilms-dna/references/built-expression.md`.
+**Site :** aucun fichier touché.
+
+---
+
+## 6. Ce qui reste ouvert
+
+- Le skill n'a **jamais servi**. Sa valeur se prouvera au premier brief réel, et
+  c'est à ce moment qu'on saura si la porte d'ambition tient ou se contourne.
+- Son unique exemple complet reste une correction. L'esquisse LAB ajoutée n'est
+  pas un cas mené jusqu'au bout — le prochain vrai jeu de directions devrait
+  compléter ou remplacer cette référence.
+- **B-010** — le déséquilibre de masse signalé sur `binksfilms-dna` vaut aussi
+  ici, dans une moindre mesure : 217 lignes de méthode pour un skill qui exige
+  des briefs courts.
+
+---
+
+## 7. Suite
+
+Selon `next-task.md` : premières propositions créatives réelles, puis un premier
+prototype visible. Le terrain reste à choisir — c'est la première occasion
+d'exercer ce skill pour de vrai.

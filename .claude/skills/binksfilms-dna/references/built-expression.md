@@ -236,18 +236,16 @@ Relevé lors de la vérification. Ce ne sont pas des défauts d'identité — ce
 des écarts entre la doctrine écrite dans les commentaires et le comportement
 réel, et ils doivent être connus avant de citer ces commentaires comme standard.
 
-**Le format d'affiche sur mobile. [intention, non réalisée]**
-Le commentaire de la grille mobile annonce : « Format d'affiche plutôt que
-vignette 16/9, espacement resserré. » Le bloc `@media(max-width:760px)` ne
-change en réalité que le `gap`, le rayon, le padding du cartel et les corps de
-texte. `.film .thumb` conserve `aspect-ratio:16/9`, qu'aucune règle ne
-surcharge.
+**Le format d'affiche sur mobile. [vérifié depuis le 2026-09-18]**
+Longtemps annoncé en commentaire sans être appliqué — c'était l'exemple qui a
+motivé la règle de preuve ci-dessus. C'est désormais réalisé :
+`.film .thumb` passe en `aspect-ratio:3/4` sous 760px, et le plancher de
+luminosité des cartes hors centre est remonté de 0,72 à 0,82 en conséquence.
 
-L'intention est juste et mérite d'être tenue — mais **le site ne l'applique pas
-aujourd'hui**. Ce qui *est* réellement authored sur mobile : l'effacement flouté
-du cartel quand la carte est au centre de l'écran, la preview déclenchée par le
-centrage plutôt que par le survol, et l'espacement resserré. C'est déjà
-substantiel, et c'est cela qu'il faut citer en exemple. [vérifié]
+On passe de 3,66 à 1,73 carte par écran, et le cartel de 53 % à 21 % de l'image.
+L'image garde toute sa largeur et se recadre en hauteur. La raison était
+géométrique et non esthétique : en 16/9 pleine largeur une carte plafonne à
+211 px de haut sur un téléphone, donc « une carte à la fois » y est impossible.
 
 **L'accessibilité des films archivés. [intention, non réalisée]**
 `archive: true` / `status: "archived"` ne masque pas un film : `filter(enLigne)`

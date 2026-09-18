@@ -8,6 +8,29 @@ Format : ID · date · décision · raison · conséquence · statut.
 
 ---
 
+## D-016 — L'ambition se gouverne par une porte, pas par une consigne
+**Date :** 2026-09-18 · **Statut :** ACTIVE · **Met en œuvre :** D-014
+
+`experience-direction` §3 impose que, dans tout jeu de directions, au moins une
+se **déclare candidate LAB** et réponde par écrit aux questions 1 et 3 du
+filtre 2 de `binksfilms-dna` §7 : comment la mécanique s'appelle-t-elle, et
+qu'apprend-on du travail après l'avoir vécue. Un jeu où aucune direction ne
+franchit cette porte est à refaire.
+
+**Raison :** D-014 a établi la doctrine — les effets ambitieux sont ouverts,
+anti-cliché n'est pas anti-effet. Mais une doctrine sans mécanisme se contourne :
+la première version du skill demandait « au moins une direction ambitieuse », ce
+qu'un agent prudent pouvait satisfaire en habillant une proposition sage. Le
+test de divergence du §2, lui, pouvait être raté — l'ambition méritait le même
+traitement.
+
+**Conséquence :** la doctrine reste dans `binksfilms-dna` §8 bis, le mécanisme
+appartient à `experience-direction` §3. Aucune duplication entre les deux. Le
+renommage ne franchit pas la porte, puisque les deux questions portent sur la
+mécanique et sur ce qu'elle révèle, jamais sur l'intensité technique.
+
+---
+
 ## D-015 — Le format d'affiche sur mobile, et ce qu'il entraîne
 **Date :** 2026-09-18 · **Statut :** ACTIVE
 

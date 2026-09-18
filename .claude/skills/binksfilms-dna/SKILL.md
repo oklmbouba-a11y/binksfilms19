@@ -292,6 +292,28 @@ ne retire rien, elle ne dit rien d'un film en particulier, et elle est
 **C'est le cas le plus instructif : le bon vocabulaire ne fait pas une idée.** La
 plupart des propositions qui échoueront ici auront l'air justes.
 
+## 8 bis. L'ambition
+
+**L'anti-DNA du §9 porte sur le cliché, jamais sur l'intensité.** Confondre les
+deux est la mauvaise lecture la plus probable de ce document, et le propriétaire
+a tranché le point : il aime les effets forts, à condition qu'ils soient
+exceptionnellement bien exécutés.
+
+Motion avancée, compositing, 3D, rendu temps réel, shaders, distorsions,
+transitions fortes, traitements vidéo : **pleinement ouverts**. Une proposition
+n'est jamais refusée parce qu'elle est spectaculaire.
+
+Ce qui est refusé reste ce qui l'a toujours été : l'effet **générique**,
+**gratuit**, **répétitif**, **mal intégré**, ou employé comme raccourci à la
+place d'une idée. Un effet ambitieux se juge sur la qualité de son exécution, sa
+relation à l'image, sa précision, son insertion dans le rythme de la page, sa
+distinctivité, et sa tenue sur mobile et en performance.
+
+**Le principe : effet maximal possible, cliché minimal possible.**
+
+Corollaire pour qui produit des directions : un jeu de propositions où les trois
+sont prudentes est un jeu raté. Voir `experience-direction` §3.
+
 ## 9. Anti-DNA
 
 À refuser **par défaut**. Chacun se lève par une raison BINKSFILMS écrite, jamais

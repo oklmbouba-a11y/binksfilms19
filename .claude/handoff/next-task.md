@@ -1,83 +1,69 @@
 # Prochaine étape — BINKSFILMS
 
 **Mise à jour :** 2026-09-18 · **Proposé par :** Claude Code
-**Intègre :** la décision propriétaire d'accélérer vers le travail créatif (`4dc5449`)
-
----
-
-## Consigne propriétaire en vigueur
-
-Sortir de la préparation. Priorité : `experience-direction`, puis des
-propositions créatives réelles, puis un premier prototype visible. Le mobile ne
-doit pas servir de prétexte à retarder ça — il est fait, on avance.
-
-**Et un point de goût qui change la lecture du système :** le propriétaire adore
-les effets ambitieux, bien exécutés. WebGL, shaders, 3D, compositing, motion
-avancée, transitions fortes sont **pleinement ouverts**. Anti-cliché n'est pas
-anti-effet. Voir D-014.
 
 ---
 
 ## Fait
 
-**B-009 — le format d'affiche mobile.** Livré. `.film .thumb` en 3/4 sur mobile,
-plancher de luminosité relevé de 0,72 à 0,82 en conséquence. On passe de 3,66 à
-1,73 carte par écran, le cartel de 53 % à 21 % de l'image. Desktop strictement
-inchangé. Détail dans `latest-report.md`, décision en D-015.
+- **B-009** — format d'affiche mobile, en 3/4. Livré et vérifié.
+- **`binksfilms-dna` V1.1** — trois niveaux de vérité, double filtre, §8 bis sur
+  l'ambition.
+- **`experience-direction`** — livré. Porte d'ambition adossée au filtre 2,
+  brief en 14 points dont 5 pour le rendre exécutable, exemple travaillé réel.
 
-Ratio tranché par le propriétaire après comparaison à l'œil : **3/4**.
-
----
-
-## Mission suivante — `experience-direction`
-
-Blueprint §13, Phase 2, point 8. Traduire l'ADN en directions créatives
-concurrentes et argumentées, puis en retenir une avant implémentation.
-
-`binksfilms-dna` dit ce qui est BINKSFILMS et ce qui mérite d'exister. Rien ne
-dit encore comment passer d'un objectif à deux ou trois propositions
-défendables. La mission B-009 vient d'en faire la démonstration à la main —
-baseline chiffrée, trois directions, choix du propriétaire, implémentation, QA.
-C'est exactement ce que ce skill doit outiller, et ce cas peut lui servir
-d'exemple travaillé.
-
-**Contrainte issue de D-014 :** le skill doit savoir produire des directions
-**ambitieuses**, pas seulement prudentes. Si ses trois propositions types sont
-toujours sages, il est raté.
+Phase 2 du blueprint close, à l'affinage d'`innovation-critic` près.
 
 ---
 
-## Puis — premier prototype visible
+## Immédiat — le premier vrai jeu de directions
 
-Objectif du propriétaire. Terrain à choisir au moment venu ; `binksfilms-dna`
-§6 (registre LAB) et `open-territories.md` donnent les critères.
+C'est l'objectif du propriétaire : sortir de la préparation, produire des
+propositions visibles. Et c'est la première occasion d'exercer
+`experience-direction` pour de vrai — jusqu'ici il n'a jamais servi.
+
+**Le terrain reste à choisir.** Trois candidats, par ordre de maturité :
+
+1. **La section Contact.** Territoire le plus concret, baseline éditoriale et
+   comportementale plutôt que géométrique — ce qui éprouvera le §1 du skill
+   ailleurs que sur du chiffre.
+2. **L'archive consultable.** La donnée existe déjà (`archive: true` conserve
+   sans montrer), `binksfilms-dna` a une tension fondatrice dédiée
+   (*mémoire × consultation*) et `open-territories.md` §2 a déjà testé un axe.
+   Le terrain le plus riche, et le plus ambitieux.
+3. **La fiche film.** Le contre-champ y existe enfin ; c'est là que le
+   dispositif signature peut gagner en portée.
+
+**Recommandation : l'archive.** C'est le seul des trois où une direction
+candidate LAB s'impose naturellement plutôt que de devoir être forcée pour
+satisfaire la porte du §3.
 
 ---
 
-## Ajustement à faire dans `binksfilms-dna`
+## Puis — affinage d'`innovation-critic`
 
-1. **Refléter D-014.** Le skill dit déjà que LAB est « autorisé, attendu même »
-   et que rien n'interdit le rendu temps réel — mais son volume penche vers le
-   refus. Une section courte sur l'ambition comme exigence, pas comme risque.
-2. **`built-expression.md` §2 bis** décrit le format d'affiche mobile comme une
-   intention non réalisée. C'est faux depuis aujourd'hui.
+Trois relectures, trois fois des défauts réels trouvés et vérifiés contre le
+code. Son prompt lui demande encore de juger à l'intuition. Lui donner
+`binksfilms-dna` §7 (double filtre) et `experience-direction` §3 (porte
+d'ambition) comme standards. Modification courte, gain déjà démontré.
 
 ---
 
 ## Dette
 
-- **B-011** — preview du clip Skinny Bastard à 10,4 Mo pour 6,4 s. Bloqué : pas
-  de `ffmpeg` sur la machine.
+- **B-011** — preview du clip Skinny Bastard à 10,4 Mo. Le propriétaire la
+  recompressera dans son logiciel de montage ; viser 3–4 Mo, même nom, même
+  dossier.
 - **B-012** — cinq doublons média (~16 Mo) à supprimer une fois les copies
   validées.
-- **B-010** — déséquilibre de masse dans `binksfilms-dna`.
+- **B-010** — déséquilibre de masse dans `binksfilms-dna`, et dans une moindre
+  mesure dans `experience-direction`.
 - **B-006** — `GUIDE-DEPLOIEMENT.md` désynchronisé.
 
 ---
 
 ## Contenu, quand le propriétaire aura la matière
 
-Bannières et contre-champs sur 3 ou 4 films, en une passe courte — le
-propriétaire a validé qu'elle reste rapide et ne devienne pas une phase. Il s'en
-occupe manuellement. C'est ce qui donnera sa pleine valeur au format d'affiche :
-aujourd'hui 8 cartes sur 10 restent des miniatures YouTube recadrées.
+Bannières et contre-champs sur 3 ou 4 films, passe courte. Il s'en occupe
+manuellement. Aujourd'hui 8 cartes sur 10 restent des miniatures YouTube, et le
+format d'affiche ne donnera sa pleine mesure qu'avec des images cadrées pour lui.
