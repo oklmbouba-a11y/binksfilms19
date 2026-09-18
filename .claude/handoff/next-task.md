@@ -180,3 +180,22 @@ Ne pas intégrer au site principal tant que ce prototype n'est pas convaincant.
 Claude garde carte blanche sur l'implémentation exacte, le shader, le rythme, les seuils et la composition. Il peut contester la synthèse Flux/Bande s'il démontre qu'une autre structure est visuellement ou techniquement supérieure.
 
 Mais la mission doit produire **un résultat visible maintenant**, pas un nouveau long brief.
+
+
+---
+
+## Règle de gouvernance — le repo est la source de vérité
+
+Décision propriétaire : ChatGPT ne doit plus se baser principalement sur les rapports de Claude Code pour juger l'avancement.
+
+À partir de maintenant :
+- **le dépôt GitHub complet est la source de vérité** ;
+- avant toute critique ou nouvelle direction, ChatGPT vérifie les commits récents et, quand c'est pertinent, les fichiers réellement modifiés ;
+- `latest-report.md`, `next-task.md` et les messages de Claude sont des explications secondaires, jamais une preuve suffisante ;
+- si le rapport dit une chose mais que le code montre autre chose, **le code gagne** ;
+- ChatGPT doit pouvoir relever les erreurs, oublis, incohérences ou surévaluations de Claude à partir du projet réel ;
+- l'évaluation doit couvrir autant que nécessaire : DA, comportement, architecture, données, performance, accessibilité, mobile, fallbacks et cohérence entre prototypes ;
+- les nouveaux LAB doivent être comparés non seulement à leur brief, mais aussi au site principal et aux autres LAB déjà présents dans le repo ;
+- Claude doit considérer les critiques basées sur le repo comme des revues indépendantes, et non comme une reformulation de ses propres rapports.
+
+But : faire fonctionner Claude Code + ChatGPT comme deux lectures indépendantes du même projet, avec le propriétaire comme arbitre final.
