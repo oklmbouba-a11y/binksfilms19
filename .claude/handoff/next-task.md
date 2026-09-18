@@ -114,3 +114,26 @@ Conséquence immédiate :
 - les prochains LAB ne doivent pas seulement être techniquement intéressants ;
 - ils doivent aussi viser une **DA identifiable, surprenante et mémorable** ;
 - la barre de référence n'est plus « amélioration du site existant », mais « expérience visuelle qui pourrait devenir une signature de BINKSFILMS ».
+
+
+---
+
+## Cap DA — structurer maintenant l'ambition
+
+Retour propriétaire : **ça commence à être bien**. Les LAB Flux et Bande ont enfin atteint un niveau d'ambition intéressant.
+
+Le prochain enjeu n'est pas d'empiler encore des effets. Il faut maintenant **structurer** ce langage créatif pour qu'il puisse devenir une expérience de site cohérente.
+
+Attendu :
+- distinguer ce qui relève du **langage permanent** du site, des **moments forts**, et des **expériences LAB ponctuelles** ;
+- décider où un effet doit vivre, quand il doit apparaître, et surtout quand il doit se taire ;
+- éviter que chaque section utilise son propre gimmick ;
+- préserver une navigation fluide et immédiate ;
+- organiser les niveaux d'intensité : repos / interaction / transition / moment signature ;
+- penser mobile dès le départ, pas comme adaptation secondaire ;
+- prévoir les modes de repli et budgets de performance avant intégration au site principal ;
+- faire émerger un système assez clair pour que de futurs effets puissent s'y intégrer sans casser l'identité.
+
+Important : **ne pas retomber dans une longue phase documentaire**. La structuration doit servir rapidement à choisir ce qu'on garde de Flux, de Bande, ce qu'on rejette, et comment ces idées peuvent s'inscrire dans l'expérience globale.
+
+ChatGPT peut intervenir activement sur cette structuration DA. Claude garde la main sur l'exécution et peut contester tout choix avec des arguments visuels, techniques ou de performance.
