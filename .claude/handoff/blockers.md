@@ -3,7 +3,7 @@
 Sévérités définies dans `.claude/skills/quality-contract/SKILL.md` :
 `BLOCKER` · `MAJOR` · `MINOR` · `POLISH`.
 
-**État au 2026-09-18 : 1 BLOCKER ouvert (authentification), 0 blocage technique.**
+**État au 2026-09-18 : 0 BLOCKER ouvert. Dépôt synchronisé avec GitHub.**
 La Phase 2 (`binksfilms-dna`) n'est bloquée par aucun point technique.
 
 ---
@@ -29,26 +29,22 @@ restent atteignables dans l'historique.
 
 ---
 
-## B-002 — Authentification GitHub absente sur cette machine
-**Sévérité :** BLOCKER · **Propriétaire :** utilisateur · **Statut :** OUVERT — action utilisateur en cours
+## B-002 — Authentification GitHub
+**Sévérité :** BLOCKER · **Propriétaire :** utilisateur · **Statut :** RÉSOLU 2026-09-18
 
-`gh` (GitHub CLI) n'est pas installé et aucun `credential.helper` n'est
-configuré. Le dépôt est lisible en anonyme, mais le push échouera faute
-d'identifiants.
+GitHub CLI n'est pas installé, mais le **Git Credential Manager était déjà
+configuré au niveau système** (`C:/Program Files/Git/etc/gitconfig` →
+`credential.helper = manager`). Le diagnostic initial était faux : seule la
+portée `--global` avait été vérifiée.
 
-Claude ne manipule ni mot de passe ni token — cette étape revient à
-l'utilisateur.
+Le push a ouvert la fenêtre GCM « Connect to GitHub », l'utilisateur a validé,
+et la synchronisation a abouti : `d18b018..3a66000  main -> main`, plus le tag
+`core-phase1`. Aucun identifiant n'a transité par Claude.
 
-**Voie retenue :** installation de GitHub CLI puis `gh auth login`.
-
-```
-winget install --id GitHub.cli
-# puis, dans un NOUVEAU terminal :
-gh auth login   # GitHub.com -> HTTPS -> Login with a web browser
-```
-
-**Seul point restant avant le push.** Tout est prêt localement : 3 commits
-d'avance sur `origin/main`, working tree propre, fusion faite.
+**Pour les prochaines missions :** le push fonctionne désormais sans
+intervention, les identifiants étant mémorisés par GCM. GitHub CLI reste
+optionnel — utile seulement si le travail sur les pull requests devient
+nécessaire.
 
 ---
 

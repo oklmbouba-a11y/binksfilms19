@@ -6,18 +6,10 @@ début de chaque mission.
 
 ---
 
-## Immédiat — une seule action, côté utilisateur
+## Immédiat
 
-**Authentifier GitHub, puis pousser (B-002).**
-
-```
-winget install --id GitHub.cli
-# puis, dans un NOUVEAU terminal :
-gh auth login   # GitHub.com -> HTTPS -> Login with a web browser
-```
-
-Tout le reste est prêt : fusion faite, working tree propre, 3 commits en attente
-sur `main`. B-001 (stratégie d'historique) est tranché et résolu.
+Rien. Le CORE est clos, versionné et poussé. B-001 et B-002 sont résolus.
+La mission suivante peut démarrer directement.
 
 ---
 

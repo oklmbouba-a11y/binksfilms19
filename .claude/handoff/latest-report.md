@@ -5,7 +5,7 @@
 **Mode :** SURGICAL — infrastructure uniquement
 **Phase blueprint :** Phase 1 (Operating core) → close
 **Checkpoint Git :** `core-phase1` / commit `2471d91`
-**HEAD :** `8c0b00f` — 3 commits d'avance sur `origin/main`, non poussés
+**HEAD :** `3a66000` — poussé sur `oklmbouba-a11y/binksfilms19`, branche `main`
 
 ---
 
@@ -39,7 +39,11 @@ Création de `.claude/handoff/` et de ses quatre fichiers de travail.
 dupliquée, sur un historique indépendant du local. Après arbitrage utilisateur,
 fusion `-s ours` : les 17 commits sont préservés, l'arborescence locale — plus
 récente — est adoptée, les doublons sont écartés. Intégrité des fichiers du site
-vérifiée par hash après fusion. **Push en attente d'authentification (B-002).**
+vérifiée par hash après fusion.
+
+**Push effectué :** `d18b018..3a66000  main -> main`, plus le tag `core-phase1`.
+Le dépôt distant porte désormais 22 commits : les 17 d'origine, les 4 locaux et
+le merge. Arborescence finale : un seul jeu de fichiers à la racine + `.claude/`.
 
 ---
 
@@ -98,6 +102,7 @@ Serveur local `python -m http.server 4173`, navigateur intégré.
 | 8 agents | Détectés, frontmatter `name:` conforme |
 | 2 skills projet | Détectés, `SKILL.md` intact |
 | Working tree Git | Propre |
+| Push GitHub | OK — `main` et tag `core-phase1` synchronisés, 0 écart local/distant |
 | Intégrité après fusion | `index.html`, `films.js`, `admin.html`, `vercel.json` : hash identiques au tag `core-phase1` |
 | Site après fusion | Re-testé — 17 films, 10 cartes, 0 image cassée, 0 erreur JS |
 | Doublons écartés | Vérifiés bit-à-bit avant écartement (2 sur 3 ; le 3e → B-008) |
@@ -164,8 +169,8 @@ Ce sont des dégradations visuelles localisées sur un seul film.
 
 Par ordre de priorité. Proposition détaillée dans `next-task.md`.
 
-1. **Authentifier GitHub puis pousser.** Seule étape restante : `gh auth login`.
-   La fusion est faite, 3 commits attendent — voir `blockers.md` B-002.
+1. **Lancer la Phase 2 — `binksfilms-dna`.** Plus rien ne bloque : le CORE est
+   versionné, poussé, et la passerelle de handoff est en place.
 2. **Corriger le film `fulltrap-…`** via `admin.html` : ré-importer les visuels
    manquants et ré-exporter `films.js`. Corrige (a) et (b) d'un coup, sans
    édition manuelle. Ne pas éditer `films.js` à la main — l'en-tête du fichier
