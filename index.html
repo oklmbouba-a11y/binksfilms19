@@ -670,6 +670,21 @@ body.film main#home{display:none}
 #cut{position:fixed;inset:0;z-index:90;background:#000;opacity:0;pointer-events:none}
 #cut.on{opacity:1}
 #cut.off{transition:opacity .12s ease}
+/* ---------- le carton ----------
+   D'un film à l'autre, le site coupait déjà au noir — mais sur rien, et
+   trop vite pour qu'on le voie. Le noir porte maintenant la seule ligne
+   que tous les films partagent : une personne les a tous réalisés, filmés
+   et montés. Tout se remplace, elle traverse la coupe.
+   Elle n'entre pas et ne sort pas : elle est là avec le noir et s'efface
+   avec lui. Une animation la ferait passer pour un effet. */
+#cut .carton{
+  position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);
+  padding:0 24px;text-align:center;
+  font-size:12px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;
+  color:var(--ivoire);opacity:0;
+}
+#cut.carte .carton{opacity:1}
+@media(max-width:560px){#cut .carton{font-size:10px;letter-spacing:.22em}}
 
 /* ---------- apparitions au scroll ----------
    Les images se dévoilent par un volet qui monte, comme un rideau ;
@@ -924,7 +939,7 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
   <p class="legal">© 2026 — BINKSFILMS</p>
 </footer>
 
-<div id="cut" aria-hidden="true"></div>
+<div id="cut" aria-hidden="true"><span class="carton"></span></div>
 
 <!-- Les films sont dans films.js — modifiable sans code depuis admin.html -->
 <script src="films.js"></script>
@@ -1036,10 +1051,39 @@ var FILMS = (window.FILMS_DATA || []).filter(enLigne).map(function(f){
     preview: prev
   };
 });
+/* ---------- la constante ----------
+   Une ligne de crédit ne change jamais d'un film à l'autre : la même
+   personne les a tous réalisés, filmés et montés. Ailleurs une colonne
+   identique serait un défaut de remplissage ; ici c'est le fait le plus
+   vrai de la collection, et c'est elle que la coupe porte.
+   Déduite, jamais écrite en dur : le jour où un film arrive avec d'autres
+   crédits, la constante n'existe plus et la coupe redevient sèche. Une
+   exception ne casse pas la règle, elle l'annule proprement. */
+var CONSTANTE = (function(){
+  if(FILMS.length < 3) return null;
+  function cles(f){
+    return (f.credits || []).map(function(c){ return c[0] + " " + c[1]; });
+  }
+  var candidats = cles(FILMS[0]);
+  for(var i = 1; i < FILMS.length && candidats.length; i++){
+    var presentes = cles(FILMS[i]);
+    candidats = candidats.filter(function(k){ return presentes.indexOf(k) > -1; });
+  }
+  if(!candidats.length) return null;
+  var p = candidats[0].split(" ");
+  return { poste: p[0], nom: p[1] };
+})();
+
 var isFile = location.protocol === "file:";
 var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 var pad = function(n){ return String(n).padStart(2,"0"); };
 function esc(s){ return String(s).replace(/</g,"&lt;"); }
+/* Le carton est rempli une seule fois. Sans constante il reste vide et la
+   coupe garde exactement son comportement d'avant. */
+(function(){
+  var el = document.querySelector("#cut .carton");
+  if(el && CONSTANTE) el.textContent = CONSTANTE.poste + " — " + CONSTANTE.nom;
+})();
 /* ---------- Chaîne de secours des images ----------
    Une bannière personnalisée absente ou cassée ne doit jamais laisser un
    trou. Ordre : image perso → miniature YouTube (maxres puis hq) →
@@ -1510,21 +1554,27 @@ function retourAccueil(e){
   if(reduced){ scrollTo(0,0); return; }
   cut(function(){ scrollTo(0,0); });
 }
-function cut(fn){
+function cut(fn, carton){
   if(reduced){ fn(); return; }
   var c = document.getElementById("cut");
   c.classList.remove("off");
   c.classList.add("on");
+  if(carton && CONSTANTE) c.classList.add("carte");
+  /* Sans carton la coupe reste sèche, comme avant. Avec, elle tient le
+     temps qu'on lise une ligne courte — au-delà c'est une attente. */
   setTimeout(function(){
     fn();
     c.classList.add("off");
     c.classList.remove("on");
-  }, 100);
+    c.classList.remove("carte");
+  }, (carton && CONSTANTE) ? 420 : 100);
 }
 var lastWasFilm = /^#\/film\//.test(location.hash);
 addEventListener("hashchange", function(){
   var isFilm = /^#\/film\//.test(location.hash);
-  if(isFilm || lastWasFilm) cut(showRoute); else showRoute();
+  /* le carton n'a de sens qu'entre deux films : c'est là que tout change
+     sauf lui. En entrant depuis la grille ou en revenant, coupe sèche. */
+  if(isFilm || lastWasFilm) cut(showRoute, isFilm && lastWasFilm); else showRoute();
   lastWasFilm = isFilm;
 });
 showRoute(true);
