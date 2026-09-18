@@ -5,46 +5,34 @@
 
 ---
 
-## Immédiat — revue du propriétaire
+## Immédiat — passe de contenu, 3 ou 4 films
 
-Rapport complet dans `latest-report.md`. Trois points méritent vraiment un
-arbitrage ; le reste est de la mécanique.
+Point 2 du plan convenu. Le point 1 (réparation du clip Skinny Bastard) est fait.
 
-1. **Le classement du vocabulaire rétro** (D-010). J'ai maintenu VHS, MiniDV,
-   carte SD et grain en **registre disponible** contre un brief qui les voulait
-   en principe fondateur, en m'appuyant sur les mots du propriétaire lui-même. Si
-   je l'ai mal lu, c'est la première chose à corriger — tout le §11 en dépend.
-2. **§14 — le droit de se contredire.** Personne ne l'a demandé. J'ai jugé qu'un
-   document d'identité sans clause d'évolution est un document de conservation.
-   C'est un choix d'auteur : à valider ou à retirer.
-3. **§13 — le son.** J'ai ouvert le territoire sans le remplir. C'est
-   volontairement incomplet.
+Sur les 10 films publiés : 2 ont une bannière, 2 une preview, **1 un
+contre-champ**. Le dispositif existe désormais sur un film — il en faut deux ou
+trois pour qu'un visiteur comprenne que c'est une signature du site et non un
+accident.
+
+**Ce qui revient au propriétaire :** choisir les films, les photogrammes, les
+paires de contre-champ. Personne d'autre ne peut le faire.
+
+**Ce que Claude Code peut faire :** vérifier qu'`admin.html` ne rend pas la tâche
+pénible, resynchroniser `GUIDE-DEPLOIEMENT.md` (B-006), et recompresser les
+médias si `ffmpeg` devient disponible (B-011).
+
+Deux dettes ouvertes par la réparation : **B-011** (preview à 10,4 Mo, à
+recompresser) et **B-012** (doublons à supprimer une fois les copies validées).
 
 ---
 
-## Mission suivante proposée — le son
+## Ensuite — le mobile, puis le son
 
-Je propose de **ne pas enchaîner sur `experience-direction`** tout de suite.
-
-L'ADN a une lacune que sa propre validation a mise au jour : le site est fait de
-clips, l'identité déclarée dit « la rue et **la musique** », et le système
-créatif n'a aucune doctrine sonore. Deux règles seulement sont tranchées — le son
-ne part jamais seul, le silence est une matière.
-
-Ce n'est pas un travail d'écriture de skill, c'est une question de direction
-artistique qui demande l'avis du propriétaire. Qu'est-ce qu'un extrait a le droit
-de faire ? Le son peut-il structurer une durée, une navigation ? La musique
-peut-elle exister ailleurs que dans le lecteur ? Un site de réalisateur de clips
-qui reste muet dit quelque chose — reste à savoir si c'est voulu.
-
-Une fois tranché, cela nourrit `binksfilms-dna` §13 **et** la future
-`motion-language`.
-
-**Alternative, si le propriétaire préfère avancer sur le système :**
-`experience-direction` (blueprint §13, Phase 2, point 8) — traduire l'ADN en
-directions concurrentes argumentées pour une section donnée. L'ADN dit ce qui est
-BINKSFILMS ; rien ne dit encore comment en tirer deux ou trois propositions et en
-retenir une.
+- **B-009** — le format d'affiche mobile annoncé en commentaire mais jamais
+  implémenté. Vraie décision de direction artistique, périmètre net, sur la
+  partie du site la plus vue. Mission EXPERIMENTAL.
+- **Le son** — `binksfilms-dna` §13 ouvre le territoire sans le remplir. Le plus
+  intéressant, le plus risqué, celui qui demande le plus l'avis du propriétaire.
 
 ---
 

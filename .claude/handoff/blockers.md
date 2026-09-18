@@ -49,7 +49,7 @@ nécessaire.
 ---
 
 ## B-003 — Cinq médias manquants sur le film `fulltrap-…`
-**Sévérité :** MAJOR · **Propriétaire :** contenu (`admin.html`) · **Statut :** OUVERT
+**Sévérité :** MAJOR · **Propriétaire :** contenu · **Statut :** RÉSOLU 2026-09-18
 
 Film `fulltrap-skinny-bastard-skinny-bastard-s-flow-type-shit`, statut
 `published`. Manquent : `…-bann.jpg` (poster), `…-plan.jpg` + `…-derr.jpg`
@@ -63,13 +63,16 @@ seul intertitre**.
 **Piste :** `images/skinny.jpg` et `videos/skinny.mp4` sont probablement les
 originaux non renommés. À confirmer visuellement par l'utilisateur.
 
-**Correction :** via `admin.html` — ré-importer les visuels, ré-exporter
-`films.js`. Ne pas éditer `films.js` à la main.
+**Résolu autrement :** les cinq fichiers existaient sur le disque sous leurs
+noms d'export bruts. Identifiés par lecture des images, puis copiés sous les noms
+que `films.js` déclare déjà — donc sans toucher au fichier généré. Le contre-champ
+retenu oppose le plan étalonné au rush vert où le cadreur est visible.
+Vérifié au navigateur : maintien fonctionnel, section Tournage pourvue.
 
 ---
 
 ## B-004 — Chemin `videos/previews/` erroné
-**Sévérité :** MAJOR · **Propriétaire :** contenu (`admin.html`) · **Statut :** OUVERT
+**Sévérité :** MAJOR · **Propriétaire :** contenu · **Statut :** RÉSOLU 2026-09-18
 
 `films.js` attend `videos/previews/saisai-…-preview.mp4`.
 Le fichier existe à `videos/saisai-…-preview.mp4`. Le dossier `videos/previews/`
@@ -79,7 +82,10 @@ Conséquence : la preview au survol de la carte SaiSai ne démarre jamais — le
 code retire silencieusement la balise `<video>` et laisse la bannière. Invisible
 pour le visiteur, mais une intention de design est perdue.
 
-Même correction que B-003, même passage par `admin.html`.
+**Résolu :** le fichier a été déplacé vers le chemin que `films.js` déclare,
+sans duplication et sans édition du fichier généré. À noter : `admin.html` génère
+aujourd'hui des previews à plat dans `videos/`, donc un futur export normalisera
+ce chemin — le déplacement est une réparation, pas une convention à suivre.
 
 ---
 
@@ -198,3 +204,55 @@ seconde est retenue par défaut, faute de démonstration contraire.
 **À réévaluer** après la première mission créative réelle : si les propositions
 produites ressemblent au site actuel plutôt que de le prolonger, le déséquilibre
 est confirmé et il faudra trancher.
+
+---
+
+## B-011 — La preview du clip Skinny Bastard est trois fois trop lourde
+**Sévérité :** MAJOR · **Propriétaire :** contenu · **Statut :** OUVERT
+
+`videos/fulltrap-…-prev.mp4` : **10,4 Mo pour 6,4 s**, soit 1,63 Mo/s.
+Les deux autres vidéos du site tiennent une densité trois fois moindre :
+
+| Fichier | Durée | Poids | Densité |
+|---|---|---|---|
+| preview Skinny Bastard | 6,4 s | 10,4 Mo | **1,63 Mo/s** |
+| preview SaiSai | 5,9 s | 3,2 Mo | 0,54 Mo/s |
+| `hero-loop.mp4` | 6,0 s | 2,6 Mo | 0,43 Mo/s |
+
+Conséquence : au survol d'une carte, le visiteur télécharge 10 Mo pour une boucle
+muette de six secondes. C'est contraire à la discipline média du projet
+(`.claude/rules/media.md` : « défer media until useful », « account for slow
+networks ») — la garde `saveData` / 2G protège les connexions lentes, pas une
+connexion normale.
+
+**Pas corrigé** : `ffmpeg` n'est pas installé sur cette machine, et recompresser
+n'est pas une décision technique neutre — le débit choisi touche à la qualité de
+l'image, donc au travail.
+
+**À faire :** recompresser autour de 0,5 Mo/s (viser 3 à 4 Mo), puis remplacer le
+fichier. Le nom et le chemin sont déjà bons, rien d'autre à changer.
+
+---
+
+## B-012 — Doublons média après la réparation
+**Sévérité :** MINOR · **Propriétaire :** contenu · **Statut :** OUVERT
+
+La réparation de B-003 a procédé par **copie**, conformément à ce qui avait été
+validé : les originaux restent en place. Cinq fichiers existent donc en double,
+pour environ 16 Mo :
+
+| Original (orphelin) | Copie en service |
+|---|---|
+| `images/skinny.jpg` | `…-bann.jpg` |
+| `images/Adjustment Layer.00_00_56_18.Still013.jpg` | `…-plan.jpg` |
+| `images/contre champs.jpg` | `…-derr.jpg` |
+| `images/00079.MTS.00_01_37_00.Still001.jpg` | `…-tour.jpg` |
+| `videos/skinny.mp4` | `…-prev.mp4` |
+
+Reste par ailleurs `images/Adjustment Layer.00_01_57_23.Still018.jpg` (1,8 Mo),
+un plan fisheye étalonné qui n'est utilisé nulle part — ce serait une bannière
+alternative crédible.
+
+Rien n'est cassé : ces fichiers ne sont jamais requêtés par un visiteur. Ils
+pèsent sur le dépôt, pas sur le site. À supprimer quand le propriétaire aura
+confirmé que les copies sont les bonnes.

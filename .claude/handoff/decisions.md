@@ -8,6 +8,33 @@ Format : ID · date · décision · raison · conséquence · statut.
 
 ---
 
+## D-013 — Réparer les médias par le nom de fichier, pas par `films.js`
+**Date :** 2026-09-18 · **Statut :** ACTIVE
+
+Les cinq médias manquants du clip Skinny Bastard ont été rétablis en **copiant
+les fichiers du disque sous les noms que `films.js` déclare déjà**, plutôt qu'en
+réécrivant les chemins du fichier.
+
+**Raison :** `films.js` est généré par `admin.html` et son en-tête interdit
+l'édition manuelle — une retouche aurait été écrasée au prochain export. Le
+fichier déclarait des chemins corrects ; il manquait seulement les fichiers. La
+réparation la moins invasive était donc côté disque.
+
+**Conséquence :** les noms en service sont les noms tronqués hérités (`-bann`,
+`-derr`, `-tour`, `-prev`), produits par une ancienne version d'`admin.html` dont
+le `slugifier` coupait à 60 caractères. La version actuelle génère `-banner`,
+`-derriere`, `-tournage`, `-preview` : un futur export via `admin.html`
+normalisera de lui-même, sans conflit. Même logique pour la preview de SaiSai,
+déplacée vers le `videos/previews/` que `films.js` déclare.
+
+**Choix de direction associé :** le contre-champ oppose le plan **étalonné** au
+rush **brut** où le cadreur est visible — le film contre la réalité — plutôt que
+deux rushes entre eux. Les cadrages diffèrent, donc le maintien produit une
+coupe franche plutôt qu'un dévoilement ; le contraste de sens l'emporte sur la
+douceur du raccord.
+
+---
+
 ## D-012 — L'identité a le droit de se contredire, sous conditions
 **Date :** 2026-09-18 · **Statut :** ACTIVE
 
