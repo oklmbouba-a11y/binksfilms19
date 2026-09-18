@@ -8,6 +8,25 @@ Format : ID · date · décision · raison · conséquence · statut.
 
 ---
 
+## D-014 — Les effets ambitieux sont pleinement autorisés si leur exécution est excellente
+**Date :** 2026-09-18 · **Statut :** ACTIVE
+
+Le propriétaire précise qu'il **adore les effets** et reste ouvert à des traitements très ambitieux — motion avancée, compositing, 3D, shaders, WebGL, distorsions, transitions fortes, traitements vidéo — à condition qu'ils soient **très bien exécutés**.
+
+**Raison :** le système ne doit pas confondre anti-cliché avec anti-effet. Le refus porte sur l'effet générique, gratuit, mal intégré, répétitif ou utilisé comme raccourci créatif — pas sur l'intensité technique ou visuelle elle-même.
+
+**Conséquence :** une proposition forte ne doit jamais être rejetée simplement parce qu'elle est spectaculaire. Elle doit être jugée sur :
+- la qualité d'exécution ;
+- sa relation à l'image et au concept ;
+- sa précision ;
+- son intégration au rythme de la page ;
+- sa distinctivité ;
+- sa capacité à rester maîtrisée sur mobile et en performance.
+
+L'ambition visuelle est encouragée quand ces conditions sont remplies. Le principe reste : **effet maximal possible, cliché minimal possible.**
+
+---
+
 ## D-013 — Réparer les médias par le nom de fichier, pas par `films.js`
 **Date :** 2026-09-18 · **Statut :** ACTIVE
 
