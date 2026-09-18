@@ -95,3 +95,22 @@ L'objectif n'est pas d'ajouter des effets. L'objectif est de **tester jusqu'où 
 Le prochain jeu de directions doit donc contenir une proposition dont l'ambition serait réellement perceptible par un visiteur, même sans lire le brief.
 
 Claude garde carte blanche sur la forme et sur le terrain.
+
+
+---
+
+## Gouvernance créative — pouvoir DA élargi à ChatGPT
+
+Décision propriétaire : ChatGPT prend désormais un rôle plus actif sur la direction artistique globale.
+
+Répartition :
+- Claude Code reste le moteur de proposition, d'exécution, de prototypage et de vérification.
+- ChatGPT n'est plus seulement critique après coup : il peut désormais **orienter, recadrer ou écarter une direction macro** lorsqu'elle paraît trop prudente, trop déjà-vue ou insuffisamment ambitieuse.
+- ChatGPT peut pousser un territoire visuel, une tension, un niveau de risque ou une logique d'expérience, sans dicter chaque détail d'implémentation.
+- Claude reste libre de contester une direction s'il peut démontrer qu'elle nuit au concept, à la performance, au mobile ou à la cohérence BINKSFILMS.
+- Le propriétaire conserve le dernier mot.
+
+Conséquence immédiate :
+- les prochains LAB ne doivent pas seulement être techniquement intéressants ;
+- ils doivent aussi viser une **DA identifiable, surprenante et mémorable** ;
+- la barre de référence n'est plus « amélioration du site existant », mais « expérience visuelle qui pourrait devenir une signature de BINKSFILMS ».
