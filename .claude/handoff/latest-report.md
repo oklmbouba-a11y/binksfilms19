@@ -1,108 +1,84 @@
-# Rapport de mission — La signature (direction C, fiche film)
+# Rapport — LAB / catalogue, la grammaire d'intensité
 
 **Date :** 2026-09-18 · **Agent :** Claude Code (Opus 5)
-**Mode :** autonomie déléguée — direction choisie et implémentée sans arbitrage
-**Périmètre :** `index.html` uniquement
+**Mission :** `next-task.md` — passer du LAB à une expérience structurée
+**Périmètre :** prototype isolé. Aucun fichier du site modifié.
 
 ---
 
-## 1. Ce qui a été fait
+## Contestation de la synthèse proposée, avec sa raison
 
-Premier usage réel d'`experience-direction`, mené jusqu'au site.
+La direction DA demandait de fusionner Flux et Bande en une grammaire à quatre
+niveaux. **Je conteste la prémisse, pas la conclusion.**
 
-**Terrain rectifié en cours de route.** L'archive était le terrain recommandé ;
-la baseline l'a invalidée — 7 films archivés ne portant qu'un artiste, un titre,
-une date, un type et une ligne de crédit, un seul type dans tout le catalogue,
-et aucun champ de support, caméra, format ou lieu dans le schéma. Sept titres
-rangés par date font une liste, pas une archive. `open-territories.md` a été
-corrigé : il promettait une donnée qui n'existe pas.
+Flux et Bande n'ont jamais été deux effets. Dans `lab-bande.html`, le tirage est
+déjà une valeur continue nourrie par la vitesse du geste ; à zéro, la déchirure
+n'existe pas et il ne reste que la fonte par les hautes lumières — c'est-à-dire
+exactement Flux. Il n'y avait donc rien à assembler : il y avait une courbe à
+**calibrer**.
 
-**Terrain retenu : la fiche film.** Baseline : 9 fiches sur 10 sont identiques —
-lecteur, titre, une ligne de crédit, navigation. Et cette ligne est la même sur
-les dix.
-
-**Direction retenue : C — Une seule paire de mains.** Le crédit commun quitte le
-tableau et devient une signature en bas de page, hors du bloc que le routeur
-reconstruit. D'une fiche à l'autre, tout change sauf elle.
+La conclusion de ChatGPT est juste, et c'est ce qui compte : une grammaire
+d'intensité plutôt qu'une collection d'effets. Le travail était plus petit qu'il
+ne le pensait, et c'est une bonne nouvelle.
 
 ---
 
-## 2. Le mécanisme, vérifié
+## Ce que le prototype fait
 
-Navigation de « Free Durk » vers « Yeah Yeah » par le lien « suivant » :
+`lab-catalogue.html` — dix plans, vidéos et images mélangées, une seule courbe.
 
-| | |
-|---|---|
-| Titre | change |
-| Crédits | changent |
-| Signature — nœud DOM | **identique** |
-| Signature — contenu | **identique** |
-| Signature — position | **identique** |
+| Geste | Vitesse | Ce qui se voit |
+|---|---|---|
+| Repos | 0 plan/s | image nette, **rien d'ajouté** |
+| Lent | < 1,1 plan/s | fusion seule, ouverte par les hautes lumières |
+| Franc | 1,1 → 3,2 plans/s | la matière commence à se déchirer |
+| Arrachage | > 3,2 plans/s | bandes fines, filé, écart chromatique |
 
-Rien n'est animé. C'est l'absence de recomposition qui produit l'effet.
+**Les seuils sont en plans par seconde**, donc indépendants de la machine et de
+la fréquence d'affichage. C'est une correction issue d'un bug trouvé en test :
+la retombée était calculée par image, donc sur un appareil lent l'effet serait
+resté collé à l'image au lieu de s'effacer.
 
-**La constante est déduite, pas écrite en dur** : le crédit que tous les films
-portent à l'identique, calculé au démarrage. Si un film arrive avec d'autres
-crédits, la constante n'existe plus, la signature disparaît et les crédits
-reprennent leur place ordinaire. C'était la condition de repli du brief.
-
----
-
-## 3. Trois corrections pendant l'implémentation
-
-Aucune n'était dans le brief.
-
-1. **La signature recouvrait le lien « Suivant ».** Le calcul de collision ne
-   l'avait pas vu, la capture d'écran si. `#film-view` et le pied de page
-   réservent désormais la place qu'elle occupe.
-2. **`aria-hidden` faisait perdre le crédit d'auteur.** Le crédit étant retiré du
-   tableau, le masquer aux lecteurs d'écran l'aurait supprimé au lieu de le
-   déplacer. Attribut retiré.
-3. **Fragile au-dessus d'un contre-champ clair.** Elle reçoit le même dégradé que
-   l'en-tête fixe, retourné — le site résout déjà ce cas ainsi.
+Deux choses ne subissent jamais l'effet : **le texte et la navigation**. L'image
+se tord, l'information reste lisible. C'est la limite que je pose entre une
+expérience et un gadget.
 
 ---
 
-## 4. Tests
+## Vérifié
 
-| Test | Résultat |
-|---|---|
-| Persistance entre fiches | nœud, contenu et position identiques |
-| Film à deux crédits | « Produced » reste au tableau, seule la constante migre |
-| Accueil | signature absente |
-| Mobile 375×812 | aucun débordement |
-| Collisions bas de page | 0 |
-| Collisions à mi-défilement | 0 |
-| Écart au pied de page | 61 px (13 px avant correction) |
-| Desktop | grille 16/9, rayon 11 px, parallaxe inchangés |
-| Erreurs JS | 0 |
-| `films.js` · `admin.html` · `vercel.json` | intacts |
+- les quatre états sont traversés par le geste ;
+- au repos le tirage retombe à un vrai zéro, aucun réglage ne subsiste ;
+- dix plans chargés, vidéos et images ;
+- **deux vidéos décodées au maximum**, celle qu'on regarde et la suivante ;
+- repli complet sans WebGL — mêmes plans empilés en scroll-snap ;
+- mouvement réduit : inertie neutralisée, tirage forcé à zéro.
 
----
+## Non vérifiable ici, et je ne donnerai pas de chiffre faux
 
-## 5. Ce que je n'ai pas tranché
+**Les performances réelles.** La boucle d'animation est bridée à environ 1 image
+par seconde quand le panneau du navigateur n'est pas au premier plan. Toute
+mesure d'images par seconde prise depuis cet environnement est fausse. Le
+prototype affiche un compteur : il faut le lire sur une vraie machine, et sur un
+téléphone.
 
-**Si l'idée fonctionne.** C'est une question d'œil, au sens
-d'`experience-direction` §5, et elle appartient au propriétaire. Le test :
-parcourir trois fiches d'affilée par les liens précédent/suivant. Si au troisième
-film on n'a pas compris qu'une seule personne a tout fait, la direction a échoué
-et le repli est la direction A du brief.
-
-Le risque annoncé au brief tient toujours : une idée fondée sur la répétition
-devient pénible dès qu'elle se souligne. Trop discrète, elle ne se voit pas ;
-trop présente, elle insiste. Je ne peux pas juger ça depuis des mesures.
-
-**Je n'ai pas lancé `innovation-critic`** sur ce travail. Il juge bien un
-document contre du code — il l'a prouvé trois fois — mais la question ici est de
-savoir si un effet se produit à l'œil sur trois pages consécutives. C'est du
-ressort du propriétaire, pas d'une relecture de fichiers.
+**La calibration.** Savoir si 1,1 et 3,2 plans par seconde sont les bons seuils
+est une question d'œil et de main, pas de mesure. Elle appartient au
+propriétaire.
 
 ---
 
-## 6. Leçon pour `experience-direction`
+## Ce qui reste à décider
 
-Les trois écarts viennent du même angle mort : **un brief qui pose un élément
-persistant doit dire ce qu'il recouvre.** Le point 12 couvre les états de média,
-pas les collisions d'un élément fixe avec le contenu. À ajouter.
+1. **Les seuils** — la déchirure se déclenche-t-elle trop tôt, trop tard ?
+2. **La violence de l'arrachage** — trop, pas assez ?
+3. **Où cette grammaire a le droit de vivre.** Le catalogue, oui. La fiche film,
+   la section Contact, le pied de page ? La réponse par défaut devrait être non :
+   un effet qui se répand partout cesse d'être un moment.
+4. **Le son.** Les clips sont de la musique et tout est muet. C'est le territoire
+   ouvert par l'ADN et jamais rempli, et probablement le prochain vrai gain.
 
-BINKSFILMS — première direction créative livrée.
+## Ce que je n'intègre pas au site
+
+Rien, tant que le propriétaire n'a pas jugé la sensation. `index.html`,
+`films.js`, `admin.html` et `vercel.json` sont intacts.

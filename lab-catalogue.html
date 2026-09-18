@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BINKSFILMS — LAB / catalogue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--noir:#0A0A0A;--ivoire:#EDEBE6;--gris:#8E8A84}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--noir);overflow:hidden;
+  font-family:'Archivo','Helvetica Neue',Arial,sans-serif;color:var(--ivoire);
+  -webkit-font-smoothing:antialiased;overscroll-behavior:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#medias video{position:absolute;width:2px;height:2px;opacity:0;pointer-events:none;left:-10px}
+
+.cartel{position:fixed;left:0;right:0;bottom:0;padding:0 28px 34px;z-index:2;pointer-events:none;
+  background:linear-gradient(to top,rgba(6,6,6,.9),rgba(6,6,6,.42) 36%,rgba(6,6,6,0) 78%)}
+@media(min-width:900px){.cartel{padding:0 48px 46px}}
+/* le texte ne subit jamais la déchirure : l'image se tord, l'information
+   reste lisible. C'est la limite entre une expérience et un gadget. */
+.artiste{font-weight:800;font-stretch:112%;text-transform:uppercase;font-size:clamp(14px,1.9vw,18px);line-height:1.1}
+.titre{font-family:'Instrument Serif',Georgia,serif;font-style:italic;
+  font-size:clamp(27px,6vw,70px);line-height:1.02;margin-top:2px}
+.meta{margin-top:9px;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(237,235,230,.55);font-variant-numeric:tabular-nums}
+.bobine{position:fixed;top:0;right:0;padding:24px 28px;z-index:2;pointer-events:none;
+  font-size:10px;font-weight:600;letter-spacing:.2em;color:var(--gris);font-variant-numeric:tabular-nums}
+@media(min-width:900px){.bobine{padding:28px 48px}}
+.marque{position:fixed;top:0;left:0;padding:22px 28px;z-index:2;pointer-events:none}
+@media(min-width:900px){.marque{padding:26px 48px}}
+.marque b{display:block;font-weight:800;font-stretch:125%;text-transform:uppercase;font-size:12px;letter-spacing:.26em}
+.marque i{display:block;font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:11px;color:var(--gris);margin-top:1px}
+
+/* jauge d'intensité — outil de prototype, pas élément de DA.
+   Elle existe pour qu'on puisse juger la montée, et sauterait à
+   l'intégration. */
+.jauge{position:fixed;left:0;right:0;top:0;height:1px;z-index:4;transform-origin:0 50%;
+  background:linear-gradient(to right,rgba(177,18,38,0),#B11226);transform:scaleX(0)}
+.etat{position:fixed;top:0;left:50%;transform:translateX(-50%);padding:22px 0 0;z-index:4;
+  font-size:9px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:rgba(237,235,230,.35)}
+
+.porte{position:fixed;inset:0;z-index:5;display:grid;place-items:center;background:var(--noir);transition:opacity .6s ease}
+.porte.off{opacity:0;pointer-events:none}
+.porte button{background:none;border:0;color:var(--ivoire);font-family:inherit;cursor:pointer;
+  font-size:12px;font-weight:300;letter-spacing:.42em;text-indent:.42em;text-transform:uppercase;padding:18px 24px}
+.porte span{display:block;width:62px;height:1px;background:rgba(237,235,230,.5);margin:13px auto 0}
+.aide{position:fixed;left:50%;bottom:0;transform:translateX(-50%);padding:0 0 13px;z-index:3;
+  font-size:9.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:rgba(237,235,230,.34);
+  transition:opacity .7s ease;pointer-events:none}
+.aide.off{opacity:0}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="medias"></div>
+<div class="jauge" id="jauge"></div>
+<div class="etat" id="etat">Repos</div>
+<div class="marque"><b>Binksfilms</b><i>Les beaux arts du ghetto</i></div>
+<div class="bobine" id="bobine">01 / 10</div>
+<div class="cartel">
+  <p class="artiste" id="artiste"></p>
+  <p class="titre" id="titre"></p>
+  <p class="meta" id="meta"></p>
+</div>
+<div class="aide" id="aide">Défiler doucement, puis tirer d'un coup sec</div>
+<div class="porte" id="porte"><button id="entrer" type="button">Enter<span></span></button></div>
+
+<script>
+/* ============================================================
+   BINKSFILMS — LAB / catalogue
+   Prototype isolé de synthèse. Ne touche pas au site.
+
+   Ce prototype ne fusionne pas deux effets : il en calibre un seul.
+
+   Flux et Bande n'étaient jamais deux choses. Le tirage est une valeur
+   continue nourrie par la vitesse du geste ; à zéro la déchirure
+   n'existe pas et il ne reste que la fonte par les hautes lumières —
+   c'est-à-dire Flux. La grammaire d'intensité n'est donc pas un
+   assemblage, c'est une courbe :
+
+     repos        0 plan/s             image nette, rien d'ajouté
+     geste lent   < 1,1 plan/s         fusion seule
+     geste franc  1,1 -> 3,2 plans/s   la matière commence à se déchirer
+     arrachage    > 3,2 plans/s        bandes fines, filé, écart chromatique
+
+   Les seuils sont en plans par seconde, donc indépendants de la
+   machine et de la fréquence d'affichage.
+
+   Tout ce qui se voit est produit par le geste et retombe avec lui.
+   Aucun réglage ne subsiste à l'arrêt : c'est la règle qui sépare une
+   grammaire d'un filtre.
+
+   Deux choses ne subissent jamais l'effet : le texte et la navigation.
+   L'image se tord, l'information reste lisible.
+   ============================================================ */
+
+var PLANS = [
+  { src:"videos/hero-loop.mp4", type:"v", artiste:"BINKSFILMS", titre:"Le ciel", meta:"Accueil · boucle" },
+  { src:"images/fulltrap-skinny-bastard-skinny-bastard-s-flow-type-shit-bann.jpg", type:"i",
+    artiste:"FullTrap & Skinny Bastard", titre:"Skinny Bastard's Flow", meta:"Clip · 2026" },
+  { src:"videos/skinny.mp4", type:"v",
+    artiste:"FullTrap & Skinny Bastard", titre:"La voiture", meta:"Plan · étalonné" },
+  { src:"images/fulltrap-skinny-bastard-skinny-bastard-s-flow-type-shit-plan.jpg", type:"i",
+    artiste:"FullTrap & Skinny Bastard", titre:"Le plan", meta:"Contre-champ · étalonné" },
+  { src:"images/00079.MTS.00_01_37_00.Still001.jpg", type:"i",
+    artiste:"FullTrap & Skinny Bastard", titre:"Derrière la caméra", meta:"Rush · brut" },
+  { src:"images/Adjustment Layer.00_01_57_23.Still018.jpg", type:"i",
+    artiste:"FullTrap & Skinny Bastard", titre:"Fisheye", meta:"Plan · étalonné" },
+  { src:"videos/previews/saisai-fin-des-temps-feat-boro700-preview.mp4", type:"v",
+    artiste:"SaiSai feat Boro700", titre:"Fin des temps", meta:"Clip · 2026" },
+  { src:"images/saisai-fin-des-temps-feat-boro700-banner-2.jpg", type:"i",
+    artiste:"SaiSai feat Boro700", titre:"Fin des temps", meta:"Bannière" },
+  { src:"images/skinny.jpg", type:"i",
+    artiste:"FullTrap & Skinny Bastard", titre:"L'habitacle", meta:"Plan · étalonné" },
+  { src:"videos/video intro.mp4", type:"v", artiste:"BINKSFILMS", titre:"La porte", meta:"Intro · boucle" }
+];
+
+var cv = document.getElementById("c");
+var gl = cv.getContext("webgl", {antialias:false, alpha:false, powerPreference:"high-performance"});
+var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+var VERT = "attribute vec2 p;varying vec2 uv;void main(){uv=p*0.5+0.5;gl_Position=vec4(p,0.0,1.0);}";
+
+var FRAG = [
+"precision highp float;",
+"varying vec2 uv;",
+"uniform sampler2D A,B;",
+"uniform vec2 rA,rB,res;",
+"uniform float t, tir, temps;",
+
+"vec2 cover(vec2 u, vec2 r){",
+"  float ar = res.x/res.y, ai = r.x/r.y;",
+"  vec2 s = ar > ai ? vec2(1.0, ai/ar) : vec2(ar/ai, 1.0);",
+"  return (u-0.5)/s + 0.5;",
+"}",
+"float bruit(vec2 x){ return fract(sin(dot(x, vec2(12.9898,78.233)))*43758.5453); }",
+"float lisse(vec2 x){",
+"  vec2 i = floor(x), f = fract(x); f = f*f*(3.0-2.0*f);",
+"  return mix(mix(bruit(i),bruit(i+vec2(1.,0.)),f.x), mix(bruit(i+vec2(0.,1.)),bruit(i+vec2(1.,1.)),f.x), f.y);",
+"}",
+"float fbm(vec2 x){ float s=0.,a=.5; for(int i=0;i<4;i++){ s+=a*lisse(x); x*=2.03; a*=.5; } return s; }",
+"float lum(vec3 c){ return dot(c, vec3(0.299,0.587,0.114)); }",
+
+/* La déchirure ne commence qu'au-delà d'un seuil : un défilement normal
+   ne la déclenche jamais. Elle est la récompense d'un geste engagé, pas
+   un état permanent. */
+"vec2 arracher(vec2 u, float force){",
+"  if(force <= 0.001) return u;",
+"  float n = 7.0 + force*32.0;",
+"  float bande = floor(u.y * n);",
+"  float retard = bruit(vec2(bande, 3.7));",
+"  u.x += (retard - 0.5) * force * 0.30;",
+"  u.y += (retard - 0.5) * force * 0.05;",
+"  return u;",
+"}",
+
+"void main(){",
+/* la courbe d'intensité, en un seul endroit */
+"  float dechire = smoothstep(1.10, 3.20, tir);",
+"  float file    = min(tir * 0.42, 1.4);",
+
+"  vec2 ua = arracher(cover(uv, rA), dechire);",
+"  vec2 ub = arracher(cover(uv, rB), dechire);",
+"  vec3 a = texture2D(A, ua).rgb;",
+
+/* fusion : ouverte par les hautes lumières du plan sortant */
+"  float grain = fbm(uv*vec2(res.x/res.y,1.0)*3.2 + temps*0.05);",
+"  float seuil = (1.0 - lum(a)) * 0.58 + grain * 0.26;",
+"  float m = smoothstep(seuil - 0.13, seuil + 0.13, t*1.26 - 0.10);",
+"  float bord = 1.0 - abs(m*2.0 - 1.0);",
+
+/* filé dans le sens du geste — nul à l'arrêt */
+"  float e = file * 0.024 + bord * 0.010;",
+"  vec3 col = vec3(0.0);",
+"  for(int k=0;k<4;k++){",
+"    float d = (float(k)/3.0 - 0.5) * e;",
+"    col += mix(texture2D(A, ua + vec2(0.0,d)).rgb, texture2D(B, ub + vec2(0.0,d)).rgb, m) * 0.25;",
+"  }",
+
+/* écart chromatique — nul à l'arrêt */
+"  float ec = file*0.009 + bord*0.007;",
+"  col.r = mix(texture2D(A, ua+vec2(ec,0.0)).r, texture2D(B, ub+vec2(ec,0.0)).r, m);",
+"  col.b = mix(texture2D(A, ua-vec2(ec,0.0)).b, texture2D(B, ub-vec2(ec,0.0)).b, m);",
+
+"  col += vec3(0.44,0.05,0.10) * pow(bord, 3.0) * 0.5;",
+"  float d2 = distance(uv, vec2(0.5));",
+"  col *= 1.0 - d2*d2*0.52;",
+"  gl_FragColor = vec4(col, 1.0);",
+"}"].join("\n");
+
+function compiler(ty, src){
+  var s = gl.createShader(ty); gl.shaderSource(s, src); gl.compileShader(s);
+  if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)){ console.error(gl.getShaderInfoLog(s)); return null; }
+  return s;
+}
+
+var prog, loc = {}, sources = [], texs = [], prets = [], dims = [];
+
+function initGL(){
+  var vs = compiler(gl.VERTEX_SHADER, VERT), fs = compiler(gl.FRAGMENT_SHADER, FRAG);
+  if(!vs || !fs) return false;
+  prog = gl.createProgram(); gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+  if(!gl.getProgramParameter(prog, gl.LINK_STATUS)){ console.error(gl.getProgramInfoLog(prog)); return false; }
+  gl.useProgram(prog);
+  var b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  var p = gl.getAttribLocation(prog, "p");
+  gl.enableVertexAttribArray(p); gl.vertexAttribPointer(p, 2, gl.FLOAT, false, 0, 0);
+  ["A","B","rA","rB","res","t","tir","temps"].forEach(function(n){ loc[n] = gl.getUniformLocation(prog, n); });
+  gl.uniform1i(loc.A, 0); gl.uniform1i(loc.B, 1);
+  return true;
+}
+function creerTexture(){
+  var t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 1, 1, 0, gl.RGB, gl.UNSIGNED_BYTE, new Uint8Array([10,10,10]));
+  return t;
+}
+function preparer(){
+  var hote = document.getElementById("medias");
+  PLANS.forEach(function(pl, i){
+    texs[i] = creerTexture(); prets[i] = false; dims[i] = [16,9];
+    if(pl.type === "v"){
+      var v = document.createElement("video");
+      v.src = pl.src; v.muted = true; v.loop = true; v.playsInline = true; v.preload = "metadata";
+      v.setAttribute("playsinline",""); v.setAttribute("muted","");
+      v.addEventListener("loadeddata", function(){ prets[i] = true; dims[i] = [v.videoWidth, v.videoHeight]; });
+      v.addEventListener("error", function(){ prets[i] = "ko"; });
+      hote.appendChild(v); sources[i] = v;
+    } else {
+      var im = new Image();
+      im.onload = function(){
+        dims[i] = [im.naturalWidth, im.naturalHeight];
+        gl.bindTexture(gl.TEXTURE_2D, texs[i]);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, im);
+        prets[i] = "fixe";
+      };
+      im.onerror = function(){ prets[i] = "ko"; };
+      im.src = pl.src; sources[i] = im;
+    }
+  });
+}
+/* deux vidéos décodées au maximum : celle qu'on regarde et la suivante */
+function arbitrer(i){
+  PLANS.forEach(function(pl, k){
+    if(pl.type !== "v") return;
+    var v = sources[k], actif = (k === i || k === i+1);
+    if(actif){ if(v.paused) v.play().catch(function(){}); }
+    else if(!v.paused) v.pause();
+  });
+}
+
+var position = 0, cible = 0, tir = 0, dernier = 0, dernierIdx = -1;
+function N(){ return PLANS.length; }
+function pousser(d){ cible = Math.max(0, Math.min(N()-1, cible + d)); }
+addEventListener("wheel", function(e){ pousser(e.deltaY * 0.0017); }, {passive:true});
+var ty = null;
+addEventListener("touchstart", function(e){ ty = e.touches[0].clientY; }, {passive:true});
+addEventListener("touchmove", function(e){
+  if(ty === null) return; var y = e.touches[0].clientY; pousser((ty - y) * 0.0054); ty = y;
+}, {passive:true});
+addEventListener("touchend", function(){ ty = null; }, {passive:true});
+addEventListener("keydown", function(e){
+  if(e.key==="ArrowDown"||e.key==="PageDown"||e.key===" ") pousser(1);
+  if(e.key==="ArrowUp"||e.key==="PageUp") pousser(-1);
+});
+
+function cartel(i){
+  var p = PLANS[i]; if(!p) return;
+  document.getElementById("artiste").textContent = p.artiste;
+  document.getElementById("titre").textContent = p.titre;
+  document.getElementById("meta").textContent = p.meta;
+  document.getElementById("bobine").textContent =
+    String(i+1).padStart(2,"0") + " / " + String(N()).padStart(2,"0");
+}
+function redim(){
+  var d = Math.min(devicePixelRatio || 1, 2);
+  cv.width = Math.round(innerWidth*d); cv.height = Math.round(innerHeight*d);
+  gl.viewport(0,0,cv.width,cv.height);
+}
+addEventListener("resize", redim);
+
+function poser(unite, i){
+  gl.activeTexture(unite === 0 ? gl.TEXTURE0 : gl.TEXTURE1);
+  gl.bindTexture(gl.TEXTURE_2D, texs[i]);
+  if(PLANS[i].type === "v" && prets[i] === true && sources[i].readyState >= 2){
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, sources[i]);
+  }
+}
+
+var jauge = document.getElementById("jauge"), etat = document.getElementById("etat");
+var fps = 60, dernierFps = 0, images = 0;
+
+function boucle(now){
+  var avantTemps = dernier;
+  var dt = Math.min((now - dernier)/16.67, 3); dernier = now;
+  var avant = position;
+  position += (cible - position) * (reduced ? 1 : 0.065) * dt;
+  /* Le tirage est une vitesse réelle : des PLANS PAR SECONDE, jamais
+     un delta par image. Les seuils veulent donc dire la même chose sur
+     toutes les machines, et la retombée ne dépend pas du nombre
+     d'images affichées — sur un appareil lent l'effet s'efface aussi
+     vite que sur un rapide. */
+  var secondes = Math.max((now - avantTemps) / 1000, 0.001);
+  var vitesse = Math.abs(position - avant) / secondes;        /* plans/s */
+  var retombee = Math.pow(0.02, secondes);                    /* 98 % perdu par seconde */
+  tir = reduced ? 0 : Math.min(Math.max(vitesse, tir * retombee), 6.0);
+  if(tir < 0.02) tir = 0;                     /* le repos est un vrai zéro */
+
+  var i = Math.max(0, Math.min(N()-2, Math.floor(position)));
+  var t = Math.max(0, Math.min(1, position - i));
+  var vu = t > 0.5 ? i+1 : i;
+  if(vu !== dernierIdx){ dernierIdx = vu; cartel(vu); arbitrer(i); }
+
+  poser(0, i); poser(1, Math.min(i+1, N()-1));
+  var j = Math.min(i+1, N()-1);
+  gl.uniform2f(loc.rA, dims[i][0], dims[i][1]);
+  gl.uniform2f(loc.rB, dims[j][0], dims[j][1]);
+  gl.uniform2f(loc.res, cv.width, cv.height);
+  gl.uniform1f(loc.t, t); gl.uniform1f(loc.tir, tir); gl.uniform1f(loc.temps, now*0.001);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+  /* lecture de l'intensité, pour juger la montée */
+  jauge.style.transform = "scaleX(" + Math.min(tir/4.0, 1).toFixed(3) + ")";
+  var nom = tir === 0 ? "Repos" : (tir < 1.10 ? "Fusion" : (tir < 3.20 ? "Déchirure" : "Arrachage"));
+  images++;
+  if(now - dernierFps > 500){ fps = Math.round(images*1000/(now-dernierFps)); images = 0; dernierFps = now; }
+  etat.textContent = nom + " · " + fps + " i/s";
+
+  requestAnimationFrame(boucle);
+}
+
+function repli(){
+  cv.style.display = "none";
+  var d = document.createElement("div");
+  d.style.cssText = "position:fixed;inset:0;overflow-y:auto;scroll-snap-type:y mandatory;background:#0A0A0A";
+  PLANS.forEach(function(p){
+    var s = document.createElement("section");
+    s.style.cssText = "height:100svh;scroll-snap-align:start;position:relative;overflow:hidden";
+    if(p.type === "v"){
+      var v = document.createElement("video");
+      v.src = p.src; v.muted = true; v.loop = true; v.autoplay = true; v.setAttribute("playsinline","");
+      v.style.cssText = "width:100%;height:100%;object-fit:cover"; s.appendChild(v);
+    } else {
+      s.style.backgroundImage = "url('" + p.src.replace(/'/g,"%27") + "')";
+      s.style.backgroundSize = "cover"; s.style.backgroundPosition = "center";
+    }
+    d.appendChild(s);
+  });
+  document.body.appendChild(d);
+  ["porte","aide"].forEach(function(id){ document.getElementById(id).classList.add("off"); });
+  jauge.style.display = "none"; etat.style.display = "none";
+}
+
+document.getElementById("entrer").addEventListener("click", function(){
+  document.getElementById("porte").classList.add("off");
+  if(!gl || !initGL()) return repli();
+  preparer(); arbitrer(0); cartel(0); redim();
+  dernier = performance.now(); dernierFps = dernier;
+  requestAnimationFrame(boucle);
+  setTimeout(function(){ document.getElementById("aide").classList.add("off"); }, 6000);
+});
+</script>
+</body>
+</html>
