@@ -8,8 +8,47 @@ Format : ID · date · décision · raison · conséquence · statut.
 
 ---
 
+## D-018 — La signature est retirée : l'exécution ne tenait pas
+**Date :** 2026-09-18 · **Statut :** ACTIVE · **Remplace :** D-017
+
+L'implémentation de la direction C est retirée du site. `index.html` revient à
+son état d'avant, le format d'affiche 3/4 conservé.
+
+**Raison, deux défauts et un seul aveu de méthode.**
+
+*Le propriétaire ne l'a pas vue.* C'était le risque annoncé au brief — une idée
+fondée sur la répétition doit être assez présente pour se remarquer et assez
+discrète pour ne pas insister. À 10 px en gris, elle était du mauvais côté. Une
+direction dont l'observable de réussite est « avoir compris au troisième film »
+échoue si on ne la voit pas au premier.
+
+*Elle entrait en collision avec le contenu.* Balayage de 21 positions de
+défilement : **9 en collision** — navigation précédent/suivant, bloc de marque du
+pied de page, flèches des réseaux, ligne de copyright. Un élément fixe passe
+au-dessus de tout ce qui défile ; seule une gouttière permanente l'éviterait, et
+le site n'en a pas.
+
+**L'aveu :** mes deux tests de collision initiaux portaient sur deux positions,
+toutes deux propres par hasard. Deux points de mesure ne valident pas un
+comportement continu. C'est l'erreur de méthode que ce projet reproche aux
+autres depuis le début, commise sur mon propre travail.
+
+**Ce qui n'est pas remis en cause :** l'observation qui fonde la direction — dix
+films, une seule ligne de crédit commune, et c'est le fait le plus vrai du
+catalogue. L'idée reste bonne. C'est son exécution en filigrane fixe qui était
+fausse.
+
+**Piste retenue pour une reprise :** faire porter l'idée par la **coupe** plutôt
+que par un filigrane. Le site possède déjà `#cut`, son voile de coupe noir. Une
+navigation de film à film qui passe par ce cut, où tout s'éteint et revient
+changé **sauf cette ligne**, produit un moment ressenti au lieu d'une inscription
+qu'on ne remarque pas. C'est du langage de montage, et ça ne dépend d'aucun
+élément fixe.
+
+---
+
 ## D-017 — La signature : la répétition des crédits devient le sujet
-**Date :** 2026-09-18 · **Statut :** ACTIVE
+**Date :** 2026-09-18 · **Statut :** SUPERSEDED par D-018 le même jour
 
 Sur la fiche film, le crédit que tous les films portent à l'identique —
 « Réalisation, image & montage — BINKSFILMS » — est retiré du tableau et posé en
