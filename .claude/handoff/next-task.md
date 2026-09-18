@@ -73,3 +73,25 @@ Les trois écarts survenus à l'implémentation venaient tous du même angle mor
 Bannières et contre-champs sur 3 ou 4 films. 8 cartes sur 10 restent des
 miniatures YouTube, et le format d'affiche ne donnera sa pleine mesure qu'avec
 des images cadrées pour lui.
+
+
+---
+
+## Décision propriétaire — augmenter nettement le niveau de risque créatif
+
+Le propriétaire valide l'intelligence et la retenue de la première direction, mais considère qu'elle reste **trop prudente pour définir le niveau créatif final du site**.
+
+À partir du prochain jeu de directions :
+
+- au moins une proposition doit prendre un **vrai risque visuel, spatial, temporel ou interactif** ;
+- ne pas réduire l'ambition à une idée conceptuelle discrète ;
+- une direction peut être techniquement ambitieuse si le concept le justifie ;
+- WebGL, shaders, 3D, compositing, distorsion, transitions fortes, détournement de scroll, ruptures de mise en page, interactions inhabituelles ou autres techniques avancées sont pleinement ouvertes ;
+- ne pas choisir une proposition simplement parce qu'elle est plus sûre, plus légère ou plus facile à maintenir ;
+- préserver toutefois les exigences de qualité : mobile, performance, lisibilité, accessibilité, repli propre.
+
+L'objectif n'est pas d'ajouter des effets. L'objectif est de **tester jusqu'où BINKSFILMS peut aller sans perdre sa maîtrise**.
+
+Le prochain jeu de directions doit donc contenir une proposition dont l'ambition serait réellement perceptible par un visiteur, même sans lire le brief.
+
+Claude garde carte blanche sur la forme et sur le terrain.
