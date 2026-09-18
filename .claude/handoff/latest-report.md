@@ -1,81 +1,62 @@
-# Rapport de mission — Réparation média, clip Skinny Bastard
+# Rapport de mission — Format d'affiche sur mobile (B-009)
 
 **Date :** 2026-09-18
 **Agent :** Claude Code (Opus 5)
-**Mode :** SURGICAL — médias uniquement, aucun code modifié
-**Contexte :** premier changement **visible sur le site** depuis l'installation du core
+**Mode :** EXPERIMENTAL — première modification de `index.html`
+**Direction retenue par le propriétaire :** A — tenir l'intention du format d'affiche
 
 ---
 
-## 1. Pourquoi cette mission avant le travail créatif
+## 1. Le diagnostic
 
-Un relevé sur les 10 films publiés a motivé l'ordre des priorités :
+Le commentaire de la grille mobile annonçait « format d'affiche plutôt que
+vignette 16/9 » sans que le CSS ne l'applique : `.film .thumb` gardait
+`aspect-ratio:16/9`, et le bloc `@media(max-width:760px)` ne changeait que le
+rayon, l'espacement et les corps de texte.
 
-| | Films publiés concernés |
-|---|---|
-| Bannière personnalisée | 2 / 10 — les 8 autres affichent la miniature YouTube |
-| Preview au survol | 2 / 10 |
-| Contre-champ | 1 / 10 |
-| Photos de tournage | 1 / 10 |
-| Texte de présentation | 1 / 10 |
+La baseline a montré que ce n'était pas une lubie esthétique mais une contrainte
+géométrique. **En 16/9 pleine largeur sur un téléphone, une carte plafonne à
+211 px de haut.** Une carte par écran est arithmétiquement impossible dans ce
+format.
 
-Et le seul film portant un contre-champ était précisément celui dont les médias
-manquaient. **Le geste le plus spécifique du site n'était donc visible nulle
-part.** Ajouter une section ou un effet avant de régler ça n'aurait fait
-qu'agrandir le vide.
-
----
-
-## 2. Ce que j'ai fait
-
-### Identification des fichiers
-`films.js` déclarait cinq chemins absents du disque. Cinq fichiers orphelins
-existaient par ailleurs sous leurs noms d'export bruts. J'ai **lu les images**
-pour établir la correspondance plutôt que de la deviner : l'homme à la capuche
-fourrure et aux lunettes de `skinny.jpg` est le même que sur le plan fisheye
-étalonné, et la camionnette blanche revient sur quatre des cinq images. Tout
-vient du même clip.
-
-### Correspondance appliquée
-
-| Emplacement | Fichier retenu | Pourquoi |
+| Sur 375 × 812 | Avant | Après |
 |---|---|---|
-| Bannière | `skinny.jpg` | 16/9 plein cadre, plan de groupe étalonné |
-| Contre-champ — le plan | `Adjustment Layer.00_00_56_18.Still013.jpg` | la camionnette de nuit, étalonnée, bandeau -16 |
-| Contre-champ — derrière | `contre champs.jpg` | même lieu en brut vert, le cadreur au premier plan |
-| Tournage | `00079.MTS.00_01_37_00.Still001.jpg` | rush de la même nuit, caméra de making-of |
-| Preview | `skinny.mp4` | boucle de 6,4 s |
+| Image de la carte | 304 × 166 px | **327 × 409 px** |
+| Part de la hauteur d'écran | 20 % | 50 % |
+| Cartes visibles simultanément | 3,66 | **1,83** |
+| Cartel dans l'image | 53 % | **22 %** |
+| Luminosité — carte centrée | 0,99 | 1,00 |
+| Luminosité — voisines | 0,81 / 0,83 | **0,82** |
+| Hauteur de page (10 films) | 5 355 px | 7 603 px |
 
-Le choix du contre-champ est le tien : opposer le **plan de cinéma** au **rush
-brut où l'on voit l'équipe**, plutôt que deux rushes entre eux. Les cadrages
-diffèrent donc le maintien produit une coupe franche, pas un dévoilement — le
-contraste de sens l'emporte sur la douceur du raccord.
+Le dispositif d'échelle et de luminosité — du bon travail — n'avait simplement
+pas la place de fonctionner : quatre cartes à l'écran, toutes éclairées à 82 %
+les unes des autres.
 
-### Méthode
-**Copie sous les noms que `films.js` déclare déjà**, sans toucher au fichier.
-`films.js` est généré par `admin.html` et son en-tête interdit l'édition
-manuelle ; une retouche aurait été écrasée au prochain export. Le fichier
-déclarait des chemins corrects, il manquait seulement les fichiers.
+---
 
-Les noms courts (`-bann`, `-derr`, `-tour`, `-prev`) viennent d'une **ancienne
-version d'`admin.html`** dont le `slugifier` coupait à 60 caractères — vérifié :
-le slug du film fait 55 caractères, donc `-plan` (5) tient pile et les autres
-suffixes sont rognés. La version actuelle produit `-banner`, `-derriere`,
-`-tournage`, `-preview` et normalisera d'elle-même au prochain export.
+## 2. Ce qui a changé
 
-### Chemin des previews
-`films.js` déclarait `videos/previews/saisai-…-preview.mp4` ; le fichier était à
-`videos/`. Déplacé vers le chemin déclaré, sans duplication.
+**Deux modifications, toutes deux confinées au mobile.**
+
+`.film .thumb` passe en `aspect-ratio:4/5` dans la requête `max-width:760px`.
+L'image garde toute sa largeur et se recadre en hauteur : on perd le haut et le
+bas du plan, jamais les côtés — le recadrage le moins destructeur pour une image
+de clip, où le sujet est centré.
+
+Le plancher de luminosité des cartes hors centre passe de **0,72 à 0,82**, dans
+la branche `etroit` du parallaxe. C'est une conséquence directe de la première :
+à 0,72, une carte occupant la moitié de l'écran sur un plan déjà sombre se
+réduisait à une dalle noire. L'écart avec la carte centrée reste parfaitement
+lisible.
 
 ---
 
 ## 3. Fichiers
 
-**Ajoutés** — 5 copies : `images/…-bann.jpg`, `…-plan.jpg`, `…-derr.jpg`,
-`…-tour.jpg`, `videos/…-prev.mp4`.
-**Déplacé** — la preview SaiSai vers `videos/previews/`.
-**Modifiés** — aucun. `index.html`, `films.js`, `admin.html`, `vercel.json`
-vérifiés par hash contre le tag `core-phase1`.
+`index.html` — deux blocs touchés, commentés sur place.
+Aucun autre fichier modifié. `films.js`, `admin.html`, `vercel.json` intacts.
+Sauvegarde de l'état antérieur conservée hors dépôt le temps de la mission.
 
 ---
 
@@ -83,53 +64,43 @@ vérifiés par hash contre le tag `core-phase1`.
 
 | Test | Résultat |
 |---|---|
-| Chemins média de `films.js` | **7 / 7 résolvent**, 0 manquant |
-| Contre-champ — maintien | OK — `hold` posé, image B opacité 0 → 1, retour à 0 au relâchement |
-| Contre-champ — chargement | les deux images en 200, 3840px et 1920px de large |
-| Section Tournage | l'image charge (1920px) — plus d'intertitre orphelin |
-| Grille d'accueil | 10 cartes, 2 bannières locales, 8 replis YouTube, 2 previews |
-| Images cassées | **0** |
-| Erreurs JS | **0** |
-| Mobile 375×812 | aucun débordement, BTS en 2 colonnes, 0 image cassée |
-
-Captures faites des deux états du contre-champ : le plan étalonné, puis le vert
-brut avec le cadreur.
+| Ratio appliqué en mobile | 4/5 confirmé (0,80) |
+| Débordement horizontal | aucun |
+| Dévoilement par volet | intact — cartes `vu`, `clip-path: inset(0)` |
+| Preview sur carte centrée | joue (`prev-on`, `paused: false`) |
+| Cartel au centre | s'efface comme prévu |
+| **Desktop — ratio** | **`16 / 9` inchangé** |
+| **Desktop — rayon** | **11 px inchangé** |
+| **Desktop — parallaxe** | luminosité toujours sur le cadre, image à `none` — comportement d'origine |
+| Mouvement réduit | couvert par `if(reduced) return` ; le CSS dédié n'entre pas en conflit avec le 4/5 |
 
 ---
 
-## 5. Problèmes restants
+## 5. Coût assumé
 
-**B-011 — MAJOR.** La preview pèse **10,4 Mo pour 6,4 s**, soit 1,63 Mo/s contre
-0,54 pour celle de SaiSai et 0,43 pour `hero-loop.mp4`. Au survol d'une carte,
-c'est 10 Mo pour une boucle muette de six secondes — contraire à la discipline
-média du projet. Non corrigé : `ffmpeg` n'est pas installé ici, et le débit
-choisi touche à la qualité de l'image, donc au travail. À recompresser vers
-3–4 Mo ; le nom et le chemin sont déjà bons.
+**La page s'allonge de 42 %** — 7 603 px contre 5 355 pour dix films, et ça
+croîtra linéairement avec le catalogue. C'est le prix d'une carte par écran, et
+c'est le choix de la direction A.
 
-**B-012 — MINOR.** La réparation a procédé par copie, comme validé : cinq
-fichiers existent en double, environ 16 Mo. Rien n'est cassé — ces fichiers ne
-sont jamais requêtés. `images/Adjustment Layer.00_01_57_23.Still018.jpg` (1,8 Mo)
-reste inutilisé et ferait une bannière alternative crédible.
-
-**B-006 — MINOR.** `GUIDE-DEPLOIEMENT.md` reste désynchronisé. Il annonçait
-`videos/previews/`, ce qui est désormais vrai pour SaiSai mais faux pour les
-previews à venir, qu'`admin.html` pose à plat dans `videos/`. À resynchroniser
-avec la passe de contenu suivante.
+Si le catalogue double, il faudra sans doute une pagination ou un chargement
+progressif. Pas aujourd'hui.
 
 ---
 
-## 6. Ce que je recommande ensuite
+## 6. Question restée ouverte
 
-Point 2 du plan convenu : **une passe de contenu sur trois ou quatre films**, pas
-les huit. Bannière choisie plutôt que vignette YouTube, preview, et contre-champ
-là où tu as la paire.
+**Le ratio exact : 4/5 ou 3/4.** J'ai posé 4/5, qui est le plus conservateur
+(1,83 carte par écran contre 1,73 en 3/4). L'écart mesuré est mince ; la
+différence se juge à l'œil, sur un vrai téléphone, pas sur un tableau. Une ligne
+à changer si le propriétaire préfère 3/4.
 
-Cette partie t'appartient — choisir un photogramme, retrouver un plan de
-tournage, décider de ce qui mérite d'être montré. Je peux préparer le terrain :
-vérifier qu'`admin.html` ne rend pas la tâche pénible, et resynchroniser le
-guide de déploiement.
+---
 
-Le contre-champ existe maintenant sur un film. Il en faudrait deux ou trois pour
-qu'un visiteur comprenne que c'est un dispositif du site et non un accident.
+## 7. Ce que ça implique pour la suite
 
-**Après seulement** : le mobile (B-009), puis le son.
+Le format d'affiche **suppose des bannières cadrées pour lui**. Aujourd'hui 8
+cartes sur 10 affichent une miniature YouTube 16/9 recadrée au centre : ça tient,
+mais ce n'est pas choisi. Le propriétaire a indiqué qu'il mettrait les bannières
+à jour manuellement — c'est ce qui donnera sa pleine valeur à ce changement.
+
+Prochaine mission selon `next-task.md` : `experience-direction`.

@@ -8,6 +8,32 @@ Format : ID · date · décision · raison · conséquence · statut.
 
 ---
 
+## D-015 — Le format d'affiche sur mobile, et ce qu'il entraîne
+**Date :** 2026-09-18 · **Statut :** ACTIVE
+
+Les cartes de la grille passent en 4/5 sur mobile, et le plancher de luminosité
+des cartes hors centre monte de 0,72 à 0,82.
+
+**Raison :** en 16/9 pleine largeur, une carte plafonne à 211 px de haut sur un
+téléphone. Le dispositif d'échelle et de luminosité qui désigne la carte centrée
+n'avait donc pas la place d'exister — quatre cartes à l'écran, éclairées à 82 %
+les unes des autres. Le commentaire du code annonçait le format d'affiche depuis
+le début ; c'était une contrainte géométrique, pas une préférence esthétique.
+
+Le relèvement du plancher est une conséquence, pas un choix séparé : une carte
+qui occupe désormais la moitié de l'écran devenait une dalle noire à 0,72 sur un
+plan sombre.
+
+**Conséquence :** la page s'allonge de 42 % (7 603 px contre 5 355 pour dix
+films), et croîtra linéairement avec le catalogue. Le format d'affiche suppose
+par ailleurs des bannières **cadrées pour lui** — les 8 cartes encore en repli
+YouTube sont recadrées au centre, ce qui tient mais n'est pas choisi.
+
+**Portée :** strictement mobile. Le desktop garde son 16/9, son rayon de 11 px et
+sa luminosité portée par le cadre — vérifié après coup.
+
+---
+
 ## D-014 — Les effets ambitieux sont pleinement autorisés si leur exécution est excellente
 **Date :** 2026-09-18 · **Statut :** ACTIVE
 

@@ -179,7 +179,13 @@ nav a:hover{color:var(--ivoire)}
    (Placé après les règles de base, sinon elles l'emportent.) */
 @media(max-width:760px){
   #grid{gap:34px}
-  .film .thumb{--r:13px}
+  /* Le format d'affiche, enfin appliqué. En 16/9 pleine largeur une carte
+     ne fait que 211px de haut sur un téléphone : quatre cartes tiennent à
+     l'écran et l'échelle qui désigne la carte centrée n'a pas la place de
+     se voir. En 4/5 il en reste une et demie — la voisine se devine sans
+     se disputer l'attention. L'image garde toute sa largeur et se recadre
+     en hauteur : on perd le haut et le bas du plan, jamais les côtés. */
+  .film .thumb{--r:13px;aspect-ratio:4/5}
   .film .cartel{padding:0 20px 17px}
   .film .artiste{font-size:16px}
   .film .titre{font-size:27px}
@@ -2273,7 +2279,11 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
           "perspective(1400px) rotateX(" + (d * angle).toFixed(2) + "deg)"
           + " scale(" + (0.93 + prox * 0.07).toFixed(4) + ")";
         cadre.style.filter = "";
-        img.style.filter = "brightness(" + (0.72 + prox * 0.28).toFixed(3) + ")";
+        /* Plancher remonté de .72 à .82 depuis le passage au format
+           d'affiche : une carte hors centre occupe maintenant la moitié
+           de l'écran, et sur un plan déjà sombre .72 la réduisait à une
+           dalle noire. L'écart avec la carte centrée reste lisible. */
+        img.style.filter = "brightness(" + (0.82 + prox * 0.18).toFixed(3) + ")";
         var distance = Math.abs(milieu - milieuEcran);
         if(distance < distanceProche){ distanceProche = distance; proche = cadre.parentNode; }
       } else {

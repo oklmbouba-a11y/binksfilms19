@@ -154,7 +154,7 @@ et B-004, dans la même passe de correction contenu.
 ---
 
 ## B-009 — Le format d'affiche mobile est commenté mais pas implémenté
-**Sévérité :** MINOR · **Propriétaire :** site · **Statut :** OUVERT
+**Sévérité :** MINOR · **Propriétaire :** site · **Statut :** RÉSOLU 2026-09-18
 
 Relevé lors de l'extraction ADN, confirmé par `innovation-critic`.
 
@@ -171,13 +171,19 @@ par le centrage plutôt que par le survol, l'espacement resserré.
 **Rien n'est cassé** — le site est correct sur mobile, simplement pas dans le
 format annoncé.
 
-**À trancher :** tenir l'intention (passer réellement au format d'affiche, ce
-qui est un vrai changement de DA mobile et relève d'une mission EXPERIMENTAL),
-ou corriger le commentaire pour qu'il décrive ce que le code fait. La première
-option est un travail de direction artistique, pas une correction.
+**Tranché :** l'intention est tenue. `.film .thumb` passe en `aspect-ratio:4/5`
+sur mobile, et le plancher de luminosité des cartes hors centre monte de 0,72 à
+0,82 en conséquence.
 
-`binksfilms-dna` documente l'écart et interdit de citer cette intention comme un
-acquis.
+La baseline a montré que le commentaire décrivait une contrainte géométrique et
+non une préférence : en 16/9 pleine largeur, une carte plafonne à 211 px de haut
+sur un téléphone, donc « une carte à la fois » y est impossible. On passe de 3,66
+à 1,83 carte par écran, et le cartel de 53 % à 22 % de l'image.
+
+Reste ouvert : le ratio exact, 4/5 ou 3/4 — une ligne à changer, décision à l'œil.
+
+`binksfilms-dna` et `built-expression.md` doivent être mis à jour : cet écart
+intention/implémentation n'existe plus.
 
 ---
 

@@ -1,95 +1,83 @@
 # Prochaine étape — BINKSFILMS
 
 **Mise à jour :** 2026-09-18 · **Proposé par :** Claude Code
-**Phase 2 :** `binksfilms-dna` V1.1 livrée, en attente de revue du propriétaire.
+**Intègre :** la décision propriétaire d'accélérer vers le travail créatif (`4dc5449`)
 
 ---
 
-## Immédiat — passe de contenu, 3 ou 4 films
+## Consigne propriétaire en vigueur
 
-Point 2 du plan convenu. Le point 1 (réparation du clip Skinny Bastard) est fait.
+Sortir de la préparation. Priorité : `experience-direction`, puis des
+propositions créatives réelles, puis un premier prototype visible. Le mobile ne
+doit pas servir de prétexte à retarder ça — il est fait, on avance.
 
-Sur les 10 films publiés : 2 ont une bannière, 2 une preview, **1 un
-contre-champ**. Le dispositif existe désormais sur un film — il en faut deux ou
-trois pour qu'un visiteur comprenne que c'est une signature du site et non un
-accident.
-
-**Ce qui revient au propriétaire :** choisir les films, les photogrammes, les
-paires de contre-champ. Personne d'autre ne peut le faire.
-
-**Ce que Claude Code peut faire :** vérifier qu'`admin.html` ne rend pas la tâche
-pénible, resynchroniser `GUIDE-DEPLOIEMENT.md` (B-006), et recompresser les
-médias si `ffmpeg` devient disponible (B-011).
-
-Deux dettes ouvertes par la réparation : **B-011** (preview à 10,4 Mo, à
-recompresser) et **B-012** (doublons à supprimer une fois les copies validées).
+**Et un point de goût qui change la lecture du système :** le propriétaire adore
+les effets ambitieux, bien exécutés. WebGL, shaders, 3D, compositing, motion
+avancée, transitions fortes sont **pleinement ouverts**. Anti-cliché n'est pas
+anti-effet. Voir D-014.
 
 ---
 
-## Ensuite — le mobile, puis `experience-direction`
+## Fait
 
-- **B-009** — le format d'affiche mobile annoncé en commentaire mais jamais
-  implémenté. Vraie décision de direction artistique, périmètre net, sur la
-  partie du site la plus vue. Mission EXPERIMENTAL.
-- **`experience-direction`** — traduire l'ADN en directions créatives concurrentes
-  et argumentées, puis choisir une direction avant implémentation.
+**B-009 — le format d'affiche mobile.** Livré. `.film .thumb` en 4/5 sur mobile,
+plancher de luminosité relevé de 0,72 à 0,82 en conséquence. On passe de 3,66 à
+1,83 carte par écran, le cartel de 53 % à 22 % de l'image. Desktop strictement
+inchangé. Détail dans `latest-report.md`, décision en D-015.
 
-## Son — différé par décision du propriétaire
-
-Le propriétaire confirme que le son viendra **plus tard**. Ne pas l'utiliser comme
-pré-requis et ne pas retarder les premières interventions visuelles pour compléter
-la doctrine sonore. Conserver `binksfilms-dna` §13 comme territoire ouvert pour
-une phase ultérieure.
+Reste à l'œil du propriétaire : **4/5 ou 3/4** — une ligne à changer.
 
 ---
 
-## Puis — affinage d'`innovation-critic`
+## Mission suivante — `experience-direction`
 
-Deux relectures, deux fois des défauts réels trouvés et vérifiés contre le code.
-Son prompt lui demande encore de juger à l'intuition ; il peut désormais juger
-contre `binksfilms-dna`, et surtout contre le **double filtre §7**, qui lui donne
-de quoi distinguer *incohérent* de *cohérent mais déjà vu* — deux griefs
-différents qu'il formule aujourd'hui de la même manière. Modification courte,
-gain réel.
+Blueprint §13, Phase 2, point 8. Traduire l'ADN en directions créatives
+concurrentes et argumentées, puis en retenir une avant implémentation.
+
+`binksfilms-dna` dit ce qui est BINKSFILMS et ce qui mérite d'exister. Rien ne
+dit encore comment passer d'un objectif à deux ou trois propositions
+défendables. La mission B-009 vient d'en faire la démonstration à la main —
+baseline chiffrée, trois directions, choix du propriétaire, implémentation, QA.
+C'est exactement ce que ce skill doit outiller, et ce cas peut lui servir
+d'exemple travaillé.
+
+**Contrainte issue de D-014 :** le skill doit savoir produire des directions
+**ambitieuses**, pas seulement prudentes. Si ses trois propositions types sont
+toujours sages, il est raté.
+
+---
+
+## Puis — premier prototype visible
+
+Objectif du propriétaire. Terrain à choisir au moment venu ; `binksfilms-dna`
+§6 (registre LAB) et `open-territories.md` donnent les critères.
+
+---
+
+## Ajustement à faire dans `binksfilms-dna`
+
+1. **Refléter D-014.** Le skill dit déjà que LAB est « autorisé, attendu même »
+   et que rien n'interdit le rendu temps réel — mais son volume penche vers le
+   refus. Une section courte sur l'ambition comme exigence, pas comme risque.
+2. **`built-expression.md` §2 bis** décrit le format d'affiche mobile comme une
+   intention non réalisée. C'est faux depuis aujourd'hui.
 
 ---
 
 ## Dette
 
-- **B-010** — déséquilibre de masse du skill : beaucoup de valeurs concrètes face
-  à peu de principes abstraits. À réévaluer après la première mission créative.
-- **B-003 + B-004 + B-006** — passe de correction contenu via `admin.html`.
-- **B-008** — sort du fichier `previews/saisai boro 700 fin des temps.mp4`.
-- **B-009** — format d'affiche mobile annoncé mais non implémenté.
+- **B-011** — preview du clip Skinny Bastard à 10,4 Mo pour 6,4 s. Bloqué : pas
+  de `ffmpeg` sur la machine.
+- **B-012** — cinq doublons média (~16 Mo) à supprimer une fois les copies
+  validées.
+- **B-010** — déséquilibre de masse dans `binksfilms-dna`.
+- **B-006** — `GUIDE-DEPLOIEMENT.md` désynchronisé.
 
 ---
 
-## Hors périmètre
+## Contenu, quand le propriétaire aura la matière
 
-- Phases 3 à 5 du blueprint tant que la Phase 2 n'est pas close.
-- Toute modification de la DA du site. L'ADN existe pour préparer ce travail, pas
-  pour le déclencher.
-- Toute installation de skill, plugin ou MCP tiers sans passer par
-  `capability-scout`.
-
-
----
-
-## Décision propriétaire — accélérer vers le travail créatif
-
-Le propriétaire valide une petite passe contenu **uniquement si elle reste rapide et utile**. Ne transforme pas cette passe en nouvelle phase longue.
-
-Priorité après les corrections évidentes :
-1. `experience-direction`
-2. premières propositions créatives réelles
-3. premier prototype visuel / interactif
-
-Le mobile peut être traité si tu juges qu'il constitue le meilleur premier terrain d'expérimentation, mais il ne doit pas devenir un prétexte pour retarder `experience-direction`.
-
-Rappel de goût propriétaire : il **adore les effets ambitieux** quand ils sont exceptionnellement bien exécutés. Ne confonds pas anti-cliché avec anti-effet. WebGL, shaders, 3D, distorsions, compositing, motion avancée et transitions fortes sont pleinement ouverts si :
-- l'effet sert le concept et l'image ;
-- l'exécution est précise ;
-- le mobile et la performance restent maîtrisés ;
-- la proposition est distinctive, pas une démonstration technique générique.
-
-Objectif immédiat : sortir de la préparation et commencer à produire des directions visibles.
+Bannières et contre-champs sur 3 ou 4 films, en une passe courte — le
+propriétaire a validé qu'elle reste rapide et ne devienne pas une phase. Il s'en
+occupe manuellement. C'est ce qui donnera sa pleine valeur au format d'affiche :
+aujourd'hui 8 cartes sur 10 restent des miniatures YouTube recadrées.
