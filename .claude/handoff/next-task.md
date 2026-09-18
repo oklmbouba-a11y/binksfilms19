@@ -26,13 +26,20 @@ recompresser) et **B-012** (doublons à supprimer une fois les copies validées)
 
 ---
 
-## Ensuite — le mobile, puis le son
+## Ensuite — le mobile, puis `experience-direction`
 
 - **B-009** — le format d'affiche mobile annoncé en commentaire mais jamais
   implémenté. Vraie décision de direction artistique, périmètre net, sur la
   partie du site la plus vue. Mission EXPERIMENTAL.
-- **Le son** — `binksfilms-dna` §13 ouvre le territoire sans le remplir. Le plus
-  intéressant, le plus risqué, celui qui demande le plus l'avis du propriétaire.
+- **`experience-direction`** — traduire l'ADN en directions créatives concurrentes
+  et argumentées, puis choisir une direction avant implémentation.
+
+## Son — différé par décision du propriétaire
+
+Le propriétaire confirme que le son viendra **plus tard**. Ne pas l'utiliser comme
+pré-requis et ne pas retarder les premières interventions visuelles pour compléter
+la doctrine sonore. Conserver `binksfilms-dna` §13 comme territoire ouvert pour
+une phase ultérieure.
 
 ---
 
