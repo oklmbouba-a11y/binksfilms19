@@ -137,3 +137,46 @@ Attendu :
 Important : **ne pas retomber dans une longue phase documentaire**. La structuration doit servir rapidement à choisir ce qu'on garde de Flux, de Bande, ce qu'on rejette, et comment ces idées peuvent s'inscrire dans l'expérience globale.
 
 ChatGPT peut intervenir activement sur cette structuration DA. Claude garde la main sur l'exécution et peut contester tout choix avec des arguments visuels, techniques ou de performance.
+
+
+---
+
+## Mission immédiate — passer du LAB à une expérience structurée
+
+Le propriétaire veut maintenant **avancer concrètement**. Plus de phase d'attente ni de documentation longue.
+
+### Direction DA proposée par ChatGPT
+
+Prendre les deux LAB actuels comme matière, mais ne pas les traiter comme deux effets concurrents :
+
+- **Flux** devient le langage de transition fluide / continu quand le geste est normal ou lent ;
+- **Bande** devient le niveau d'intensité supérieur, déclenché par la vitesse / l'engagement du geste ;
+- **au repos**, l'image doit redevenir nette, calme et premium ;
+- **aucun trou noir**, aucune coupure de navigation ;
+- l'effet doit monter et redescendre avec le geste, jamais rester collé à l'image.
+
+L'objectif est de construire une **grammaire d'intensité** plutôt qu'une collection d'effets :
+
+1. repos = image propre ;
+2. interaction légère = flux / fusion ;
+3. interaction forte = bande / déchirure ;
+4. moment signature = rupture plus rare, à décider après test visuel.
+
+### Livrable immédiat
+
+Créer un prototype isolé de synthèse, utilisable et visible, qui démontre cette hiérarchie dans une vraie navigation de catalogue. Il doit permettre de juger en quelques secondes :
+
+- fluidité ;
+- sensation au doigt et à la molette ;
+- montée d'intensité ;
+- lisibilité des titres / artistes ;
+- caractère BINKSFILMS ;
+- performance mobile raisonnable.
+
+Ne pas intégrer au site principal tant que ce prototype n'est pas convaincant.
+
+### Liberté Claude
+
+Claude garde carte blanche sur l'implémentation exacte, le shader, le rythme, les seuils et la composition. Il peut contester la synthèse Flux/Bande s'il démontre qu'une autre structure est visuellement ou techniquement supérieure.
+
+Mais la mission doit produire **un résultat visible maintenant**, pas un nouveau long brief.
