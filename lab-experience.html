@@ -11,15 +11,14 @@
 /* ============================================================
    LA STRUCTURE, EN TROIS ZONES
 
-   1. LE FLUX          langage permanent. La grammaire d'intensité y
-                       vit, et seulement là.
-   2. LA FICHE         zone de silence. Aucun effet, jamais. C'est la
-                       règle qui empêche la grammaire de devenir un
-                       thème : elle doit avoir un endroit interdit.
-   3. LES SEUILS       l'entrée et le retour. Continus, sans noir.
+   1. LE FLUX     langage permanent. La grammaire d'intensité y vit,
+                  et seulement là. Une entrée = un film publié.
+   2. LA FICHE    zone de silence. Aucun effet, jamais. C'est la règle
+                  qui empêche la grammaire de devenir un thème.
+   3. LES SEUILS  l'entrée et le retour. Continus, sans noir.
 
-   Rien ne se répète d'une zone à l'autre. Un futur effet devra
-   déclarer dans quelle zone il vit, ou il n'entre pas.
+   Un futur effet devra déclarer dans quelle zone il vit, ou il
+   n'entre pas.
    ============================================================ */
 :root{color-scheme:dark;--noir:#0A0A0A;--ivoire:#EDEBE6;--gris:#8E8A84;--gris2:#5C5955;--rouge:#B11226;
   --ligne:rgba(237,235,230,.12)}
@@ -29,8 +28,9 @@ html,body{height:100%;background:var(--noir);overflow:hidden;
   -webkit-font-smoothing:antialiased;overscroll-behavior:none}
 canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
 #medias video{position:absolute;width:2px;height:2px;opacity:0;pointer-events:none;left:-10px}
+::selection{background:rgba(177,18,38,.5);color:#fff}
+:focus-visible{outline:1px solid var(--rouge);outline-offset:3px}
 
-/* ---------- 1. LE FLUX ---------- */
 .flux{position:fixed;inset:0;z-index:2;pointer-events:none;transition:opacity .5s ease}
 .flux.retire{opacity:0}
 .cartel{position:absolute;left:0;right:0;bottom:0;padding:0 28px 34px;
@@ -44,7 +44,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
 .ouvrir{margin-top:20px;pointer-events:auto;background:none;border:0;border-bottom:1px solid var(--ligne);
   font-family:inherit;color:var(--ivoire);font-size:11px;font-weight:600;letter-spacing:.2em;
   text-transform:uppercase;padding:0 0 6px;cursor:pointer;transition:border-color .3s}
-.ouvrir:hover,.ouvrir:focus-visible{border-color:var(--ivoire);outline:none}
+.ouvrir:hover{border-color:var(--ivoire)}
 .bobine{position:absolute;top:0;right:0;padding:24px 28px;
   font-size:10px;font-weight:600;letter-spacing:.2em;color:var(--gris);font-variant-numeric:tabular-nums}
 @media(min-width:900px){.bobine{padding:28px 48px}}
@@ -53,10 +53,6 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
 .marque b{display:block;font-weight:800;font-stretch:125%;text-transform:uppercase;font-size:12px;letter-spacing:.26em}
 .marque i{display:block;font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:11px;color:var(--gris);margin-top:1px}
 
-/* ---------- 2. LA FICHE — zone de silence ----------
-   Elle monte par-dessus le flux, qui se fige derrière elle. Aucune
-   coupe, aucun noir : le plan qu'on regardait devient le fond de sa
-   propre fiche. */
 .fiche{position:fixed;inset:0;z-index:4;overflow-y:auto;overscroll-behavior:contain;
   transform:translateY(100%);transition:transform .62s cubic-bezier(.16,1,.3,1);
   background:linear-gradient(to bottom,rgba(10,10,10,.55) 0%,rgba(10,10,10,.93) 46%,var(--noir) 78%)}
@@ -66,18 +62,21 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
 .retour{background:none;border:0;font-family:inherit;color:var(--gris);cursor:pointer;
   font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;padding:0 0 22px;
   display:inline-flex;gap:9px;align-items:center;transition:color .3s}
-.retour:hover,.retour:focus-visible{color:var(--ivoire);outline:none}
+.retour:hover{color:var(--ivoire)}
 .f-titre{font-weight:800;font-stretch:125%;text-transform:uppercase;letter-spacing:-.01em;
   font-size:clamp(30px,5.4vw,66px);line-height:.96;margin-top:6px}
-.f-titre em{font-style:normal;color:#9A958F}
+.f-titre .a{color:#9A958F}
 .f-meta{margin-top:32px;display:flex;flex-direction:column;gap:9px;max-width:60ch}
 .f-row{display:flex;gap:18px;font-size:14px;color:var(--gris)}
 .f-row b{color:var(--ivoire);font-weight:600;min-width:150px;font-size:11px;letter-spacing:.14em;
   text-transform:uppercase;line-height:1.5;padding-top:2px}
+.f-row span{flex:1 1 auto;min-width:0;overflow-wrap:break-word}
 @media(max-width:420px){.f-row b{min-width:112px;max-width:48%}}
-.f-note{margin-top:38px;max-width:34em;font-family:'Newsreader',Georgia,serif;font-size:19px;line-height:1.6}
+.f-row a{color:inherit;border-bottom:1px solid var(--ligne);text-decoration:none;transition:border-color .3s,color .3s}
+.f-row a:hover{color:var(--ivoire);border-color:var(--ivoire)}
+.f-note{margin-top:38px;max-width:34em;font-family:'Newsreader',Georgia,serif;font-size:19px;line-height:1.6;
+  white-space:pre-line}
 
-/* ---------- 3. LES SEUILS ---------- */
 .porte{position:fixed;inset:0;z-index:6;display:grid;place-items:center;background:var(--noir);transition:opacity .7s ease}
 .porte.off{opacity:0;pointer-events:none}
 .porte button{background:none;border:0;color:var(--ivoire);font-family:inherit;cursor:pointer;
@@ -87,6 +86,15 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
   font-size:9.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:rgba(237,235,230,.32);
   transition:opacity .8s ease;pointer-events:none}
 .aide.off{opacity:0}
+
+/* ---------- mouvement réduit ----------
+   Le JS neutralisait déjà l'intensité du shader. Il manquait la
+   structure : sans ça la fiche gardait sa translation de 620 ms,
+   c'est-à-dire exactement le mouvement qu'on demande de supprimer. */
+@media(prefers-reduced-motion: reduce){
+  *{transition:none !important;animation:none !important}
+  .aide{display:none}
+}
 </style>
 </head>
 <body>
@@ -96,7 +104,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
 <div class="marque"><b>Binksfilms</b><i>Les beaux arts du ghetto</i></div>
 
 <div class="flux" id="flux">
-  <div class="bobine" id="bobine">01 / 10</div>
+  <div class="bobine" id="bobine">— / —</div>
   <div class="cartel">
     <p class="artiste" id="artiste"></p>
     <p class="titre" id="titre"></p>
@@ -117,75 +125,65 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
 <div class="aide" id="aide">Défiler doucement · tirer d'un coup sec · ouvrir</div>
 <div class="porte" id="porte"><button id="entrer" type="button">Enter<span></span></button></div>
 
+<script src="films.js"></script>
 <script>
 /* ============================================================
-   BINKSFILMS — LAB / expérience
-   Prototype isolé de structure. Ne touche pas au site.
+   BINKSFILMS — LAB / expérience — VERSION 2, sur les vraies données
+   Prototype isolé. Ne touche pas au site.
 
-   Ce n'est plus une démonstration d'effet : c'est le système.
+   Ce qui change, et pourquoi. La version 1 portait son propre tableau
+   de plans écrit à la main, qui avait déjà divergé de la source : le
+   crédit « Produced by » de SaiSai y était remplacé par un tiret,
+   c'est-à-dire un crédit inventé sur le travail de quelqu'un. Un
+   prototype qui montre des films doit lire les films.
 
-   UNE SEULE COURBE D'INTENSITÉ, exprimée en plans par seconde, donc
-   indépendante de la machine :
+   Désormais :
+   - les entrées viennent de window.FILMS_DATA, filtrées comme le site,
+     donc UNE ENTRÉE = UN FILM PUBLIÉ ;
+   - l'image suit la chaîne de secours du site : bannière locale, puis
+     miniature YouTube haute définition, puis standard ;
+   - la preview ne joue que si le film en a une et que le réseau le
+     permet ;
+   - crédits, date, type et lien viennent de films.js, posés en texte
+     et jamais en HTML.
 
-     repos       0 plan/s             image nette, rien d'ajouté
-     lent      < 1,1 plan/s           fusion par les hautes lumières
-     franc     1,1 -> 3,2 plans/s     la matière se déchire
-     arrachage > 3,2 plans/s          bandes fines, filé, écart chromatique
-
-   TROIS RÈGLES DE STRUCTURE, et ce sont elles le vrai livrable :
-
-   1. La grammaire vit dans le FLUX, et nulle part ailleurs. La fiche
-      est une zone de silence : aucun effet n'y entre, jamais. Un
-      langage qui n'a pas d'endroit interdit devient un thème.
-
-   2. Rien ne passe par du noir. Ouvrir un film ne coupe pas : le plan
-      qu'on regardait reste là et devient le fond de sa propre fiche.
-
-   3. Le texte et la navigation ne subissent jamais l'effet. L'image se
-      tord ; l'information reste lisible.
-
-   Un futur effet devra déclarer dans quelle zone il vit, ou il n'entre
-   pas dans le système.
+   UNE SEULE COURBE D'INTENSITÉ, en plans par seconde :
+     repos 0 · lent < 1,1 · franc 1,1→3,2 · arrachage > 3,2
    ============================================================ */
 
-var PLANS = [
-  { src:"videos/hero-loop.mp4", type:"v", artiste:"BINKSFILMS", titre:"Le ciel", meta:"Accueil · boucle",
-    credits:[["Réalisation, image & montage","BINKSFILMS"]], note:"" },
-  { src:"images/fulltrap-skinny-bastard-skinny-bastard-s-flow-type-shit-bann.jpg", type:"i",
-    artiste:"FullTrap & Skinny Bastard", titre:"Skinny Bastard's Flow", meta:"Clip · 2026",
-    credits:[["Réalisation, image & montage","BINKSFILMS"],["Produced","FullTrap"]],
-    note:"FullTrap & Skinny Bastard — Skinny Bastard's Flow (type shit). Directed by BinksFilms." },
-  { src:"videos/skinny.mp4", type:"v", artiste:"FullTrap & Skinny Bastard", titre:"La voiture",
-    meta:"Plan · étalonné", credits:[["Réalisation, image & montage","BINKSFILMS"]], note:"" },
-  { src:"images/fulltrap-skinny-bastard-skinny-bastard-s-flow-type-shit-plan.jpg", type:"i",
-    artiste:"FullTrap & Skinny Bastard", titre:"Le plan", meta:"Contre-champ · étalonné",
-    credits:[["Réalisation, image & montage","BINKSFILMS"]], note:"" },
-  { src:"images/00079.MTS.00_01_37_00.Still001.jpg", type:"i",
-    artiste:"FullTrap & Skinny Bastard", titre:"Derrière la caméra", meta:"Rush · brut",
-    credits:[["Réalisation, image & montage","BINKSFILMS"]], note:"" },
-  { src:"images/Adjustment Layer.00_01_57_23.Still018.jpg", type:"i",
-    artiste:"FullTrap & Skinny Bastard", titre:"Fisheye", meta:"Plan · étalonné",
-    credits:[["Réalisation, image & montage","BINKSFILMS"]], note:"" },
-  { src:"videos/previews/saisai-fin-des-temps-feat-boro700-preview.mp4", type:"v",
-    artiste:"SaiSai feat Boro700", titre:"Fin des temps", meta:"Clip · 2026",
-    credits:[["Réalisation, image & montage","BINKSFILMS"],["Produced by","—"]], note:"" },
-  { src:"images/saisai-fin-des-temps-feat-boro700-banner-2.jpg", type:"i",
-    artiste:"SaiSai feat Boro700", titre:"Fin des temps", meta:"Bannière",
-    credits:[["Réalisation, image & montage","BINKSFILMS"]], note:"" },
-  { src:"images/skinny.jpg", type:"i", artiste:"FullTrap & Skinny Bastard", titre:"L'habitacle",
-    meta:"Plan · étalonné", credits:[["Réalisation, image & montage","BINKSFILMS"]], note:"" },
-  { src:"videos/video intro.mp4", type:"v", artiste:"BINKSFILMS", titre:"La porte", meta:"Intro · boucle",
-    credits:[["Réalisation, image & montage","BINKSFILMS"]], note:"" }
-];
+function enLigne(f){
+  if(!f || !f.yt) return false;
+  if(f.status) return f.status === "published";
+  return !f.archive;
+}
+function annee(f){ return (f.sortie || "").slice(0,4); }
+
+var FILMS = (window.FILMS_DATA || []).filter(enLigne).map(function(f){
+  var cred = (f.credits || []).filter(function(c){
+    return c && c.length >= 2 && String(c[0]).trim() && String(c[1]).trim();
+  });
+  var pv = f.preview ? (typeof f.preview === "string" ? f.preview : f.preview.src) : "";
+  return {
+    slug:f.slug, yt:f.yt, artiste:f.artist || "", titre:f.title || "",
+    sortie:f.sortie || "", type:f.type || "Clip", note:f.note || "",
+    poster:f.poster || "", preview:pv, credits:cred
+  };
+});
 
 var cv = document.getElementById("c");
 var gl = cv.getContext("webgl", {antialias:false, alpha:false, powerPreference:"high-performance"});
 var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/* conscience du réseau, reprise du site : Save-Data ou connexion lente,
+   aucune vidéo n'est chargée. Le flux garde sa grammaire, il coûte
+   simplement beaucoup moins. */
+var co = navigator.connection;
+var reseauEconome = !!(co && (co.saveData || /(^|-)2g$/.test(co.effectiveType || "")));
+
 var VERT = "attribute vec2 p;varying vec2 uv;void main(){uv=p*0.5+0.5;gl_Position=vec4(p,0.0,1.0);}";
 var FRAG = [
-"precision highp float;",
-"varying vec2 uv;","uniform sampler2D A,B;","uniform vec2 rA,rB,res;","uniform float t,tir,temps;",
+"precision highp float;","varying vec2 uv;","uniform sampler2D A,B;",
+"uniform vec2 rA,rB,res;","uniform float t,tir,temps;",
 "vec2 cover(vec2 u, vec2 r){",
 "  float ar=res.x/res.y, ai=r.x/r.y;",
 "  vec2 s = ar>ai ? vec2(1.0, ai/ar) : vec2(ar/ai, 1.0);",
@@ -229,7 +227,7 @@ var FRAG = [
 function compiler(ty,src){ var s=gl.createShader(ty); gl.shaderSource(s,src); gl.compileShader(s);
   if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){ console.error(gl.getShaderInfoLog(s)); return null; } return s; }
 
-var prog, loc={}, sources=[], texs=[], prets=[], dims=[];
+var prog, loc={}, texs=[], dims=[], videos=[], pretes=[];
 function initGL(){
   var vs=compiler(gl.VERTEX_SHADER,VERT), fs=compiler(gl.FRAGMENT_SHADER,FRAG);
   if(!vs||!fs) return false;
@@ -238,7 +236,7 @@ function initGL(){
   gl.useProgram(prog);
   /* WebGL remplit les textures de bas en haut alors qu'une image et une
      vidéo se lisent de haut en bas : sans cette ligne, tout est
-     retourné. Posée une fois pour tout le contexte. */
+     retourné. Le défaut est resté invisible pendant quatre prototypes. */
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   var b=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,b);
   gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
@@ -246,47 +244,79 @@ function initGL(){
   ["A","B","rA","rB","res","t","tir","temps"].forEach(function(n){ loc[n]=gl.getUniformLocation(prog,n); });
   gl.uniform1i(loc.A,0); gl.uniform1i(loc.B,1); return true;
 }
-function creerTexture(){ var t=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,t);
+function creerTexture(){
+  var t=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,t);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
-  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,1,1,0,gl.RGB,gl.UNSIGNED_BYTE,new Uint8Array([10,10,10])); return t; }
+  gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,1,1,0,gl.RGB,gl.UNSIGNED_BYTE,new Uint8Array([10,10,10]));
+  return t;
+}
+
+/* ---------- la chaîne de secours des images, celle du site ----------
+   bannière locale -> miniature haute définition -> miniature standard.
+   Les miniatures YouTube autorisent le partage d'origine, elles sont
+   donc utilisables comme texture. La vignette grise que YouTube renvoie
+   parfois est détectée par sa largeur et rejetée, comme dans index.html. */
+function chargerImage(i){
+  var f = FILMS[i], etapes = [];
+  if(f.poster) etapes.push({url:f.poster, local:true});
+  etapes.push({url:"https://i.ytimg.com/vi/"+f.yt+"/maxresdefault.jpg", local:false});
+  etapes.push({url:"https://i.ytimg.com/vi/"+f.yt+"/hqdefault.jpg", local:false});
+  var k = 0;
+  function suivant(){
+    if(k >= etapes.length) return;          /* rien de lisible : le plan garde son noir */
+    var e = etapes[k++];
+    var im = new Image();
+    if(!e.local) im.crossOrigin = "anonymous";
+    im.onload = function(){
+      if(!e.local && im.naturalWidth < 200) return suivant();   /* vignette grise */
+      dims[i] = [im.naturalWidth, im.naturalHeight];
+      gl.bindTexture(gl.TEXTURE_2D, texs[i]);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, im);
+      if(pretes[i] !== "video") pretes[i] = "image";
+    };
+    im.onerror = suivant;
+    im.src = e.url;
+  }
+  suivant();
+}
 
 function preparer(){
-  var hote=document.getElementById("medias");
-  PLANS.forEach(function(pl,i){
-    texs[i]=creerTexture(); prets[i]=false; dims[i]=[16,9];
-    if(pl.type==="v"){
-      var v=document.createElement("video");
-      v.src=pl.src; v.muted=true; v.loop=true; v.playsInline=true; v.preload="metadata";
+  var hote = document.getElementById("medias");
+  FILMS.forEach(function(f,i){
+    texs[i] = creerTexture(); dims[i] = [16,9]; pretes[i] = false; videos[i] = null;
+    chargerImage(i);
+    if(f.preview && !reseauEconome && !reduced){
+      var v = document.createElement("video");
+      v.src = f.preview; v.muted = true; v.loop = true; v.playsInline = true; v.preload = "none";
       v.setAttribute("playsinline",""); v.setAttribute("muted","");
-      v.addEventListener("loadeddata",function(){ prets[i]=true; dims[i]=[v.videoWidth,v.videoHeight]; });
-      v.addEventListener("error",function(){ prets[i]="ko"; });
-      hote.appendChild(v); sources[i]=v;
-    } else {
-      var im=new Image();
-      im.onload=function(){ dims[i]=[im.naturalWidth,im.naturalHeight];
-        gl.bindTexture(gl.TEXTURE_2D,texs[i]);
-        gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,im); prets[i]="fixe"; };
-      im.onerror=function(){ prets[i]="ko"; };
-      im.src=pl.src; sources[i]=im;
+      v.addEventListener("loadeddata", function(){
+        if(v.videoWidth){ dims[i] = [v.videoWidth, v.videoHeight]; pretes[i] = "video"; }
+      });
+      v.addEventListener("error", function(){ videos[i] = null; });   /* on garde l'image */
+      hote.appendChild(v); videos[i] = v;
     }
   });
 }
-/* budget de décodage : deux vidéos au maximum, et zéro quand la fiche
-   est ouverte — rien ne doit tourner derrière une zone de silence */
+
+/* budget de décodage : deux vidéos au maximum dans le flux, zéro quand
+   la fiche est ouverte ou quand l'onglet est caché */
 function arbitrer(i){
-  PLANS.forEach(function(pl,k){
-    if(pl.type!=="v") return;
-    var v=sources[k], actif = !ficheOuverte && (k===i || k===i+1);
-    if(actif){ if(v.paused) v.play().catch(function(){}); }
+  var autorise = !ficheOuverte && !document.hidden;
+  FILMS.forEach(function(f,k){
+    var v = videos[k]; if(!v) return;
+    if(autorise && (k===i || k===i+1)){ if(v.paused) v.play().catch(function(){}); }
     else if(!v.paused) v.pause();
   });
 }
+document.addEventListener("visibilitychange", function(){
+  arbitrer(Math.max(0, Math.min(Math.max(FILMS.length-2,0), Math.floor(position))));
+});
 
 var position=0, cible=0, tir=0, dernier=0, dernierIdx=-1, ficheOuverte=false, dernierFiche=null;
-function N(){ return PLANS.length; }
+function N(){ return FILMS.length; }
 function pousser(d){ if(ficheOuverte) return; cible=Math.max(0,Math.min(N()-1,cible+d)); }
 addEventListener("wheel",function(e){ pousser(e.deltaY*0.0017); },{passive:true});
 var ty=null;
@@ -303,29 +333,50 @@ addEventListener("keydown",function(e){
 });
 
 function cartel(i){
-  var p=PLANS[i]; if(!p) return;
-  document.getElementById("artiste").textContent=p.artiste;
-  document.getElementById("titre").textContent=p.titre;
-  document.getElementById("meta").textContent=p.meta;
-  document.getElementById("bobine").textContent=
-    String(i+1).padStart(2,"0")+" / "+String(N()).padStart(2,"0");
+  var f=FILMS[i]; if(!f) return;
+  document.getElementById("artiste").textContent = f.artiste;
+  document.getElementById("titre").textContent = f.titre;
+  document.getElementById("meta").textContent = f.type + " · " + annee(f);
+  document.getElementById("bobine").textContent =
+    String(i+1).padStart(2,"0") + " / " + String(N()).padStart(2,"0");
 }
 
-/* ---------- 2. LA ZONE DE SILENCE ----------
-   Ouvrir ne coupe pas. Le flux s'arrête sur le plan regardé, la fiche
-   monte par-dessus, et l'effet est mis à zéro — pas atténué : à zéro. */
+/* ---------- la fiche, en nœuds de texte ----------
+   Aucune valeur de films.js ne passe par innerHTML : ces données sont
+   éditées dans admin.html et rien ne garantit qu'elles ne contiennent
+   pas de caractères de balisage. */
+function ligne(label, valeur, lien){
+  var d=document.createElement("div"); d.className="f-row";
+  var b=document.createElement("b"); b.textContent=label; d.appendChild(b);
+  var s=document.createElement("span");
+  if(lien){
+    var a=document.createElement("a");
+    a.href=lien; a.target="_blank"; a.rel="noopener"; a.textContent=valeur;
+    s.appendChild(a);
+  } else { s.textContent=valeur; }
+  d.appendChild(s); return d;
+}
+
 var fiche=document.getElementById("fiche"), flux=document.getElementById("flux");
 function ouvrir(){
-  if(ficheOuverte) return;
-  var i=Math.round(position);
-  var p=PLANS[Math.max(0,Math.min(N()-1,i))];
+  if(ficheOuverte || !N()) return;
+  var i=Math.max(0,Math.min(N()-1,Math.round(position)));
+  var f=FILMS[i];
   cible=i; ficheOuverte=true; tir=0;
-  document.getElementById("f-titre").innerHTML=
-    '<em>'+p.artiste+'</em> — '+p.titre;
-  document.getElementById("f-meta").innerHTML=
-    p.credits.map(function(c){ return '<div class="f-row"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>'; }).join("")
-    + '<div class="f-row"><b>Type</b><span>'+p.meta+'</span></div>';
-  var n=document.getElementById("f-note"); n.textContent=p.note||""; n.style.display=p.note?"":"none";
+
+  var h=document.getElementById("f-titre"); h.textContent="";
+  var sa=document.createElement("span"); sa.className="a"; sa.textContent=f.artiste;
+  h.appendChild(sa); h.appendChild(document.createTextNode(" — "+f.titre));
+
+  var m=document.getElementById("f-meta"); m.textContent="";
+  f.credits.forEach(function(c){ m.appendChild(ligne(c[0], c[1])); });
+  if(f.sortie) m.appendChild(ligne("Sortie", f.sortie));
+  m.appendChild(ligne("Type", f.type));
+  m.appendChild(ligne("Voir", "YouTube ↗", "https://www.youtube.com/watch?v="+f.yt));
+
+  var n=document.getElementById("f-note");
+  n.textContent = f.note || ""; n.style.display = f.note ? "" : "none";
+
   fiche.classList.add("on"); fiche.setAttribute("aria-hidden","false");
   flux.classList.add("retire");
   arbitrer(i);                 /* dans le clic : il porte l'autorisation de lecture */
@@ -335,49 +386,49 @@ function fermer(){
   if(!ficheOuverte) return;
   ficheOuverte=false;
   fiche.classList.remove("on"); fiche.setAttribute("aria-hidden","true");
-  flux.classList.remove("retire");
-  fiche.scrollTop=0;
-  /* Reprise posée ici, dans le geste. Une reprise différée à la boucle
-     peut arriver après l'expiration de l'autorisation de lecture
-     accordée par le clic — la boucle ne sert plus que de filet. */
-  arbitrer(Math.max(0,Math.min(N()-2,Math.floor(position))));
+  flux.classList.remove("retire"); fiche.scrollTop=0;
+  arbitrer(Math.max(0,Math.min(Math.max(N()-2,0),Math.floor(position))));
   document.getElementById("ouvrir").focus();
 }
 document.getElementById("ouvrir").addEventListener("click",ouvrir);
 document.getElementById("retour").addEventListener("click",fermer);
 
-function redim(){ var d=Math.min(devicePixelRatio||1,2);
-  cv.width=Math.round(innerWidth*d); cv.height=Math.round(innerHeight*d); gl.viewport(0,0,cv.width,cv.height); }
+function redim(){
+  /* la densité est plafonnée à 2, et à 1 sur réseau économe : le coût du
+     shader est proportionnel au nombre de pixels */
+  var d=Math.min(devicePixelRatio||1, reseauEconome ? 1 : 2);
+  cv.width=Math.round(innerWidth*d); cv.height=Math.round(innerHeight*d);
+  gl.viewport(0,0,cv.width,cv.height);
+}
 addEventListener("resize",redim);
 
 function poser(u,i){
   gl.activeTexture(u===0?gl.TEXTURE0:gl.TEXTURE1);
   gl.bindTexture(gl.TEXTURE_2D,texs[i]);
-  if(PLANS[i].type==="v" && prets[i]===true && sources[i].readyState>=2 && !sources[i].paused){
-    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,sources[i]);
+  var v=videos[i];
+  if(v && pretes[i]==="video" && v.readyState>=2 && !v.paused && !document.hidden){
+    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,v);
   }
 }
 
 function boucle(now){
+  /* onglet caché : on ne dessine pas et on ne décode pas */
+  if(document.hidden){ dernier=now; return requestAnimationFrame(boucle); }
+
   var avantTemps=dernier;
   var dt=Math.min((now-dernier)/16.67,3); dernier=now;
   var avant=position;
   position += (cible-position)*(reduced?1:0.065)*dt;
 
-  /* vitesse réelle, en plans par seconde : les seuils veulent dire la
-     même chose sur toutes les machines */
   var secondes=Math.max((now-avantTemps)/1000,0.001);
-  var vitesse=Math.abs(position-avant)/secondes;
+  var vitesse=Math.abs(position-avant)/secondes;          /* plans par seconde */
   var retombee=Math.pow(0.02,secondes);
   tir = (reduced||ficheOuverte) ? 0 : Math.min(Math.max(vitesse,tir*retombee),6.0);
   if(tir<0.02) tir=0;
 
-  var i=Math.max(0,Math.min(N()-2,Math.floor(position)));
+  var i=Math.max(0,Math.min(Math.max(N()-2,0),Math.floor(position)));
   var t=Math.max(0,Math.min(1,position-i));
-  var vu = t>0.5 ? i+1 : i;
-  /* La lecture est arbitrée depuis la boucle, pas au moment du clic :
-     une reprise posée dans un gestionnaire peut être perdue si l'état
-     change pendant la transition. Ici elle ne peut pas l'être. */
+  var vu = t>0.5 ? Math.min(i+1,N()-1) : i;
   if(vu!==dernierIdx || ficheOuverte!==dernierFiche){
     dernierIdx=vu; dernierFiche=ficheOuverte; cartel(vu); arbitrer(i);
   }
@@ -393,23 +444,21 @@ function boucle(now){
 }
 
 /* ---------- repli ----------
-   Sans WebGL : les mêmes plans empilés en plein écran, la même fiche,
-   la même structure. On perd la matière, pas le système. */
+   Sans WebGL : les mêmes films, la même fiche, la même structure, en
+   plein écran. On perd la matière, pas le système. */
 function repli(){
   cv.style.display="none";
   var d=document.createElement("div");
   d.style.cssText="position:fixed;inset:0;overflow-y:auto;scroll-snap-type:y mandatory;background:#0A0A0A;z-index:1";
-  PLANS.forEach(function(p,k){
+  FILMS.forEach(function(f,k){
     var s=document.createElement("section");
-    s.style.cssText="height:100svh;scroll-snap-align:start;position:relative;overflow:hidden";
-    if(p.type==="v"){
-      var v=document.createElement("video");
-      v.src=p.src; v.muted=true; v.loop=true; v.autoplay=true; v.setAttribute("playsinline","");
-      v.style.cssText="width:100%;height:100%;object-fit:cover"; s.appendChild(v);
-    } else {
-      s.style.backgroundImage="url('"+p.src.replace(/'/g,"%27")+"')";
-      s.style.backgroundSize="cover"; s.style.backgroundPosition="center";
-    }
+    s.style.cssText="height:100svh;scroll-snap-align:start;position:relative;overflow:hidden;cursor:pointer";
+    var im=document.createElement("img");
+    im.src = f.poster || ("https://i.ytimg.com/vi/"+f.yt+"/maxresdefault.jpg");
+    im.alt = ""; im.loading = "lazy";
+    im.onerror = function(){ im.src = "https://i.ytimg.com/vi/"+f.yt+"/hqdefault.jpg"; };
+    im.style.cssText="width:100%;height:100%;object-fit:cover";
+    s.appendChild(im);
     s.addEventListener("click",function(){ position=k; cible=k; ouvrir(); });
     d.appendChild(s);
   });
@@ -419,8 +468,9 @@ function repli(){
 
 document.getElementById("entrer").addEventListener("click",function(){
   document.getElementById("porte").classList.add("off");
+  if(!N()){ document.getElementById("titre").textContent = "Aucun film publié"; return; }
   if(!gl||!initGL()) return repli();
-  preparer(); arbitrer(0); cartel(0); redim();
+  preparer(); cartel(0); arbitrer(0); redim();
   dernier=performance.now(); requestAnimationFrame(boucle);
   setTimeout(function(){ document.getElementById("aide").classList.add("off"); },6500);
 });
