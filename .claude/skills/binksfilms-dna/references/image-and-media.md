@@ -8,22 +8,32 @@ dessus.
 
 ## L'image porte, l'interface tient
 
-Le texte vit **dans** la bannière, pas sous elle. Même information, simplement
-posée sur l'image avec un voile qui assure la lisibilité. Ce choix a une
-conséquence : chaque plan doit pouvoir accueillir du texte, donc le cadrage se
-pense avec sa zone basse.
+**Principe (invariant) :** l'image est le sujet ; le dispositif la sert. Ce qui
+s'ajoute à une image se justifie contre elle.
+
+**Solution actuelle (niveau B) :** le texte vit *dans* la bannière, pas sous
+elle — même information, posée sur l'image avec un voile qui assure la
+lisibilité. Ce choix a une conséquence : chaque plan doit pouvoir accueillir du
+texte, donc le cadrage se pense avec sa zone basse.
+
+Ce n'est **pas** une obligation éternelle. Le texte peut vivre dans, sous, à
+côté ou autour d'une image, tant que l'image reste le sujet et que le dispositif
+a une raison. Ce qui serait une faute, c'est de sortir le texte du cadre *par
+défaut*, sans avoir rien décidé.
 
 Corollaire : aucun élément décoratif ne s'ajoute à une image qui se suffit. La
 vidéo d'intro ne reçoit aucun filtre, aucun grain, aucun overlay coloré — parce
 qu'elle *porte déjà la direction artistique*. C'est la règle générale : si le
 plan est bon, on s'écarte.
 
-### Quand les deux invariants s'opposent
+### Quand l'invariant et la solution s'opposent
 
-« L'image est le sujet » et « le texte vit dans la bannière » entrent en conflit
-dès qu'un plan n'a pas de zone basse calme — un visage bas dans le cadre, un
-fond clair, un élément important là où le cartel se pose.
+Le principe « l'image est le sujet » et la solution « le texte vit dans la
+bannière » entrent en conflit dès qu'un plan n'a pas de zone basse calme — un
+visage bas dans le cadre, un fond clair, un élément important là où le cartel se
+pose.
 
+C'est le cas d'école où le niveau B cède : l'invariant gagne, la solution s'adapte.
 Ordre de résolution, du meilleur au moins bon :
 
 1. **Changer de plan.** L'image est choisie, pas subie. Un autre photogramme du
@@ -37,14 +47,14 @@ Ordre de résolution, du meilleur au moins bon :
 
 Ce qui n'est pas une option : assombrir l'image entière, ajouter un caisson
 derrière le texte, ou réduire le texte jusqu'à l'illisible. Les trois sacrifient
-un invariant pour sauver l'autre.
+l'image — c'est-à-dire l'invariant — pour sauver une solution.
 
 ## Crop et format
 
 - **Bureau :** 16/9. C'est le format du travail, pas un choix graphique.
 - **Mobile :** aujourd'hui 16/9 également, avec un espacement resserré. Le code
   annonce en commentaire un « format d'affiche » qu'il n'applique pas — l'écart
-  est documenté dans `extraction-report.md` §2 bis. L'intention est bonne et
+  est documenté dans `built-expression.md` §2 bis. L'intention est bonne et
   reste ouverte ; la citer comme un acquis serait faux.
 - **Contre-champ et lecteur :** 16/9 strict, aucune exception.
 - **Tournage / BTS :** 4/3 en grille de trois (deux sur petit écran). Le
@@ -60,13 +70,14 @@ Les images sont plus hautes que leur cadre (116 % de hauteur, calées à `-8%`) 
 glissent au défilement. Cette **réserve** est ce qui permet le mouvement sans
 jamais découvrir de vide.
 
-Il n'y a **aucun zoom au survol**, et c'est une décision inscrite dans le code.
-Le zoom au survol est le réflexe le plus répandu des grilles de portfolio ; le
-site l'a explicitement écarté au profit d'un glissement piloté par le
-défilement. Le reproduire serait revenir en arrière.
+Il n'y a **aucun zoom au survol**, et c'est une décision inscrite dans le code :
+le zoom au survol est le réflexe le plus répandu des grilles de portfolio, et le
+site l'a écarté au profit d'un glissement piloté par le défilement.
 
-**Règle :** la profondeur vient du déplacement dans un cadre, jamais d'un
-agrandissement au pointeur.
+**Ce qui se transporte :** la profondeur se gagne par un déplacement décidé dans
+un cadre, pas par un agrandissement réflexe au pointeur. Un agrandissement peut
+exister s'il **fait** quelque chose — examiner un détail, entrer dans une image.
+Ce qui est refusé, c'est le zoom comme accusé de réception du survol.
 
 ## Temporalité — la vidéo se mérite
 
@@ -87,8 +98,18 @@ récompense.
 
 ## Compression et texture
 
-Aucune texture n'est ajoutée. Pas de grain, pas de bruit, pas de dégradation
-simulée, pas de filtre de compression esthétisé.
+**Le site n'ajoute aujourd'hui aucune texture** : pas de grain, pas de bruit, pas
+de dégradation simulée. C'est un constat de niveau B, pas une interdiction.
+
+La règle qui se transporte est la distinction entre **matière** et **décor**
+(`SKILL.md` §11) : une texture qui est **dans** l'œuvre — le grain d'une source,
+la compression qu'un fichier a réellement subie, l'usure d'une génération de
+copie — se montre légitimement, parce que la montrer c'est montrer l'œuvre. Une
+texture **posée par-dessus** pour signifier l'authenticité est refusée, parce
+qu'elle dégrade sans rôle.
+
+Ce que le site a réellement décidé, c'est de ne rien poser sur un plan qui se
+suffit. Ce n'est pas la même chose que d'interdire la matière.
 
 La seule manipulation d'image du site est le **mot-vidéo** : la vidéo est
 désaturée, contrastée et fusionnée pour que les lettres du mot RÉALISATEUR
@@ -117,7 +138,7 @@ mouvement réduit, comportement réseau (`Save-Data`, 2G).
 Un dispositif média sans ces huit réponses n'est pas fini, quelle que soit sa
 beauté.
 
-## L'archive comme statut, pas comme texture
+## L'archive : mémoire du travail, pas patine
 
 Dans `films.js`, `archive: true` (ou `status: "archived"`) retire un film du site
 **sans le supprimer de la source**. Précision qui compte : le film est filtré
@@ -135,6 +156,14 @@ Ce que cela autorise, si une direction future le demande : rendre l'archive
 consultable est une extension **cohérente** avec l'ADN, pas une trahison — la
 donnée est déjà là. Ce serait un geste LAB à part entière.
 
+**Ne pas réduire l'archive à ce booléen.** Le statut de données en est la forme
+la plus pauvre, pas la définition. L'archive BINKSFILMS, c'est la mémoire réelle
+du travail : rushes, versions, dates, supports, générations de copie, images
+écartées, projets non diffusés, provenance d'un plan. La tension fondatrice
+*mémoire × consultation* porte sur **la manière dont on traverse tout cela** —
+par le temps, le support, le projet, l'inachevé.
+
 Chercher l'archive dans une texture VHS, c'est confondre le classement avec sa
-patine. Voir `editorial-and-system.md` pour les conditions d'usage du
-vocabulaire rétro.
+patine. Et la trace réelle de ce travail n'a pas la texture qu'on imagine : elle
+est numérique et récente, faite de fichiers, de réencodages et de plateformes.
+Voir `open-territories.md` §2 et `editorial-and-system.md`.

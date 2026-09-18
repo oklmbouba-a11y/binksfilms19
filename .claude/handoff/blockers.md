@@ -172,3 +172,29 @@ option est un travail de direction artistique, pas une correction.
 
 `binksfilms-dna` documente l'écart et interdit de citer cette intention comme un
 acquis.
+
+---
+
+## B-010 — Déséquilibre de masse dans `binksfilms-dna`
+**Sévérité :** MINOR · **Propriétaire :** skill · **Statut :** OUVERT
+
+Relevé par `innovation-critic` lors de la validation V1.1, et non résolu.
+
+Le skill déclare en vingt lignes que les valeurs du site ne sont pas des lois,
+puis fournit plusieurs centaines de lignes de valeurs précises — hex, rayons,
+fourchettes de durée, interlettrages. Le concret est mémorisable et générateur ;
+l'abstrait ne l'est pas. À la génération, le concret risque de l'emporter sur le
+principe, quels que soient les avertissements.
+
+Correctifs appliqués : marquage de niveau sur chaque référence, en-têtes de
+lecture, `built-expression.md` renommé et préfacé. Le déséquilibre de volume
+demeure.
+
+**Pistes non tranchées :** déplacer toutes les valeurs dans le seul
+`built-expression.md` et n'en garder aucune ailleurs ; ou accepter le
+déséquilibre, en considérant que la précision du relevé vaut le risque. La
+seconde est retenue par défaut, faute de démonstration contraire.
+
+**À réévaluer** après la première mission créative réelle : si les propositions
+produites ressemblent au site actuel plutôt que de le prolonger, le déséquilibre
+est confirmé et il faudra trancher.

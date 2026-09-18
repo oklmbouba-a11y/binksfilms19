@@ -1,7 +1,12 @@
 # Langage visuel
 
-Principes de décision. Les valeurs citées sont celles du site actuel — elles
-servent de preuve et de point de départ, pas de gabarit à recopier.
+**Comment lire ce document.** Chaque section sépare deux choses : le **principe**,
+qui se transporte sur n'importe quel territoire, et la **valeur actuelle**, qui
+documente comment le site l'a résolu une fois. Les valeurs sont du niveau B
+(`SKILL.md` §2) : une preuve et un point de départ, jamais un gabarit.
+
+Sur un territoire que le site ne couvre pas, seuls les principes s'appliquent —
+voir `open-territories.md`.
 
 ---
 
@@ -94,11 +99,16 @@ le problème est presque toujours une hiérarchie molle, pas un manque de conten
   pour une séparation qui se devine. Jamais de bordure pleine ivoire, sauf en
   état actif.
 
-La règle utilisable n'est donc pas « tout est carré », mais : **la forme suit la
-nature de l'objet.** Un cadre d'image porte un rayon discret ; un contrôle de
-saisie est carré ; une commande de projection est ronde. Arrondir un bouton de
-formulaire ou carrer une bannière fait basculer le site vers l'application
-générique — introduire un rond ailleurs que sur une commande de lecture aussi.
+**Principe :** *la forme a une sémantique.* Dans ce système, la géométrie d'un
+élément dit sa nature — cadre d'image, contrôle de saisie, commande de
+projection se distinguent à la forme avant de se distinguer à la place. Ce qui
+est invariant, c'est **qu'une lecture de ce type existe et soit tenue**, pas la
+répartition précise ci-dessus.
+
+Ce qui reste donc vrai partout : ne pas homogénéiser les formes à la manière d'un
+design system SaaS, où tout porte le même rayon et où plus rien ne se distingue.
+Un nouveau territoire peut établir sa propre grammaire de formes — il doit en
+établir une.
 
 **Aucune ombre portée**, sauf deux `text-shadow` très diffus qui tiennent le
 cartel lisible sur l'image. Pas de carte flottante, pas d'élévation, pas de

@@ -8,6 +8,65 @@ Format : ID · date · décision · raison · conséquence · statut.
 
 ---
 
+## D-012 — L'identité a le droit de se contredire, sous conditions
+**Date :** 2026-09-18 · **Statut :** ACTIVE
+
+`binksfilms-dna` §14 définit comment BINKSFILMS peut changer : le niveau B change
+librement avec une raison écrite ; un geste SIGNATURE se retire quand il est
+devenu une habitude plutôt qu'une décision, et ce retrait se consigne ici ; les
+tensions et les invariants ne se révisent que par décision du propriétaire,
+jamais au détour d'une tâche.
+
+**Raison :** un document d'identité capable d'accueillir des territoires neufs
+mais incapable de contredire son propre passé reste de la conservation. Sans
+cette clause, les quatorze autres sections figent le site de 2026 pour toujours.
+
+**Conséquence :** le test avant tout changement d'ampleur est « est-ce que ce
+changement vient du travail, ou d'ailleurs ? ». Un changement issu du travail est
+légitime même s'il contredit le passé ; un changement issu d'une tendance ne
+l'est pas, même s'il s'y accorde.
+
+---
+
+## D-011 — Trois niveaux de vérité : intention, construit, registre
+**Date :** 2026-09-18 · **Statut :** ACTIVE
+
+L'ADN distingue l'**intention** déclarée par le propriétaire, le **construit**
+que le site implémente, et les **registres** simplement disponibles. Une
+intention l'emporte sur une absence dans le code. Un construit impose une charge
+de la preuve, mais elle est levable. Un registre ne l'emporte sur rien.
+
+**Raison :** la V1 traitait le code existant comme l'autorité suprême sur
+l'identité future — même erreur que [[D-009]] (commentaire vs comportement), d'un
+cran au-dessus. BINKSFILMS est en transformation ; le site est une expression
+construite de l'identité à un moment, pas toute l'identité.
+
+**Conséquence :** aucune valeur du site — rayon, courbe, police, grille — n'est
+un invariant du seul fait qu'elle existe. `extraction-report.md` est renommé
+`built-expression.md` pour que son nom dise son statut.
+
+---
+
+## D-010 — Le vocabulaire rétro reste en registre, contre un brief reçu
+**Date :** 2026-09-18 · **Statut :** ACTIVE · **Précise :** D-008
+
+Un brief de ChatGPT (`eadf865`) demandait de classer VHS, MiniDV, carte SD et
+grain parmi les principes voulus pour le futur. Je les ai maintenus en registre
+conditionnel.
+
+**Raison :** le propriétaire a tranché lui-même dans le commit suivant
+(`81dd5ce`) — « matière disponible, pas obligation visuelle » — en listant le CRT
+partout, le VHS partout, les scanlines, les timecodes décoratifs et le grain
+systématique parmi ce qu'il ne veut surtout pas. Les deux briefs se
+contredisaient ; le plus récent et le plus direct l'emporte.
+
+**Conséquence :** ce qui est fondateur, c'est la tension `trace × système` — une
+captation laisse une trace, un système contemporain la donne à consulter. Les
+costumes restent conditionnels. La distinction **grain de matière** (présent dans
+la source, recevable) / **grain décoratif** (posé par-dessus, refusé) en découle.
+
+---
+
 ## D-009 — Le rapport d'extraction distingue comportement vérifié et intention commentée
 **Date :** 2026-09-18 · **Statut :** ACTIVE
 

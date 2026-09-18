@@ -40,8 +40,9 @@ toutes sont des décélérations franches — départ rapide, arrivée qui se po
 « Rien ne clignote, rien ne rebondit. »
 
 Il n'y a pas d'appariement strict courbe/durée : la même courbe sert à 0.25 s sur
-un survol et à 0.85 s sur une apparition. Choisir la durée selon le rôle — 0.2 à
-0.55 s pour répondre, 0.85 à 1.5 s pour révéler — et la courbe selon la famille.
+un survol et à 0.85 s sur une apparition. Choisir la durée selon le rôle. Les fourchettes actuelles — 0.2 à 0.55 s pour
+répondre, 0.85 à 1.5 s pour révéler — sont un repère de niveau B, pas une
+échelle obligatoire.
 
 Ce qui est exclu : `ease-in-out` symétrique, qui donne un mouvement mou ; et
 toute courbe à dépassement, qui donne un mouvement joueur. Ni l'un ni l'autre
@@ -95,13 +96,21 @@ acte, jamais une attente.
 **Le filet qui s'allonge.** La navigation précédent/suivant trace une ligne qui
 court sur toute la largeur au survol. Discret, mécanique, satisfaisant.
 
-**Ce qui n'appartient pas au vocabulaire :** le curseur personnalisé, le
-défilement détourné, le magnétisme au pointeur, la révélation au passage de
-souris sur chaque élément, les particules. Aucun n'existe dans le site.
+**Gestes en refus par défaut :** curseur personnalisé, défilement détourné,
+magnétisme au pointeur, révélation au survol sur chaque élément, particules.
+Ce sont des refus **avec conditions de levée**, listés dans `anti-dna.md` — pas
+des exclusions. Leur absence du site actuel ne les disqualifie pas ; `SKILL.md`
+§2C classe d'ailleurs le curseur signifiant parmi les registres disponibles.
 
-**Test de nommage :** si le geste n'a pas de nom en langage de tournage, d'archive
-ou de projection — maintenir, couper, révéler, cadrer, classer, dérouler — il
-vient probablement d'ailleurs.
+**Le vocabulaire du plateau est une aide à penser, pas un péage.** Chercher
+comment un geste se nommerait en langage de tournage, de montage ou d'archive —
+maintenir, couper, révéler, cadrer, classer, dérouler — est un bon réflexe : si
+un nom vient facilement, le geste a probablement une logique.
+
+Mais **l'absence de nom ne disqualifie pas**. Une interaction peut être
+BINKSFILMS sans nom cinématographique, si sa logique sert l'image, la durée, la
+découverte ou la mémoire du travail. Et l'inverse est plus dangereux encore : un
+nom bien choisi posé sur un effet ne crée pas d'idée.
 
 ## Friction
 
@@ -121,16 +130,23 @@ modèle :
 |---|---|
 | Preview au survol | Preview quand la carte est **au centre de l'écran** |
 | Cartel toujours lisible | Le cartel se **floute et s'efface** quand la carte est au centre : l'image reste seule |
-| Grille en deux colonnes | Une colonne, espacement resserré de 72 à 34px, corps de texte remontés |
+| Grille en deux colonnes | Une colonne, espacement resserré, corps de texte remontés |
+| Profondeur par bascule du cadre | **La bannière grandit et s'éclaircit en approchant du centre** (échelle 0.93 → 1, luminosité 0.72 → 1) — l'échelle fait la hiérarchie |
 | Survol du contre-champ | Maintien tactile, avec `user-select` neutralisé |
 | Navigation gauche/droite | Deux zones empilées, très aérées, séparées d'un filet infime |
 
-La ligne la plus instructive est la deuxième : sur mobile, **le site retire du
-texte pour laisser l'image**. C'est l'inverse du réflexe habituel, qui conserve
-tout en plus petit. C'est le meilleur modèle de « mobile authored » du projet.
+Les deux lignes les plus instructives : sur mobile, **le site retire du texte
+pour laisser l'image**, et il **fait porter la hiérarchie par l'échelle et la
+luminosité** plutôt que par la bascule en profondeur du bureau. L'assombrissement
+est d'ailleurs appliqué à l'image et non au cadre, pour ne pas éteindre le texte
+des bannières en attente — ce niveau de soin est le vrai standard du projet.
+
+C'est l'inverse du réflexe habituel, qui conserve tout en plus petit. Ce sont les
+meilleurs modèles de « mobile authored » dont on dispose — à transposer, pas à
+recopier.
 
 À noter : le code annonce aussi un passage au format d'affiche sur mobile, qu'il
-n'applique pas — voir `extraction-report.md` §2 bis. Ne pas le citer comme
+n'applique pas — voir `built-expression.md` §2 bis. Ne pas le citer comme
 acquis.
 
 Principes qui en découlent :

@@ -1,161 +1,78 @@
 # Prochaine étape — BINKSFILMS
 
-**Mise à jour :** 2026-09-18  
-**Émise par :** ChatGPT, selon consigne directe du propriétaire  
-**Phase :** 2 — Identité  
-**Mission :** faire évoluer `binksfilms-dna` avec autonomie créative
+**Mise à jour :** 2026-09-18 · **Proposé par :** Claude Code
+**Phase 2 :** `binksfilms-dna` V1.1 livrée, en attente de revue du propriétaire.
 
 ---
 
-## Changement de posture
+## Immédiat — revue du propriétaire
 
-À partir de maintenant, **Claude Code est le moteur créatif principal** du système.
+Rapport complet dans `latest-report.md`. Trois points méritent vraiment un
+arbitrage ; le reste est de la mécanique.
 
-ChatGPT reste en arrière-plan comme :
-- regard critique ;
-- garde-fou anti-cliché ;
-- vérificateur de cohérence ;
-- aide technique / recherche quand nécessaire ;
-- second regard sur les décisions importantes.
-
-**Ne traite pas les propositions précédentes de ChatGPT comme une structure à exécuter mot pour mot.**
-
-Tu peux les contester, les simplifier, les remplacer ou proposer une meilleure architecture si tu peux expliquer pourquoi.
-
----
-
-## Ce que veut le propriétaire
-
-Le but n'est pas de fabriquer un site rempli de signes rétro.
-
-Il veut une expérience BINKSFILMS :
-- originale ;
-- haut de gamme ;
-- cinématographique ;
-- expérimentale ;
-- identifiable ;
-- difficile à confondre avec un template ou un site Awwwards générique.
-
-Mais il ne veut surtout pas tomber dans :
-- le CRT partout ;
-- VHS partout ;
-- scanlines partout ;
-- timecodes décoratifs ;
-- glitch permanent ;
-- faux terminal ;
-- fausse caméra MiniDV en permanence ;
-- grain systématique ;
-- nostalgie rétro utilisée comme raccourci créatif.
-
-Le vocabulaire rétro-numérique est **une matière disponible**, pas une obligation visuelle.
+1. **Le classement du vocabulaire rétro** (D-010). J'ai maintenu VHS, MiniDV,
+   carte SD et grain en **registre disponible** contre un brief qui les voulait
+   en principe fondateur, en m'appuyant sur les mots du propriétaire lui-même. Si
+   je l'ai mal lu, c'est la première chose à corriger — tout le §11 en dépend.
+2. **§14 — le droit de se contredire.** Personne ne l'a demandé. J'ai jugé qu'un
+   document d'identité sans clause d'évolution est un document de conservation.
+   C'est un choix d'auteur : à valider ou à retirer.
+3. **§13 — le son.** J'ai ouvert le territoire sans le remplir. C'est
+   volontairement incomplet.
 
 ---
 
-## Ta liberté
+## Mission suivante proposée — le son
 
-Tu peux maintenant proposer toi-même :
+Je propose de **ne pas enchaîner sur `experience-direction`** tout de suite.
 
-- la structure du DNA ;
-- les invariants ;
-- les tensions ;
-- les registres créatifs ;
-- les anti-patterns ;
-- les exemples ;
-- les distinctions utiles ;
-- la façon dont BINKSFILMS peut évoluer au-delà du site actuel.
+L'ADN a une lacune que sa propre validation a mise au jour : le site est fait de
+clips, l'identité déclarée dit « la rue et **la musique** », et le système
+créatif n'a aucune doctrine sonore. Deux règles seulement sont tranchées — le son
+ne part jamais seul, le silence est une matière.
 
-Tu n'as pas à conserver une structure simplement parce qu'elle vient de ChatGPT.
+Ce n'est pas un travail d'écriture de skill, c'est une question de direction
+artistique qui demande l'avis du propriétaire. Qu'est-ce qu'un extrait a le droit
+de faire ? Le son peut-il structurer une durée, une navigation ? La musique
+peut-elle exister ailleurs que dans le lecteur ? Un site de réalisateur de clips
+qui reste muet dit quelque chose — reste à savoir si c'est voulu.
 
-Le site actuel est une source de preuve importante, mais **pas une prison**.
+Une fois tranché, cela nourrit `binksfilms-dna` §13 **et** la future
+`motion-language`.
 
-La vision déclarée du propriétaire compte également, même lorsqu'elle n'est pas encore matérialisée dans le code.
-
----
-
-## Garde-fous seulement
-
-Pendant ta révision, vérifie surtout quatre choses.
-
-### 1. Ne pas fossiliser le site actuel
-Une valeur actuelle comme un rayon, une typo, une courbe, une grille ou une transition n'est pas automatiquement un invariant.
-
-### 2. Ne pas transformer le rétro en thème
-Analogique, archive, MiniDV, VHS, carte SD, grain, interface système peuvent nourrir une idée.
-
-Ils ne doivent pas devenir un costume général.
-
-### 3. Distinguer cohérence et originalité
-Une idée peut être :
-- cohérente avec BINKSFILMS ;
-- mais encore trop vue ou trop générique pour mériter un traitement SIGNATURE / LAB.
-
-`innovation-critic` doit pouvoir faire cette distinction.
-
-### 4. Garder l'image au-dessus de la technologie
-WebGL, shader, GSAP, vidéo, effets ou interfaces n'ont aucune valeur en eux-mêmes.
-
-Ils doivent servir l'image, le rythme, la mémoire, la découverte ou l'expérience du travail BINKSFILMS.
+**Alternative, si le propriétaire préfère avancer sur le système :**
+`experience-direction` (blueprint §13, Phase 2, point 8) — traduire l'ADN en
+directions concurrentes argumentées pour une section donnée. L'ADN dit ce qui est
+BINKSFILMS ; rien ne dit encore comment en tirer deux ou trois propositions et en
+retenir une.
 
 ---
 
-## Controlled Accident
+## Puis — affinage d'`innovation-critic`
 
-Ce principe ne doit pas être réduit à la gestion des erreurs techniques.
-
-Il peut être visuel, spatial, temporel ou interactif.
-
-Mais l'accident doit toujours être **maîtrisé** :
-ce qui semble imparfait ou imprévu doit être intentionnel, lisible et techniquement solide.
-
----
-
-## Travail demandé
-
-Relis ta V1 actuelle de `binksfilms-dna`.
-
-Puis décide toi-même :
-- ce qui mérite d'être conservé ;
-- ce qui est trop dépendant du site actuel ;
-- ce qui doit être élargi ;
-- ce qui doit être supprimé ;
-- ce qui manque.
-
-Tu peux produire une V1.1 ou une autre organisation si elle est meilleure.
-
-Ne cherche pas à satisfaire artificiellement ChatGPT.  
-Cherche à construire le meilleur cerveau créatif possible pour BINKSFILMS.
+Deux relectures, deux fois des défauts réels trouvés et vérifiés contre le code.
+Son prompt lui demande encore de juger à l'intuition ; il peut désormais juger
+contre `binksfilms-dna`, et surtout contre le **double filtre §7**, qui lui donne
+de quoi distinguer *incohérent* de *cohérent mais déjà vu* — deux griefs
+différents qu'il formule aujourd'hui de la même manière. Modification courte,
+gain réel.
 
 ---
 
-## Validation
+## Dette
 
-Avant de conclure, utilise `innovation-critic` comme adversaire indépendant.
-
-Questions minimales :
-
-- Est-ce que le skill peut guider quelque chose qui n'existe pas encore ?
-- Est-ce qu'il évite le cliché CRT/VHS/glitch facile ?
-- Est-ce qu'il distingue une vraie idée d'un simple habillage rétro ?
-- Est-ce qu'il peut guider un Shop, une archive documentaire ou une expérience WebGL sans copier le site actuel ?
-- Est-ce qu'il laisse suffisamment de liberté pour inventer ?
-
-Corrige les BLOCKER et MAJOR réellement fondés.
+- **B-010** — déséquilibre de masse du skill : beaucoup de valeurs concrètes face
+  à peu de principes abstraits. À réévaluer après la première mission créative.
+- **B-003 + B-004 + B-006** — passe de correction contenu via `admin.html`.
+- **B-008** — sort du fichier `previews/saisai boro 700 fin des temps.mp4`.
+- **B-009** — format d'affiche mobile annoncé mais non implémenté.
 
 ---
 
-## Périmètre
+## Hors périmètre
 
-Pour cette mission :
-- ne modifie pas le site public ;
-- ne commence pas encore `experience-direction` ;
-- n'installe aucun nouvel outil ou skill sans nécessité réelle ;
-- reste concentré sur la qualité du DNA.
-
-À la fin :
-- commit + push ;
-- mets à jour les fichiers de handoff ;
-- explique les décisions importantes et les points que tu as choisi de ne PAS suivre.
-
-Termine par :
-
-`BINKSFILMS DNA READY FOR OWNER REVIEW`
+- Phases 3 à 5 du blueprint tant que la Phase 2 n'est pas close.
+- Toute modification de la DA du site. L'ADN existe pour préparer ce travail, pas
+  pour le déclencher.
+- Toute installation de skill, plugin ou MCP tiers sans passer par
+  `capability-scout`.

@@ -1,12 +1,26 @@
-# DNA Extraction Report
+# Expression construite — niveau B
 
-Relevé de ce qui est **réellement construit** dans le site, avant toute
-interprétation.
+Relevé de ce que le site **implémente réellement**, avant toute interprétation.
 
-Ce rapport sert à distinguer trois choses que l'on confond facilement :
-l'**invariant** (l'identité ne survit pas à sa disparition), l'**actuel**
-(vrai aujourd'hui, remplaçable sans perte), et le **projeté** (nommé dans les
-documents, absent du site).
+## Statut de ce document
+
+C'est le **niveau B** du modèle à trois niveaux (`SKILL.md` §2) : une preuve et
+une école de précision, **pas une loi**.
+
+Le site est exceptionnellement réglé, et c'est ce qui rend ce relevé précieux :
+on y voit des problèmes réels résolus avec exactitude. Mais une valeur présente
+ici — un rayon, une courbe, un couple de polices, une grille — n'est **pas un
+invariant du seul fait qu'elle existe**. Elle documente une solution, dans un
+contexte, à un moment.
+
+Règle d'usage : quand le site a résolu un problème avec précision, la charge de
+la preuve est sur celui qui veut faire autrement. **Cette charge est levable.**
+Ne jamais citer ce document pour refuser une idée sur un territoire qu'il ne
+couvre pas — voir `open-territories.md`.
+
+Ce rapport distingue par ailleurs l'**invariant** (l'identité ne survit pas à sa
+disparition), l'**actuel** (vrai aujourd'hui, remplaçable sans perte), et le
+**projeté** (nommé dans les documents, absent du site).
 
 ## Règle de preuve
 
@@ -280,15 +294,3 @@ archivé sort de la grille sans être supprimé. L'archive est une **logique de
 conservation et de hiérarchie**, pas une texture.
 
 ---
-
-## 4. Contradictions relevées
-
-| # | Contradiction | Traitement |
-|---|---|---|
-| 1 | Mission : grain / VHS / glitch comme identité · Site : explicitement refusés · Blueprint : « restrained », anti-DNA | Encodé comme registre conditionnel à conditions d'entrée strictes. Signalé. |
-| 2 | Mission : « brutalité maîtrisée » · Site : peu brutal — courbes longues, gris doux, aucune arête agressive | La brutalité du site est une **brutalité de refus** (pas d'ornement, pas d'explication), pas de forme. Encodé ainsi. |
-| 3 | Blueprint : « black as material, not default background » · Site : le noir EST le fond partout | Résolu par la distinction `#0A0A0A` (page) vs `#000` (matière de montage), réellement présente dans le code. |
-| 4 | Mission : « détails cachés / easter eggs » · Site : aucun easter egg, mais des détails **discrets et fonctionnels** | Encodé comme « récompense de l'attention », pas comme jeu caché. |
-
-Aucune de ces contradictions ne bloque l'écriture du skill. Toutes sont tranchées
-explicitement plutôt que moyennées.

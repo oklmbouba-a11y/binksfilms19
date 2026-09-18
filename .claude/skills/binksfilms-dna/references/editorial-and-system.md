@@ -1,5 +1,13 @@
 # Ton éditorial et langage système
 
+**Comment lire ce document.** La **voix** — constater plutôt que vendre, la
+première personne, le refus du superlatif — est de l'identité : elle se
+transporte partout. Les **conventions d'écriture** (chiffres tabulaires,
+zéro-padding, langue du site, formulations exactes) sont du niveau B : elles
+documentent comment le site a résolu ses cas, et n'ont pas force de loi sur un
+territoire qu'il ne couvre pas. Une boutique internationale ou une archive
+peuvent avoir d'autres besoins — elles doivent alors décider, pas hériter.
+
 ---
 
 ## La voix
@@ -65,23 +73,16 @@ celui qui porte.
 
 Carte SD, MiniDV, VHS, timecode, interface d'enregistrement, console, grain,
 glitch : **aucune de ces références n'existe dans le site construit.** Le relevé
-et sa vérification sont dans `extraction-report.md` §3.
+et sa vérification sont dans `built-expression.md` §3.
 
 Ce sont donc des **registres disponibles**, pas l'identité.
 
 ## Les quatre conditions d'entrée
 
-Cumulatives. Les quatre, ou rien.
+Énoncées dans `SKILL.md` §11 : réalité plutôt qu'ambiance, locale jamais globale,
+une idée et non une texture, non permanente. Cumulatives — les quatre, ou rien.
 
-1. **Réalité, pas ambiance.** La référence désigne quelque chose de vrai dans le
-   travail : un support effectivement utilisé, une date, un statut de
-   conservation, un numéro de rush. Pas « ça fait vintage ».
-2. **Locale, jamais globale.** Elle habille un élément. Une couche posée sur
-   toute la page est refusée, sans exception.
-3. **Une idée, pas une texture.** Elle passe le filtre : peut-on la raconter en
-   une phrase sans décrire sa technique ?
-4. **Non permanente.** Elle se déclenche, se maintient, se révèle, puis s'en va.
-   Un effet toujours présent devient un fond d'écran.
+Ce qui suit en précise l'application.
 
 ## Ce qui est déjà juste dans le site
 
