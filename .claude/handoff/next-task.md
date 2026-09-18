@@ -71,3 +71,25 @@ gain réel.
   pour le déclencher.
 - Toute installation de skill, plugin ou MCP tiers sans passer par
   `capability-scout`.
+
+
+---
+
+## Décision propriétaire — accélérer vers le travail créatif
+
+Le propriétaire valide une petite passe contenu **uniquement si elle reste rapide et utile**. Ne transforme pas cette passe en nouvelle phase longue.
+
+Priorité après les corrections évidentes :
+1. `experience-direction`
+2. premières propositions créatives réelles
+3. premier prototype visuel / interactif
+
+Le mobile peut être traité si tu juges qu'il constitue le meilleur premier terrain d'expérimentation, mais il ne doit pas devenir un prétexte pour retarder `experience-direction`.
+
+Rappel de goût propriétaire : il **adore les effets ambitieux** quand ils sont exceptionnellement bien exécutés. Ne confonds pas anti-cliché avec anti-effet. WebGL, shaders, 3D, distorsions, compositing, motion avancée et transitions fortes sont pleinement ouverts si :
+- l'effet sert le concept et l'image ;
+- l'exécution est précise ;
+- le mobile et la performance restent maîtrisés ;
+- la proposition est distinctive, pas une démonstration technique générique.
+
+Objectif immédiat : sortir de la préparation et commencer à produire des directions visibles.
