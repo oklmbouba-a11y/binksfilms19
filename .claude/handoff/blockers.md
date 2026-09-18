@@ -144,3 +144,31 @@ git show d20c35aa37 > "videos/le-nom-choisi.mp4"
 **À décider :** le réintégrer sous un nom conforme à la convention
 d'`admin.html`, ou le laisser dormir dans l'historique. À traiter avec B-003
 et B-004, dans la même passe de correction contenu.
+
+---
+
+## B-009 — Le format d'affiche mobile est commenté mais pas implémenté
+**Sévérité :** MINOR · **Propriétaire :** site · **Statut :** OUVERT
+
+Relevé lors de l'extraction ADN, confirmé par `innovation-critic`.
+
+Le commentaire de la grille mobile annonce : « Format d'affiche plutôt que
+vignette 16/9, espacement resserré. » Le bloc `@media(max-width:760px)` ne
+change en réalité que le `gap`, le rayon, le padding du cartel et les corps de
+texte. `.film .thumb` conserve `aspect-ratio:16/9`, qu'aucune règle ne
+surcharge.
+
+Ce qui *est* réellement authored sur mobile reste substantiel : l'effacement
+flouté du cartel quand la carte est au centre de l'écran, la preview déclenchée
+par le centrage plutôt que par le survol, l'espacement resserré.
+
+**Rien n'est cassé** — le site est correct sur mobile, simplement pas dans le
+format annoncé.
+
+**À trancher :** tenir l'intention (passer réellement au format d'affiche, ce
+qui est un vrai changement de DA mobile et relève d'une mission EXPERIMENTAL),
+ou corriger le commentaire pour qu'il décrive ce que le code fait. La première
+option est un travail de direction artistique, pas une correction.
+
+`binksfilms-dna` documente l'écart et interdit de citer cette intention comme un
+acquis.

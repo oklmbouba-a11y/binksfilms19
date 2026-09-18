@@ -8,6 +8,47 @@ Format : ID · date · décision · raison · conséquence · statut.
 
 ---
 
+## D-009 — Le rapport d'extraction distingue comportement vérifié et intention commentée
+**Date :** 2026-09-18 · **Statut :** ACTIVE
+
+Chaque affirmation de `extraction-report.md` porte une marque `[vérifié]` ou
+`[intention]`. Une affirmation `[intention]` ne peut pas servir seule à refuser
+une proposition.
+
+**Raison :** `index.html` est abondamment commenté, et ses commentaires sont de
+la doctrine de design — c'est une source précieuse, mais ce n'est pas une preuve
+de comportement. La relecture par `innovation-critic` a montré au moins un cas
+où le commentaire décrit une intention que le CSS ne réalise pas (le format
+d'affiche sur mobile), et plusieurs affirmations du skill s'appuyaient dessus.
+
+**Conséquence :** l'ADN repose sur ce que le site fait, pas sur ce qu'il dit
+faire. Les écarts sont consignés en `extraction-report.md` §2 bis, et deviennent
+des questions ouvertes plutôt que des acquis.
+
+---
+
+## D-008 — Le vocabulaire rétro-numérique est un registre, pas l'identité
+**Date :** 2026-09-18 · **Statut :** ACTIVE
+
+VHS, MiniDV, carte SD, timecode, grain, glitch, interfaces rétro : encodés dans
+`binksfilms-dna` comme **registres conditionnels** soumis à quatre conditions
+cumulatives, et non comme socle de l'identité.
+
+**Raison :** le site n'en contient aucune trace — vérifié, et la seule mention
+du mot « grain » est un commentaire disant qu'il a été délibérément écarté. Le
+blueprint demande un « restrained use of retro vocabulary » et classe le glitch
+permanent et les filtres CRT en anti-DNA. La mission elle-même pose en critère
+de réussite de « ne pas réduire la marque à VHS + noir + glitch ».
+
+Ce qui est réellement invariant dans le mot « archive » est ailleurs :
+`archive: true` est un statut de données. L'archive est une logique de
+conservation et de hiérarchie, pas une texture.
+
+**Conséquence :** une proposition rétro doit satisfaire les quatre conditions du
+§8 du skill. À défaut, elle relève du cosplay et se refuse.
+
+---
+
 ## D-007 — Fusion de l'historique distant plutôt que force-push
 **Date :** 2026-09-18 · **Statut :** ACTIVE
 
