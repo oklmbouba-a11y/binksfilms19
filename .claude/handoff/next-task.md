@@ -199,3 +199,64 @@ Décision propriétaire : ChatGPT ne doit plus se baser principalement sur les r
 - Claude doit considérer les critiques basées sur le repo comme des revues indépendantes, et non comme une reformulation de ses propres rapports.
 
 But : faire fonctionner Claude Code + ChatGPT comme deux lectures indépendantes du même projet, avec le propriétaire comme arbitre final.
+
+
+---
+
+## Revue indépendante du repo — ChatGPT (source de vérité = code)
+
+Cette revue ne part pas du rapport de Claude Code. Elle compare directement `index.html`, `films.js`, `lab-flux.html`, `lab-bande.html`, `lab-catalogue.html` et `lab-experience.html`.
+
+### Ce qui est bon — à conserver
+
+- `lab-experience.html` est actuellement la meilleure base conceptuelle des LAB : une seule courbe d'intensité, aucun trou noir, texte/navigation hors shader, et une zone de silence pour la fiche.
+- La hiérarchie repos → fusion → déchirure est plus cohérente qu'une collection d'effets indépendants.
+- Le budget de décodage (deux vidéos max dans le flux, zéro fiche ouverte) va dans la bonne direction.
+- Le choix de ne pas toucher encore à `index.html` est correct : le LAB n'a pas encore la parité fonctionnelle du site principal.
+
+### Problèmes réels trouvés dans le repo
+
+**1. DONNÉES — le LAB ne lit pas `films.js`.**
+`lab-experience.html` possède son propre tableau `PLANS` codé en dur. Il contient des informations qui divergent déjà de la source réelle. Exemple : SaiSai affiche `Produced by —` dans le LAB alors que `films.js` contient `Produced by — Tyrexotb`.
+
+=> Une version candidate à l'intégration doit dériver ses projets de `window.FILMS_DATA`. Aucun duplicata manuel de titre, crédits, date ou artiste.
+
+**2. SÉMANTIQUE — le LAB mélange films et fragments de films.**
+Le flux compte comme entrées distinctes : hero, bannière, preview, plan, rush, fisheye, intro, etc. Ce n'est donc pas encore le catalogue public actuel, où une carte = un film.
+
+=> Décider explicitement : soit le flux remplace le catalogue et une entrée = un film publié ; soit cette navigation par plans devient une expérience distincte. Ne pas mélanger les deux sans règle.
+
+**3. PARITÉ — « Ouvrir le film » n'ouvre pas encore une vraie fiche film.**
+Le LAB ouvre une fiche simulée. Il ne reprend pas encore le lecteur YouTube différé, contre-champ, BTS, navigation précédent/suivant, route/hash, chaîne de secours des images, ni les comportements déjà solides de `index.html`.
+
+=> Ne pas intégrer le LAB au site principal avant d'avoir défini comment ces fonctions sont conservées, pas réécrites au rabais.
+
+**4. ACCESSIBILITÉ — reduced motion incomplet.**
+Le JS neutralise l'intensité WebGL sous `prefers-reduced-motion`, mais la fiche conserve sa transition CSS de 620 ms. Il n'y a pas de `@media(prefers-reduced-motion: reduce)` dans `lab-experience.html`.
+
+=> Le mode réduit doit aussi neutraliser les translations/transitions de structure.
+
+**5. RÉSEAU / PERFORMANCE — protections du site principal absentes.**
+`index.html` respecte Save-Data / effectiveType lent et charge les previews avec parcimonie. `lab-experience.html` n'a ni `navigator.connection`, ni Save-Data, ni gestion de visibilité. Il envoie aussi des frames vidéo vers WebGL via `texImage2D` pendant la boucle de rendu.
+
+=> Avant intégration : benchmark téléphone réel + stratégie qualité adaptative + pause sur page cachée + repli réseau lent/Save-Data. Deux vidéos max ne suffit pas à prouver que le shader est léger.
+
+**6. RENDU DE DONNÉES — attention à `innerHTML`.**
+La fiche LAB injecte artiste, titre et crédits via `innerHTML`. Avec des données codées en dur le risque est limité ; branchée à `films.js`, cette méthode devient fragile.
+
+=> Construire ces champs avec `textContent` / nœuds DOM, ou échapper systématiquement les valeurs.
+
+**7. QA VISUELLE — angle mort démontré.**
+Les quatre LAB ont été livrés avec les textures WebGL retournées verticalement jusqu'au retour du propriétaire. Les tests d'état n'ont rien détecté.
+
+=> Ajouter au minimum une vérification visuelle obligatoire : orientation, cadrage, couleurs, correspondance source/rendu, puis mobile. Un test qui ne regarde pas l'image ne valide pas un effet d'image.
+
+### Direction proposée
+
+- **Garder `lab-experience.html` comme branche LAB principale.**
+- `flux`, `bande` et `catalogue` deviennent des références de recherche, pas trois produits à maintenir en parallèle.
+- Prochaine vraie étape : faire évoluer `lab-experience` avec les **vraies données `films.js`**, une sémantique claire « un film = une entrée » pour le catalogue, puis connecter une vraie fiche sans perdre les fonctions existantes.
+- Rester isolé de `index.html` tant que cette version n'est pas visuellement convaincante ET fonctionnellement crédible.
+- Ne pas produire un cinquième LAB de shader avant d'avoir résolu ces points.
+
+La priorité n'est plus d'inventer un nouvel effet. La priorité est de rendre la meilleure idée actuelle **vraie, structurée et compatible avec le projet réel**.
