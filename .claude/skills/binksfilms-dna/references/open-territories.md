@@ -70,8 +70,18 @@ exigence, pas en recollant les formes d'à côté.
 ## 2. Une archive consultable
 
 Rendre traversable ce que le travail a accumulé : rushes, versions, dates,
-supports, images écartées, projets non diffusés. La donnée existe déjà en partie
-— les films archivés sont conservés dans la source sans être montrés.
+supports, images écartées, projets non diffusés.
+
+**Avertissement, établi par mesure le 2026-09-18 :** cette donnée **n'existe pas
+encore**. Les 7 films archivés portent un artiste, un titre, une date, un type et
+une ligne de crédit — rien d'autre. Aucune note, aucune image, aucune preview.
+Les 17 films du catalogue sont tous de type « Clip », et les champs support,
+caméra, format, durée et lieu **n'existent pas dans le schéma**. Le seul axe de
+traversée réellement disponible est la date.
+
+Sept titres rangés par date ne font pas une archive, ils font une liste. Ce qui
+suit décrit donc un territoire **à ouvrir quand la matière existera**, et ce qui
+lui manque n'est pas du design : c'est du contenu.
 
 ### Ce que l'ADN impose
 
