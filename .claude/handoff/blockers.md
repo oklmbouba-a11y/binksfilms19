@@ -3,51 +3,52 @@
 Sévérités définies dans `.claude/skills/quality-contract/SKILL.md` :
 `BLOCKER` · `MAJOR` · `MINOR` · `POLISH`.
 
-**État au 2026-09-18 : 1 BLOCKER ouvert (décision utilisateur), 0 blocage technique.**
+**État au 2026-09-18 : 1 BLOCKER ouvert (authentification), 0 blocage technique.**
 La Phase 2 (`binksfilms-dna`) n'est bloquée par aucun point technique.
 
 ---
 
-## B-001 — Stratégie d'historique GitHub non tranchée
-**Sévérité :** BLOCKER · **Propriétaire :** utilisateur · **Statut :** OUVERT
+## B-001 — Stratégie d'historique GitHub
+**Sévérité :** BLOCKER · **Propriétaire :** utilisateur · **Statut :** RÉSOLU 2026-09-18
 
-Le dépôt distant `oklmbouba-a11y/binksfilms19` contient déjà 17 commits et une
-arborescence différente : les fichiers du site existent **en double**, à la
-racine ET dans un sous-dossier `deploiement/`, plus un dossier `previews/`
-orphelin. Il ne contient aucun `.claude/`.
+Le dépôt distant `oklmbouba-a11y/binksfilms19` contenait 17 commits et une
+arborescence dupliquée : les fichiers du site à la racine ET dans un sous-dossier
+`deploiement/`, plus un dossier `previews/`. Aucun `.claude/`. L'historique local
+était indépendant — push simple impossible.
 
-L'historique local est **indépendant** du distant (dépôt initialisé ici même) :
-Git refusera un push simple.
+**Décision utilisateur :** fusionner en préservant les 17 commits, adopter
+l'arborescence locale (strictement plus récente), écarter les doublons.
 
-Comparaison des contenus — le local est strictement plus récent :
+**Réalisé :** merge `-s ours --allow-unrelated-histories` (commit `8c0b00f`).
+L'arbre retenu est celui du local, bit pour bit — intégrité des quatre fichiers
+du site vérifiée par hash contre le tag `core-phase1`. Les 17 commits distants
+restent atteignables dans l'historique.
 
-| Fichier | Local | Distant |
-|---|---|---|
-| `index.html` | 116 457 o | 111 466 o |
-| `films.js` | généré le 18/09/2026 | généré le 24/08/2026 |
-| `admin.html` | identique | identique |
-| `vercel.json` | identique | identique |
-
-**Ce qu'il faut décider :** préserver les 17 commits distants en les fusionnant
-sous l'historique local, ou repartir d'un historique propre par force-push.
-Et, dans les deux cas, garder ou supprimer les doublons `deploiement/` et
-`previews/`.
-
-**Tant que ce n'est pas tranché :** aucun push. Rien ne sera écrasé sans accord
-explicite.
+Écartés de l'arborescence : `deploiement/` (10 fichiers), `previews/` (2),
+`hero-loop.mp4` racine. Voir B-008 pour le seul fichier non dupliqué.
 
 ---
 
 ## B-002 — Authentification GitHub absente sur cette machine
-**Sévérité :** BLOCKER · **Propriétaire :** utilisateur · **Statut :** OUVERT
+**Sévérité :** BLOCKER · **Propriétaire :** utilisateur · **Statut :** OUVERT — action utilisateur en cours
 
 `gh` (GitHub CLI) n'est pas installé et aucun `credential.helper` n'est
 configuré. Le dépôt est lisible en anonyme, mais le push échouera faute
 d'identifiants.
 
 Claude ne manipule ni mot de passe ni token — cette étape revient à
-l'utilisateur. Deux voies : installer GitHub CLI puis `gh auth login`, ou
-configurer le Git Credential Manager de Windows.
+l'utilisateur.
+
+**Voie retenue :** installation de GitHub CLI puis `gh auth login`.
+
+```
+winget install --id GitHub.cli
+# puis, dans un NOUVEAU terminal :
+gh auth login   # GitHub.com -> HTTPS -> Login with a web browser
+```
+
+**Seul point restant avant le push.** Tout est prêt localement : 3 commits
+d'avance sur `origin/main`, working tree propre, fusion faite.
 
 ---
 
@@ -117,3 +118,33 @@ Une autre session Claude occupe le port 4173. La vérification a été faite sur
 ce serveur après avoir confirmé qu'il sert bien ce répertoire (17 films,
 `FILMS_SCHEMA = 2`). Sans conséquence, mais à savoir si deux sessions
 travaillent en parallèle.
+
+---
+
+## B-008 — Un fichier distant sans équivalent local, écarté de l'arborescence
+**Sévérité :** MINOR · **Propriétaire :** contenu · **Statut :** OUVERT
+
+`previews/saisai boro 700 fin des temps.mp4` — 4,57 Mo, blob `d20c35aa37`.
+
+Lors de la fusion (B-001), les fichiers écartés ont été vérifiés un à un.
+Deux étaient des doublons bit-à-bit d'un fichier local :
+
+| Écarté | Identique à | Blob |
+|---|---|---|
+| `previews/fin des temps.mp4` | `videos/saisai-…-preview.mp4` | `d5e9d9ec` |
+| `hero-loop.mp4` (racine) | `videos/hero-loop.mp4` | `9ffca058` |
+
+Celui-ci n'a **aucun équivalent local**. Il est référencé par aucun code —
+ni `index.html`, ni `films.js`. Probablement un montage antérieur ou plus long
+de la preview SaiSai (4,57 Mo contre 3,33 Mo pour celle en service).
+
+**Rien n'est perdu :** la fusion ayant préservé l'historique distant, le fichier
+reste extractible à tout moment :
+
+```
+git show d20c35aa37 > "videos/le-nom-choisi.mp4"
+```
+
+**À décider :** le réintégrer sous un nom conforme à la convention
+d'`admin.html`, ou le laisser dormir dans l'historique. À traiter avec B-003
+et B-004, dans la même passe de correction contenu.

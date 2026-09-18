@@ -8,6 +8,26 @@ Format : ID · date · décision · raison · conséquence · statut.
 
 ---
 
+## D-007 — Fusion de l'historique distant plutôt que force-push
+**Date :** 2026-09-18 · **Statut :** ACTIVE
+
+L'historique distant (17 commits) est greffé sous l'historique local par
+`git merge -s ours --allow-unrelated-histories`. L'arborescence retenue est
+celle du local ; les doublons `deploiement/`, `previews/` et le `hero-loop.mp4`
+racine sont écartés de l'arbre de travail.
+
+**Raison :** un force-push aurait détruit 17 commits sans retour possible. La
+stratégie `ours` garde l'arbre local intact **bit pour bit** — vérifié par hash
+contre le tag `core-phase1` — tout en rendant les commits distants atteignables.
+Choisir `-X ours` aurait été un piège : cette option fusionne les hunks non
+conflictuels et aurait réinjecté du contenu périmé dans `index.html`.
+
+**Conséquence :** le dépôt part d'une arborescence propre sans rien perdre.
+Les fichiers écartés restent extractibles par leur blob — voir B-008 pour le
+seul d'entre eux qui n'était pas un doublon.
+
+---
+
 ## D-006 — Passerelle de handoff par GitHub
 **Date :** 2026-09-18 · **Statut :** ACTIVE
 

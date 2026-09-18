@@ -5,6 +5,7 @@
 **Mode :** SURGICAL — infrastructure uniquement
 **Phase blueprint :** Phase 1 (Operating core) → close
 **Checkpoint Git :** `core-phase1` / commit `2471d91`
+**HEAD :** `8c0b00f` — 3 commits d'avance sur `origin/main`, non poussés
 
 ---
 
@@ -33,6 +34,13 @@ disque, puis vérification empirique dans le navigateur. Détail en section 5.
 ### Mise en place de la passerelle de handoff
 Création de `.claude/handoff/` et de ses quatre fichiers de travail.
 
+### Raccordement au dépôt GitHub
+`oklmbouba-a11y/binksfilms19` contenait déjà 17 commits et une arborescence
+dupliquée, sur un historique indépendant du local. Après arbitrage utilisateur,
+fusion `-s ours` : les 17 commits sont préservés, l'arborescence locale — plus
+récente — est adoptée, les doublons sont écartés. Intégrité des fichiers du site
+vérifiée par hash après fusion. **Push en attente d'authentification (B-002).**
+
 ---
 
 ## 2. Fichiers modifiés
@@ -46,6 +54,9 @@ Création de `.claude/handoff/` et de ses quatre fichiers de travail.
 | `.claude/handoff/decisions.md` | Créé | Handoff |
 | `.claude/handoff/blockers.md` | Créé | Handoff |
 | `.claude/handoff/next-task.md` | Créé | Handoff |
+
+Écartés de l'arborescence par la fusion (conservés dans l'historique) :
+`deploiement/` (10 fichiers), `previews/` (2), `hero-loop.mp4` racine.
 
 **Non modifiés, à dessein :** `index.html`, `films.js`, `admin.html`,
 `vercel.json`, `images/`, `videos/`, `real-web.webp`. Aucun octet du site
@@ -64,6 +75,8 @@ Détail et justification dans `decisions.md`. Résumé :
   pas le site et leur correction passe par `admin.html`, pas par une édition
   manuelle de `films.js`.
 - **D-005** — `binksfilms-dna` non créé : Phase 2, hors périmètre.
+- **D-006** — GitHub comme unique passerelle Claude Code ↔ ChatGPT.
+- **D-007** — Fusion de l'historique distant plutôt que force-push.
 
 ---
 
@@ -85,6 +98,9 @@ Serveur local `python -m http.server 4173`, navigateur intégré.
 | 8 agents | Détectés, frontmatter `name:` conforme |
 | 2 skills projet | Détectés, `SKILL.md` intact |
 | Working tree Git | Propre |
+| Intégrité après fusion | `index.html`, `films.js`, `admin.html`, `vercel.json` : hash identiques au tag `core-phase1` |
+| Site après fusion | Re-testé — 17 films, 10 cartes, 0 image cassée, 0 erreur JS |
+| Doublons écartés | Vérifiés bit-à-bit avant écartement (2 sur 3 ; le 3e → B-008) |
 
 Non testés : YouTube en lecture réelle, previews au survol, intro animée,
 `prefers-reduced-motion`, comportement Save-Data. Hors périmètre d'une mission
@@ -148,9 +164,8 @@ Ce sont des dégradations visuelles localisées sur un seul film.
 
 Par ordre de priorité. Proposition détaillée dans `next-task.md`.
 
-1. **Trancher la stratégie d'historique GitHub.** Le dépôt distant contient
-   17 commits et une arborescence dupliquée ; l'historique local est
-   indépendant. Décision utilisateur requise — voir `blockers.md` B-001.
+1. **Authentifier GitHub puis pousser.** Seule étape restante : `gh auth login`.
+   La fusion est faite, 3 commits attendent — voir `blockers.md` B-002.
 2. **Corriger le film `fulltrap-…`** via `admin.html` : ré-importer les visuels
    manquants et ré-exporter `films.js`. Corrige (a) et (b) d'un coup, sans
    édition manuelle. Ne pas éditer `films.js` à la main — l'en-tête du fichier

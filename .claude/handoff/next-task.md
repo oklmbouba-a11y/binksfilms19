@@ -6,14 +6,18 @@ début de chaque mission.
 
 ---
 
-## Immédiat — décision utilisateur, avant tout push
+## Immédiat — une seule action, côté utilisateur
 
-1. **Trancher B-001** — stratégie d'historique GitHub (fusion des 17 commits
-   distants, ou historique propre), et sort des doublons `deploiement/` et
-   `previews/` présents sur le distant.
-2. **Trancher B-002** — authentification GitHub sur cette machine.
+**Authentifier GitHub, puis pousser (B-002).**
 
-Rien ne part sur GitHub avant ces deux réponses.
+```
+winget install --id GitHub.cli
+# puis, dans un NOUVEAU terminal :
+gh auth login   # GitHub.com -> HTTPS -> Login with a web browser
+```
+
+Tout le reste est prêt : fusion faite, working tree propre, 3 commits en attente
+sur `main`. B-001 (stratégie d'historique) est tranché et résolu.
 
 ---
 
