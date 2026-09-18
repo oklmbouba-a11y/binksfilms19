@@ -195,6 +195,10 @@ function init(){
   gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
   if(!gl.getProgramParameter(prog, gl.LINK_STATUS)) return repliSansWebGL();
   gl.useProgram(prog);
+  /* WebGL remplit les textures de bas en haut alors qu'une image et une
+     vidéo se lisent de haut en bas : sans cette ligne, tout est
+     retourné. Posée une fois pour tout le contexte. */
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
 
   var buf = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, buf);

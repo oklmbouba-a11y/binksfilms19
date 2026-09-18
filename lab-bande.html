@@ -179,6 +179,10 @@ function initGL(){
   prog = gl.createProgram(); gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
   if(!gl.getProgramParameter(prog, gl.LINK_STATUS)){ console.error(gl.getProgramInfoLog(prog)); return false; }
   gl.useProgram(prog);
+  /* WebGL remplit les textures de bas en haut alors qu'une image et une
+     vidéo se lisent de haut en bas : sans cette ligne, tout est
+     retourné. Posée une fois pour tout le contexte. */
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   var b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b);
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
   var p = gl.getAttribLocation(prog, "p");
