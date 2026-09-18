@@ -20,12 +20,12 @@ anti-effet. Voir D-014.
 
 ## Fait
 
-**B-009 — le format d'affiche mobile.** Livré. `.film .thumb` en 4/5 sur mobile,
+**B-009 — le format d'affiche mobile.** Livré. `.film .thumb` en 3/4 sur mobile,
 plancher de luminosité relevé de 0,72 à 0,82 en conséquence. On passe de 3,66 à
-1,83 carte par écran, le cartel de 53 % à 22 % de l'image. Desktop strictement
+1,73 carte par écran, le cartel de 53 % à 21 % de l'image. Desktop strictement
 inchangé. Détail dans `latest-report.md`, décision en D-015.
 
-Reste à l'œil du propriétaire : **4/5 ou 3/4** — une ligne à changer.
+Ratio tranché par le propriétaire après comparaison à l'œil : **3/4**.
 
 ---
 

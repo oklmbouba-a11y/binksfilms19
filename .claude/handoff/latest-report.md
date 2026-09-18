@@ -21,13 +21,13 @@ format.
 
 | Sur 375 × 812 | Avant | Après |
 |---|---|---|
-| Image de la carte | 304 × 166 px | **327 × 409 px** |
+| Image de la carte | 304 × 166 px | **327 × 436 px** |
 | Part de la hauteur d'écran | 20 % | 50 % |
-| Cartes visibles simultanément | 3,66 | **1,83** |
-| Cartel dans l'image | 53 % | **22 %** |
+| Cartes visibles simultanément | 3,66 | **1,73** |
+| Cartel dans l'image | 53 % | **21 %** |
 | Luminosité — carte centrée | 0,99 | 1,00 |
 | Luminosité — voisines | 0,81 / 0,83 | **0,82** |
-| Hauteur de page (10 films) | 5 355 px | 7 603 px |
+| Hauteur de page (10 films) | 5 355 px | 7 875 px |
 
 Le dispositif d'échelle et de luminosité — du bon travail — n'avait simplement
 pas la place de fonctionner : quatre cartes à l'écran, toutes éclairées à 82 %
@@ -39,7 +39,7 @@ les unes des autres.
 
 **Deux modifications, toutes deux confinées au mobile.**
 
-`.film .thumb` passe en `aspect-ratio:4/5` dans la requête `max-width:760px`.
+`.film .thumb` passe en `aspect-ratio:3/4` dans la requête `max-width:760px`.
 L'image garde toute sa largeur et se recadre en hauteur : on perd le haut et le
 bas du plan, jamais les côtés — le recadrage le moins destructeur pour une image
 de clip, où le sujet est centré.
@@ -64,7 +64,7 @@ Sauvegarde de l'état antérieur conservée hors dépôt le temps de la mission.
 
 | Test | Résultat |
 |---|---|
-| Ratio appliqué en mobile | 4/5 confirmé (0,80) |
+| Ratio appliqué en mobile | 3/4 confirmé (0,750) |
 | Débordement horizontal | aucun |
 | Dévoilement par volet | intact — cartes `vu`, `clip-path: inset(0)` |
 | Preview sur carte centrée | joue (`prev-on`, `paused: false`) |
@@ -72,13 +72,13 @@ Sauvegarde de l'état antérieur conservée hors dépôt le temps de la mission.
 | **Desktop — ratio** | **`16 / 9` inchangé** |
 | **Desktop — rayon** | **11 px inchangé** |
 | **Desktop — parallaxe** | luminosité toujours sur le cadre, image à `none` — comportement d'origine |
-| Mouvement réduit | couvert par `if(reduced) return` ; le CSS dédié n'entre pas en conflit avec le 4/5 |
+| Mouvement réduit | couvert par `if(reduced) return` ; le CSS dédié n'entre pas en conflit avec le format d'affiche |
 
 ---
 
 ## 5. Coût assumé
 
-**La page s'allonge de 42 %** — 7 603 px contre 5 355 pour dix films, et ça
+**La page s'allonge de 47 %** — 7 875 px contre 5 355 pour dix films, et ça
 croîtra linéairement avec le catalogue. C'est le prix d'une carte par écran, et
 c'est le choix de la direction A.
 
@@ -87,14 +87,19 @@ progressif. Pas aujourd'hui.
 
 ---
 
-## 6. Question restée ouverte
+## 6. Ratio — tranché
 
-**Le ratio exact : 4/5 ou 3/4.** J'ai posé 4/5, qui est le plus conservateur
-(1,83 carte par écran contre 1,73 en 3/4). L'écart mesuré est mince ; la
-différence se juge à l'œil, sur un vrai téléphone, pas sur un tableau. Une ligne
-à changer si le propriétaire préfère 3/4.
+**3/4**, choisi par le propriétaire après avoir regardé les deux.
 
----
+| | 4/5 (essayé) | **3/4 (retenu)** |
+|---|---|---|
+| Carte | 327 × 409 | **327 × 436** |
+| Cartes par écran | 1,83 | **1,73** |
+| Cartel dans l'image | 22 % | **21 %** |
+| Hauteur de page | 7 603 px | **7 875 px** |
+
+L'écart est mince sur le papier ; c'est à l'œil qu'il se décide, et c'était la
+bonne manière de trancher.
 
 ## 7. Ce que ça implique pour la suite
 

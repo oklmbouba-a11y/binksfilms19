@@ -11,7 +11,7 @@ Format : ID · date · décision · raison · conséquence · statut.
 ## D-015 — Le format d'affiche sur mobile, et ce qu'il entraîne
 **Date :** 2026-09-18 · **Statut :** ACTIVE
 
-Les cartes de la grille passent en 4/5 sur mobile, et le plancher de luminosité
+Les cartes de la grille passent en 3/4 sur mobile, et le plancher de luminosité
 des cartes hors centre monte de 0,72 à 0,82.
 
 **Raison :** en 16/9 pleine largeur, une carte plafonne à 211 px de haut sur un
@@ -24,7 +24,7 @@ Le relèvement du plancher est une conséquence, pas un choix séparé : une car
 qui occupe désormais la moitié de l'écran devenait une dalle noire à 0,72 sur un
 plan sombre.
 
-**Conséquence :** la page s'allonge de 42 % (7 603 px contre 5 355 pour dix
+**Conséquence :** la page s'allonge de 42 % (7 875 px contre 5 355 pour dix
 films), et croîtra linéairement avec le catalogue. Le format d'affiche suppose
 par ailleurs des bannières **cadrées pour lui** — les 8 cartes encore en repli
 YouTube sont recadrées au centre, ce qui tient mais n'est pas choisi.

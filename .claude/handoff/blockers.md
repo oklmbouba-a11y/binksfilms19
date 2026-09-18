@@ -171,16 +171,16 @@ par le centrage plutôt que par le survol, l'espacement resserré.
 **Rien n'est cassé** — le site est correct sur mobile, simplement pas dans le
 format annoncé.
 
-**Tranché :** l'intention est tenue. `.film .thumb` passe en `aspect-ratio:4/5`
+**Tranché :** l'intention est tenue. `.film .thumb` passe en `aspect-ratio:3/4`
 sur mobile, et le plancher de luminosité des cartes hors centre monte de 0,72 à
 0,82 en conséquence.
 
 La baseline a montré que le commentaire décrivait une contrainte géométrique et
 non une préférence : en 16/9 pleine largeur, une carte plafonne à 211 px de haut
 sur un téléphone, donc « une carte à la fois » y est impossible. On passe de 3,66
-à 1,83 carte par écran, et le cartel de 53 % à 22 % de l'image.
+à 1,73 carte par écran, et le cartel de 53 % à 21 % de l'image.
 
-Reste ouvert : le ratio exact, 4/5 ou 3/4 — une ligne à changer, décision à l'œil.
+Ratio retenu : **3/4**, tranché par le propriétaire après comparaison à l'œil avec 4/5.
 
 `binksfilms-dna` et `built-expression.md` doivent être mis à jour : cet écart
 intention/implémentation n'existe plus.
