@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BINKSFILMS — LAB / flux</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--noir:#0A0A0A;--ivoire:#EDEBE6;--gris:#8E8A84;--rouge:#B11226}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--noir);overflow:hidden;
+  font-family:'Archivo','Helvetica Neue',Arial,sans-serif;color:var(--ivoire);
+  -webkit-font-smoothing:antialiased;overscroll-behavior:none}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
+
+/* le texte vit dans l'image, jamais sous elle */
+.cartel{position:fixed;left:0;right:0;bottom:0;padding:0 28px 34px;z-index:2;pointer-events:none;
+  background:linear-gradient(to top,rgba(6,6,6,.88),rgba(6,6,6,.45) 34%,rgba(6,6,6,0) 76%)}
+@media(min-width:900px){.cartel{padding:0 48px 46px}}
+.artiste{font-weight:800;font-stretch:112%;text-transform:uppercase;font-size:clamp(15px,2vw,19px);
+  letter-spacing:.005em;line-height:1.1}
+.titre{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:clamp(28px,6.4vw,76px);
+  line-height:1.02;margin-top:2px}
+.meta{margin-top:10px;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(237,235,230,.55);font-variant-numeric:tabular-nums}
+
+/* le compteur de bobine, fixe : c'est lui qui tient l'échelle du flux */
+.bobine{position:fixed;top:0;right:0;padding:24px 28px;z-index:2;pointer-events:none;
+  font-size:10px;font-weight:600;letter-spacing:.2em;color:var(--gris);font-variant-numeric:tabular-nums}
+@media(min-width:900px){.bobine{padding:28px 48px}}
+.marque{position:fixed;top:0;left:0;padding:22px 28px;z-index:2;pointer-events:none}
+@media(min-width:900px){.marque{padding:26px 48px}}
+.marque b{display:block;font-weight:800;font-stretch:125%;text-transform:uppercase;font-size:12px;letter-spacing:.26em}
+.marque i{display:block;font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:11px;color:var(--gris);margin-top:1px}
+
+.aide{position:fixed;left:50%;bottom:0;transform:translateX(-50%);padding:0 0 14px;z-index:3;
+  font-size:9.5px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:rgba(237,235,230,.4);
+  transition:opacity .6s ease;pointer-events:none}
+.aide.off{opacity:0}
+.chargement{position:fixed;inset:0;display:grid;place-items:center;z-index:4;background:var(--noir);
+  font-size:10px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gris);
+  transition:opacity .5s ease}
+.chargement.off{opacity:0;pointer-events:none}
+@media(prefers-reduced-motion:reduce){.aide{display:none}}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<div class="marque"><b>Binksfilms</b><i>Les beaux arts du ghetto</i></div>
+<div class="bobine" id="bobine">01 / 06</div>
+<div class="cartel">
+  <p class="artiste" id="artiste"></p>
+  <p class="titre" id="titre"></p>
+  <p class="meta" id="meta"></p>
+</div>
+<div class="aide" id="aide">Faire défiler</div>
+<div class="chargement" id="chargement">Chargement</div>
+
+<script>
+/* ============================================================
+   BINKSFILMS — LAB / flux
+   Prototype isolé. Ne touche pas au site.
+
+   Idée : le catalogue n'est pas une grille de vignettes, c'est une
+   seule matière continue. On avance dedans, et un plan se dissout
+   dans le suivant sans jamais passer par du noir.
+
+   Ce qui rend la dissolution défendable plutôt que décorative : elle
+   est pilotée par l'image. Le seuil de fonte suit la luminance du
+   plan en cours, donc la transition s'ouvre par les zones claires —
+   les néons, les phares, le ciel. Chaque film se dissout à sa façon,
+   parce que chaque film est éclairé à sa façon. L'effet ne recouvre
+   pas l'image : il la lit.
+   ============================================================ */
+
+var PLANS = [
+  { src:"images/fulltrap-skinny-bastard-skinny-bastard-s-flow-type-shit-bann.jpg",
+    artiste:"FullTrap & Skinny Bastard", titre:"Skinny Bastard's Flow", meta:"Clip · 2026" },
+  { src:"images/fulltrap-skinny-bastard-skinny-bastard-s-flow-type-shit-plan.jpg",
+    artiste:"FullTrap & Skinny Bastard", titre:"Le plan", meta:"Contre-champ · étalonné" },
+  { src:"images/00079.MTS.00_01_37_00.Still001.jpg",
+    artiste:"FullTrap & Skinny Bastard", titre:"Derrière la caméra", meta:"Rush · brut" },
+  { src:"images/Adjustment Layer.00_01_57_23.Still018.jpg",
+    artiste:"FullTrap & Skinny Bastard", titre:"Fisheye", meta:"Plan · étalonné" },
+  { src:"images/saisai-fin-des-temps-feat-boro700-banner-2.jpg",
+    artiste:"SaiSai feat Boro700", titre:"Fin des temps", meta:"Clip · 2026" },
+  { src:"images/skinny.jpg",
+    artiste:"FullTrap & Skinny Bastard", titre:"La voiture", meta:"Plan · étalonné" }
+];
+
+var cv = document.getElementById("c");
+var gl = cv.getContext("webgl", {antialias:false, alpha:false, powerPreference:"high-performance"});
+var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- repli ----------
+   Sans WebGL, le prototype ne se casse pas : il redevient un simple
+   fondu entre les mêmes plans. Le concept perd sa matière, pas son
+   propos. */
+if(!gl){ repliSansWebGL(); }
+
+var VERT = [
+"attribute vec2 p;varying vec2 uv;",
+"void main(){uv=p*0.5+0.5;gl_Position=vec4(p,0.0,1.0);}"].join("\n");
+
+var FRAG = [
+"precision highp float;",
+"varying vec2 uv;",
+"uniform sampler2D A,B;",
+"uniform vec2 rA,rB,res;",
+"uniform float t;      /* 0..1 : avancée de la dissolution */",
+"uniform float v;      /* vitesse : nourrit l'écart chromatique */",
+"uniform float temps;",
+
+/* cadrage « cover » : l'image remplit sans jamais se déformer */
+"vec2 cover(vec2 u, vec2 r){",
+"  float ar = res.x/res.y, ai = r.x/r.y;",
+"  vec2 s = ar > ai ? vec2(1.0, ai/ar) : vec2(ar/ai, 1.0);",
+"  return (u-0.5)/s + 0.5;",
+"}",
+
+"float bruit(vec2 x){",
+"  return fract(sin(dot(x, vec2(12.9898,78.233)))*43758.5453);",
+"}",
+"float lisse(vec2 x){",
+"  vec2 i = floor(x), f = fract(x);",
+"  f = f*f*(3.0-2.0*f);",
+"  return mix(mix(bruit(i), bruit(i+vec2(1.0,0.0)), f.x),",
+"             mix(bruit(i+vec2(0.0,1.0)), bruit(i+vec2(1.0,1.0)), f.x), f.y);",
+"}",
+"float fbm(vec2 x){",
+"  float s = 0.0, a = 0.5;",
+"  for(int i=0;i<5;i++){ s += a*lisse(x); x *= 2.03; a *= 0.5; }",
+"  return s;",
+"}",
+"float lum(vec3 c){ return dot(c, vec3(0.299,0.587,0.114)); }",
+
+"void main(){",
+"  vec2 ua = cover(uv, rA), ub = cover(uv, rB);",
+"  vec3 a = texture2D(A, ua).rgb;",
+"  vec3 b = texture2D(B, ub).rgb;",
+
+/* Le seuil suit la luminance du plan sortant : la dissolution part des
+   hautes lumières. C'est ce qui lie l'effet à l'image au lieu de la
+   recouvrir — chaque plan se consume par ses propres sources. */
+"  float grain = fbm(uv*vec2(res.x/res.y,1.0)*3.4 + temps*0.03);",
+/* Chaque pixel a son propre seuil : bas dans les hautes lumieres, haut
+   dans les noirs. L'avancee t balaie cette carte de seuils, donc la
+   fonte part des sources lumineuses du plan et gagne les ombres en
+   dernier. Le grain casse la regularite pour que le front ne soit
+   jamais une ligne geometrique. */
+"  float seuil = (1.0 - lum(a)) * 0.58 + grain * 0.26;",
+"  float front = t * 1.26 - 0.10;",
+"  float m = smoothstep(seuil - 0.13, seuil + 0.13, front);",
+
+/* le bord de la fonte tire l'image : la matière se déplace avant de céder */
+"  float bord = (1.0-abs(m*2.0-1.0));",
+"  vec2 tir = vec2(fbm(uv*5.0+11.0)-0.5, fbm(uv*5.0-7.0)-0.5) * bord * 0.075;",
+"  a = texture2D(A, ua + tir).rgb;",
+"  b = texture2D(B, ub - tir*0.6).rgb;",
+
+/* écart chromatique proportionnel à la vitesse : une caméra qui suit trop
+   vite. Nul à l'arrêt, donc jamais un filtre permanent. */
+"  float ec = (0.004 + bord*0.010) * min(v, 2.2);",
+"  vec3 col;",
+"  col.r = mix(texture2D(A, ua + tir + vec2(ec,0.0)).r, texture2D(B, ub - tir*0.6 + vec2(ec,0.0)).r, m);",
+"  col.g = mix(a.g, b.g, m);",
+"  col.b = mix(texture2D(A, ua + tir - vec2(ec,0.0)).b, texture2D(B, ub - tir*0.6 - vec2(ec,0.0)).b, m);",
+
+/* la ligne de fonte chauffe très légèrement — un rouge profond, l'accent
+   du site, jamais une couleur inventée */
+"  col += vec3(0.44,0.05,0.10) * pow(bord, 3.0) * 0.5;",
+
+/* vignettage discret : on est dans une salle, pas devant une dalle */
+"  float d = distance(uv, vec2(0.5));",
+"  col *= 1.0 - d*d*0.55;",
+"  gl_FragColor = vec4(col, 1.0);",
+"}"].join("\n");
+
+function compiler(type, src){
+  var s = gl.createShader(type);
+  gl.shaderSource(s, src); gl.compileShader(s);
+  if(!gl.getShaderParameter(s, gl.COMPILE_STATUS)){ console.error(gl.getShaderInfoLog(s)); return null; }
+  return s;
+}
+
+var prog, loc = {}, textures = [], tailles = [];
+
+function init(){
+  var vs = compiler(gl.VERTEX_SHADER, VERT), fs = compiler(gl.FRAGMENT_SHADER, FRAG);
+  if(!vs || !fs) return repliSansWebGL();
+  prog = gl.createProgram();
+  gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+  if(!gl.getProgramParameter(prog, gl.LINK_STATUS)) return repliSansWebGL();
+  gl.useProgram(prog);
+
+  var buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  var p = gl.getAttribLocation(prog, "p");
+  gl.enableVertexAttribArray(p);
+  gl.vertexAttribPointer(p, 2, gl.FLOAT, false, 0, 0);
+
+  ["A","B","rA","rB","res","t","v","temps"].forEach(function(n){ loc[n] = gl.getUniformLocation(prog, n); });
+  gl.uniform1i(loc.A, 0); gl.uniform1i(loc.B, 1);
+}
+
+function texture(img){
+  var t = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+  return t;
+}
+
+function charger(){
+  var reste = PLANS.length, echecs = 0;
+  PLANS.forEach(function(pl, i){
+    var img = new Image();
+    img.onload = function(){
+      textures[i] = texture(img);
+      tailles[i] = [img.naturalWidth, img.naturalHeight];
+      if(--reste === 0) demarrer(echecs);
+    };
+    img.onerror = function(){
+      echecs++;
+      /* un plan manquant ne casse pas le flux : il est simplement sauté */
+      textures[i] = null; tailles[i] = [16,9];
+      if(--reste === 0) demarrer(echecs);
+    };
+    img.src = pl.src;
+  });
+}
+
+var position = 0, cible = 0, vitesse = 0, dernier = 0;
+
+function demarrer(echecs){
+  var dispo = textures.map(function(t,i){ return t ? i : -1; }).filter(function(i){ return i > -1; });
+  if(dispo.length < 2) return repliSansWebGL();
+  PLANS = dispo.map(function(i){ return PLANS[i]; });
+  var tx = dispo.map(function(i){ return textures[i]; });
+  var tl = dispo.map(function(i){ return tailles[i]; });
+  textures = tx; tailles = tl;
+
+  document.getElementById("chargement").classList.add("off");
+  cartel(0);
+  redim();
+  dernier = performance.now();
+  requestAnimationFrame(boucle);
+  setTimeout(function(){ document.getElementById("aide").classList.add("off"); }, 4200);
+}
+
+function redim(){
+  var d = Math.min(devicePixelRatio || 1, 2);
+  cv.width = Math.round(innerWidth * d);
+  cv.height = Math.round(innerHeight * d);
+  gl.viewport(0, 0, cv.width, cv.height);
+}
+addEventListener("resize", redim);
+
+/* ---------- l'avancée ----------
+   Le défilement ne saute pas d'un plan à l'autre : il nourrit une
+   position continue, que la boucle rattrape avec de l'inertie. C'est
+   ce qui supprime le trou — il n'y a jamais d'état « entre deux
+   pages », seulement une matière qui avance. */
+var N = function(){ return PLANS.length; };
+function pousser(d){
+  cible += d;
+  if(cible < 0) cible = 0;
+  if(cible > N()-1) cible = N()-1;
+}
+addEventListener("wheel", function(e){ pousser(e.deltaY * 0.0016); }, {passive:true});
+
+var touchY = null;
+addEventListener("touchstart", function(e){ touchY = e.touches[0].clientY; }, {passive:true});
+addEventListener("touchmove", function(e){
+  if(touchY === null) return;
+  var y = e.touches[0].clientY;
+  pousser((touchY - y) * 0.0052);
+  touchY = y;
+}, {passive:true});
+addEventListener("touchend", function(){ touchY = null; }, {passive:true});
+addEventListener("keydown", function(e){
+  if(e.key === "ArrowDown" || e.key === "PageDown" || e.key === " ") pousser(1);
+  if(e.key === "ArrowUp" || e.key === "PageUp") pousser(-1);
+});
+
+var dernierIndex = -1;
+function cartel(i){
+  var p = PLANS[i]; if(!p) return;
+  document.getElementById("artiste").textContent = p.artiste;
+  document.getElementById("titre").textContent = p.titre;
+  document.getElementById("meta").textContent = p.meta;
+  document.getElementById("bobine").textContent =
+    String(i+1).padStart(2,"0") + " / " + String(N()).padStart(2,"0");
+}
+
+function boucle(now){
+  var dt = Math.min((now - dernier) / 16.67, 3); dernier = now;
+  var avant = position;
+  /* inertie : l'image continue un peu après le geste, comme une bobine */
+  position += (cible - position) * (reduced ? 1 : 0.075) * dt;
+  vitesse = vitesse * 0.88 + Math.abs(position - avant) * 46;
+
+  var i = Math.max(0, Math.min(N()-2, Math.floor(position)));
+  var t = Math.max(0, Math.min(1, position - i));
+  var vu = t > 0.5 ? i+1 : i;
+  if(vu !== dernierIndex){ dernierIndex = vu; cartel(vu); }
+
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, textures[i]);
+  gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, textures[Math.min(i+1, N()-1)]);
+  gl.uniform2f(loc.rA, tailles[i][0], tailles[i][1]);
+  var j = Math.min(i+1, N()-1);
+  gl.uniform2f(loc.rB, tailles[j][0], tailles[j][1]);
+  gl.uniform2f(loc.res, cv.width, cv.height);
+  gl.uniform1f(loc.t, t);
+  gl.uniform1f(loc.v, reduced ? 0 : vitesse);
+  gl.uniform1f(loc.temps, now * 0.001);
+  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  requestAnimationFrame(boucle);
+}
+
+/* ---------- repli complet ----------
+   Pas de WebGL, shader refusé, ou moins de deux plans lisibles : on
+   retombe sur un empilement d'images en fondu. Rien ne reste vide. */
+function repliSansWebGL(){
+  if(cv) cv.style.display = "none";
+  var d = document.createElement("div");
+  d.style.cssText = "position:fixed;inset:0;overflow-y:auto;scroll-snap-type:y mandatory;background:var(--noir)";
+  PLANS.forEach(function(p){
+    var s = document.createElement("section");
+    s.style.cssText = "height:100svh;scroll-snap-align:start;background-size:cover;background-position:center;background-image:url('"+p.src.replace(/'/g,"%27")+"')";
+    d.appendChild(s);
+  });
+  document.body.appendChild(d);
+  document.getElementById("chargement").classList.add("off");
+  document.getElementById("aide").classList.add("off");
+}
+
+if(gl){ init(); charger(); }
+</script>
+</body>
+</html>
