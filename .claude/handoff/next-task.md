@@ -1,259 +1,161 @@
 # Prochaine étape — BINKSFILMS
 
-Mise à jour : 2026-09-18
-Émise par : ChatGPT
-Phase : 2 — Identité
-Mission : révision ciblée BINKSFILMS DNA V1.1
+**Mise à jour :** 2026-09-18  
+**Émise par :** ChatGPT, selon consigne directe du propriétaire  
+**Phase :** 2 — Identité  
+**Mission :** faire évoluer `binksfilms-dna` avec autonomie créative
 
-## Verdict
+---
 
-La V1 est solide dans sa méthode, son anti-DNA, son filtre idée/effet et sa séparation entre skill principal et références.
+## Changement de posture
 
-Le défaut principal est méthodologique : le site actuel est parfois traité comme l'autorité suprême sur l'identité future.
+À partir de maintenant, **Claude Code est le moteur créatif principal** du système.
 
-BINKSFILMS est en transformation. Le site actuel est une expression construite de l'identité, pas toute l'identité.
+ChatGPT reste en arrière-plan comme :
+- regard critique ;
+- garde-fou anti-cliché ;
+- vérificateur de cohérence ;
+- aide technique / recherche quand nécessaire ;
+- second regard sur les décisions importantes.
 
-La vision explicitement déclarée par le propriétaire a donc le même statut de source que le code lorsqu'elle décrit le futur voulu.
+**Ne traite pas les propositions précédentes de ChatGPT comme une structure à exécuter mot pour mot.**
 
-La mission est REFINE, pas REWRITE.
+Tu peux les contester, les simplifier, les remplacer ou proposer une meilleure architecture si tu peux expliquer pourquoi.
 
-## 1. Introduire trois niveaux de vérité
+---
 
-A — CORE INTENT / OWNER-DECLARED DNA
+## Ce que veut le propriétaire
 
-Principes explicitement voulus pour le futur BINKSFILMS, même s'ils ne sont pas encore implémentés :
-- réalisateur / musique / image / rue / numérique
-- Les Beaux Arts du Ghetto
-- noir profond
-- image cinématographique
-- interfaces rétro-numériques
-- VHS / MiniDV / carte SD
-- archive
-- grain
-- mouvement
-- expérimentation
-- détails cachés
-- brutalité maîtrisée
-- luxe sombre
-- STREET × CINEMA × DIGITAL SYSTEM × ARCHIVE × CONTROLLED ACCIDENT × DARK LUXURY
+Le but n'est pas de fabriquer un site rempli de signes rétro.
 
-B — BUILT EXPRESSION
+Il veut une expérience BINKSFILMS :
+- originale ;
+- haut de gamme ;
+- cinématographique ;
+- expérimentale ;
+- identifiable ;
+- difficile à confondre avec un template ou un site Awwwards générique.
 
-Ce que le site actuel implémente réellement. C'est une preuve et une source d'apprentissage, mais pas automatiquement une loi future.
+Mais il ne veut surtout pas tomber dans :
+- le CRT partout ;
+- VHS partout ;
+- scanlines partout ;
+- timecodes décoratifs ;
+- glitch permanent ;
+- faux terminal ;
+- fausse caméra MiniDV en permanence ;
+- grain systématique ;
+- nostalgie rétro utilisée comme raccourci créatif.
 
-C — OPTIONAL / EXPERIMENTAL REGISTER
+Le vocabulaire rétro-numérique est **une matière disponible**, pas une obligation visuelle.
 
-Une expression possible du DNA, utilisable seulement si elle passe les filtres :
-glitch, scanlines, timecode, shader, grain ajouté, métaphore de carte mémoire, interface de capture, etc.
+---
 
-## 2. Revoir les invariants
+## Ta liberté
 
-Invariant image/interface :
-Conserver l'idée que l'image est prioritaire et que l'interface la sert.
-Retirer l'absolu selon lequel le texte doit vivre dans la bannière et jamais ailleurs.
-Le texte peut être dans, sous, à côté ou autour d'une image si l'image reste le sujet et que le concept le justifie.
+Tu peux maintenant proposer toi-même :
 
-Invariant typographique :
-Trois voix est une excellente lecture du site actuel, mais l'invariant stable est la séparation claire des rôles.
-Grotesque lourde, serif italique et petites capitales techniques deviennent Built Expression, pas obligation éternelle.
+- la structure du DNA ;
+- les invariants ;
+- les tensions ;
+- les registres créatifs ;
+- les anti-patterns ;
+- les exemples ;
+- les distinctions utiles ;
+- la façon dont BINKSFILMS peut évoluer au-delà du site actuel.
 
-On retire avant d'ajouter :
-Conserver. C'est un bon invariant.
+Tu n'as pas à conserver une structure simplement parce qu'elle vient de ChatGPT.
 
-## 3. Réhabiliter analogique × numérique
+Le site actuel est une source de preuve importante, mais **pas une prison**.
 
-La V1 l'écarte parce que cette tension n'est pas visible aujourd'hui. C'est trop conservateur.
+La vision déclarée du propriétaire compte également, même lorsqu'elle n'est pas encore matérialisée dans le code.
 
-La vision BINKSFILMS la revendique explicitement.
+---
 
-Réintroduire au niveau conceptuel une tension du type :
-trace physique / logique de capture × interface numérique contemporaine.
+## Garde-fous seulement
 
-Les expressions littérales restent conditionnelles :
-overlay VHS, cadre MiniDV, icône SD, scanlines, timecode, bruit de bande.
+Pendant ta révision, vérifie surtout quatre choses.
 
-La tension est fondatrice. Ses costumes ne le sont pas.
+### 1. Ne pas fossiliser le site actuel
+Une valeur actuelle comme un rayon, une typo, une courbe, une grille ou une transition n'est pas automatiquement un invariant.
 
-## 4. Revoir archive × futur
+### 2. Ne pas transformer le rétro en thème
+Analogique, archive, MiniDV, VHS, carte SD, grain, interface système peuvent nourrir une idée.
 
-Ne pas réduire archive à un booléen de données.
+Ils ne doivent pas devenir un costume général.
 
-Archive peut signifier :
-trace, conservation, rush, versions, dates, supports, mémoire de tournage, images oubliées, fragments, provenance, couches temporelles, ancien contenu réactivé.
+### 3. Distinguer cohérence et originalité
+Une idée peut être :
+- cohérente avec BINKSFILMS ;
+- mais encore trop vue ou trop générique pour mériter un traitement SIGNATURE / LAB.
 
-Le futur ne veut pas dire science-fiction.
-La tension pertinente est mémoire réelle du travail × système contemporain ou expérimental de consultation.
+`innovation-critic` doit pouvoir faire cette distinction.
 
-## 5. Controlled Accident
+### 4. Garder l'image au-dessus de la technologie
+WebGL, shader, GSAP, vidéo, effets ou interfaces n'ont aucune valeur en eux-mêmes.
 
-La V1 le traite surtout comme résilience technique. C'est intelligent mais trop étroit.
+Ils doivent servir l'image, le rythme, la mémoire, la découverte ou l'expérience du travail BINKSFILMS.
 
-CONTROLLED ACCIDENT est aussi un principe créatif.
+---
 
-Il peut se manifester dans :
-- composition légèrement désaxée
-- rythme interrompu
-- crop surprenant
-- rupture de grille
-- typographie imparfaite mais lisible
-- frame hold
-- désynchronisation volontaire
-- erreur simulée locale
-- collision maîtrisée entre registres
-- matière irrégulière
+## Controlled Accident
 
-Règle :
-l'accident doit sembler possible mais être totalement maîtrisé.
+Ce principe ne doit pas être réduit à la gestion des erreurs techniques.
 
-Ne pas confondre accident, bug, décoration ou manque de finition.
+Il peut être visuel, spatial, temporel ou interactif.
 
-## 6. Grain
+Mais l'accident doit toujours être **maîtrisé** :
+ce qui semble imparfait ou imprévu doit être intentionnel, lisible et techniquement solide.
 
-Le fait que le site actuel ait retiré le grain d'une vidéo ne fait pas de l'absence de grain un invariant.
+---
 
-La vision déclarée inclut le grain.
+## Travail demandé
 
-Distinguer :
+Relis ta V1 actuelle de `binksfilms-dna`.
 
-MATERIAL GRAIN
-- présent dans le plan
-- lié à une source, une caméra, un support ou une archive
-- traitement local apportant une matière justifiée
+Puis décide toi-même :
+- ce qui mérite d'être conservé ;
+- ce qui est trop dépendant du site actuel ;
+- ce qui doit être élargi ;
+- ce qui doit être supprimé ;
+- ce qui manque.
 
-DECORATIVE GRAIN
-- overlay global
-- faux grain appliqué mécaniquement partout
-- bruit qui dégrade l'image sans rôle
+Tu peux produire une V1.1 ou une autre organisation si elle est meilleure.
 
-Le grain est un vocabulaire possible de matière, ni obligation ni interdiction.
+Ne cherche pas à satisfaire artificiellement ChatGPT.  
+Cherche à construire le meilleur cerveau créatif possible pour BINKSFILMS.
 
-## 7. Hidden details
+---
 
-Le propriétaire veut explicitement développer les détails cachés.
+## Validation
 
-Les intégrer comme couche secondaire du DNA futur :
-- jamais nécessaires pour comprendre ou naviguer
-- récompensent l'attention
-- peuvent apparaître après interaction, maintien, retour, exploration ou temps passé
-- ne gênent jamais l'usage principal
+Avant de conclure, utilise `innovation-critic` comme adversaire indépendant.
 
-Leur absence actuelle ne les disqualifie pas.
+Questions minimales :
 
-## 8. Cinéma × interface
+- Est-ce que le skill peut guider quelque chose qui n'existe pas encore ?
+- Est-ce qu'il évite le cliché CRT/VHS/glitch facile ?
+- Est-ce qu'il distingue une vraie idée d'un simple habillage rétro ?
+- Est-ce qu'il peut guider un Shop, une archive documentaire ou une expérience WebGL sans copier le site actuel ?
+- Est-ce qu'il laisse suffisamment de liberté pour inventer ?
 
-Corriger toute règle qui implique qu'une interaction doit porter un nom de tournage pour être légitime.
+Corrige les BLOCKER et MAJOR réellement fondés.
 
-Les gestes de cinéma, tournage et montage sont une source conceptuelle forte.
-Mais le vocabulaire ne justifie jamais le geste.
+---
 
-Une interaction peut être BINKSFILMS sans nom cinématographique si sa logique sert l'image, la temporalité, la découverte ou la mémoire du travail.
+## Périmètre
 
-## 9. Exactitudes actuelles ≠ règles éternelles
-
-Déplacer hors des invariants les prescriptions trop exactes telles que :
-- rayon 11 px
-- rond réservé absolument à la lecture
-- rouge utilisé exactement trois fois
-- une courbe précise
-- un type de volet obligatoire
-- cartel obligatoirement dans la bannière
-
-Ces éléments peuvent rester dans extraction-report comme Built Expression.
-
-Dans le DNA, conserver les principes :
-- la forme a une sémantique
-- l'accent coloré reste rare
-- le mouvement évite le rebond gratuit
-- les transitions ont une logique
-- les contrôles ne sont pas homogénéisés façon SaaS
-
-## 10. QUIET / SIGNATURE / LAB
-
-Conserver ce modèle.
-
-Supprimer la contradiction entre :
-un geste SIGNATURE par section, pas deux
-et
-pas de quota chiffré.
-
-Garder uniquement une règle perceptuelle :
-un geste dominant doit avoir de l'espace pour exister ; plusieurs gestes forts ne peuvent coexister que s'ils ne se disputent pas simultanément l'attention.
-
-Ne pas utiliser le faible nombre de gestes LAB du site actuel comme proportion normative pour le futur.
-
-## 11. Exemple planche contact
-
-Verdict ChatGPT :
-DNA-compatible, mais pas suffisamment distinctive à elle seule pour prouver l'innovation BINKSFILMS.
-
-Une planche contact interactive peut exister sur de nombreux portfolios de réalisateurs.
-
-Introduire deux validations séparées :
-
-DNA FIT
-Est-ce cohérent avec BINKSFILMS ?
-
-DISTINCTIVENESS
-Est-ce assez spécifique et surprenant pour mériter SIGNATURE ou LAB ?
-
-Une idée peut donc être compatible BINKSFILMS mais encore trop familière pour passer Innovation Critic.
-
-Modifier la démonstration afin de montrer :
-1. une idée compatible mais pas automatiquement LAB
-2. une idée plus fortement spécifique qui atteint potentiellement LAB
-3. une idée qui échoue malgré le bon vocabulaire
-
-Ne transforme pas cette partie en catalogue de features à construire.
-
-## 12. Test anti-fossilisation
-
-Après correction, tester le DNA sur trois éléments qui n'existent pas encore :
-1. une page Shop BINKSFILMS
-2. une expérience documentaire / archive
-3. une expérience WebGL réellement justifiée
-
-Le DNA doit pouvoir les guider sans forcer la copie de la grille, des boutons, du volet ou des typographies exactes du site actuel.
-
-Si le skill ne sait produire que des variantes du site V1, il est trop étroit.
-
-## 13. Conserver les forces de la V1
-
-Ne pas casser :
-- séparation skill / références
-- extraction report
-- marquage vérifié / intention
-- filtre idée vs effet
-- charge de la preuve inversée contre les clichés
-- anti-DNA
-- dark luxury anti-parfumerie
-- principe de rareté
-- mobile authored
-- technologie subordonnée à l'image
-- progressive disclosure
-
-## 14. Validation V1.1
-
-Avant push, lancer innovation-critic et lui demander explicitement :
-- Est-ce que ce skill fossilise encore le site actuel ?
-- Peut-il guider quelque chose qui n'existe pas encore ?
-- La vision déclarée du propriétaire a-t-elle le même poids que le built evidence ?
-- Les registres rétro sont-ils utilisables sans devenir du cosplay ?
-- Controlled Accident est-il maintenant créatif et pas seulement technique ?
-
-Corriger les BLOCKER et MAJOR fondés.
-
-Ne modifier aucun fichier public du site.
-
-## 15. Handoff
+Pour cette mission :
+- ne modifie pas le site public ;
+- ne commence pas encore `experience-direction` ;
+- n'installe aucun nouvel outil ou skill sans nécessité réelle ;
+- reste concentré sur la qualité du DNA.
 
 À la fin :
-- commit + push
-- mettre à jour latest-report, decisions, blockers et next-task
-- expliquer précisément les différences V1 → V1.1
-- signaler ce qui relève désormais de CORE INTENT, BUILT EXPRESSION et OPTIONAL REGISTER
+- commit + push ;
+- mets à jour les fichiers de handoff ;
+- explique les décisions importantes et les points que tu as choisi de ne PAS suivre.
 
-Terminer le rapport par exactement :
+Termine par :
 
-BINKSFILMS DNA V1.1 READY FOR REVIEW
-
-Ne commencer experience-direction qu'après cette revue.
+`BINKSFILMS DNA READY FOR OWNER REVIEW`
