@@ -350,6 +350,11 @@ nav a:hover{color:var(--ivoire)}
   position:absolute;left:0;top:0;width:100%;height:100%;
   overflow:hidden;background:#0D0D0D;
   backface-visibility:hidden;
+  /* Une face tournee en 3D reste cliquable a sa position projetee, donc
+     elle deborde largement la boite du cube et attrape des touchers a
+     cote. Seule la boite du cube doit recevoir le geste : c'est ce qui
+     empechait le defilement de repartir sur telephone. */
+  pointer-events:none;
 }
 #binks figure .bl-f img{
   position:absolute;inset:0;width:100%;height:100%;
@@ -2547,7 +2552,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   var rx = -14, ry = 24;          /* une position de depart de trois-quarts, pas de face plate */
   var vx = 0, vy = 0;
   var incX = 0, incY = 0, visX = 0, visY = 0;   /* l'orientation que suit le pointeur */
-  var tenu = false, px = 0, py = 0, bouge = false;
+  var tenu = false, px = 0, py = 0;
   var derniereAction = performance.now() - 9999;
   var aTourne = false;
 
@@ -2560,31 +2565,40 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   function agi(){ derniereAction = performance.now(); }
 
   /* ---------- le glissement : la vraie rotation ----------
-     Une seule regle de priorite : tant que l'utilisateur tient le cube,
-     rien d'autre ne le pilote. */
+     Deux regles de priorite :
+     - tant que l'utilisateur tient le cube, rien d'autre ne le pilote ;
+     - mais au doigt, la page passe avant le cube. Si le geste part en
+       vertical il appartient au defilement, et le cube lache aussitot. */
+  var finPointeur = matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var depX = 0, depY = 0, axeDecide = false;
+
   bl.addEventListener("pointerdown", function(e){
-    tenu = true; bouge = false; px = e.clientX; py = e.clientY;
+    tenu = true; axeDecide = (e.pointerType === "mouse");
+    px = depX = e.clientX; py = depY = e.clientY;
     vx = 0; vy = 0; agi();
     bl.classList.add("tenu");
-    if(bl.setPointerCapture && e.pointerId != null){ try{ bl.setPointerCapture(e.pointerId); }catch(err){} }
-  });
-  addEventListener("pointermove", function(e){
-    if(!tenu){
-      /* hors glissement : une orientation legere, jamais une rotation */
-      var r = bl.getBoundingClientRect();
-      if(!r.width) return;
-      var nx = (e.clientX - (r.left + r.width/2)) / (r.width/2);
-      var ny = (e.clientY - (r.top + r.height/2)) / (r.height/2);
-      if(Math.abs(nx) < 2.4 && Math.abs(ny) < 2.4){
-        incY = Math.max(-1, Math.min(1, nx)) * SUIVI;
-        incX = Math.max(-1, Math.min(1, ny)) * -SUIVI * 0.7;
-        agi();
-      } else { incX = 0; incY = 0; }
-      return;
+    /* La capture n'est utile qu'a la souris, pour suivre un glissement
+       qui sort du cube. Au doigt elle generait la decision de
+       defilement du navigateur. */
+    if(e.pointerType === "mouse" && bl.setPointerCapture && e.pointerId != null){
+      try{ bl.setPointerCapture(e.pointerId); }catch(err){}
     }
+  });
+
+  addEventListener("pointermove", function(e){
+    if(!tenu) return;
     var dx = e.clientX - px, dy = e.clientY - py;
+
+    /* Au doigt : on tranche une fois pour toutes, des que le geste a
+       parcouru huit pixels. Vertical -> la page. Horizontal -> le cube. */
+    if(!axeDecide){
+      var tx = Math.abs(e.clientX - depX), ty = Math.abs(e.clientY - depY);
+      if(tx + ty < 8){ px = e.clientX; py = e.clientY; return; }
+      axeDecide = true;
+      if(ty > tx){ lacher(); return; }    /* le defilement gagne */
+    }
+
     px = e.clientX; py = e.clientY;
-    if(Math.abs(dx) + Math.abs(dy) > 2) bouge = true;
     /* 0,32 degre par pixel : assez pour tourner franchement, assez peu
        pour garder de la precision */
     ry += dx * 0.32;
@@ -2595,6 +2609,27 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     agi(); aTourne = true;
     if(indice) indice.classList.add("fini");
   }, {passive:true});
+
+  /* L'orientation legere au pointeur n'a de sens qu'a la souris : il n'y
+     a pas de survol au doigt. Elle est posee sur le cube lui-meme, plus
+     sur la fenetre — le cube ne reagit donc plus a ce qui se passe a
+     cote de lui. */
+  if(finPointeur){
+    bl.addEventListener("pointermove", function(e){
+      /* verrou sur le type reel du pointeur, pas seulement sur la requete
+         media : un navigateur qui emule un telephone se declare encore
+         « pointeur fin », et le cube bougerait alors sous un doigt qui
+         ne fait que defiler. */
+      if(tenu || e.pointerType !== "mouse") return;
+      var r = bl.getBoundingClientRect();
+      if(!r.width) return;
+      var nx = (e.clientX - (r.left + r.width/2)) / (r.width/2);
+      var ny = (e.clientY - (r.top + r.height/2)) / (r.height/2);
+      incY = Math.max(-1, Math.min(1, nx)) * SUIVI;
+      incX = Math.max(-1, Math.min(1, ny)) * -SUIVI * 0.7;
+      agi();
+    });
+  }
   function lacher(){
     if(!tenu) return;
     tenu = false; bl.classList.remove("tenu"); agi();
