@@ -428,3 +428,121 @@ Quand on arrive dans la section, on doit d'abord reconnaître la photo du réali
 Le premier ressenti doit être : **photo premium qui devient objet**, pas **cube 3D qui contient des photos**.
 
 Ne pas modifier le reste de la section ni la structure du site.
+
+
+---
+
+## Audit profond ChatGPT — cube Réalisateur (code réel)
+
+Audit effectué directement sur `index.html` après le commit `bd1ea5a`.
+La syntaxe JS compile, mais plusieurs problèmes structurels doivent être corrigés avant de considérer le cube comme propre.
+
+### P0 — bug de timing sur l'animation d'arrivée
+
+Le code fait :
+`setTimeout(function(){ figure.classList.add("ouvert"); poser(); }, 1700);`
+à partir du chargement de la page.
+
+Or la section Réalisateur est bien plus bas. Dans la plupart des visites, `ouvert` est donc ajouté longtemps AVANT que l'IntersectionObserver ajoute `.vu` à la figure.
+Ensuite la règle `#binks figure.ouvert .cadre{overflow:visible;clip-path:none}` écrase le `clip-path` de l'animation d'arrivée.
+
+=> L'ouverture doit être déclenchée APRES l'entrée réelle de la figure et la fin de sa transition, pas 1,7 s après le chargement global.
+Préférer `transitionend` sur `.cadre` une fois `figure.vu`, avec un petit fallback lié à cette entrée.
+
+### P0 — boucle rAF permanente hors écran
+
+Le cube lance `requestAnimationFrame(boucle)` en continu dès le chargement, même :
+- pendant l'intro ;
+- lorsque la section Réalisateur est plusieurs écrans plus bas ;
+- quand le cube est hors viewport.
+
+La boucle appelle en plus `cadre.getBoundingClientRect()` à chaque frame via `biaisScroll()`.
+
+=> Ajouter une conscience de visibilité : IntersectionObserver + `document.hidden`.
+Ne calculer / dessiner le cube que quand la section est proche ou visible.
+Mettre en pause hors écran et dans un onglet caché.
+Cache le biais de scroll au lieu de relire le layout chaque frame.
+
+### P1 — inertie dépendante de la fréquence des pointer events
+
+Actuel :
+`vy = dx * 13; vx = -dy * 13;`
+
+Cette vitesse dépend du nombre de pixels PAR EVENT et non de pixels PAR SECONDE.
+Sur un écran 120 Hz, un même geste produit souvent des `dx` plus petits qu'à 60 Hz et donc une inertie différente.
+
+=> Calculer la vitesse avec `e.timeStamp` / delta temps :
+rotationDelta / dt * 1000, puis lisser légèrement la vitesse.
+La sensation de poids doit être la même sur iPhone 60 et 120 Hz.
+
+### P1 — pointermove global inutile
+
+Le code écoute `pointermove` sur `window` et appelle `bl.getBoundingClientRect()` même quand le pointeur est ailleurs sur la page.
+Le seuil `abs(nx) < 2.4` est très large : un pointeur seulement proche du cube appelle `agi()` et peut empêcher la respiration de reprendre.
+
+=> Écouter `pointermove` sur `bl` uniquement. Le pointer capture suffit à continuer le drag hors de l'objet une fois le geste commencé.
+
+### P1 — surcharge de médias / cohérence
+
+Les faces secondaires actuelles chargent environ **6,4 Mo** de JPEG supplémentaires :
+- `skinny.jpg` ~2,41 Mo
+- `Adjustment Layer...Still018.jpg` ~1,88 Mo
+- `Adjustment Layer...Still013.jpg` ~1,23 Mo
+- `contre champs.jpg` ~0,89 Mo
+
+Et plusieurs de ces images ne sont pas cohérentes avec la section Réalisateur.
+
+=> Tant qu'il n'existe pas assez de portraits/backstage du réalisateur : utiliser `real-web.webp` (déjà ~0,40 Mo et mis en cache) avec plusieurs recadrages sur les faces secondaires.
+Quand de vraies images Réalisateur existent, les charger à la demande (`data-src`) quand la section approche ou à la première interaction. `loading=lazy` seul n'est pas un budget fiable pour six faces superposées dans le viewport.
+
+### P1 — deux réactions au scroll se superposent
+
+Le wrapper `.bl-par` reçoit déjà une translation + scale au scroll dans la boucle de parallaxe existante.
+Le cube ajoute en plus `biaisScroll() * 11` degrés de rotation Y.
+
+=> Choisir une hiérarchie claire. Recommandation : garder la parallaxe existante sur `.bl-par` et réduire fortement ou supprimer le `biaisScroll` du cube. Le cube doit surtout respirer doucement et répondre au geste.
+
+### P1 — réglages visuels trop agressifs
+
+Actuel :
+- `rx = -14`
+- `ry = 24`
+- côté = `82%` de la largeur disponible
+- biais scroll jusqu'à ±11°
+
+Cela explique la grosse face supérieure et le ressenti « cube d'abord, photo ensuite ».
+
+=> Base recommandée à tester :
+- repos `rx ≈ -4 à -6°`
+- repos `ry ≈ 7 à 10°`
+- cube mobile ≈ 68–72% de la largeur utile
+- desktop ≈ 74–78%
+- respiration X faible (≈2°)
+- suivi pointeur plus discret (≈4–5°)
+
+Le portrait avant doit dominer.
+
+### P2 — le fallback « sans script » annoncé n'existe pas réellement
+
+Le commentaire dit que sans script la photo redevient plate, mais la taille/position 3D de `.bl` est posée par JS. Sans JS, les faces n'ont pas une structure de fallback fiable.
+
+=> Faire de la photo plate l'état CSS par défaut, puis ajouter une classe d'enhancement (`cube-on`) quand le JS a initialisé la géométrie. Tous les styles 3D doivent être progressifs à partir de cette classe.
+
+### P2 — clavier / accessibilité
+
+`role="button"` + Enter/Espace donne actuellement une vitesse `vy=150`, donc une rotation inertielle peu prévisible.
+
+=> Préférer un contrôle déterministe : flèches gauche/droite = face précédente/suivante ; éventuellement haut/bas = inclinaison/face verticale. Enter peut faire un pas de 90° au lieu de lancer une vitesse.
+
+### P2 — mobile : compromis à assumer
+
+`touch-action:pan-y` est le bon choix pour ne pas voler le scroll vertical, mais cela signifie qu'un drag vertical pur ne peut pas servir de contrôle complet du cube sur mobile.
+
+=> Assumer la règle : horizontal/diagonal = rotation manuelle ; vertical = scroll de page ; le pivot haut/bas reste une respiration autonome. Ne pas essayer de capturer le scroll vertical du site.
+
+### Verdict
+
+La base 3D est techniquement correcte et la séparation `.bl-par` / `.bl` est une bonne décision.
+Mais avant tout nouveau polish visuel, corriger P0/P1 : timing d'entrée, boucle offscreen, inertie dépendante des events, pointermove global, poids média et double motion scroll.
+
+Objectif : **moins de calcul, moins d'images, moins d'angle — plus de précision.**
