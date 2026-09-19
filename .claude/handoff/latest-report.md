@@ -35,10 +35,11 @@ entières. Le cube à six faces en était la preuve — il inclinait, il ne
 réfractait pas. C'est la seule raison d'aller jusqu'au shader ici.
 
 ### Ce qui a été construit
-- **Géométrie** : un profil de pierre en sept anneaux, de la table avant à la
+- **Géométrie** : sept anneaux, d'une **table avant plate et large** à la
   pointe arrière, anneaux décalés d'un demi-pas pour produire des facettes
   triangulaires et non des bandeaux. Désordre tiré d'une suite déterministe :
-  la pierre est irrégulière, mais c'est toujours la même pierre.
+  la pierre est irrégulière, mais c'est toujours la même pierre. Le cadre est
+  carré et la pierre en occupe 92 %.
 - **Réfraction** : le rayon réfracté est prolongé jusqu'au plan où se tient la
   photo, derrière la pierre. Chaque facette montre donc un autre morceau de
   l'image — d'où les répétitions du sujet sur les flancs.
@@ -78,21 +79,23 @@ réfractait pas. C'est la seule raison d'aller jusqu'au shader ici.
 
 ## Mesures
 
-**Bureau, fenêtre 1280 —** boîte 397 × 397 carrée, gemme de 776 à 1173 px,
-107 px de marge à droite, 43 px de marge dans sa colonne, aucun débordement de
-page. Silhouette : polygone fermé irrégulier, rayons de 65 à 90 % du
-demi-cadre, donc centrée et jamais rognée. Couverture 53 % de la toile.
+**Bureau, fenêtre 1265 —** cadre carré 484 × 484, pierre 445 × 445 soit 92 %
+du cadre, de 747 à 1203 px, entièrement dans l'écran, aucun débordement de
+page. Marques à 733 et 1217, dans la colonne.
 
-**Mobile 375 × 812 —** boîte 249 × 249, 76 % de la colonne, toile 498 × 498
-à deux pixels physiques par pixel CSS, entièrement dans l'écran, aucun
-débordement, `pan-y` actif.
+**Mobile 375 × 812 —** cadre 327 × 327, pierre 301 × 301 soit **80 % de la
+largeur d'écran**, toile 602 × 602 à deux pixels physiques par pixel CSS,
+entièrement dans l'écran, aucun débordement, `pan-y` actif. Sigle à 24 px du
+bord gauche, disque à 24 px du bord droit.
 
-**Repli —** avant activation : photo visible, toile masquée. Après : photo
-masquée, toile visible. Sans WebGL, sans `Save-Data`, en mouvement réduit ou
-si l'image échoue, rien ne se pose et la photo reste.
+**Repli —** sans la classe `.gemme` et sans les styles posés par le script :
+photo 327 × 327 dans un cadre 327 × 327, `object-fit: cover`, recadrée sur le
+visage, toile masquée, indication masquée. Sans WebGL, sans `Save-Data`, en
+mouvement réduit ou si l'image échoue, rien ne se pose et la photo reste.
 
-**Réseau —** aucune requête en échec ; `real-web.webp`, `films.js`, bannières
-et vidéos en 200/206.
+**Réseau —** aucune requête en échec. Les seuls 404 du journal sont
+`/favicon.ico`, requête par défaut du navigateur — la page déclare une icône en
+ligne, rien ne manque.
 
 ---
 
