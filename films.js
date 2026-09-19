@@ -13,7 +13,7 @@ window.FILMS_DATA = [
     "yt": "aVvPL-jePVM",
     "artist": "FullTrap & Skinny Bastard",
     "title": "Skinny Bastard's Flow (type shit)",
-    "sortie": "2000-09-02",
+    "sortie": "2026-09-02",
     "type": "Clip",
     "status": "published",
     "archive": false,
