@@ -314,3 +314,86 @@ Conséquences immédiates :
 - QA visuelle et performance sur vrai téléphone obligatoires avant intégration.
 
 Prochaine étape créative : faire de la v3 une expérience dont le **mouvement lui-même est reconnaissable comme BINKSFILMS**, sans repartir vers un nouveau LAB.
+
+
+---
+
+## CORRECTION DE CAP PROPRIÉTAIRE — conserver la structure du site existant
+
+Le propriétaire clarifie un point majeur : **la structure actuelle de `index.html` est déjà la bonne structure du site**.
+
+Ce qu'il veut conserver :
+- l'intro actuelle ;
+- l'arrivée sur l'accueil ;
+- la vidéo d'accueil plein écran ;
+- l'ordre et la logique générale des sections ;
+- la façon dont les films, la partie réalisateur et le contact sont organisés ;
+- la logique actuelle des fiches films et du contenu ;
+- l'architecture légère existante.
+
+Le problème initial n'était pas une mauvaise architecture. Il manquait surtout une **couche de Motion plus ambitieuse et mieux chorégraphiée**.
+
+### Conséquence
+
+`lab-experience.html` n'est plus candidat à remplacer la structure du site.
+Il devient une **réserve R&D** : shaders, logique d'intensité, réactions à la vitesse, matière, transitions — à réinjecter ponctuellement dans le site existant quand cela sert l'expérience.
+
+### Nouvelle mission prioritaire : MOTION RETROFIT
+
+Prendre `index.html` comme squelette de référence et proposer une version augmentée par le mouvement, sans casser sa structure.
+
+Le Motion doit surtout vivre dans :
+- les transitions entre les grandes sections ;
+- les changements d'échelle / profondeur au scroll ;
+- les entrées/sorties de médias ;
+- les mouvements de masques et de cadres ;
+- la relation texte / image / vidéo ;
+- les passages accueil → films → réalisateur → contact ;
+- la navigation dans les films ;
+- quelques moments signature plus forts, rares.
+
+### Ce que le propriétaire cherche
+
+Le niveau de sensation des sites contemporains très travaillés en scroll animation :
+- sticky sequences ;
+- scroll-driven transforms ;
+- scale / depth / perspective ;
+- pinning ponctuel ;
+- reveal par masque ;
+- layers qui se croisent ;
+- éléments qui continuent leur mouvement d'une section à l'autre ;
+- accélérations / ralentissements ;
+- parallax sophistiqué ;
+- transitions spatiales ;
+- 3D/WebGL ponctuels si cela renforce une scène.
+
+Mais : **ne pas transformer le site en démonstration 3D**.
+Le Motion doit amplifier le montage et la DA existants.
+
+### Chorégraphie de départ proposée
+
+1. **Intro : conserver.** Ne pas la réinventer.
+2. **Hero vidéo plein écran : conserver.** En faire le premier grand plan du site.
+3. **Premier scroll :** le hero ne disparaît pas simplement ; il se transforme / recule / se cadre / cède la place au catalogue avec une vraie transition spatiale.
+4. **Films :** la structure de contenu reste la même, mais le scroll doit produire profondeur, rythme, échelle et changements de focalisation plus ambitieux.
+5. **Réalisateur :** utiliser une séquence plus éditoriale / cinématique, avec image + texte qui se recomposent au scroll, sans casser la lecture.
+6. **Contact :** arrivée plus simple mais forte, comme une retombée après la montée d'intensité.
+7. **Fiches film :** garder une zone relativement calme ; réserver les motions forts à l'ouverture/fermeture et à précédent/suivant.
+
+### Important
+
+Le propriétaire ne demande pas « encore un shader » ni « encore une expérience complètement différente ».
+Il demande maintenant : **prendre le bon site qu'il avait déjà et le rendre exceptionnel par le mouvement.**
+
+Claude peut proposer plus puissant que cette direction, mais toute proposition doit préserver la structure existante sauf démonstration très claire qu'un changement améliore réellement l'expérience.
+
+### Méthode
+
+Avant toute grosse réécriture :
+- auditer les animations déjà présentes dans `index.html` ;
+- identifier ce qui est déjà bon et ne doit pas être touché ;
+- proposer 5 à 8 interventions Motion à fort impact maximum ;
+- prioriser les 2 ou 3 qui changent immédiatement la sensation du site ;
+- prototyper sur la structure réelle, pas dans un univers parallèle.
+
+Critère de réussite : le propriétaire doit reconnaître immédiatement **son site**, mais avoir la sensation qu'il est passé d'un bon portfolio à une expérience de direction artistique beaucoup plus haut niveau.
