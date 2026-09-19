@@ -290,3 +290,27 @@ Ne pas créer de nouveau LAB. Continuer sur lab-experience.html.
 3. Ajouter le routage/hash seulement si la navigation visuelle est validée.
 4. Comparer la fiche v3 à index.html pour repérer les dernières fonctions utiles manquantes avant toute intégration.
 5. Ne toucher à index.html qu'après validation visuelle et fonctionnelle du LAB.
+
+
+---
+
+## Décision propriétaire — Motion prioritaire
+
+Le propriétaire précise que le **Motion est très important** pour le site.
+
+Ce n'est plus un enrichissement secondaire : il devient un pilier DA au même niveau que l'image, la typographie et l'interaction.
+
+Référence désormais disponible :
+- `.claude/skills/motion-language/SKILL.md`
+
+Conséquences immédiates :
+- toute évolution de `lab-experience.html` doit être pensée comme une chorégraphie, pas une suite de blocs statiques ;
+- le mouvement doit avoir une cause, une inertie et une retombée ;
+- exploiter réellement vitesse, direction et engagement du scroll/swipe ;
+- utiliser le contraste calme / tension / rupture ;
+- autoriser des moments Motion très ambitieux, y compris WebGL, shader, compositing, 3D et transitions spatiales, s'ils sont justifiés ;
+- ne pas transformer la fiche film en fête foraine : créer des zones de silence ;
+- mobile est une surface Motion principale, pas un fallback ;
+- QA visuelle et performance sur vrai téléphone obligatoires avant intégration.
+
+Prochaine étape créative : faire de la v3 une expérience dont le **mouvement lui-même est reconnaissable comme BINKSFILMS**, sans repartir vers un nouveau LAB.
