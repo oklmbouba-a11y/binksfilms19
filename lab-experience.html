@@ -76,6 +76,30 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
 .f-row a:hover{color:var(--ivoire);border-color:var(--ivoire)}
 .f-note{margin-top:38px;max-width:34em;font-family:'Newsreader',Georgia,serif;font-size:19px;line-height:1.6;
   white-space:pre-line}
+.f-player{position:relative;aspect-ratio:16/9;margin:4px 0 38px;background:#050505;overflow:hidden}
+.f-player img,.f-player iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.f-player img{object-fit:cover}
+.f-player .play-film{position:absolute;inset:0;border:0;background:linear-gradient(rgba(0,0,0,.05),rgba(0,0,0,.36));
+  color:var(--ivoire);cursor:pointer;display:grid;place-items:center}
+.f-player .play-film span{display:grid;place-items:center;width:72px;height:72px;border-radius:50%;
+  border:1px solid rgba(237,235,230,.55);background:rgba(10,10,10,.48);font-size:20px;padding-left:4px}
+.f-sect{margin-top:58px}
+.f-lab{display:block;margin-bottom:14px;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gris)}
+.cc{position:relative;aspect-ratio:16/9;overflow:hidden;background:#050505;cursor:hold}
+.cc img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .28s ease}
+.cc img.b{opacity:0}.cc.hold img.b{opacity:1}
+.cc .hint{position:absolute;left:14px;bottom:12px;padding:7px 9px;background:rgba(10,10,10,.7);
+  font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(237,235,230,.8)}
+.cc-leg{margin-top:10px;color:var(--gris);font-size:13px}
+.bts{display:grid;grid-template-columns:1fr;gap:10px}
+.bts img{display:block;width:100%;height:auto}
+@media(min-width:700px){.bts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.f-nav{margin-top:72px;border-top:1px solid var(--ligne);display:grid;grid-template-columns:1fr 1fr}
+.f-nav button{min-width:0;padding:24px 0;border:0;background:none;color:var(--gris);font:inherit;cursor:pointer;text-align:left}
+.f-nav button:last-child{text-align:right}
+.f-nav .dir{display:block;font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gris2)}
+.f-nav .name{display:block;margin-top:7px;color:var(--ivoire);font-size:14px;overflow-wrap:anywhere}
+.f-nav button:hover .name{color:#fff}
 
 .porte{position:fixed;inset:0;z-index:6;display:grid;place-items:center;background:var(--noir);transition:opacity .7s ease}
 .porte.off{opacity:0;pointer-events:none}
@@ -116,9 +140,12 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:
 <div class="fiche" id="fiche" aria-hidden="true">
   <div class="fiche-inner">
     <button class="retour" id="retour" type="button"><span aria-hidden="true">&larr;</span> Retour au flux</button>
+    <div class="f-player" id="f-player" hidden></div>
     <h1 class="f-titre" id="f-titre"></h1>
     <div class="f-meta" id="f-meta"></div>
     <p class="f-note" id="f-note"></p>
+    <div id="f-extra"></div>
+    <nav class="f-nav" id="f-nav" aria-label="Autres films"></nav>
   </div>
 </div>
 
@@ -157,16 +184,29 @@ function enLigne(f){
   return !f.archive;
 }
 function annee(f){ return (f.sortie || "").slice(0,4); }
+function dateLongue(f){
+  if(!f.sortie) return "";
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(f.sortie);
+  if(!m) return f.sortie;
+  var mois = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+  return String(parseInt(m[3],10))+" "+mois[parseInt(m[2],10)-1]+" "+m[1];
+}
 
 var FILMS = (window.FILMS_DATA || []).filter(enLigne).map(function(f){
   var cred = (f.credits || []).filter(function(c){
     return c && c.length >= 2 && String(c[0]).trim() && String(c[1]).trim();
   });
   var pv = f.preview ? (typeof f.preview === "string" ? f.preview : f.preview.src) : "";
+  var cc = null;
+  if(f.contrechamp && f.contrechamp.a && f.contrechamp.b){
+    cc = {a:f.contrechamp.a, b:f.contrechamp.b, legende:f.contrechamp.legende || ""};
+  }
   return {
     slug:f.slug, yt:f.yt, artiste:f.artist || "", titre:f.title || "",
     sortie:f.sortie || "", type:f.type || "Clip", note:f.note || "",
-    poster:f.poster || "", preview:pv, credits:cred
+    lieu:f.lieu || "", tournage:f.tournage || "",
+    poster:f.poster || "", preview:pv, credits:cred,
+    contrechamp:cc, bts:(f.bts || []).filter(Boolean)
   };
 });
 
@@ -358,28 +398,100 @@ function ligne(label, valeur, lien){
 }
 
 var fiche=document.getElementById("fiche"), flux=document.getElementById("flux");
-function ouvrir(){
-  if(ficheOuverte || !N()) return;
-  var i=Math.max(0,Math.min(N()-1,Math.round(position)));
-  var f=FILMS[i];
-  cible=i; ficheOuverte=true; tir=0;
 
+function posterFilm(f){
+  return f.poster || ("https://i.ytimg.com/vi/"+f.yt+"/maxresdefault.jpg");
+}
+function remplirLecteur(f){
+  var p=document.getElementById("f-player"); p.textContent=""; p.hidden=false;
+  var im=document.createElement("img"); im.src=posterFilm(f); im.alt="";
+  im.onerror=function(){ im.onerror=null; im.src="https://i.ytimg.com/vi/"+f.yt+"/hqdefault.jpg"; };
+  var b=document.createElement("button"); b.type="button"; b.className="play-film";
+  b.setAttribute("aria-label","Lire "+[f.artiste,f.titre].filter(Boolean).join(" — "));
+  var ic=document.createElement("span"); ic.textContent="▶"; b.appendChild(ic);
+  b.addEventListener("click",function(){
+    var frame=document.createElement("iframe");
+    frame.src="https://www.youtube-nocookie.com/embed/"+encodeURIComponent(f.yt)+"?autoplay=1&rel=0&playsinline=1";
+    frame.title=[f.artiste,f.titre].filter(Boolean).join(" — ");
+    frame.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+    frame.allowFullscreen=true;
+    p.textContent=""; p.appendChild(frame);
+  });
+  p.appendChild(im); p.appendChild(b);
+}
+function remplirExtras(f){
+  var x=document.getElementById("f-extra"); x.textContent="";
+  if(f.contrechamp){
+    var s=document.createElement("section"); s.className="f-sect";
+    var lab=document.createElement("span"); lab.className="f-lab"; lab.textContent="Contre-champ"; s.appendChild(lab);
+    var cc=document.createElement("div"); cc.className="cc"; cc.tabIndex=0; cc.setAttribute("role","button");
+    cc.setAttribute("aria-label","Maintenir pour voir le contre-champ");
+    var a=document.createElement("img"); a.src=f.contrechamp.a; a.alt="";
+    var b=document.createElement("img"); b.src=f.contrechamp.b; b.alt="Derrière la caméra"; b.className="b";
+    var hint=document.createElement("span"); hint.className="hint"; hint.textContent="Maintenir pour voir derrière";
+    cc.appendChild(a); cc.appendChild(b); cc.appendChild(hint); s.appendChild(cc);
+    var on=function(e){ if(e) e.preventDefault(); cc.classList.add("hold"); };
+    var off=function(){ cc.classList.remove("hold"); };
+    cc.addEventListener("pointerdown",on); cc.addEventListener("pointerup",off); cc.addEventListener("pointerleave",off);
+    cc.addEventListener("keydown",function(e){ if(e.key===" "||e.key==="Enter") on(e); });
+    cc.addEventListener("keyup",off);
+    if(f.contrechamp.legende){
+      var l=document.createElement("p"); l.className="cc-leg"; l.textContent=f.contrechamp.legende; s.appendChild(l);
+    }
+    x.appendChild(s);
+  }
+  if(f.bts && f.bts.length){
+    var t=document.createElement("section"); t.className="f-sect";
+    var tl=document.createElement("span"); tl.className="f-lab"; tl.textContent="Tournage"; t.appendChild(tl);
+    var g=document.createElement("div"); g.className="bts";
+    f.bts.forEach(function(src){
+      var im=document.createElement("img"); im.src=src; im.alt="Image de tournage"; im.loading="lazy";
+      im.onerror=function(){ im.remove(); }; g.appendChild(im);
+    });
+    t.appendChild(g); x.appendChild(t);
+  }
+}
+function remplirNav(i){
+  var nav=document.getElementById("f-nav"); nav.textContent="";
+  if(N()<2) return;
+  [{label:"Précédent",idx:(i-1+N())%N()},{label:"Suivant",idx:(i+1)%N()}].forEach(function(o){
+    var f=FILMS[o.idx], b=document.createElement("button"); b.type="button";
+    var d=document.createElement("span"); d.className="dir"; d.textContent=o.label;
+    var n=document.createElement("span"); n.className="name"; n.textContent=[f.artiste,f.titre].filter(Boolean).join(" — ");
+    b.appendChild(d); b.appendChild(n);
+    b.addEventListener("click",function(){
+      position=o.idx; cible=o.idx; tir=0; remplirFiche(o.idx); fiche.scrollTo(0,0);
+    });
+    nav.appendChild(b);
+  });
+}
+function remplirFiche(i){
+  var f=FILMS[i]; if(!f) return;
+  remplirLecteur(f);
   var h=document.getElementById("f-titre"); h.textContent="";
   var sa=document.createElement("span"); sa.className="a"; sa.textContent=f.artiste;
   h.appendChild(sa); h.appendChild(document.createTextNode(" — "+f.titre));
 
   var m=document.getElementById("f-meta"); m.textContent="";
   f.credits.forEach(function(c){ m.appendChild(ligne(c[0], c[1])); });
-  if(f.sortie) m.appendChild(ligne("Sortie", f.sortie));
+  if(f.lieu) m.appendChild(ligne("Lieu", f.lieu));
+  if(f.tournage) m.appendChild(ligne("Tournage", f.tournage));
+  if(f.sortie) m.appendChild(ligne("Sortie", dateLongue(f)));
   m.appendChild(ligne("Type", f.type));
   m.appendChild(ligne("Voir", "YouTube ↗", "https://www.youtube.com/watch?v="+f.yt));
 
-  var n=document.getElementById("f-note");
-  n.textContent = f.note || ""; n.style.display = f.note ? "" : "none";
-
+  var note=document.getElementById("f-note");
+  note.textContent=f.note || ""; note.style.display=f.note ? "" : "none";
+  remplirExtras(f); remplirNav(i);
+}
+function ouvrir(){
+  if(ficheOuverte || !N()) return;
+  var i=Math.max(0,Math.min(N()-1,Math.round(position)));
+  cible=i; ficheOuverte=true; tir=0;
+  remplirFiche(i);
   fiche.classList.add("on"); fiche.setAttribute("aria-hidden","false");
   flux.classList.add("retire");
-  arbitrer(i);                 /* dans le clic : il porte l'autorisation de lecture */
+  arbitrer(i);
   document.getElementById("retour").focus();
 }
 function fermer(){
@@ -387,6 +499,7 @@ function fermer(){
   ficheOuverte=false;
   fiche.classList.remove("on"); fiche.setAttribute("aria-hidden","true");
   flux.classList.remove("retire"); fiche.scrollTop=0;
+  document.getElementById("f-player").textContent="";
   arbitrer(Math.max(0,Math.min(Math.max(N()-2,0),Math.floor(position))));
   document.getElementById("ouvrir").focus();
 }
