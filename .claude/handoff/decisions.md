@@ -538,3 +538,36 @@ défilement, et le déplacement se fait par transformation seule.
 Les ancres sont reprises au chargement, **quand les polices sont prêtes**, à
 chaque retour de la section à l'écran, et au redimensionnement. La mesure
 faite avant l'arrivée des polices était fausse de douze pixels.
+
+---
+
+## D-030 — L'aspiration est pilotée par la course de défilement, pas par le temps
+
+Le brief demandait « environ 300–500 ms » pour la distorsion, **et** une
+animation qui suit le défilement de façon réversible. Les deux ne peuvent pas
+être vraies ensemble : une animation liée au défilement a la durée que
+l'utilisateur lui donne.
+
+La contrainte explicite l'a emporté. Tout — trajectoire, rotation, taille,
+déformation, vortex du bouton — est fonction de `p`, la position dans la course
+de défilement, et de rien d'autre. Remonter rembobine exactement.
+
+**Conséquence utile :** la déformation du bouton suit une cloche `sin(p·π)`
+plutôt qu'une minuterie. Elle monte, culmine quand la pierre disparaît, et
+retombe à zéro. Le bouton retrouve donc un état parfaitement propre **sans
+qu'aucun code de remise à zéro n'existe** — il n'y a rien qui puisse rester
+coincé.
+
+---
+
+## D-031 — La course se mesure en défilement atteignable, pas en position d'écran
+
+Le contact est la dernière section. Si la page s'arrête avant que le bouton
+n'atteigne le milieu de l'écran, une animation définie par « le bouton est
+centré » **ne se termine jamais** : la pierre reste suspendue à mi-course.
+
+La fin de course est donc bornée au dernier pixel de défilement réellement
+atteignable (`scrollHeight - innerHeight`). L'aspiration s'achève exactement au
+bas de la page.
+
+À reprendre au redimensionnement et quand la hauteur du document change.

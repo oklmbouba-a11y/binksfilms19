@@ -285,3 +285,32 @@ et confirme les trois comportements listés dans `next-task.md`.
 
 Tant que ce n'est pas fait, **ne pas considérer le bug tactile comme corrigé**,
 quelle que soit la qualité du raisonnement sur le code.
+
+---
+
+## B-014 — La traînée floute la pierre, mais ne strie pas le chemin
+
+**Ouvert le 19/09/2026.**
+
+Le brief demande que la traînée « suive la courbe de déplacement ». Ce qui est
+livré floute réellement la pierre — rotation, mise à l'échelle, déformation —
+par rétroaction d'image, sans aucune copie nette. **Mais elle ne laisse pas de
+traînée le long du trajet à l'écran.**
+
+**Cause :** la toile est petite et voyage avec la pierre. Dans son repère, la
+translation à travers l'écran n'existe pas — seul ce qui bouge *à l'intérieur*
+de la toile laisse une trace.
+
+**Ce qu'il faudrait :** une toile fixe plein écran, la pierre positionnée dans
+la projection plutôt que par transformation CSS, et le tampon de rétroaction en
+coordonnées d'écran. La déformation devrait alors passer du CSS au shader.
+
+**Pourquoi ce n'est pas fait :** le coût de ce changement est un remplissage
+plein écran, deux passes par image. C'est précisément la dépense que contraint
+l'exigence des 60 images par seconde — et c'est la seule chose que ce poste ne
+peut pas mesurer, le volet d'aperçu étant bridé quand il est masqué. Livrer une
+version plus lourde sans pouvoir en vérifier le coût serait le mauvais choix.
+
+**Atténuation prévue si le propriétaire le demande :** tampons de rétroaction à
+résolution réduite (la traînée est floue de toute façon), plafond de pixels, et
+mesure sur appareil réel avant de garder.

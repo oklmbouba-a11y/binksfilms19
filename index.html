@@ -363,6 +363,37 @@ nav a:hover{color:var(--ivoire)}
 #binks figure.gemme canvas{display:block;width:100%;height:100%}
 #binks figure.gemme .cadre{background:transparent}
 
+/* ---------- l'aspiration ----------
+   Le bouton devient une porte. Rien de son dessin ne change : on lui
+   ajoute un puits — un creux sombre qui s'ouvre sous le point d'entree —
+   et une deformation tres breve de sa surface et de son texte, tiree
+   vers ce point puis rendue.
+
+   Tout est commande par la position dans le defilement, donc tout se
+   rembobine si l'on remonte. La deformation suit une cloche : elle
+   monte, culmine quand la pierre disparait, et redescend a zero. Le
+   bouton retrouve donc un etat parfaitement propre, sans qu'aucune
+   minuterie n'ait a l'y ramener. */
+.gros-cta{position:relative;overflow:hidden;transform-origin:50% 50%;will-change:transform}
+/* L'enveloppe du texte doit rejouer la mise en page qu'elle remplace :
+   le bouton est un flex a gouttiere, et un simple bloc en ligne avalait
+   cette gouttiere — le bouton perdait trente pixels. Elle herite donc de
+   la gouttiere et de la repartition, y compris de l'ecartement impose sur
+   telephone. */
+.gros-cta .aspire{
+  display:inline-flex;align-items:center;
+  gap:var(--ecart);justify-content:inherit;flex:1 1 auto;
+  will-change:transform;
+}
+.gros-cta .puits{
+  position:absolute;left:50%;top:50%;width:230%;aspect-ratio:1;
+  pointer-events:none;opacity:0;
+  background:radial-gradient(circle closest-side,
+    rgba(10,10,10,.92) 0%, rgba(10,10,10,.55) 26%,
+    rgba(10,10,10,.18) 48%, rgba(10,10,10,0) 68%);
+  will-change:transform,opacity;
+}
+
 /* ---------- le vol ----------
    La pierre quitte le flux des qu'elle est montee et passe dans une
    couche fixe : c'est ce qui lui permet de descendre avec le defilement
@@ -474,7 +505,8 @@ footer .ailleurs{margin-top:30px;border:0;padding-top:0;flex-direction:row;gap:2
 /* les deux entrées : parler d'un projet / questions */
 .entrees{margin-top:44px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
 .gros-cta{
-  display:inline-flex;align-items:center;gap:18px;
+  --ecart:18px;
+  display:inline-flex;align-items:center;gap:var(--ecart);
   background:var(--ivoire);color:var(--noir);border:0;font-family:inherit;
   font-size:clamp(13px,1.7vw,16px);font-weight:800;font-stretch:110%;
   letter-spacing:.14em;text-transform:uppercase;
@@ -2605,7 +2637,11 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        quatre fois le remplissage pour une nettete qu'on ne voit plus */
     dpr = Math.min(devicePixelRatio || 1, 2);
     var n = Math.round(cote * dpr);
-    if(cnv.width !== n){ cnv.width = n; cnv.height = n; }
+    /* Les cibles de rendu n'existent pas encore au tout premier appel :
+       celui-ci precede la construction des programmes. On ne les touche
+       que lorsqu'elles sont la. */
+    if(cnv.width !== n){ cnv.width = n; cnv.height = n; if(cibles) refaireCibles(n, n); }
+    else if(cibles && !cibles[0]) refaireCibles(n, n);
     gl.viewport(0, 0, cnv.width, cnv.height);
     /* la couche de vol suit la taille de la pierre, sinon la mise a
        l'echelle du deplacement part d'une base fausse */
@@ -2728,6 +2764,8 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     "uniform vec2 uFen;",      /* la fenetre de photo, en unites de pierre */
     "uniform vec2 uCentre;",
     "uniform float uPlan;",
+    "uniform float uPincement;",   /* l'image se contracte quand la pierre est aspiree */
+    "uniform float uDisp;",
     /* Le rayon refracte est prolonge jusqu'au plan ou se tient la photo,
        derriere la pierre. C'est ce trajet qui fait que chaque facette
        montre un autre morceau de l'image, et que certaines ne montrent
@@ -2737,6 +2775,10 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     "  float t = (uPlan - ro.z) / rd.z;",
     "  vec2 q = ro.xy + rd.xy * t;",
     "  vec2 uv = q / uFen + 0.5 + uCentre;",
+    /* Le pincement : au moment de l'aspiration l'image portee par la
+       pierre se contracte vers son centre. Ce n'est pas un ecrasement de
+       la boite, c'est l'optique elle-meme qui se resserre. */
+    "  uv = 0.5 + (uv - 0.5) * (1.0 - uPincement * 0.55);",
     /* Un rayon qui sort de l'image ne renvoie pas du noir absolu : il
        renvoie le bord, tres assombri. La pierre garde ses facettes
        sourdes sans tomber dans le trou noir. */
@@ -2752,10 +2794,11 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        et c'est elle qui met de la couleur sur les aretes sans qu'on ait
        a en peindre. Tres retenue — au-dela on tombe dans l'arc-en-ciel. */
     "  float e = 1.0 / 1.62;",
+    "  float g = 0.016 + uDisp * 0.05;",   /* l'ecart s'ouvre avec la vitesse */
     "  vec3 c = vec3(",
-    "    vers(vP, refract(V, N, e * 0.984)).r,",
+    "    vers(vP, refract(V, N, e * (1.0 - g))).r,",
     "    vers(vP, refract(V, N, e)).g,",
-    "    vers(vP, refract(V, N, e * 1.016)).b);",
+    "    vers(vP, refract(V, N, e * (1.0 + g))).b);",
     /* Fresnel : les facettes vues de biais renvoient la lumiere au lieu
        de laisser passer l'image. C'est ce qui dessine le contour de la
        pierre sans qu'aucun trait ne soit trace. */
@@ -2783,20 +2826,99 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   if(!gl.getProgramParameter(prg, gl.LINK_STATUS)) return;
   gl.useProgram(prg);
 
-  function tampon(data, loc, n){
+  function tampon(data){
     var b = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, b);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
-    var l = gl.getAttribLocation(prg, loc);
-    gl.enableVertexAttribArray(l);
-    gl.vertexAttribPointer(l, n, gl.FLOAT, false, 0, 0);
+    return b;
   }
-  tampon(pos, "aPos", 3);
-  tampon(nor, "aNor", 3);
+  var bufPos = tampon(pos), bufNor = tampon(nor);
+  var locPos = gl.getAttribLocation(prg, "aPos"),
+      locNor = gl.getAttribLocation(prg, "aNor");
+  function lierPierre(){
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufPos);
+    gl.enableVertexAttribArray(locPos);
+    gl.vertexAttribPointer(locPos, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufNor);
+    gl.enableVertexAttribArray(locNor);
+    gl.vertexAttribPointer(locNor, 3, gl.FLOAT, false, 0, 0);
+  }
+
+  /* ---------- la trainee ----------
+     Pas de copies successives de la pierre : ce sont elles qui font
+     l'effet pelicule bon marche. On garde l'image precedente, on
+     l'affaiblit, et on redessine par-dessus. La trace suit donc
+     exactement la courbe parcourue et s'eteint d'elle-meme.
+
+     L'ecart chromatique est applique a la composition finale, le long du
+     deplacement, et seulement quand la pierre prend de la vitesse. */
+  var prgB = gl.createProgram();
+  var vsB = compiler(gl.VERTEX_SHADER, [
+    "attribute vec2 aQ;","varying vec2 vU;",
+    "void main(){ vU = aQ * 0.5 + 0.5; gl_Position = vec4(aQ, 0.0, 1.0); }"
+  ].join("\n"));
+  var fsB = compiler(gl.FRAGMENT_SHADER, [
+    "precision mediump float;",
+    "varying vec2 vU;","uniform sampler2D uT;",
+    "uniform float uFade;","uniform vec2 uAb;",
+    "void main(){",
+    "  if(uAb.x == 0.0 && uAb.y == 0.0){ gl_FragColor = texture2D(uT, vU) * uFade; return; }",
+    "  vec4 a = texture2D(uT, vU + uAb);",
+    "  vec4 b = texture2D(uT, vU);",
+    "  vec4 d = texture2D(uT, vU - uAb);",
+    "  gl_FragColor = vec4(a.r, b.g, d.b, max(max(a.a, b.a), d.a)) * uFade;",
+    "}"
+  ].join("\n"));
+  if(!vsB || !fsB) return;
+  gl.attachShader(prgB, vsB); gl.attachShader(prgB, fsB); gl.linkProgram(prgB);
+  if(!gl.getProgramParameter(prgB, gl.LINK_STATUS)) return;
+  var bufQ = tampon([-1,-1, 3,-1, -1,3]);
+  var locQ = gl.getAttribLocation(prgB, "aQ");
+  var uBT = gl.getUniformLocation(prgB, "uT"),
+      uBFade = gl.getUniformLocation(prgB, "uFade"),
+      uBAb = gl.getUniformLocation(prgB, "uAb");
+  function lierQuad(){
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufQ);
+    gl.enableVertexAttribArray(locQ);
+    gl.vertexAttribPointer(locQ, 2, gl.FLOAT, false, 0, 0);
+  }
+
+  var cibles = [null, null], iCible = 0;
+  function creerCible(w, h){
+    var t = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    var f = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, f);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, t, 0);
+    var z = gl.createRenderbuffer();
+    gl.bindRenderbuffer(gl.RENDERBUFFER, z);
+    gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, w, h);
+    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, z);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    return {t:t, f:f, z:z, w:w, h:h};
+  }
+  function refaireCibles(w, h){
+    for(var i = 0; i < 2; i++){
+      if(cibles[i]){
+        gl.deleteFramebuffer(cibles[i].f);
+        gl.deleteTexture(cibles[i].t);
+        gl.deleteRenderbuffer(cibles[i].z);
+      }
+      cibles[i] = creerCible(w, h);
+    }
+  }
+  refaireCibles(cnv.width, cnv.height);
 
   var uMVP = gl.getUniformLocation(prg, "uMVP"),
       uR   = gl.getUniformLocation(prg, "uR"),
-      uCam = gl.getUniformLocation(prg, "uCam");
+      uCam = gl.getUniformLocation(prg, "uCam"),
+      uPin = gl.getUniformLocation(prg, "uPincement"),
+      uDsp = gl.getUniformLocation(prg, "uDisp");
   gl.uniform3f(uCam, 0, 0, 4.6);
   /* La fenetre de photo, en unites de pierre. Plus elle est large,
      plus l'image est grossie dans la pierre et moins les rayons
@@ -2999,6 +3121,9 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     biais = Math.max(-1, Math.min(1, d));
   }
   mesurerBiais();
+  /* La place suit le defilement meme si la boucle de rendu est a
+     l'arret — onglet en arriere-plan, image deja rendue. Elle ne lit
+     aucune mise en page : deux ancres gardees et scrollY suffisent. */
   addEventListener("scroll", function(){ mesurerBiais(); placer(); }, {passive:true});
 
   /* ---------- les matrices ----------
@@ -3035,18 +3160,44 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   /* ---------- la boucle, et ses bornes ----------
      Elle ne demarre que lorsque la section est a l'ecran, l'onglet au
      premier plan et la matiere chargee. Elle s'arrete reellement sinon. */
-  /* ---------- la descente vers le contact ----------
-     Deux ancres : le cadre d'origine, et le bloc « Parler d'un projet ».
-     Leurs positions absolues sont mesurees une fois, puis converties en
-     position d'ecran a chaque defilement : aucune lecture de mise en page
-     n'est refaite pendant qu'on defile.
+  /* ---------- l'aspiration ----------
+     La pierre ne tombe pas en ligne droite dans le bouton : elle suit
+     une courbe de Bezier dont le point de commande est pose de cote,
+     plus un reste de spirale qui s'eteint en arrivant. Elle part
+     lentement et accelere — la force qui l'attire se fait sentir tard.
 
-     Le deplacement se fait par transformation seule — jamais par largeur
-     ni hauteur — pour que le defilement n'ait pas a recalculer la page. */
-  var cible = document.querySelector("#contact .entrees");
-  var vol = null;
-  var aX = 0, aY = 0, bX = 0, bY = 0, tailleB = 0;
+     Tout est fonction de la position dans le defilement, et de rien
+     d'autre : remonter rembobine l'aspiration exactement, la pierre
+     ressort du bouton et remonte sa courbe a l'envers.
 
+     Les deux ancres sont mesurees une fois, puis converties en position
+     d'ecran a chaque image : aucune lecture de mise en page pendant le
+     defilement, et le deplacement se fait par translate3d et scale
+     seuls, donc sans recalcul de la page. */
+  var cible = document.querySelector("#contact .gros-cta");
+  var vol = null, puits = null, aspire = null;
+  var aX = 0, aY = 0, bX = 0, bY = 0;
+
+  /* etat partage avec le rendu */
+  var pincement = 0, ecartRVB = 0, trainee = 0, dirX = 0, dirY = 1;
+  var descRx = 0, descRy = 0;
+  var pxPrec = null, pyPrec = 0, tPrecP = 0, vLisse = 0, dernierP = 0;
+
+  /* Le bouton recoit son puits et une enveloppe pour son texte. Son
+     dessin ne change pas : ni sa couleur, ni sa taille, ni sa fonte, ni
+     son gestionnaire de clic. */
+  if(cible){
+    aspire = document.createElement("span");
+    aspire.className = "aspire";
+    while(cible.firstChild) aspire.appendChild(cible.firstChild);
+    cible.appendChild(aspire);
+    puits = document.createElement("span");
+    puits.className = "puits";
+    puits.setAttribute("aria-hidden", "true");
+    cible.appendChild(puits);
+  }
+
+  var sDebut = 0, sFin = 1;
   function mesurer(){
     if(!cible || !vol) return;
     var rc = cadre.getBoundingClientRect();
@@ -3055,30 +3206,128 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     var rb = cible.getBoundingClientRect();
     bX = rb.left + rb.width/2 + scrollX;
     bY = rb.top  + rb.height/2 + scrollY;
-    /* elle arrive plus petite : elle entre dans la section, elle ne
-       l'ecrase pas */
-    tailleB = Math.min(rb.width * 0.95, cote * 0.78);
+
+    /* La course se mesure en defilement, pas en position d'ecran. Le
+       contact est la derniere section : si la page s'arrete avant que le
+       bouton n'atteigne le milieu de l'ecran, l'aspiration ne se
+       terminerait jamais et la pierre resterait suspendue. On borne donc
+       la fin de course au dernier pixel reellement atteignable. */
+    var vh = innerHeight;
+    var maxi = Math.max(0, document.documentElement.scrollHeight - vh);
+    sDebut = bY - vh;                    /* le bouton entre par le bas */
+    sFin   = Math.min(maxi, bY - vh * 0.5);
+    if(sFin - sDebut < 60) sFin = sDebut + 60;
   }
 
   function placer(){
     if(!vol) return;
-    var vh = innerHeight;
-    /* p vaut 0 quand le bloc contact touche le bas de l'ecran, et 1
-       quand il est centre : la pierre est donc exactement arrivee au
-       moment ou l'on regarde « Parler d'un projet ». */
-    var p = (vh - (bY - scrollY)) / (vh * 0.5);
+    var vh = innerHeight, vw = document.documentElement.clientWidth;
+
+    /* p : 0 quand le bouton entre par le bas, 1 au bout de la course.
+       C'est la seule source de toute l'animation, et c'est pour cela
+       qu'elle se rembobine exactement quand on remonte. */
+    var p = (scrollY - sDebut) / (sFin - sDebut);
     p = p < 0 ? 0 : (p > 1 ? 1 : p);
-    var e = p * p * (3 - 2 * p);          /* depart et arrivee adoucis */
-    var cx = (aX + (bX - aX) * e) - scrollX;
-    var cy = (aY + (bY - aY) * e) - scrollY;
-    var k  = (cote + (tailleB - cote) * e) / cote;
+
+    /* lente d'abord, puis de plus en plus vite : l'attraction ne se
+       manifeste qu'a l'approche */
+    var e = Math.pow(p, 2.15);
+
+    var ax = aX - scrollX, ay = aY - scrollY;
+    var bx = bX - scrollX, by = bY - scrollY;
+    var dx = bx - ax, dy = by - ay;
+
+    /* La courbe se creuse LATERALEMENT, jamais vers le haut : une
+       deviation perpendiculaire faisait remonter la pierre avant qu'elle
+       ne descende, ce qui contredisait le geste. Elle s'ecarte donc du
+       cote oppose au bouton, puis revient — et sa hauteur ne fait que
+       descendre. */
+    var sens = (bx < ax) ? 1 : -1;
+    var lat = Math.min(Math.abs(dy) * 0.30, vw * 0.16, 190) * sens;
+    var cx0 = (ax + bx) / 2 + lat;
+    var cy0 = (ay + by) / 2;
+
+    var u = 1 - e;
+    var x = u*u*ax + 2*u*e*cx0 + e*e*bx;
+    var y = u*u*ay + 2*u*e*cy0 + e*e*by;
+    /* le reste de spirale : une oscillation laterale qui s'eteint en
+       arrivant, plus un souffle vertical minuscule */
+    x += Math.sin(e * Math.PI * 2.3) * lat * 0.17 * (1 - e);
+    y += Math.sin(e * Math.PI * 1.6) * 9 * (1 - e);
+
+    /* elle part grosse et se reduit tout du long, puis disparait */
+    var k = Math.pow(1 - e, 0.72);
+    var t = cote * k;
+
+    /* elle reste toujours entierement a l'ecran */
+    var marge = 6 + t/2;
+    if(x < marge) x = marge;
+    if(x > vw - marge) x = vw - marge;
+
+    /* la vitesse reelle a l'ecran, lissee : c'est elle qui commande la
+       trainee et l'ecart chromatique, jamais une valeur devinee */
+    var now = performance.now();
+    if(pxPrec === null){ pxPrec = x; pyPrec = y; tPrecP = now - 16; }
+    var dt = Math.min(0.2, Math.max(0.008, (now - tPrecP) / 1000));
+    tPrecP = now;
+    var vx2 = x - pxPrec, vy2 = y - pyPrec;
+    pxPrec = x; pyPrec = y;
+    var d2 = Math.sqrt(vx2*vx2 + vy2*vy2);
+    /* En pixels par SECONDE : cette fonction peut etre appelee au
+       defilement comme a chaque image, et la trainee ne doit pas
+       dependre du nombre d'appels. */
+    var v = d2 / dt;
+    vLisse += (v - vLisse) * Math.min(1, dt * 9);
+    if(d2 > 0.5){ dirX = vx2 / d2; dirY = vy2 / d2; }
+
+    var rapide = Math.min(1, vLisse / 900);
+    trainee  = p > 0 && p < 1 ? rapide * 0.86 : 0;
+    ecartRVB = rapide;
+
+    /* La deformation occupe les treize derniers pour cent de la COURSE,
+       pas de la courbe accelerée : rapportee a e, elle ne durait que six
+       pour cent du defilement et arrivait comme un a-coup. */
+    var dfm = (p - 0.87) / 0.13;
+    dfm = dfm < 0 ? 0 : (dfm > 1 ? 1 : dfm);
+    /* une cloche : elle monte, culmine quand la pierre disparait, et
+       redescend a zero. Le bouton revient donc propre tout seul. */
+    var asp = Math.sin(dfm * Math.PI);
+
+    pincement = dfm;
+    /* elle tourne sur elle-meme pendant toute la descente, et plus vite
+       quand elle est happee */
+    descRy = e * 300 + dfm * 160;
+    descRx = e * 84;
+
+    /* etirement dans l'axe du deplacement, plus une torsion */
+    var ang = Math.atan2(dirY, dirX) * 180 / Math.PI;
+    var sx = 1 + 0.6 * dfm, sy = 1 - 0.36 * dfm;
+
     vol.style.transform =
-      "translate(" + (cx - cote/2).toFixed(1) + "px," + (cy - cote/2).toFixed(1) + "px)" +
-      " scale(" + k.toFixed(4) + ")";
-    /* elle s'efface en arrivant : le texte du contact garde la parole */
-    vol.style.opacity = (1 - e * 0.5).toFixed(3);
-    /* et elle cesse de capter le geste avant de recouvrir le bouton */
-    vol.style.pointerEvents = e > 0.3 ? "none" : "";
+      "translate3d(" + (x - cote/2).toFixed(1) + "px," + (y - cote/2).toFixed(1) + "px,0)" +
+      " scale(" + k.toFixed(4) + ")" +
+      " rotate(" + ang.toFixed(1) + "deg)" +
+      " scale(" + sx.toFixed(3) + "," + sy.toFixed(3) + ")" +
+      " rotate(" + (-ang + dfm * 24).toFixed(1) + "deg)";
+    /* sur la fin elle passe devant le texte : c'est la que se joue
+       l'aspiration, et elle ne cache plus rien puisqu'elle n'est plus
+       qu'un point */
+    vol.style.zIndex = dfm > 0 ? 8 : 6;
+    vol.style.visibility = (p >= 1 || k < 0.004) ? "hidden" : "";
+    vol.style.pointerEvents = e > 0.25 ? "none" : "";
+
+    /* ---------- le bouton, porte du projet ---------- */
+    if(puits){
+      puits.style.opacity = (asp * 0.95).toFixed(3);
+      puits.style.transform =
+        "translate3d(-50%,-50%,0) scale(" + (0.18 + asp * 0.95).toFixed(3) + ")";
+      cible.style.transform =
+        "scale(" + (1 + 0.03 * asp).toFixed(4) + "," + (1 - 0.042 * asp).toFixed(4) + ")";
+      aspire.style.transform =
+        "translate3d(" + (-3.2 * asp).toFixed(2) + "px,0,0)" +
+        " scale(" + (1 - 0.022 * asp).toFixed(4) + ")";
+    }
+    dernierP = p;
   }
   addEventListener("load", function(){ mesurer(); placer(); });
   /* Les polices arrivent apres le chargement et changent la taille des
@@ -3088,14 +3337,47 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     document.fonts.ready.then(function(){ mesurer(); placer(); });
 
   function dessiner(ax, ay){
+    if(!cibles[0]) return;
+    var A = cibles[iCible], B = cibles[1 - iCible];
+
+    /* 1. la trace : l'image precedente, affaiblie */
+    gl.bindFramebuffer(gl.FRAMEBUFFER, A.f);
+    gl.viewport(0, 0, A.w, A.h);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    if(trainee > 0.02){
+      gl.useProgram(prgB); lierQuad();
+      gl.disable(gl.DEPTH_TEST); gl.disable(gl.BLEND);
+      gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, B.t);
+      gl.uniform1i(uBT, 0); gl.uniform1f(uBFade, trainee); gl.uniform2f(uBAb, 0, 0);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+
+    /* 2. la pierre, par-dessus */
     matrices(ax, ay);
-    gl.useProgram(prg);
+    gl.useProgram(prg); lierPierre();
+    gl.enable(gl.DEPTH_TEST); gl.enable(gl.BLEND);
     gl.uniformMatrix4fv(uMVP, false, mvp);
     gl.uniformMatrix3fv(uR, false, rot);
+    gl.uniform1f(uPin, pincement);
+    gl.uniform1f(uDsp, ecartRVB);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, tex);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, nbSommets);
+
+    /* 3. a l'ecran, avec l'ecart chromatique le long du deplacement */
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, cnv.width, cnv.height);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(prgB); lierQuad();
+    gl.disable(gl.DEPTH_TEST); gl.disable(gl.BLEND);
+    gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, A.t);
+    gl.uniform1i(uBT, 0); gl.uniform1f(uBFade, 1);
+    gl.uniform2f(uBAb, -dirX * ecartRVB * 0.012, dirY * ecartRVB * 0.012);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    iCible = 1 - iCible;
   }
 
   var visible = false, anime = false, precedent = 0;
@@ -3172,7 +3454,12 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     visX += (incX - visX) * Math.min(1, 6 * dt);
     visY += (incY - visY) * Math.min(1, 6 * dt);
 
-    dessiner(rx + visX + respX, ry + visY + respY + biais * 4 * repos);
+    /* la place a l'ecran est recalculee a chaque image, et non au
+       defilement : c'est ce qui rend la descente continue au lieu de
+       saccadee, et c'est gratuit — aucune lecture de mise en page */
+    placer();
+    dessiner(rx + visX + respX + descRx,
+             ry + visY + respY + biais * 4 * repos + descRy);
     requestAnimationFrame(boucle);
   }
 })();
