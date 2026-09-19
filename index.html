@@ -3175,7 +3175,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
      defilement, et le deplacement se fait par translate3d et scale
      seuls, donc sans recalcul de la page. */
   var cible = document.querySelector("#contact .gros-cta");
-  var vol = null, puits = null, aspire = null;
+  var vol = null, puits = null, aspire = null, deplace = null;
   var aX = 0, aY = 0, bX = 0, bY = 0;
 
   /* etat partage avec le rendu */
@@ -3195,6 +3195,26 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     puits.className = "puits";
     puits.setAttribute("aria-hidden", "true");
     cible.appendChild(puits);
+
+    /* La surface du bouton doit se tordre, pas seulement se comprimer.
+       Un deplacement de pixels pilote par un bruit donne cette matiere
+       liquide qu'aucune mise a l'echelle ne rend. Le filtre n'est pose
+       sur le bouton que pendant l'aspiration : au repos il n'existe pas,
+       donc il ne coute rien et ne change rien au rendu du texte. */
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("aria-hidden", "true");
+    svg.setAttribute("focusable", "false");
+    svg.style.cssText = "position:absolute;width:0;height:0;overflow:hidden";
+    svg.innerHTML =
+      '<filter id="binks-liquide" x="-30%" y="-60%" width="160%" height="220%"' +
+      ' color-interpolation-filters="sRGB">' +
+      '<feTurbulence type="fractalNoise" baseFrequency="0.011 0.042"' +
+      ' numOctaves="2" seed="7" result="bruit"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="bruit" scale="0"' +
+      ' xChannelSelector="R" yChannelSelector="G"/>' +
+      '</filter>';
+    document.body.appendChild(svg);
+    deplace = svg.querySelector("feDisplacementMap");
   }
 
   var sDebut = 0, sFin = 1;
@@ -3214,9 +3234,21 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        la fin de course au dernier pixel reellement atteignable. */
     var vh = innerHeight;
     var maxi = Math.max(0, document.documentElement.scrollHeight - vh);
-    sDebut = bY - vh;                    /* le bouton entre par le bas */
+
+    /* La descente ne commence pas quand le bouton pointe : elle commence
+       des qu'on a depasse le texte de la section. Attendre le bouton
+       faisait tenir la pierre en place pendant tout le defilement, puis
+       tout se jouait d'un coup. */
+    var txt = document.querySelector("#binks .clos") ||
+              document.querySelector("#binks .txt");
+    var depart = bY - vh;
+    if(txt){
+      var rt = txt.getBoundingClientRect();
+      depart = Math.min(depart, rt.bottom + scrollY - vh * 0.45);
+    }
+    sDebut = depart;
     sFin   = Math.min(maxi, bY - vh * 0.5);
-    if(sFin - sDebut < 60) sFin = sDebut + 60;
+    if(sFin - sDebut < 120) sFin = sDebut + 120;
   }
 
   function placer(){
@@ -3320,12 +3352,25 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     if(puits){
       puits.style.opacity = (asp * 0.95).toFixed(3);
       puits.style.transform =
-        "translate3d(-50%,-50%,0) scale(" + (0.18 + asp * 0.95).toFixed(3) + ")";
+        "translate3d(-50%,-50%,0) scale(" + (0.18 + asp * 1.05).toFixed(3) + ")";
+      /* la boite se pince et gauchit */
       cible.style.transform =
-        "scale(" + (1 + 0.03 * asp).toFixed(4) + "," + (1 - 0.042 * asp).toFixed(4) + ")";
+        "scale(" + (1 + 0.055 * asp).toFixed(4) + "," + (1 - 0.075 * asp).toFixed(4) + ")" +
+        " skewX(" + (-2.4 * asp).toFixed(2) + "deg)";
+      /* le texte est tire vers le puits, puis rendu */
       aspire.style.transform =
-        "translate3d(" + (-3.2 * asp).toFixed(2) + "px,0,0)" +
-        " scale(" + (1 - 0.022 * asp).toFixed(4) + ")";
+        "translate3d(" + (-6 * asp).toFixed(2) + "px,0,0)" +
+        " scale(" + (1 - 0.045 * asp).toFixed(4) + "," + (1 - 0.02 * asp).toFixed(4) + ")";
+      /* et la surface elle-meme se tord */
+      if(deplace){
+        if(asp > 0.012){
+          deplace.setAttribute("scale", (asp * 17).toFixed(2));
+          if(!cible.style.filter) cible.style.filter = "url(#binks-liquide)";
+        } else if(cible.style.filter){
+          cible.style.filter = "";
+          deplace.setAttribute("scale", "0");
+        }
+      }
     }
     dernierP = p;
   }
