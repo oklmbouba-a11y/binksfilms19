@@ -344,55 +344,26 @@ nav a:hover{color:var(--ivoire)}
 #binks figure:not(.cube) .bl-1 img{object-position:50% 30%}
 #binks figure:not(.cube) .indice{display:none}
 
-/* ---------- le cube ---------- */
-/* La reserve d'origine est conservee mais deplacee sur cette enveloppe :
-   c'est elle que la parallaxe du site pilote, ce qui laisse au cube la
-   propriete transform dont il a besoin pour tourner. */
-#binks figure.cube .bl-par{transform-style:preserve-3d;will-change:transform}
-/* Le cube est centre dans l'enveloppe et ne la remplit pas : c'est ce
-   vide autour qui le fait flotter au lieu de tenir dans une fenetre. */
-#binks figure.cube .bl{
+/* ---------- la gemme ----------
+   La photo plate reste l'etat par defaut de la feuille de style. Le
+   rendu ne prend sa place que si le script a reellement obtenu un
+   contexte WebGL et charge l'image : c'est lui qui pose .gemme. */
+#binks figure canvas{display:none}
+#binks figure:not(.gemme) .indice{display:none}
+
+#binks figure.gemme .bl-par{will-change:transform}
+/* La gemme ne remplit pas son enveloppe : c'est le vide autour qui la
+   fait flotter, et qui laisse la place aux eclats de ses aretes. */
+#binks figure.gemme .bl{
   inset:auto;left:50%;top:50%;
-  transform-style:preserve-3d;
-  will-change:transform;cursor:grab;
+  cursor:grab;
   touch-action:pan-y;              /* le doigt fait toujours defiler la page */
   -webkit-tap-highlight-color:transparent;
 }
-#binks figure.cube .bl.tenu{cursor:grabbing}
-#binks figure.cube .bl-f{
-  backface-visibility:hidden;
-  /* Une face tournee en 3D reste cliquable a sa position projetee, donc
-     elle deborde largement la boite du cube et attrape des touchers a
-     cote. Seule la boite du cube doit recevoir le geste : c'est ce qui
-     empechait le defilement de repartir sur telephone. */
-  pointer-events:none;
-}
-/* Ecart de lumiere entre les faces : tres faible, juste assez pour que
-   l'arete se lise. Aucune lueur, aucun contour. */
-#binks figure.cube .bl-1{filter:brightness(1)}
-#binks figure.cube .bl-2,#binks figure.cube .bl-4{filter:brightness(.84)}
-#binks figure.cube .bl-5{filter:brightness(.92)}
-#binks figure.cube .bl-3{filter:brightness(.68)}
-#binks figure.cube .bl-6{filter:brightness(.62)}
-/* Six recadrages d'une seule et meme photographie : le projet n'en
-   contient qu'une du realisateur, et rien n'a ete invente. C'est aussi
-   ce qui rend l'objet coherent — un seul sujet vu sous six angles de
-   cadre, pas six images sans rapport. Un seul fichier, donc une seule
-   requete et aucun poids supplementaire. */
-#binks figure.cube .bl-1 img{object-position:50% 26%}
-#binks figure.cube .bl-2 img{object-position:50% 72%}
-#binks figure.cube .bl-3 img{object-position:50% 50%}
-#binks figure.cube .bl-4 img{object-position:50% 10%}
-#binks figure.cube .bl-5 img{object-position:50% 90%}
-#binks figure.cube .bl-6 img{object-position:50% 60%}
-
-/* l'indication n'apparait qu'au survol et disparait des qu'on a compris */
-#binks figure .indice{
-  margin-top:13px;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
-  color:var(--gris-2);opacity:0;transition:opacity .45s ease;
-}
-#binks figure .indice.montre{opacity:1}
-#binks figure .indice.fini{opacity:0}
+#binks figure.gemme .bl.tenu{cursor:grabbing}
+#binks figure.gemme .bl-f{display:none}   /* la photo passe dans la pierre */
+#binks figure.gemme canvas{display:block;width:100%;height:100%}
+#binks figure.gemme .cadre{background:transparent}
 
 /* Le cadre cesse de decouper une fois son volet d'entree termine :
    sinon la rotation serait coupee aux bords. La classe est posee a la
@@ -408,6 +379,67 @@ nav a:hover{color:var(--ivoire)}
 @media(prefers-reduced-motion:reduce){
   #binks figure .cadre{transform:none;clip-path:none;perspective:none}
   #binks figure .indice{display:none}
+}
+/* ---------- les marques de classification ----------
+   Elles ne decorent pas : elles disent a quoi on a affaire, et elles
+   appartiennent au vocabulaire du disque autant qu'a celui du clip.
+   Entierement dessinees en texte — net a toute taille, aucun fichier.
+   Elles arrivent apres le cube, jamais en meme temps : c'est la photo
+   qu'on doit voir en premier. */
+#binks .marques{
+  margin-top:clamp(26px,3.4vw,44px);
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+  opacity:0;transform:translateY(10px);
+  transition:opacity .9s ease .4s,transform .9s cubic-bezier(.2,.7,.2,1) .4s;
+}
+#binks figure.vu .marques{opacity:1;transform:none}
+
+/* Le sigle, en version inversee : celle qui tient sur un fond noir.
+   Une seule unite commande tout le bloc, donc il grandit d'un bloc. */
+#binks .pa{
+  --u:clamp(8.5px,1.35vw,13px);
+  flex:none;display:flex;flex-direction:column;width:calc(var(--u)*17.4);
+  font-weight:800;color:var(--ivoire);text-transform:uppercase;line-height:1;
+  -webkit-user-select:none;user-select:none;
+}
+#binks .pa i{font-style:normal;display:block;text-align:center;white-space:nowrap}
+#binks .pa .l1{
+  font-size:calc(var(--u)*.95);letter-spacing:.235em;text-indent:.235em;
+  padding-bottom:calc(var(--u)*.3);
+}
+#binks .pa .l2{
+  font-size:calc(var(--u)*1.62);letter-spacing:.025em;
+  border:calc(var(--u)*.18) solid var(--ivoire);
+  padding:calc(var(--u)*.2) 0 calc(var(--u)*.28);
+}
+#binks .pa .l3{
+  font-size:calc(var(--u)*.86);letter-spacing:.055em;
+  padding-top:calc(var(--u)*.32);
+}
+
+/* Le disque : plein, franc, sans contour. Le tiret est dessine, pas
+   tape — aucun tiret de la fonte n'a l'epaisseur qu'il faut ici. */
+#binks .seize{
+  flex:none;display:flex;align-items:center;justify-content:center;
+  width:clamp(52px,8.4vw,84px);aspect-ratio:1;border-radius:50%;
+  background:var(--ivoire);color:var(--noir);
+  font-weight:800;font-size:clamp(21px,3.4vw,34px);letter-spacing:-.015em;
+  -webkit-user-select:none;user-select:none;
+}
+#binks .seize i{
+  display:block;width:.4em;height:.15em;background:currentColor;
+  margin-right:.05em;border-radius:.02em;
+}
+#binks .seize b{font-weight:800}
+
+@media(max-width:760px){
+  /* sur telephone la colonne est etroite : les marques se serrent aux
+     deux bords plutot que de retrecir jusqu'a l'illisible */
+  #binks .marques{margin-top:24px}
+  #binks .pa{--u:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  #binks .marques{opacity:1;transform:none;transition:none}
 }
 #binks figcaption{margin-top:12px;font-size:13px;color:var(--gris-2)}
 
@@ -971,16 +1003,25 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
           <span class="bl-par">
             <span class="bl" id="bl" tabindex="0" role="button"
                   aria-label="Portrait du réalisateur — cube photographique, faire glisser pour le tourner">
-              <span class="bl-f bl-1"><img src="real-web.webp" width="1920" height="2566" alt="BinksFilms, réalisateur" loading="lazy"></span>
-              <span class="bl-f bl-2"><img src="real-web.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
-              <span class="bl-f bl-3"><img src="real-web.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
-              <span class="bl-f bl-4"><img src="real-web.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
-              <span class="bl-f bl-5"><img src="real-web.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
-              <span class="bl-f bl-6"><img src="real-web.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
+              <span class="bl-f bl-1"><img id="bl-img" src="real-web.webp" width="1920" height="2566" alt="BinksFilms, réalisateur" loading="lazy"></span>
+              <canvas id="gem" aria-hidden="true"></canvas>
             </span>
           </span>
         </span>
         <p class="indice" id="indice-bloc">Faire glisser pour tourner</p>
+        <!-- Les deux marques de classification. Dessinees, pas importees :
+             un sigle en image serait flou au zoom et pesant pour ce qu'il
+             dit. Ici c'est du texte, net a toute taille, zero kilo-octet. -->
+        <div class="marques">
+          <span class="pa" role="img" aria-label="Parental Advisory — contenu explicite">
+            <i class="l1" aria-hidden="true">Parental</i>
+            <i class="l2" aria-hidden="true">Advisory</i>
+            <i class="l3" aria-hidden="true">Explicit Content</i>
+          </span>
+          <span class="seize" role="img" aria-label="Deconseille aux moins de 16 ans">
+            <i aria-hidden="true"></i><b aria-hidden="true">16</b>
+          </span>
+        </div>
       </figure>
     </div>
   </section>
@@ -2496,71 +2537,290 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   addEventListener("scroll",function(){ hdr.classList.toggle("sc", scrollY > 60); },{passive:true});
 })();
 
-/* ================= LE CUBE =================
-   Section Realisateur, et nulle part ailleurs. Aucune carte film,
-   aucun autre bloc du site ne recoit ceci.
+/* ================= LA GEMME =================
+   Section Realisateur, et nulle part ailleurs.
+
+   La photo n'est plus posee dans un cadre : elle est prise dans une
+   pierre brute taillee a facettes, et c'est a travers elle qu'on la
+   regarde. Chaque facette refracte l'image a son propre angle — d'ou
+   les eclats, les repetitions du sujet sur les flancs, et le noir dans
+   les facettes qui pointent hors de l'image.
+
+   Pourquoi cette couche et pas une autre : des facettes qui refractent
+   vraiment demandent un calcul par pixel. Ni le DOM ni le CSS 3D ne le
+   font — ils ne savent qu'incliner des images entieres. C'est la seule
+   raison d'aller jusqu'au shader ici.
+
+   Repli : si le contexte 3D manque, si l'image ne charge pas, si le
+   mouvement reduit est demande ou si le reseau est economise, rien ne
+   se pose et la feuille de style laisse la photo telle qu'elle a
+   toujours ete.
 
    Quatre comportements, par ordre de priorite :
    1. le glissement de l'utilisateur, toujours prioritaire ;
    2. l'inertie au relachement, qui decelere naturellement ;
    3. l'orientation legere que suit le pointeur quand on ne glisse pas ;
-   4. au repos, une respiration tres lente — un objet suspendu, pas une
-      animation qui tourne toute seule.
-
-   La respiration s'efface des qu'on touche le cube et revient
-   progressivement quand on le laisse.
+   4. au repos, une respiration tres lente — une pierre suspendue, pas
+      une animation qui tourne toute seule.
 
    Rien ne tourne quand la section n'est pas a l'ecran ni quand
-   l'onglet est en arriere-plan : la boucle s'arrete vraiment, elle ne
-   se contente pas de calculer dans le vide. */
+   l'onglet est en arriere-plan : la boucle s'arrete vraiment. */
 (function(){
   var figure = document.querySelector("#binks figure");
   var cadre  = figure && figure.querySelector(".cadre");
   var bl     = document.getElementById("bl");
+  var cnv    = document.getElementById("gem");
+  var img    = document.getElementById("bl-img");
   var indice = document.getElementById("indice-bloc");
-  if(!figure || !bl || !cadre) return;
+  if(!figure || !bl || !cadre || !cnv || !img) return;
 
-  var supporte = window.CSS && CSS.supports && CSS.supports("transform-style","preserve-3d");
-  /* Sans 3D ou en mouvement reduit on ne pose rien : la feuille de
-     style laisse alors la photo telle qu'elle a toujours ete. */
-  if(!supporte || reduced) return;
+  if(reduced) return;
+  /* La gemme ne telecharge rien de plus : la photo est deja la, pour le
+     repli. Elle ne coute que du calcul. Juger sur le debit du reseau
+     serait donc un contresens — seul Save-Data est retenu, parce que
+     c'est une preference exprimee, pas une mesure de tuyau. */
+  if(navigator.connection && navigator.connection.saveData) return;
 
-  var faces = bl.querySelectorAll(".bl-f");
+  var gl = null;
+  try{
+    gl = cnv.getContext("webgl", {alpha:true, antialias:true, premultipliedAlpha:false})
+      || cnv.getContext("experimental-webgl", {alpha:true, antialias:true});
+  }catch(e){}
+  if(!gl) return;
 
-  /* ---------- geometrie ----------
-     Un vrai cube : six faces carrees de cote identique. Le cote est
-     calcule depuis l'enveloppe et laisse du vide autour, pour que la
-     rotation ne soit jamais coupee et que l'objet flotte. La photo
-     principale doit rester l'element dominant : le cube occupe donc
-     une part mesuree de la largeur utile, pas sa quasi-totalite. */
-  var cote = 0;
+  /* ---------- la taille de fabrique ----------
+     Le cote se calcule depuis l'enveloppe et laisse du vide autour. La
+     photo doit rester l'element dominant : la pierre occupe une part
+     mesuree de la largeur utile, pas sa quasi-totalite. */
+  var cote = 0, dpr = 1;
   function poser(){
     var L = bl.parentNode.offsetWidth, H = bl.parentNode.offsetHeight;
     if(!L || !H) return false;
     var etroit = innerWidth <= 760;
-    cote = Math.round(Math.min(L * (etroit ? 0.70 : 0.76), H * 0.60));
-    var d = cote / 2;
-    bl.style.width  = cote + "px";
-    bl.style.height = cote + "px";
-    bl.style.marginLeft = (-d) + "px";
-    bl.style.marginTop  = (-d) + "px";
-    faces[0].style.transform = "translateZ(" + d + "px)";                 /* avant  */
-    faces[1].style.transform = "rotateY(90deg) translateZ(" + d + "px)";  /* droite */
-    faces[2].style.transform = "rotateY(180deg) translateZ(" + d + "px)"; /* arriere*/
-    faces[3].style.transform = "rotateY(-90deg) translateZ(" + d + "px)"; /* gauche */
-    faces[4].style.transform = "rotateX(90deg) translateZ(" + d + "px)";  /* haut   */
-    faces[5].style.transform = "rotateX(-90deg) translateZ(" + d + "px)"; /* bas    */
+    cote = Math.round(Math.min(L * (etroit ? 0.76 : 0.82), H * 0.64));
+    bl.style.width = cote + "px"; bl.style.height = cote + "px";
+    bl.style.marginLeft = (-cote/2) + "px"; bl.style.marginTop = (-cote/2) + "px";
+    /* deux pixels physiques par pixel css au maximum : au-dela on paie
+       quatre fois le remplissage pour une nettete qu'on ne voit plus */
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    var n = Math.round(cote * dpr);
+    if(cnv.width !== n){ cnv.width = n; cnv.height = n; }
+    gl.viewport(0, 0, cnv.width, cnv.height);
     return true;
   }
   if(!poser()) return;
-  figure.classList.add("cube");          /* le volume n'existe qu'ici */
-  addEventListener("resize", function(){ poser(); mesurerBiais(); }, {passive:true});
+
+  /* ============ la taille brute ============
+     Un profil de pierre : des anneaux de rayons et de hauteurs, de la
+     table avant a la petite table arriere. Les anneaux sont decales
+     d'un demi-pas l'un par rapport a l'autre, ce qui donne des facettes
+     triangulaires et non des bandeaux — c'est ce decalage qui separe
+     une pierre taillee d'un tonneau.
+
+     Le desordre est tire d'une suite deterministe : la pierre est
+     irreguliere, mais c'est toujours la meme pierre. */
+  var N = 9;
+  var profil = [
+    [0.00,  1.00],   /* pointe : le centre de la table avant */
+    [0.54,  0.66],
+    [0.88,  0.30],
+    [1.00, -0.04],   /* le rondiste, le plus large */
+    [0.80, -0.44],
+    [0.42, -0.80],
+    [0.00, -1.00]    /* la pointe arriere */
+  ];
+  var graine = 1337;
+  function hasard(){ graine = (graine * 1103515245 + 12345) & 0x7fffffff; return graine / 0x7fffffff; }
+
+  var anneaux = [];
+  for(var i = 0; i < profil.length; i++){
+    var r = profil[i][0], z = profil[i][1];
+    var pts = [];
+    if(r < 0.001){ pts.push([0, 0, z + (hasard()-0.5)*0.05]); }
+    else {
+      var dec = (i % 2) * (Math.PI / N);          /* le demi-pas */
+      for(var k = 0; k < N; k++){
+        var a = dec + k * 2*Math.PI/N;
+        var rr = r * (0.9 + hasard()*0.2);        /* la pierre est brute */
+        var zz = z + (hasard()-0.5) * 0.09;
+        pts.push([Math.cos(a)*rr, Math.sin(a)*rr, zz]);
+      }
+    }
+    anneaux.push(pts);
+  }
+  /* la pierre est un peu plus haute que large, comme sur la photo */
+  for(i = 0; i < anneaux.length; i++)
+    for(var j = 0; j < anneaux[i].length; j++) anneaux[i][j][1] *= 1.12;
+
+  var pos = [], nor = [];
+  function facette(a, b, c){
+    var ux = b[0]-a[0], uy = b[1]-a[1], uz = b[2]-a[2];
+    var vx = c[0]-a[0], vy = c[1]-a[1], vz = c[2]-a[2];
+    var nx = uy*vz - uz*vy, ny = uz*vx - ux*vz, nz = ux*vy - uy*vx;
+    var l = Math.sqrt(nx*nx + ny*ny + nz*nz) || 1;
+    nx/=l; ny/=l; nz/=l;
+    /* la normale regarde toujours vers l'exterieur */
+    var cx = (a[0]+b[0]+c[0])/3, cy = (a[1]+b[1]+c[1])/3, cz = (a[2]+b[2]+c[2])/3;
+    if(nx*cx + ny*cy + nz*cz < 0){ nx=-nx; ny=-ny; nz=-nz; }
+    pos.push(a[0],a[1],a[2], b[0],b[1],b[2], c[0],c[1],c[2]);
+    for(var q = 0; q < 3; q++) nor.push(nx, ny, nz);
+  }
+  for(i = 0; i < anneaux.length - 1; i++){
+    var A = anneaux[i], B = anneaux[i+1];
+    if(A.length === 1){ for(var k2=0;k2<B.length;k2++) facette(A[0], B[k2], B[(k2+1)%B.length]); }
+    else if(B.length === 1){ for(k2=0;k2<A.length;k2++) facette(B[0], A[k2], A[(k2+1)%A.length]); }
+    else {
+      for(k2 = 0; k2 < N; k2++){
+        var a1 = A[k2], a2 = A[(k2+1)%N], b1 = B[k2], b2 = B[(k2+1)%N];
+        facette(a1, a2, b1); facette(a2, b2, b1);
+      }
+    }
+  }
+  var nbSommets = pos.length / 3;
+
+  /* ============ les programmes ============ */
+  function compiler(type, src){
+    var sh = gl.createShader(type);
+    gl.shaderSource(sh, src); gl.compileShader(sh);
+    if(!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) return null;
+    return sh;
+  }
+  var vs = compiler(gl.VERTEX_SHADER, [
+    "attribute vec3 aPos;","attribute vec3 aNor;",
+    "uniform mat4 uMVP;","uniform mat3 uR;",
+    "varying vec3 vN;","varying vec3 vP;",
+    "void main(){",
+    "  vec3 p = uR * aPos;",
+    "  vN = uR * aNor;",
+    "  vP = p;",
+    "  gl_Position = uMVP * vec4(aPos, 1.0);",
+    "}"
+  ].join("\n"));
+  var fs = compiler(gl.FRAGMENT_SHADER, [
+    "precision highp float;",
+    "varying vec3 vN;","varying vec3 vP;",
+    "uniform sampler2D uTex;",
+    "uniform vec3 uCam;",
+    "uniform vec2 uFen;",      /* la fenetre de photo, en unites de pierre */
+    "uniform vec2 uCentre;",
+    "uniform float uPlan;",
+    /* Le rayon refracte est prolonge jusqu'au plan ou se tient la photo,
+       derriere la pierre. C'est ce trajet qui fait que chaque facette
+       montre un autre morceau de l'image, et que certaines ne montrent
+       que du noir. */
+    "vec3 vers(vec3 ro, vec3 rd){",
+    "  if(rd.z > -0.02) return vec3(0.0);",
+    "  float t = (uPlan - ro.z) / rd.z;",
+    "  vec2 q = ro.xy + rd.xy * t;",
+    "  vec2 uv = q / uFen + 0.5 + uCentre;",
+    /* Un rayon qui sort de l'image ne renvoie pas du noir absolu : il
+       renvoie le bord, tres assombri. La pierre garde ses facettes
+       sourdes sans tomber dans le trou noir. */
+    "  vec2 uvc = clamp(uv, 0.0, 1.0);",
+    "  float dedans = (uv.x == uvc.x && uv.y == uvc.y) ? 1.0 : 0.30;",
+    "  return texture2D(uTex, vec2(uvc.x, 1.0 - uvc.y)).rgb * dedans;",
+    "}",
+    "void main(){",
+    "  vec3 N = normalize(vN);",
+    "  vec3 V = normalize(vP - uCam);",
+    "  if(dot(N, V) > 0.0) N = -N;",
+    /* Trois indices tres legerement differents : c'est la dispersion,
+       et c'est elle qui met de la couleur sur les aretes sans qu'on ait
+       a en peindre. Tres retenue — au-dela on tombe dans l'arc-en-ciel. */
+    "  float e = 1.0 / 1.62;",
+    "  vec3 c = vec3(",
+    "    vers(vP, refract(V, N, e * 0.984)).r,",
+    "    vers(vP, refract(V, N, e)).g,",
+    "    vers(vP, refract(V, N, e * 1.016)).b);",
+    /* Fresnel : les facettes vues de biais renvoient la lumiere au lieu
+       de laisser passer l'image. C'est ce qui dessine le contour de la
+       pierre sans qu'aucun trait ne soit trace. */
+    "  float fr = pow(1.0 - max(dot(N, -V), 0.0), 4.0);",
+    "  vec3 L1 = normalize(vec3(-0.45, 0.75, 0.62));",
+    "  vec3 L2 = normalize(vec3(0.6, -0.35, 0.72));",
+    "  vec3 R = reflect(V, N);",
+    /* Deux eclats plutot qu'un, et assez larges pour se voir : c'est la
+       lumiere qui donne la durete de la pierre. */
+    "  float sp = pow(max(dot(R, L1), 0.0), 40.0) + 0.55 * pow(max(dot(R, L2), 0.0), 22.0);",
+    "  c = c * (1.0 - fr * 0.45) * 1.5 + vec3(fr) * 0.18 + vec3(sp) * 0.85;",
+    /* La pierre s'arrete au noir de la page, jamais sur un bord franc :
+       l'opacite suit ce qu'il y a reellement a voir. */
+    "  float a = clamp(max(max(c.r, c.g), c.b) * 3.2, 0.0, 1.0);",
+    "  gl_FragColor = vec4(c, a);",
+    "}"
+  ].join("\n"));
+  if(!vs || !fs) return;
+
+  var prg = gl.createProgram();
+  gl.attachShader(prg, vs); gl.attachShader(prg, fs); gl.linkProgram(prg);
+  if(!gl.getProgramParameter(prg, gl.LINK_STATUS)) return;
+  gl.useProgram(prg);
+
+  function tampon(data, loc, n){
+    var b = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, b);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
+    var l = gl.getAttribLocation(prg, loc);
+    gl.enableVertexAttribArray(l);
+    gl.vertexAttribPointer(l, n, gl.FLOAT, false, 0, 0);
+  }
+  tampon(pos, "aPos", 3);
+  tampon(nor, "aNor", 3);
+
+  var uMVP = gl.getUniformLocation(prg, "uMVP"),
+      uR   = gl.getUniformLocation(prg, "uR"),
+      uCam = gl.getUniformLocation(prg, "uCam");
+  gl.uniform3f(uCam, 0, 0, 4.6);
+  /* La fenetre de photo, en unites de pierre. Plus elle est large,
+     plus l'image est grossie dans la pierre et moins les rayons
+     s'echappent par les cotes. Le rapport 1920/2566 est celui du
+     fichier : la photo n'est jamais deformee. */
+  gl.uniform2f(gl.getUniformLocation(prg, "uFen"), 3.4, 3.4 * 2566/1920);
+  gl.uniform2f(gl.getUniformLocation(prg, "uCentre"), 0.0, 0.24);  /* on vise le visage, pas le torse */
+  gl.uniform1f(gl.getUniformLocation(prg, "uPlan"), -1.15);
+
+  gl.enable(gl.DEPTH_TEST);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.clearColor(0, 0, 0, 0);
+
+  /* ---------- la photo devient la matiere ---------- */
+  var tex = gl.createTexture();
+  var prete = false;
+  function charger(){
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);   /* le retournement est fait dans le shader */
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.uniform1i(gl.getUniformLocation(prg, "uTex"), 0);
+    prete = true;
+    /* Une premiere image est dessinee AVANT de basculer : la classe
+       masque la photo plate, et une toile encore vierge laisserait un
+       trou a la place du portrait le temps que la boucle demarre.
+       Repousse a la fin du bloc courant, parce que si la photo est deja
+       en cache cette fonction s'execute avant que l'orientation et la
+       camera soient declarees plus bas. Une minuterie et non une image :
+       requestAnimationFrame ne se declenche pas dans un onglet masque,
+       et la pierre ne serait alors jamais montee. */
+    setTimeout(function(){
+      poser(); dessiner(rx, ry);
+      figure.classList.add("gemme");    /* la pierre n'existe qu'ici */
+      demarrer();
+    }, 0);
+  }
+  if(img.complete && img.naturalWidth) charger();
+  else { img.addEventListener("load", charger); img.addEventListener("error", function(){}); }
+
+  addEventListener("resize", function(){ poser(); mesurerBiais(); demarrer(); }, {passive:true});
 
   /* ---------- l'ouverture du cadre ----------
      Le cadre decoupe pendant son volet d'entree ; il doit cesser de
      decouper une fois celui-ci termine, et pas avant, sinon le volet
-     n'a pas lieu. On attend donc la fin reelle de la transition, avec
-     un filet de securite au cas ou elle ne serait jamais emise. */
+     n'a pas lieu. On attend la fin reelle de la transition, avec un
+     filet arme quand la section entre a l'ecran. */
   var ouvert = false, filet = 0;
   function ouvrir(){
     if(ouvert) return;
@@ -2572,30 +2832,30 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   });
 
   /* ---------- etat ----------
-     rx, ry : orientation du cube, en degres
+     rx, ry : orientation de la pierre, en degres
      vx, vy : vitesse angulaire, en degres par seconde */
-  var rx = -5, ry = 9;            /* un depart de trois-quarts tres leger : la face avant domine */
+  var rx = -5, ry = 9;
   var vx = 0, vy = 0;
-  var incX = 0, incY = 0, visX = 0, visY = 0;   /* l'orientation que suit le pointeur */
+  var incX = 0, incY = 0, visX = 0, visY = 0;
   var tenu = false, px = 0, py = 0;
   var derniereAction = performance.now() - 9999;
   var aTourne = false;
 
-  var SUIVI      = 4.5;    /* degres : l'orientation legere au pointeur */
-  var FROTTEMENT = 1.9;    /* plus haut = s'arrete plus vite */
-  var RESP_AMP   = 2;      /* degres : amplitude de la respiration */
-  var RESP_PER   = 8.5;    /* secondes : sa periode */
-  var CALME      = 1500;   /* ms apres la derniere action avant que la vie revienne */
-  var PAR_PX     = 0.3;    /* degres de rotation par pixel glisse */
-  var V_MAX      = 420;    /* degres par seconde : plafond de l'inertie */
+  var SUIVI      = 4.5;
+  var FROTTEMENT = 1.9;
+  var RESP_AMP   = 2;
+  var RESP_PER   = 8.5;
+  var CALME      = 1500;
+  var PAR_PX     = 0.3;
+  var V_MAX      = 420;
 
   function agi(){ derniereAction = performance.now(); }
 
-  /* ---------- le glissement : la vraie rotation ----------
+  /* ---------- le glissement ----------
      Deux regles de priorite :
-     - tant que l'utilisateur tient le cube, rien d'autre ne le pilote ;
-     - mais au doigt, la page passe avant le cube. Si le geste part en
-       vertical il appartient au defilement, et le cube lache aussitot. */
+     - tant que l'utilisateur tient la pierre, rien d'autre ne la pilote ;
+     - mais au doigt, la page passe avant. Si le geste part en vertical
+       il appartient au defilement, et la pierre lache aussitot. */
   var finPointeur = matchMedia("(hover: hover) and (pointer: fine)").matches;
   var depX = 0, depY = 0, axeDecide = false, tPrec = 0;
 
@@ -2605,9 +2865,6 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     tPrec = e.timeStamp;
     vx = 0; vy = 0; cibleRy = null; agi(); demarrer();
     bl.classList.add("tenu");
-    /* La capture n'est utile qu'a la souris, pour suivre un glissement
-       qui sort du cube. Au doigt elle genait la decision de
-       defilement du navigateur. */
     if(e.pointerType === "mouse" && bl.setPointerCapture && e.pointerId != null){
       try{ bl.setPointerCapture(e.pointerId); }catch(err){}
     }
@@ -2616,44 +2873,33 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   addEventListener("pointermove", function(e){
     if(!tenu) return;
     var dx = e.clientX - px, dy = e.clientY - py;
-
-    /* Au doigt : on tranche une fois pour toutes, des que le geste a
-       parcouru huit pixels. Vertical -> la page. Horizontal -> le cube. */
     if(!axeDecide){
       var tx = Math.abs(e.clientX - depX), ty = Math.abs(e.clientY - depY);
       if(tx + ty < 8){ px = e.clientX; py = e.clientY; return; }
       axeDecide = true;
       if(ty > tx){ lacher(); return; }    /* le defilement gagne */
     }
-
     px = e.clientX; py = e.clientY;
     ry += dx * PAR_PX;
     rx -= dy * PAR_PX;
-    if(rx >  70) rx =  70;        /* on ne passe jamais par-dessus : l'objet reste lisible */
+    if(rx >  70) rx =  70;
     if(rx < -70) rx = -70;
-
-    /* La vitesse se mesure en degres par SECONDE, jamais par
-       evenement : sinon le meme geste lance deux fois plus fort sur un
-       ecran a 120 Hz que sur un ecran a 60 Hz. */
+    /* La vitesse se mesure en degres par SECONDE, jamais par evenement :
+       sinon le meme geste part deux fois plus fort a 120 Hz qu'a 60 Hz. */
     var dts = Math.min(0.1, Math.max(0.008, (e.timeStamp - tPrec) / 1000));
     tPrec = e.timeStamp;
     vy = Math.max(-V_MAX, Math.min(V_MAX,  dx * PAR_PX / dts));
     vx = Math.max(-V_MAX, Math.min(V_MAX, -dy * PAR_PX / dts));
-
     agi(); aTourne = true;
     if(indice) indice.classList.add("fini");
   }, {passive:true});
 
   /* L'orientation legere au pointeur n'a de sens qu'a la souris : il n'y
-     a pas de survol au doigt. Elle est posee sur le cube lui-meme, plus
-     sur la fenetre — le cube ne reagit donc plus a ce qui se passe a
-     cote de lui. */
+     a pas de survol au doigt. Elle est posee sur la pierre elle-meme,
+     plus sur la fenetre — elle ne reagit donc plus a ce qui se passe a
+     cote d'elle. */
   if(finPointeur){
     bl.addEventListener("pointermove", function(e){
-      /* verrou sur le type reel du pointeur, pas seulement sur la requete
-         media : un navigateur qui emule un telephone se declare encore
-         « pointeur fin », et le cube bougerait alors sous un doigt qui
-         ne fait que defiler. */
       if(tenu || e.pointerType !== "mouse") return;
       var r = bl.getBoundingClientRect();
       if(!r.width) return;
@@ -2676,9 +2922,8 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   bl.addEventListener("pointerleave", function(){ if(!tenu){ incX = 0; incY = 0; demarrer(); } });
 
   /* ---------- clavier ----------
-     Une face par appui, exactement, et dans la direction demandee :
-     une impulsion de vitesse serait imprevisible, un quart de tour ne
-     l'est pas. */
+     Un quart de tour exact dans la direction demandee : une impulsion
+     de vitesse serait imprevisible, un quart de tour ne l'est pas. */
   var cibleRy = null;
   bl.addEventListener("keydown", function(e){
     var sens = 0;
@@ -2694,9 +2939,9 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
 
   /* ---------- l'arrivee au scroll ----------
      Une inclinaison tres faible liee a la position de la section dans
-     l'ecran. La parallaxe de la page reagit deja au defilement : le
-     cube ne fait qu'ajouter un souffle, il ne double pas l'effet.
-     Mesuree au defilement et gardee, jamais recalculee a chaque image. */
+     l'ecran. La parallaxe de la page reagit deja au defilement : la
+     pierre ajoute un souffle, elle ne double pas l'effet. Mesuree au
+     defilement et gardee, jamais recalculee a chaque image. */
   var biais = 0;
   function mesurerBiais(){
     var r = cadre.getBoundingClientRect();
@@ -2707,13 +2952,55 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   mesurerBiais();
   addEventListener("scroll", mesurerBiais, {passive:true});
 
+  /* ---------- les matrices ----------
+     Une projection et une rotation, rien de plus : pas de bibliotheque
+     pour six lignes d'algebre. */
+  var F = 1 / Math.tan(30 * Math.PI/180 / 2), D = 4.6, PN = 0.1, PF = 12;
+  var mvp = new Float32Array(16), rot = new Float32Array(9);
+  function matrices(ax, ay){
+    var a = ax*Math.PI/180, b = ay*Math.PI/180;
+    var ca=Math.cos(a), sa=Math.sin(a), cb=Math.cos(b), sb=Math.sin(b);
+    /* R = Rx * Ry, en colonnes */
+    var m00=cb,      m01=0,   m02=sb;
+    var m10=sa*sb,   m11=ca,  m12=-sa*cb;
+    var m20=-ca*sb,  m21=sa,  m22=ca*cb;
+    rot[0]=m00; rot[1]=m10; rot[2]=m20;
+    rot[3]=m01; rot[4]=m11; rot[5]=m21;
+    rot[6]=m02; rot[7]=m12; rot[8]=m22;
+    /* MVP = P * T(0,0,-D) * R */
+    var nf = 1/(PN - PF);
+    var pz = (PF + PN)*nf, pw = 2*PF*PN*nf;
+    /* Colonne j = P * T * R[:,j]. La distance camera n'appartient qu'a
+       la colonne de translation : la retrancher aussi sur les colonnes
+       de base la compterait quatre fois et decentrerait la pierre. */
+    function col(j, x, y, z){
+      mvp[j*4+0] = F*x; mvp[j*4+1] = F*y;
+      mvp[j*4+2] = pz*z; mvp[j*4+3] = -z;
+    }
+    col(0, m00, m10, m20);
+    col(1, m01, m11, m21);
+    col(2, m02, m12, m22);
+    mvp[12] = 0; mvp[13] = 0; mvp[14] = pz*(-D) + pw; mvp[15] = D;
+  }
+
   /* ---------- la boucle, et ses bornes ----------
-     Elle ne demarre que lorsque la section est a l'ecran et l'onglet
-     au premier plan, et elle s'arrete reellement sinon. */
+     Elle ne demarre que lorsque la section est a l'ecran, l'onglet au
+     premier plan et la matiere chargee. Elle s'arrete reellement sinon. */
+  function dessiner(ax, ay){
+    matrices(ax, ay);
+    gl.useProgram(prg);
+    gl.uniformMatrix4fv(uMVP, false, mvp);
+    gl.uniformMatrix3fv(uR, false, rot);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, nbSommets);
+  }
+
   var visible = false, anime = false, precedent = 0;
 
   function demarrer(){
-    if(anime || !visible || document.hidden) return;
+    if(anime || !visible || !prete || document.hidden) return;
     anime = true; precedent = performance.now();
     requestAnimationFrame(boucle);
   }
@@ -2723,8 +3010,12 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
       visible = es[0].isIntersecting;
       if(visible){
         mesurerBiais();
-        /* filet : si la transition du cadre n'emet rien, on ouvre
-           quand meme, mais seulement une fois la section atteinte */
+        /* Le chargement paresseux est juste tant que la section est
+           loin, mais le cadre est decoupe a zero pendant son volet
+           d'entree : une image paresseuse dans une boite de surface
+           nulle peut n'etre jamais demandee, et la pierre n'arriverait
+           jamais. Des que la section approche, on la reclame. */
+        if(!prete && !img.complete) img.loading = "eager";
         if(!ouvert && !filet) filet = setTimeout(ouvrir, 2200);
         demarrer();
       }
@@ -2741,11 +3032,9 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
 
     if(!tenu){
       if(cibleRy !== null){
-        /* le quart de tour demande au clavier, amene sans a-coup */
         ry += (cibleRy - ry) * Math.min(1, 7 * dt);
         if(Math.abs(cibleRy - ry) < 0.15){ ry = cibleRy; cibleRy = null; }
       } else {
-        /* inertie : la vitesse retombe toute seule, sans a-coup */
         var k = Math.exp(-FROTTEMENT * dt);
         ry += vy * dt; rx += vx * dt;
         vy *= k; vx *= k;
@@ -2759,9 +3048,6 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     /* la vie revient progressivement apres la derniere action, jamais
        d'un coup : c'est ce degrade qui evite l'effet gadget */
     var repos = Math.min(1, Math.max(0, (now - derniereAction - CALME) / 2200));
-
-    /* respiration : un pivot vertical tres lent, de faible amplitude,
-       plus un souffle horizontal deux fois plus lent encore */
     var respX = Math.sin(t * (2*Math.PI/RESP_PER)) * RESP_AMP * repos;
     var respY = Math.sin(t * (2*Math.PI/(RESP_PER*1.9)) + 1.1) * RESP_AMP * 0.55 * repos;
 
@@ -2770,9 +3056,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     visX += (incX - visX) * Math.min(1, 6 * dt);
     visY += (incY - visY) * Math.min(1, 6 * dt);
 
-    bl.style.transform =
-      "rotateX(" + (rx + visX + respX).toFixed(2) + "deg) " +
-      "rotateY(" + (ry + visY + respY + biais * 4 * repos).toFixed(2) + "deg)";
+    dessiner(rx + visX + respX, ry + visY + respY + biais * 4 * repos);
     requestAnimationFrame(boucle);
   }
 })();

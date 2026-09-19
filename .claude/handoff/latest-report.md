@@ -1,146 +1,128 @@
-# Dernier rapport — corrections issues de l'audit du cube
+# Dernier rapport — la gemme, et les marques de classification
 
-**Mission :** appliquer l'audit `e6333ee` (revue de code approfondie du cube
-Réalisateur) transmis via `next-task.md`.
-**Mode :** SURGICAL — un seul fichier touché, `index.html`.
-**Périmètre :** section Réalisateur uniquement. Hero, intro, cartes film,
-`films.js`, `admin.html`, `vercel.json` : aucun changement.
+**Mission :** deux demandes du propriétaire, sur maquettes.
+1. Ajouter les marques **Parental Advisory** et **−16** sous le portrait.
+2. Donner au volume de la section Réalisateur **une forme de diamant brut**.
 
----
-
-## Vérification préalable de l'audit
-
-L'audit a été mené sur `bd1ea5a`, qui **précède** le correctif tactile
-`0a6a771`. Sa remarque P1 « pointermove global » était donc déjà traitée en
-partie : l'inclinaison au pointeur avait été replacée sur le cube lui-même et
-verrouillée sur `pointerType === "mouse"`. Seul le `pointermove` de glissement
-reste au niveau fenêtre, ce qui est nécessaire pour suivre un geste souris qui
-sort du cube, et sans effet au doigt puisqu'il est gardé par `tenu`.
-
-Les autres points ont été vérifiés dans le code avant d'agir. Tous exacts.
-**Un l'était même en dessous de la réalité** : voir P2-fallback ci-dessous.
+**Mode :** RADICAL / BINKSFILMS LAB pour la gemme, SURGICAL pour les marques.
+**Périmètre :** `index.html` seul. Hero, intro, cartes film, `films.js`,
+`admin.html`, `vercel.json` : aucun changement.
 
 ---
 
-## Ce qui a été corrigé
+## 1. Les marques de classification
 
-### P0 — l'ouverture du cadre effaçait le volet d'entrée
-`setTimeout(…, 1700)` partait du chargement de la page, donc bien avant que
-l'`IntersectionObserver` ne pose `.vu`. La règle
-`#binks figure.ouvert .cadre{clip-path:none}` supprimait alors le découpage
-avant que la transition d'entrée ait joué.
+Dessinées en texte, pas importées en image : nettes à toute taille, **0 Ko**.
+Le sigle est en version inversée — lettres et cadre clairs sur le noir de la
+page — conformément à la maquette. Le disque −16 est plein, son tiret est
+dessiné parce qu'aucun tiret de la fonte n'a l'épaisseur voulue.
 
-Remplacé par un `transitionend` sur `.cadre`, filtré sur `propertyName ===
-"clip-path"`, avec un filet de 2 200 ms armé **au moment où la section entre à
-l'écran**, pas au chargement.
+Elles apparaissent **après** le portrait, jamais en même temps : c'est l'image
+qu'on doit voir en premier.
 
-*Vérifié :* ordre des classes observé `rv → cube → vu → ouvert`.
+*Mesuré à 375 px :* sigle 174 px de large calé à 24 px du bord gauche, disque
+52 px calé à 24 px du bord droit, les deux entièrement dans l'écran.
 
-### P0 — la boucle tournait en permanence
-Elle tournait pendant l'intro, hors écran et en arrière-plan d'onglet, et
-appelait `getBoundingClientRect()` à chaque image via `biaisScroll()`.
+---
 
-- `IntersectionObserver` sur le cadre (`rootMargin: 120px`) + `document.hidden` :
-  la boucle s'arrête réellement, elle ne calcule plus dans le vide. Elle
-  redémarre à l'intersection, au `visibilitychange` et à chaque geste.
-- Le biais de défilement est mesuré dans un écouteur `scroll` passif et gardé.
-  Plus aucun `getBoundingClientRect()` par image.
+## 2. La gemme
 
-*Vérifié :* volet en arrière-plan, `document.hidden === true`, `transform`
-jamais posé. Onglet au premier plan, section atteinte : `transform` posé.
+### Pourquoi WebGL, et pas plus simple
+La règle du projet impose la couche la moins complexe qui exprime vraiment le
+concept. Des facettes qui **réfractent** l'image demandent un calcul par pixel.
+Ni le DOM ni le CSS 3D ne le font : ils ne savent qu'incliner des images
+entières. Le cube à six faces en était la preuve — il inclinait, il ne
+réfractait pas. C'est la seule raison d'aller jusqu'au shader ici.
 
-### P1 — inertie dépendante de la fréquence d'écran
-`vy = dx * 13` exprimait des pixels par évènement. Le même geste partait deux
-fois plus fort à 120 Hz qu'à 60 Hz. Vitesse désormais dérivée de
-`e.timeStamp`, en degrés par seconde, plafonnée à 420 °/s.
+### Ce qui a été construit
+- **Géométrie** : un profil de pierre en sept anneaux, de la table avant à la
+  pointe arrière, anneaux décalés d'un demi-pas pour produire des facettes
+  triangulaires et non des bandeaux. Désordre tiré d'une suite déterministe :
+  la pierre est irrégulière, mais c'est toujours la même pierre.
+- **Réfraction** : le rayon réfracté est prolongé jusqu'au plan où se tient la
+  photo, derrière la pierre. Chaque facette montre donc un autre morceau de
+  l'image — d'où les répétitions du sujet sur les flancs.
+- **Dispersion** : trois indices très légèrement différents pour R, G et B.
+  C'est ce qui met de la couleur sur les arêtes sans qu'on en peigne.
+- **Fresnel et deux éclats** : les facettes vues de biais renvoient la lumière
+  au lieu de laisser passer l'image. C'est ce qui dessine le contour sans
+  qu'aucun trait ne soit tracé.
+- **Interaction** : identique à celle du cube — glissement prioritaire,
+  inertie en degrés par seconde, arbitrage d'axe à 8 px au doigt, quart de
+  tour au clavier, respiration au repos, boucle bornée par
+  `IntersectionObserver` + `document.hidden`.
+- **Coût** : une seule photo, déjà chargée pour le repli. **0 Ko de réseau en
+  plus.** ~110 triangles, une texture.
 
-### P1 — 6,26 Mo d'images hors-sujet
-Mesuré : `skinny.jpg` 2 356 Ko, `Still018` 1 836 Ko, `Still013` 1 204 Ko,
-`contre champs.jpg` 868 Ko. Des plans de films, pas des photos de réalisateur —
-l'audit avait raison de les juger incohérents avec la section.
-
-Les six faces reprennent maintenant **la seule photo de réalisateur que le
-projet contient**, `real-web.webp` (396 Ko, déjà en cache), sous six
-recadrages : 26 / 72 / 50 / 10 / 90 / 60 %. Un seul fichier, une seule requête,
-**0 Ko ajouté**. Rien n'a été inventé, conformément au brief.
-
-> À reprendre dès que de vraies photos de réalisateur existeront : remplacer
-> face par face, le CSS est déjà par-face.
-
-### P1 — deux réactions au défilement superposées
-La parallaxe du site et le biais du cube réagissaient tous deux au scroll.
-Biais réduit de 11° à 4°, toujours pondéré par le repos. La parallaxe reste
-seule maîtresse du mouvement d'ensemble.
-
-### P1 — réglages trop marqués
-| | avant | après |
-|---|---|---|
-| position de départ | rx −14° / ry 24° | **rx −5° / ry 9°** |
-| taille, mobile | 82 % | **70 %** |
-| taille, bureau | 82 % | **76 %** |
-| respiration | 2,6° | **2°** |
-| inclinaison au pointeur | 7° | **4,5°** |
-| borne verticale | 82° | **70°** |
-
-La face avant redevient l'élément dominant, comme le brief le demandait.
-
-### P2 — le repli n'existait pas (plus grave qu'annoncé)
-L'audit disait que le repli sans script était « théorique ». En réalité `.bl`
-n'avait **aucune largeur ni hauteur en CSS** — elles étaient posées par le
-script. Sans JavaScript le cube faisait 0 × 0 et **la photo disparaissait
-entièrement**. C'était une régression franche par rapport à l'état d'avant le
-cube.
-
-Cascade inversée : la photo plate est désormais l'état par défaut de la
-feuille de style, et le cube une surcouche que le script active en posant
-`.cube` sur la figure, **après** avoir calculé la géométrie. La classe `.plat`
-et ses règles disparaissent, devenues inutiles.
-
-*Vérifié sans `.cube`, sans `.ouvert` et sans styles inline :* photo
-491 × 656 dans un cadre 491 × 656, `object-fit: cover`, une seule face
-visible, indication masquée. Exactement la photo d'avant.
-
-### P2 — clavier imprévisible
-`vy = 150` lançait une impulsion dont l'arrêt dépendait du frottement.
-Remplacé par un quart de tour déterministe : `←` / `→` (et Entrée / Espace)
-amènent à `Math.round(ry/90)*90 ± 90`, rejoint sans à-coup et annulé dès qu'on
-saisit le cube.
-
-### P2 — compromis tactile
-`touch-action: pan-y` conservé, comme l'audit le recommandait : geste
-horizontal ou diagonal → rotation, geste vertical → défilement de la page. Le
-départ d'axe est tranché à 8 px.
+### Défauts trouvés et corrigés en route
+- **Matrice de projection fausse.** La distance caméra était retranchée sur les
+  trois colonnes de base au lieu de la seule colonne de translation : la pierre
+  sortait du cadre d'un côté et se rétractait de l'autre. Mesuré par la
+  silhouette — rayons à 100 % sur la moitié des directions, 32 % sur l'autre.
+- **Garde réseau mal raisonnée.** Je coupais le rendu sur `effectiveType`.
+  Contresens : la gemme ne télécharge rien de plus, elle ne coûte que du calcul.
+  Seul `Save-Data` est retenu, parce que c'est une préférence exprimée et non
+  une mesure de tuyau.
+- **Trou à la place du portrait.** La classe `.gemme` masque la photo plate ; si
+  la boucle n'avait pas encore dessiné, la figure était vide. Une première
+  image est maintenant dessinée **avant** la bascule.
+- **Activation impossible en onglet masqué.** Cette première image était
+  repoussée par `requestAnimationFrame`, qui ne se déclenche pas dans un onglet
+  masqué : la pierre n'était alors jamais montée. Remplacé par une minuterie.
+- **Image jamais demandée.** La photo est en chargement paresseux et le cadre
+  est découpé à zéro pendant son volet d'entrée : une image paresseuse dans une
+  boîte de surface nulle peut n'être jamais réclamée. Le chargement est
+  désormais déclenché quand la section approche.
 
 ---
 
 ## Mesures
 
-**Bureau (800 px utiles)** — cube 373 × 373 parfaitement carré, 76 % de la
-largeur de l'enveloppe, six faces posées à 186,5 px de demi-arête, six
-recadrages distincts, six paliers de luminosité (1 / 0,92 / 0,84 / 0,84 /
-0,68 / 0,62), faces inertes au pointeur, aucun débordement de page, aucune
-erreur console.
+**Bureau, fenêtre 1280 —** boîte 397 × 397 carrée, gemme de 776 à 1173 px,
+107 px de marge à droite, 43 px de marge dans sa colonne, aucun débordement de
+page. Silhouette : polygone fermé irrégulier, rayons de 65 à 90 % du
+demi-cadre, donc centrée et jamais rognée. Couverture 53 % de la toile.
 
-**Mobile 375 × 812** — cube 229 × 229 carré, 70 % de la largeur, marges
-74 | 77 px, entièrement dans l'écran, aucun débordement, `pan-y` actif, faces
-inertes.
+**Mobile 375 × 812 —** boîte 249 × 249, 76 % de la colonne, toile 498 × 498
+à deux pixels physiques par pixel CSS, entièrement dans l'écran, aucun
+débordement, `pan-y` actif.
+
+**Repli —** avant activation : photo visible, toile masquée. Après : photo
+masquée, toile visible. Sans WebGL, sans `Save-Data`, en mouvement réduit ou
+si l'image échoue, rien ne se pose et la photo reste.
+
+**Réseau —** aucune requête en échec ; `real-web.webp`, `films.js`, bannières
+et vidéos en 200/206.
 
 ---
 
-## Ce qui n'est pas prouvé
+## Ce qui n'est PAS prouvé
 
-- **Le comportement tactile réel sur un téléphone.** Le volet d'aperçu n'émet
-  que des évènements de synthèse et rend la page en instantané `data:`, ce qui
-  empêche à la fois le test au doigt et le chargement des images relatives.
-  La correction du bug de défilement (`0a6a771` puis celle-ci) demande une
-  vérification sur un vrai appareil.
-- **La fluidité en images par seconde.** Le volet est bridé quand il est
-  masqué ; aucun chiffre fiable n'a pu être relevé, et aucun n'est inventé ici.
+**Le rendu lui-même n'a pas été vu.** Le volet d'aperçu a refusé toutes les
+captures d'écran — fenêtre de l'application masquée — et gèle à la fois
+`requestAnimationFrame`, les transitions CSS et `IntersectionObserver`. J'ai pu
+mesurer la géométrie, la silhouette, la facettisation et les tons dans les
+pixels lus, mais **pas juger l'aspect**.
+
+Les réglages de lumière posés sont donc **défendables, pas validés** :
+
+| Réglage | Valeur | Ce qu'il commande |
+|---|---|---|
+| `uFen` | 3,4 | grossissement de la photo dans la pierre |
+| `uCentre.y` | 0,24 | on vise le visage, pas le torse |
+| `uPlan` | −1,15 | distance de la photo derrière la pierre |
+| gain | 1,5 | éclairement général |
+| bord hors image | 0,30 | noirceur des facettes qui sortent de la photo |
+| éclats | 40 / 22 | dureté des reflets |
+| indice | 1,62 | force de la réfraction |
+
+Ces sept valeurs sont des **questions d'œil** au sens de `experience-direction`
+§5. Elles se règlent en regardant, pas en raisonnant.
+
+**Le comportement au doigt reste non vérifié** (B-013, inchangé).
 
 ---
 
 ## État
 
-`index.html` seul modifié : 179 insertions, 106 suppressions.
-`films.js`, `admin.html`, `vercel.json`, `images/` : intacts.
-Repères disponibles : `core-phase1`, `avant-bloc`.
+`index.html` seul modifié. Repères : `core-phase1`, `avant-bloc`.

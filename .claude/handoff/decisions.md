@@ -433,3 +433,54 @@ fois plus fort sur un écran à 120 Hz. Toute vitesse est désormais dérivée d
 
 Même famille de défaut que la décroissance par image corrigée plus tôt sur les
 prototypes : **rien ne doit dépendre du rythme d'affichage.**
+
+---
+
+## D-023 — La pierre remplace le cube, et WebGL se justifie par la réfraction
+
+**Décidé le 19/09/2026, sur maquette du propriétaire.**
+
+Le cube CSS 3D inclinait six images ; il ne réfractait rien. Une forme de
+diamant brut suppose que l'image traverse la matière et se brise par facette —
+c'est un calcul par pixel, qu'aucune couche DOM ou CSS ne sait faire.
+
+**C'est la seule raison de monter jusqu'au shader ici.** Le critère reste
+celui de `CLAUDE.md` : la couche la moins complexe qui exprime *vraiment* le
+concept, pas la plus impressionnante.
+
+Le coût est vérifié et faible : une seule photo, déjà chargée pour le repli,
+donc **0 Ko de réseau supplémentaire** ; ~110 triangles ; une texture.
+
+---
+
+## D-024 — Un garde réseau ne s'applique pas à un coût de calcul
+
+J'avais coupé la gemme sur `effectiveType` (2g/3g). Contresens : elle ne
+télécharge rien de plus que le repli. Juger un effet purement GPU sur le débit
+du réseau est une erreur de catégorie.
+
+**Règle :** `Save-Data` est retenu — c'est une préférence exprimée par
+l'utilisateur. `effectiveType` ne l'est que pour ce qui pèse réellement en
+octets.
+
+---
+
+## D-025 — Une amélioration ne masque jamais ce qu'elle remplace avant d'être prête
+
+`.gemme` masque la photo plate. Tant que la première image n'était pas
+dessinée, la figure était **vide**. Même famille de faute que D-019 : la
+surcouche ne doit pas retirer l'état de base avant de pouvoir le remplacer.
+
+**Règle :** dessiner d'abord, basculer ensuite — dans cet ordre, toujours.
+
+Corollaire découvert au passage : `requestAnimationFrame` ne se déclenche pas
+dans un onglet masqué. Il ne peut donc pas servir à *monter* quelque chose,
+seulement à l'animer.
+
+---
+
+## D-026 — Les marques de classification sont dessinées, pas importées
+
+Parental Advisory et le disque −16 sont du texte mis en forme : nets à toute
+taille, aucun fichier, aucune requête. Le sigle est en version inversée, celle
+qui tient sur un fond noir.
