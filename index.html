@@ -2657,10 +2657,11 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        pour cent a chaque recalcul. */
     var L = cadre.clientWidth, H = cadre.clientHeight;
     if(!L || !H) return false;
-    /* La pierre est l'objet, pas une vignette posee dans un cadre : elle
-       prend presque toute la place et ne garde que la marge qu'il faut
-       pour que ses eclats ne soient jamais coupes. */
-    cote = Math.round(Math.min(L, H) * 0.92);
+    /* La toile fait tout le cadre : au debut elle porte la photographie
+       entiere, a plat, exactement comme le repli. La pierre, elle, est
+       reduite dans sa geometrie pour garder a l'ecran la taille qu'elle
+       avait — c'est le cadre qui a grandi, pas elle qui a retreci. */
+    cote = Math.round(Math.min(L, H));
     bl.style.width = cote + "px"; bl.style.height = cote + "px";
     bl.style.marginLeft = (-cote/2) + "px"; bl.style.marginTop = (-cote/2) + "px";
     /* deux pixels physiques par pixel css au maximum : au-dela on paie
@@ -2693,7 +2694,14 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
 
      Le desordre est tire d'une suite deterministe : la pierre est
      irreguliere, mais c'est toujours la meme pierre. */
-  var N = 7;   /* peu de facettes, donc grandes : une pierre taillee, pas une boule */
+  /* Huit et non sept. A plat, les anneaux doivent former un vrai
+     rectangle : il faut donc des sommets AUX QUATRE COINS. Avec sept
+     points par anneau on n'obtient qu'un heptagone, et la photographie
+     de depart a les coins coupes. Avec huit, et le rondiste cale sur les
+     angles droits, le rectangle est exact. La pierre y gagne une facette
+     et reste irreguliere : c'est le desordre des rayons qui fait sa
+     taille brute, pas leur nombre. */
+  var N = 8;
   /* La table avant est PLATE et large : c'est par elle que la photo
      passe presque sans devier, et c'est ce qui la met en valeur. Son
      centre et son bord sont a la meme hauteur — sinon on obtient un
@@ -2716,6 +2724,27 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   var graine = 1337;
   function hasard(){ graine = (graine * 1103515245 + 12345) & 0x7fffffff; return graine / 0x7fffffff; }
 
+  /* ============ la metamorphose ============
+     Chaque sommet connait DEUX positions : celle qu'il occupe a plat,
+     dans le rectangle de la photographie, et celle qu'il occupe dans la
+     pierre. On ne fond pas une image sur une autre — ce sont les memes
+     triangles qui se deplacent, et la photo se plie reellement.
+
+     A plat, les anneaux deviennent des carres concentriques : un point
+     d'angle a et de rayon nominal rn se pose a la distance
+     rn / max(|cos a|, |sin a|), ce qui envoie le disque sur le carre en
+     conservant l'angle. Les triangles pavent donc exactement le cadre,
+     et leurs coordonnees d'image se suivent d'un triangle a l'autre :
+     l'image est continue, sans couture.
+
+     La hauteur a plat n'est pas nulle mais un trentieme de la hauteur
+     dans la pierre : les deux coques resteraient sinon rigoureusement
+     coplanaires et se disputeraient chaque pixel. Ce residu, invisible a
+     l'ecran, suffit a garder l'ordre de profondeur. */
+  var CARRE = 1.2325;      /* demi-cote du rectangle a plat, en unites de pierre */
+  var PHO_R = 1920 / 2566; /* la part de hauteur visible en recadrage couvrant */
+  var PHO_H = 0.30 * (1 - PHO_R);   /* et sa position : 50% 30%, comme le repli */
+
   var anneaux = [];
   for(var i = 0; i < profil.length; i++){
     var r = profil[i][0], z = profil[i][1];
@@ -2726,23 +2755,39 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        fenetre. Ailleurs le desordre reste faible : une pierre taillee,
        pas un caillou. */
     var plate = (i <= 1);
-    if(r < 0.001){ pts.push([0, 0, z]); }
+    if(r < 0.001){ pts.push([0, 0, z, 0, 0, z * 0.03, 0]); }
     else {
-      var dec = (i % 2) * (Math.PI / N);          /* le demi-pas */
+      /* Le demi-pas est inverse : c'est le rondiste — anneau 3, impair —
+         qui doit tomber sur les coins, donc recevoir un decalage nul.
+         Ses voisins gardent le demi-pas, et les facettes triangulaires
+         avec lui. */
+      var dec = ((i + 1) % 2) * (Math.PI / N);
       for(var k = 0; k < N; k++){
         var a = dec + k * 2*Math.PI/N;
         var rr = r * (0.86 + hasard()*0.28);   /* aretes de longueurs inegales : une pierre brute */
         var zz = plate ? z : z + (hasard()-0.5) * 0.05;
-        pts.push([Math.cos(a)*rr, Math.sin(a)*rr, zz]);
+        /* le meme point, pose a plat sur le carre : le desordre de la
+           pierre n'existe pas encore, il naitra du pliage */
+        var ec = 1 / Math.max(Math.abs(Math.cos(a)), Math.abs(Math.sin(a)));
+        pts.push([Math.cos(a)*rr, Math.sin(a)*rr, zz,
+                  Math.cos(a)*ec*r*CARRE, Math.sin(a)*ec*r*CARRE, z * 0.03, r]);
       }
     }
     anneaux.push(pts);
   }
-  /* la pierre est un peu plus haute que large, comme sur la photo */
+  /* la pierre est un peu plus haute que large, comme sur la photo — mais
+     le rectangle a plat, lui, garde le format du cadre */
   for(i = 0; i < anneaux.length; i++)
     for(var j = 0; j < anneaux[i].length; j++) anneaux[i][j][1] *= 1.2;
+  /* Le cadre porte desormais la photo entiere a plat, donc la toile fait
+     toute sa largeur. La pierre est reduite d'autant pour garder a
+     l'ecran exactement la taille qu'elle avait. */
+  for(i = 0; i < anneaux.length; i++)
+    for(j = 0; j < anneaux[i].length; j++){
+      anneaux[i][j][0] *= 0.918; anneaux[i][j][1] *= 0.918; anneaux[i][j][2] *= 0.918;
+    }
 
-  var pos = [], nor = [];
+  var pos = [], nor = [], plat = [], uvs = [], rang = [];
   function facette(a, b, c){
     var ux = b[0]-a[0], uy = b[1]-a[1], uz = b[2]-a[2];
     var vx = c[0]-a[0], vy = c[1]-a[1], vz = c[2]-a[2];
@@ -2754,6 +2799,21 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     if(nx*cx + ny*cy + nz*cz < 0){ nx=-nx; ny=-ny; nz=-nz; }
     pos.push(a[0],a[1],a[2], b[0],b[1],b[2], c[0],c[1],c[2]);
     for(var q = 0; q < 3; q++) nor.push(nx, ny, nz);
+
+    /* Le rang decide de l'ORDRE dans lequel les facettes se plient. Il
+       vient du rayon : les bords partent les premiers, la table centrale
+       en dernier. La photographie reste donc lisible en son centre
+       pendant que ses bords se cassent deja — une premiere fracture,
+       puis de grandes facettes, puis le volume entier. */
+    var rg = 1 - Math.min(1, ((a[6]||0) + (b[6]||0) + (c[6]||0)) / 3);
+    var som = [a, b, c];
+    for(q = 0; q < 3; q++){
+      var v = som[q];
+      plat.push(v[3]||0, v[4]||0, v[5]||0);
+      uvs.push(0.5 + (v[3]||0) / (2*CARRE),
+               PHO_H + (0.5 - (v[4]||0) / (2*CARRE)) * PHO_R);
+      rang.push(rg);
+    }
   }
   for(i = 0; i < anneaux.length - 1; i++){
     var A = anneaux[i], B = anneaux[i+1];
@@ -2777,18 +2837,30 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   }
   var vs = compiler(gl.VERTEX_SHADER, [
     "attribute vec3 aPos;","attribute vec3 aNor;",
+    "attribute vec3 aPlat;","attribute vec2 aUV;","attribute float aRang;",
     "uniform mat4 uMVP;","uniform mat3 uR;",
-    "varying vec3 vN;","varying vec3 vP;",
+    "uniform float uM;","uniform float uEtal;",
+    "varying vec3 vN;","varying vec3 vP;","varying vec2 vUV;","varying float vMf;",
     "void main(){",
-    "  vec3 p = uR * aPos;",
-    "  vN = uR * aNor;",
-    "  vP = p;",
-    "  gl_Position = uMVP * vec4(aPos, 1.0);",
+    /* Chaque facette a son propre avancement : elle attend son rang,
+       puis se plie sur le reste de la course. C'est ce decalage qui fait
+       une metamorphose et non un basculement d'un bloc. */
+    "  float mf = clamp((uM - aRang * uEtal) / (1.0 - uEtal), 0.0, 1.0);",
+    "  mf = mf * mf * (3.0 - 2.0 * mf);",
+    "  vMf = mf; vUV = aUV;",
+    "  vec3 q = mix(aPlat, aPos, mf);",
+    /* la normale se redresse avec le pli : a plat elle regarde droit
+       vers nous, donc rien ne brille et la photo est simplement la */
+    "  vec3 n = normalize(mix(vec3(0.0, 0.0, 1.0), aNor, mf));",
+    "  vP = uR * q;",
+    "  vN = uR * n;",
+    "  gl_Position = uMVP * vec4(q, 1.0);",
     "}"
   ].join("\n"));
   var fs = compiler(gl.FRAGMENT_SHADER, [
     "precision highp float;",
     "varying vec3 vN;","varying vec3 vP;",
+    "varying vec2 vUV;","varying float vMf;",
     "uniform sampler2D uTex;",
     "uniform vec3 uCam;",
     "uniform vec2 uFen;",      /* la fenetre de photo, en unites de pierre */
@@ -2846,7 +2918,11 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        d'une taille. Une trace de lumiere ambiante suffit pour que meme
        la facette la plus sourde se detache du noir de la page. */
     "  c += 0.04;",
-    "  gl_FragColor = vec4(c, 1.0);",
+    /* Tant que la facette n'est pas pliee, elle n'est qu'un morceau de
+       la photographie : pas de refraction, pas d'eclat, rien. Le passage
+       se fait facette par facette, donc jamais comme un fondu global. */
+    "  vec3 photo = texture2D(uTex, vUV).rgb;",
+    "  gl_FragColor = vec4(mix(photo, c, vMf), 1.0);",
     "}"
   ].join("\n"));
   if(!vs || !fs) return;
@@ -2862,16 +2938,22 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(data), gl.STATIC_DRAW);
     return b;
   }
-  var bufPos = tampon(pos), bufNor = tampon(nor);
-  var locPos = gl.getAttribLocation(prg, "aPos"),
-      locNor = gl.getAttribLocation(prg, "aNor");
+  var bufPos = tampon(pos), bufNor = tampon(nor),
+      bufPlat = tampon(plat), bufUV = tampon(uvs), bufRang = tampon(rang);
+  var locPos  = gl.getAttribLocation(prg, "aPos"),
+      locNor  = gl.getAttribLocation(prg, "aNor"),
+      locPlat = gl.getAttribLocation(prg, "aPlat"),
+      locUV   = gl.getAttribLocation(prg, "aUV"),
+      locRang = gl.getAttribLocation(prg, "aRang");
+  function lier(buf, loc, n){
+    if(loc < 0) return;
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, n, gl.FLOAT, false, 0, 0);
+  }
   function lierPierre(){
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufPos);
-    gl.enableVertexAttribArray(locPos);
-    gl.vertexAttribPointer(locPos, 3, gl.FLOAT, false, 0, 0);
-    gl.bindBuffer(gl.ARRAY_BUFFER, bufNor);
-    gl.enableVertexAttribArray(locNor);
-    gl.vertexAttribPointer(locNor, 3, gl.FLOAT, false, 0, 0);
+    lier(bufPos, locPos, 3); lier(bufNor, locNor, 3);
+    lier(bufPlat, locPlat, 3); lier(bufUV, locUV, 2); lier(bufRang, locRang, 1);
   }
 
   /* ---------- la trainee ----------
@@ -2948,7 +3030,9 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
       uR   = gl.getUniformLocation(prg, "uR"),
       uCam = gl.getUniformLocation(prg, "uCam"),
       uPin = gl.getUniformLocation(prg, "uPincement"),
-      uDsp = gl.getUniformLocation(prg, "uDisp");
+      uDsp = gl.getUniformLocation(prg, "uDisp"),
+      uMet = gl.getUniformLocation(prg, "uM"),
+      uEta = gl.getUniformLocation(prg, "uEtal");
   gl.uniform3f(uCam, 0, 0, 4.6);
   /* La fenetre de photo, en unites de pierre. Plus elle est large,
      plus l'image est grossie dans la pierre et moins les rayons
@@ -3206,6 +3290,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
 
   /* etat partage avec le rendu */
   var pincement = 0, ecartRVB = 0, trainee = 0, dirX = 0, dirY = 1;
+  var meta = 0, orient = 0;
   var descRx = 0, descRy = 0;
   var pxPrec = null, pyPrec = 0, tPrecP = 0, vLisse = 0, dernierP = 0;
 
@@ -3258,7 +3343,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     bruit = svg.querySelector("feTurbulence");
   }
 
-  var sDebut = 0, sFin = 1;
+  var sDebut = 0, sFin = 1, mDebut = 0, mFin = 1;
   function mesurer(){
     if(!cible || !vol) return;
     var rc = cadre.getBoundingClientRect();
@@ -3287,7 +3372,17 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
       var rt = txt.getBoundingClientRect();
       depart = Math.min(depart, rt.bottom + scrollY - vh * 0.45);
     }
-    sDebut = depart;
+    /* ---------- la metamorphose ----------
+       Elle occupe la montee du cadre : elle commence quand son bord haut
+       entre par le bas de l'ecran, et se termine quand le cadre est haut
+       dans la vue. La descente ne peut donc jamais demarrer avant que la
+       pierre soit formee — l'une prend le relais de l'autre, elles ne se
+       chevauchent pas. */
+    mDebut = aY - cote / 2 - vh * 0.95;
+    mFin   = aY - vh * 0.42;
+    if(mFin - mDebut < 200) mFin = mDebut + 200;
+
+    sDebut = Math.max(depart, mFin);
     sFin   = Math.min(maxi, bY - vh * 0.5);
     if(sFin - sDebut < 120) sFin = sDebut + 120;
   }
@@ -3295,6 +3390,23 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   function placer(){
     if(!vol) return;
     var vh = innerHeight, vw = document.documentElement.clientWidth;
+
+    /* La metamorphose : 0 = la photographie, plate et entiere ; 1 = la
+       pierre. Comme tout le reste ici, c'est une fonction de la position
+       dans le defilement et de rien d'autre — remonter la deplie. */
+    var mt = (scrollY - mDebut) / (mFin - mDebut);
+    meta = mt < 0 ? 0 : (mt > 1 ? 1 : mt);
+
+    /* Tant que la photo est plate elle doit l'etre vraiment : aucune
+       inclinaison, aucune respiration, aucun suivi du pointeur. Toute
+       l'orientation se leve avec le pli. */
+    orient = meta * meta * (3 - 2 * meta);
+
+    /* et le geste n'a pas de prise sur une image plate */
+    if(vol) vol.style.pointerEvents = (meta < 0.55) ? "none" : "";
+
+    /* la presentation n'a de sens qu'une fois la pierre formee */
+    if(amorce === -1 && meta > 0.985) amorce = performance.now() + 200;
 
     /* p : 0 quand le bouton entre par le bas, 1 au bout de la course.
        C'est la seule source de toute l'animation, et c'est pour cela
@@ -3395,7 +3507,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        qu'un point */
     vol.style.zIndex = dfm > 0 ? 8 : 6;
     vol.style.visibility = (p >= 1 || k < 0.004) ? "hidden" : "";
-    vol.style.pointerEvents = e > 0.25 ? "none" : "";
+    if(e > 0.25) vol.style.pointerEvents = "none";
 
     /* ---------- le bouton, porte du projet ---------- */
     if(puits){
@@ -3479,6 +3591,8 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     gl.uniformMatrix3fv(uR, false, rot);
     gl.uniform1f(uPin, pincement);
     gl.uniform1f(uDsp, ecartRVB);
+    gl.uniform1f(uMet, meta);
+    gl.uniform1f(uEta, 0.55);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.drawArrays(gl.TRIANGLES, 0, nbSommets);
@@ -3518,7 +3632,6 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
       }
       visible = vuCadre || vuContact;
       if(visible){
-        if(amorce === -1 && vuCadre) amorce = performance.now() + CLIN_DEB;
         mesurerBiais();
         /* Les ancres sont reprises quand la section revient a l'ecran :
            les images chargees plus haut dans la page ont pu decaler la
@@ -3585,8 +3698,8 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        defilement : c'est ce qui rend la descente continue au lieu de
        saccadee, et c'est gratuit — aucune lecture de mise en page */
     placer();
-    dessiner(rx + visX + respX + descRx,
-             ry + visY + respY + biais * 4 * repos + descRy + clin);
+    dessiner((rx + visX + respX + descRx) * orient,
+             (ry + visY + respY + biais * 4 * repos + descRy + clin) * orient);
     requestAnimationFrame(boucle);
   }
 })();

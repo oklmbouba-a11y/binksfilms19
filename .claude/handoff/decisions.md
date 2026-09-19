@@ -645,3 +645,44 @@ en tient la *lecture* — creux, anneaux concentriques, matière et texte ondul�
 
 L'ordre reste : dessiner d'abord, basculer ensuite (D-025), et tout est
 fonction de la position de défilement (D-030), donc rien ne peut rester coincé.
+
+---
+
+## D-036 — La photographie devient la pierre : ce sont les mêmes triangles
+
+**Nouvelle phase, AVANT tout le reste.** Au début, la photographie est plate,
+rectangulaire, entière. Au défilement elle se plie jusqu'à devenir exactement
+la pierre, et la séquence existante prend le relais sans rien changer.
+
+**Ce n'est pas un fondu.** Chaque sommet connaît deux positions : la sienne à
+plat dans le rectangle, et la sienne dans la pierre. Ce sont les mêmes
+triangles qui se déplacent. Le shader ne mélange la photographie et le cristal
+que **facette par facette**, selon l'avancement propre de chaque facette —
+jamais globalement.
+
+**Trois mécanismes le rendent lisible :**
+
+1. **Le rang.** Chaque facette attend son tour selon son rayon : les bords
+   partent les premiers, la table centrale en dernier. La photographie reste
+   donc lisible en son centre pendant que ses bords se cassent déjà.
+2. **La normale se redresse avec le pli.** À plat elle regarde droit vers nous :
+   aucun éclat, aucune réfraction, rien qu'une image.
+3. **L'orientation ne se lève qu'avec le pli.** Inclinaison, respiration, suivi
+   du pointeur et prise du geste sont tous multipliés par l'avancement. Une
+   photographie plate est vraiment plate, et le doigt n'a pas de prise dessus.
+
+**Sept facettes sont devenues huit, et c'est un choix assumé.** À plat, les
+anneaux doivent former un vrai rectangle, donc il faut des sommets **aux quatre
+coins**. Avec sept points par anneau on n'obtient qu'un heptagone et la
+photographie de départ a les coins coupés — c'était visible. Avec huit, et le
+rondiste calé sur les angles droits, le rectangle est exact. La pierre y gagne
+une facette et reste irrégulière : c'est le désordre des rayons qui fait sa
+taille brute, pas leur nombre.
+
+**Le cadre porte désormais la photo entière**, donc la toile fait toute sa
+largeur ; la géométrie de la pierre est réduite d'autant pour garder à l'écran
+exactement la taille qu'elle avait.
+
+**Les deux courses ne se chevauchent jamais** : la descente ne peut pas
+commencer avant que la pierre soit formée. Mesuré : métamorphose 594 px sur
+téléphone, 677 sur bureau ; la descente démarre au pixel où elle finit.
