@@ -613,3 +613,35 @@ et le premier geste de l'utilisateur annule la démonstration.
 Une légende se lit puis s'oublie ; un objet qui bouge tout seul se touche.
 C'est aussi une ligne de texte de moins dans une section qui n'en demandait
 pas.
+
+---
+
+## D-035 — Le bouton est une surface d'eau, pas un trou noir
+
+**Storyboard du propriétaire, quatre temps : approche, impact, immersion,
+retour.** Il remplace la direction « vortex / trou noir » précédente.
+
+Deux conséquences de forme, et ce sont elles qui séparent l'eau de l'effet de
+manège :
+
+1. **Le rectangle du bouton ne bouge plus.** Toute mise à l'échelle, tout
+   gauchissement et toute rotation de la boîte sont retirés. Ce qui se déforme
+   est ce qu'il y a *dedans* : la matière claire et le texte. Un bouton qui
+   s'écrase n'est pas un liquide, c'est un ressort. Vérifié : 342 × 67 au
+   repos, au pic et à la fin.
+2. **La déformation reste locale.** Trois ondes seulement, décalées, qui
+   naissent au point d'entrée, s'ouvrent et s'éteignent. Au-delà de trois on
+   obtient une cible de tir, pas une surface d'eau.
+
+Le creux reste sombre et doux — une dépression dans une matière claire, pas un
+trou percé dedans. La houle du filtre passe en basse fréquence : de longues
+ondulations plutôt qu'un grain.
+
+**Ce que le web ne sait pas faire ici, et qu'il faut assumer :** le storyboard
+est un rendu photographique, avec caustiques et réfraction réelle de la
+surface. Un bouton du DOM ne peut pas produire de caustiques. Ce qui est livré
+en tient la *lecture* — creux, anneaux concentriques, matière et texte ondulés
+— pas le photoréalisme.
+
+L'ordre reste : dessiner d'abord, basculer ensuite (D-025), et tout est
+fonction de la position de défilement (D-030), donc rien ne peut rester coincé.

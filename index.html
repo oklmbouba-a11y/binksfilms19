@@ -375,37 +375,47 @@ nav a:hover{color:var(--ivoire)}
 #binks figure.gemme canvas{display:block;width:100%;height:100%}
 #binks figure.gemme .cadre{background:transparent}
 
-/* ---------- l'aspiration ----------
-   Le bouton devient une porte. Rien de son dessin ne change : on lui
-   ajoute un puits — un creux sombre qui s'ouvre sous le point d'entree —
-   et une deformation tres breve de sa surface et de son texte, tiree
-   vers ce point puis rendue.
+/* ---------- l'aspiration : une surface d'eau ----------
+   Le bouton n'est pas un trou noir, c'est une surface. Le cristal la
+   touche, elle se creuse localement, des ondes circulaires partent du
+   point d'impact, puis tout s'estompe et la surface redevient nette.
 
-   Tout est commande par la position dans le defilement, donc tout se
-   rembobine si l'on remonte. La deformation suit une cloche : elle
-   monte, culmine quand la pierre disparait, et redescend a zero. Le
-   bouton retrouve donc un etat parfaitement propre, sans qu'aucune
-   minuterie n'ait a l'y ramener. */
-.gros-cta{position:relative;overflow:hidden;transform-origin:50% 50%;will-change:transform}
-/* L'enveloppe du texte doit rejouer la mise en page qu'elle remplace :
-   le bouton est un flex a gouttiere, et un simple bloc en ligne avalait
-   cette gouttiere — le bouton perdait trente pixels. Elle herite donc de
-   la gouttiere et de la repartition, y compris de l'ecartement impose sur
-   telephone. */
+   Deux consequences de forme, et ce sont elles qui separent l'eau de
+   l'effet de manege :
+   - le RECTANGLE du bouton ne bouge pas. Ce qui se deforme, c'est ce
+     qu'il y a dedans — la matiere claire et le texte. Un bouton qui
+     s'ecrase n'est pas un liquide, c'est un ressort.
+   - la deformation reste LOCALE. Les ondes naissent au point d'entree
+     et s'y eteignent ; elles n'emportent jamais toute la surface.
+
+   Rien de son dessin ne change : ni sa couleur, ni sa taille, ni sa
+   fonte, ni son gestionnaire de clic. Tout est commande par la position
+   dans le defilement, donc tout se rembobine si l'on remonte. */
+.gros-cta{position:relative;overflow:hidden;transform-origin:50% 50%}
 .gros-cta .aspire{
   display:inline-flex;align-items:center;
   gap:var(--ecart);justify-content:inherit;flex:1 1 auto;
   will-change:transform;
 }
-.gros-cta .puits{
-  position:absolute;left:50%;top:50%;width:230%;aspect-ratio:1;
-  pointer-events:none;opacity:0;
-  /* Le centre est un vrai noir, pas une ombre : c'est ce qui fait lire
-     un trou et non une tache. La chute est rapide au coeur puis longue
-     sur le bord, comme un entonnoir vu de face. */
+/* le creux : la depression sous le point d'impact, jamais un trou */
+.gros-cta .creux{
+  position:absolute;left:50%;top:50%;width:170%;aspect-ratio:1;
+  pointer-events:none;opacity:0;border-radius:50%;
   background:radial-gradient(circle closest-side,
-    #000 0%, rgba(0,0,0,.96) 11%, rgba(0,0,0,.74) 24%,
-    rgba(0,0,0,.40) 40%, rgba(0,0,0,.12) 58%, rgba(0,0,0,0) 72%);
+    rgba(0,0,0,.50) 0%, rgba(0,0,0,.33) 20%,
+    rgba(0,0,0,.15) 38%, rgba(0,0,0,.05) 54%, rgba(0,0,0,0) 68%);
+  will-change:transform,opacity;
+}
+/* les ondes : une crete claire entre deux creux sombres, qui s'ecarte */
+.gros-cta .onde{
+  position:absolute;left:50%;top:50%;width:250%;aspect-ratio:1;
+  pointer-events:none;opacity:0;border-radius:50%;
+  background:radial-gradient(circle closest-side,
+    rgba(0,0,0,0)     0 52%,
+    rgba(0,0,0,.13)  52% 59%,
+    rgba(255,255,255,.62) 59% 66%,
+    rgba(0,0,0,.09)  66% 73%,
+    rgba(0,0,0,0)    73%);
   will-change:transform,opacity;
 }
 
@@ -3187,6 +3197,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
      seuls, donc sans recalcul de la page. */
   var cible = document.querySelector("#contact .gros-cta");
   var vol = null, puits = null, aspire = null, deplace = null, bruit = null;
+  var ondes = [];
   var aX = 0, aY = 0, bX = 0, bY = 0;
 
   /* etat partage avec le rendu */
@@ -3210,9 +3221,16 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     while(cible.firstChild) aspire.appendChild(cible.firstChild);
     cible.appendChild(aspire);
     puits = document.createElement("span");
-    puits.className = "puits";
+    puits.className = "creux";
     puits.setAttribute("aria-hidden", "true");
     cible.appendChild(puits);
+    for(var w = 0; w < 3; w++){
+      var o = document.createElement("span");
+      o.className = "onde";
+      o.setAttribute("aria-hidden", "true");
+      cible.appendChild(o);
+      ondes.push(o);
+    }
 
     /* La surface du bouton doit se tordre, pas seulement se comprimer.
        Un deplacement de pixels pilote par un bruit donne cette matiere
@@ -3226,7 +3244,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     svg.innerHTML =
       '<filter id="binks-liquide" x="-30%" y="-60%" width="160%" height="220%"' +
       ' color-interpolation-filters="sRGB">' +
-      '<feTurbulence type="fractalNoise" baseFrequency="0.011 0.042"' +
+      '<feTurbulence type="fractalNoise" baseFrequency="0.006 0.019"' +
       ' numOctaves="2" seed="7" result="bruit"/>' +
       '<feDisplacementMap in="SourceGraphic" in2="bruit" scale="0"' +
       ' xChannelSelector="R" yChannelSelector="G"/>' +
@@ -3335,14 +3353,22 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     trainee  = p > 0 && p < 1 ? rapide * 0.86 : 0;
     ecartRVB = rapide;
 
-    /* La deformation occupe les treize derniers pour cent de la COURSE,
-       pas de la courbe accelerée : rapportee a e, elle ne durait que six
-       pour cent du defilement et arrivait comme un a-coup. */
-    var dfm = (p - 0.87) / 0.13;
+    /* Les quatorze derniers pour cent de la course portent les quatre
+       temps du storyboard : approche, impact, immersion, retour. */
+    var dfm = (p - 0.86) / 0.14;
     dfm = dfm < 0 ? 0 : (dfm > 1 ? 1 : dfm);
-    /* une cloche : elle monte, culmine quand la pierre disparait, et
-       redescend a zero. Le bouton revient donc propre tout seul. */
-    var asp = Math.sin(dfm * Math.PI);
+
+    /* APPROCHE — le premier sixieme : le cristal survole, la surface est
+       intacte. Rien ne doit trahir ce qui va arriver. */
+    var imp = (dfm - 0.16) / 0.84;
+    imp = imp < 0 ? 0 : (imp > 1 ? 1 : imp);
+
+    /* Une cloche pour le creux et la houle : ils montent a l'impact,
+       culminent quand le cristal s'enfonce, et sont revenus a zero quand
+       il a disparu. Le bouton retrouve son etat propre tout seul — il
+       n'existe aucun code pour l'y ramener, donc rien ne peut rester
+       coince. */
+    var asp = Math.sin(imp * Math.PI);
 
     pincement = dfm;
     /* elle tourne sur elle-meme pendant toute la descente, et plus vite
@@ -3369,33 +3395,49 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
 
     /* ---------- le bouton, porte du projet ---------- */
     if(puits){
-      puits.style.opacity = (asp * 0.95).toFixed(3);
+      /* IMPACT puis IMMERSION — le creux se forme sous le point
+         d'entree. Il reste sombre et doux : une depression dans une
+         matiere claire, pas un trou perce dedans. */
+      puits.style.opacity = (asp * 0.88).toFixed(3);
       puits.style.transform =
-        "translate3d(-50%,-50%,0) scale(" + (0.18 + asp * 1.05).toFixed(3) + ")";
-      /* la boite se pince et gauchit */
-      /* pincement, gauchissement ET rotation : trois gestes differents
-         valent mieux qu'un seul amplifie — c'est ce qui separe une
-         torsion d'un simple ecrasement */
-      cible.style.transform =
-        "scale(" + (1 + 0.07 * asp).toFixed(4) + "," + (1 - 0.095 * asp).toFixed(4) + ")" +
-        " skewX(" + (-3.2 * asp).toFixed(2) + "deg)" +
-        " rotate(" + (-1.1 * asp).toFixed(2) + "deg)";
-      /* le texte est tire vers le puits, puis rendu */
+        "translate3d(-50%,-50%,0) scale(" + (0.22 + asp * 0.48).toFixed(3) + ")";
+
+      /* Les ondes partent du point d'impact et s'ecartent. Trois
+         seulement, decalees : au-dela on obtient une cible de tir, pas
+         une surface d'eau. Chacune nait, s'ouvre et s'eteint sur son
+         propre tour. */
+      var fondu = 1 - Math.max(0, (imp - 0.70) / 0.30);   /* RETOUR : elles s'estompent vite */
+      for(var q = 0; q < ondes.length; q++){
+        var ph = imp * 1.8 - q * 0.26;
+        var op = 0, ech = 0.12;
+        if(ph > 0 && ph < 1){
+          ech = 0.12 + ph * 1.22;
+          op = Math.sin(ph * Math.PI) * fondu * 0.95;
+        }
+        ondes[q].style.opacity = op.toFixed(3);
+        ondes[q].style.transform =
+          "translate3d(-50%,-50%,0) scale(" + ech.toFixed(3) + ")";
+      }
+
+      /* Le rectangle du bouton ne bouge pas : seul le contenu suit la
+         surface. Une boite qui s'ecrase serait un ressort, pas un
+         liquide. Le texte est simplement entraine vers le creux. */
       aspire.style.transform =
-        "translate3d(" + (-6 * asp).toFixed(2) + "px,0,0)" +
-        " scale(" + (1 - 0.045 * asp).toFixed(4) + "," + (1 - 0.02 * asp).toFixed(4) + ")";
-      /* et la surface elle-meme se tord */
+        "translate3d(" + (-4.5 * asp).toFixed(2) + "px," + (1.6 * asp).toFixed(2) + "px,0)" +
+        " scale(" + (1 - 0.028 * asp).toFixed(4) + "," + (1 - 0.012 * asp).toFixed(4) + ")";
+
+      /* et la matiere elle-meme ondule, texte compris */
       if(deplace){
         if(asp > 0.012){
-          deplace.setAttribute("scale", (asp * 22).toFixed(2));
-          /* la maille du bruit se resserre a mesure que l'aspiration
-             monte : la surface ne se deplace pas, elle tourbillonne */
+          deplace.setAttribute("scale", (asp * 15).toFixed(2));
+          /* la houle s'allonge a mesure que le cristal s'enfonce */
           if(bruit) bruit.setAttribute("baseFrequency",
-            (0.009 + asp * 0.016).toFixed(4) + " " + (0.034 + asp * 0.030).toFixed(4));
+            (0.0075 + asp * 0.007).toFixed(4) + " " + (0.021 + asp * 0.016).toFixed(4));
           if(!cible.style.filter) cible.style.filter = "url(#binks-liquide)";
         } else if(cible.style.filter){
           cible.style.filter = "";
           deplace.setAttribute("scale", "0");
+          cible.style.transform = "";
         }
       }
     }
