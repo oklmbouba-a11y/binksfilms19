@@ -397,3 +397,34 @@ Avant toute grosse réécriture :
 - prototyper sur la structure réelle, pas dans un univers parallèle.
 
 Critère de réussite : le propriétaire doit reconnaître immédiatement **son site**, mais avoir la sensation qu'il est passé d'un bon portfolio à une expérience de direction artistique beaucoup plus haut niveau.
+
+
+---
+
+## Revue visuelle propriétaire — cube Réalisateur
+
+La mécanique du cube est comprise, mais la capture actuelle reste trop proche d'une démo 3D et pas assez d'un objet éditorial intégré au site.
+
+### À garder
+- fond = interface noire du site, sans décor ajouté ;
+- aucun reflet/sol/studio virtuel ;
+- vrai volume manipulable ;
+- drag souris/tactile + inertie ;
+- respiration autonome lente ;
+- cube uniquement dans la section Réalisateur.
+
+### À corriger visuellement
+1. **Réduire le cube.** Il est actuellement trop massif sur mobile. Il doit respirer dans la section et laisser du noir autour.
+2. **Réduire l'angle de repos.** La face du dessus prend trop de place. Chercher une position de repos plus frontale, seulement légèrement en trois-quarts.
+3. **Le portrait principal doit dominer.** La face avant doit rester lisible comme la photo originale du site, pas devenir une facette parmi d'autres.
+4. **Faces secondaires cohérentes avec le Réalisateur.** Ne pas utiliser des images aléatoires du catalogue. Utiliser uniquement des portraits / backstage / images réellement liées au réalisateur. S'il n'y en a pas assez, utiliser des recadrages différents de `real-web.webp` plutôt que des images sans rapport.
+5. **Perspective plus élégante.** Moins de sensation 'cube géant', plus de sensation 'photo devenue volume'.
+6. **Pas de contours lumineux.** Les arêtes doivent se lire par la lumière naturelle des faces et la perspective uniquement.
+7. **Respiration verticale douce.** Conserver le pivot haut/bas autonome mais avec faible amplitude ; il doit être presque hypnotique, pas visible comme une boucle d'animation.
+
+### Cible
+Quand on arrive dans la section, on doit d'abord reconnaître la photo du réalisateur. Ensuite, en bougeant la souris ou le doigt, on découvre que cette photo est en réalité un objet 3D avec d'autres faces.
+
+Le premier ressenti doit être : **photo premium qui devient objet**, pas **cube 3D qui contient des photos**.
+
+Ne pas modifier le reste de la section ni la structure du site.
