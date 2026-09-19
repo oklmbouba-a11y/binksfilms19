@@ -304,7 +304,7 @@ nav a:hover{color:var(--ivoire)}
    pour les bannières de films. Le cadre garde le format du fichier pour
    que la page ne saute pas au chargement. */
 #binks figure .cadre{
-  display:block;position:relative;overflow:hidden;aspect-ratio:1920/2566;
+  display:block;position:relative;overflow:hidden;aspect-ratio:1/1;
   transform:translateX(14vw);
   clip-path:inset(0 0 0 100%);
   transition:transform 1.5s cubic-bezier(.16,1,.3,1),clip-path 1.5s cubic-bezier(.16,1,.3,1);
@@ -2596,8 +2596,10 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   function poser(){
     var L = bl.parentNode.offsetWidth, H = bl.parentNode.offsetHeight;
     if(!L || !H) return false;
-    var etroit = innerWidth <= 760;
-    cote = Math.round(Math.min(L * (etroit ? 0.76 : 0.82), H * 0.64));
+    /* La pierre est l'objet, pas une vignette posee dans un cadre : elle
+       prend presque toute la place et ne garde que la marge qu'il faut
+       pour que ses eclats ne soient jamais coupes. */
+    cote = Math.round(Math.min(L, H) * 0.92);
     bl.style.width = cote + "px"; bl.style.height = cote + "px";
     bl.style.marginLeft = (-cote/2) + "px"; bl.style.marginTop = (-cote/2) + "px";
     /* deux pixels physiques par pixel css au maximum : au-dela on paie
@@ -2619,16 +2621,26 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
 
      Le desordre est tire d'une suite deterministe : la pierre est
      irreguliere, mais c'est toujours la meme pierre. */
-  var N = 9;
+  var N = 7;   /* peu de facettes, donc grandes : une pierre taillee, pas une boule */
+  /* La table avant est PLATE et large : c'est par elle que la photo
+     passe presque sans devier, et c'est ce qui la met en valeur. Son
+     centre et son bord sont a la meme hauteur — sinon on obtient un
+     cone, la photo se brise en quartiers et le sujet devient illisible.
+     Tout le reste — couronne, rondiste, pavillon — n'est qu'un cadre de
+     facettes autour de cette fenetre. */
   var profil = [
-    [0.00,  1.00],   /* pointe : le centre de la table avant */
-    [0.54,  0.66],
-    [0.88,  0.30],
-    [1.00, -0.04],   /* le rondiste, le plus large */
-    [0.80, -0.44],
-    [0.42, -0.80],
-    [0.00, -1.00]    /* la pointe arriere */
+    [0.00,  0.55],   /* centre de la table */
+    [0.66,  0.55],   /* bord de la table : meme hauteur, donc plate */
+    [0.79,  0.22],   /* la couronne, franchement en retrait */
+    [1.00, -0.04],   /* le rondiste : seul a toucher le contour */
+    [0.76, -0.48],   /* le pavillon */
+    [0.44, -0.86],
+    [0.00, -1.06]    /* la pointe arriere */
   ];
+  /* Le rondiste doit etre nettement plus large que ses voisins. S'ils
+     l'approchent, leurs sommets decales d'un demi-pas viennent completer
+     le contour et la pierre se referme en boule : on veut un polygone a
+     sept cotes franchement anguleux, pas un cercle facette. */
   var graine = 1337;
   function hasard(){ graine = (graine * 1103515245 + 12345) & 0x7fffffff; return graine / 0x7fffffff; }
 
@@ -2636,13 +2648,19 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   for(var i = 0; i < profil.length; i++){
     var r = profil[i][0], z = profil[i][1];
     var pts = [];
-    if(r < 0.001){ pts.push([0, 0, z + (hasard()-0.5)*0.05]); }
+    /* La table (anneaux 0 et 1) ne recoit AUCUN desordre en hauteur :
+       elle doit rester rigoureusement coplanaire. Son contour, lui, peut
+       etre irregulier — c'est ce qui fait la pierre brute sans casser la
+       fenetre. Ailleurs le desordre reste faible : une pierre taillee,
+       pas un caillou. */
+    var plate = (i <= 1);
+    if(r < 0.001){ pts.push([0, 0, z]); }
     else {
       var dec = (i % 2) * (Math.PI / N);          /* le demi-pas */
       for(var k = 0; k < N; k++){
         var a = dec + k * 2*Math.PI/N;
-        var rr = r * (0.9 + hasard()*0.2);        /* la pierre est brute */
-        var zz = z + (hasard()-0.5) * 0.09;
+        var rr = r * (0.86 + hasard()*0.28);   /* aretes de longueurs inegales : une pierre brute */
+        var zz = plate ? z : z + (hasard()-0.5) * 0.05;
         pts.push([Math.cos(a)*rr, Math.sin(a)*rr, zz]);
       }
     }
@@ -2650,7 +2668,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   }
   /* la pierre est un peu plus haute que large, comme sur la photo */
   for(i = 0; i < anneaux.length; i++)
-    for(var j = 0; j < anneaux[i].length; j++) anneaux[i][j][1] *= 1.12;
+    for(var j = 0; j < anneaux[i].length; j++) anneaux[i][j][1] *= 1.2;
 
   var pos = [], nor = [];
   function facette(a, b, c){
@@ -2717,7 +2735,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        renvoie le bord, tres assombri. La pierre garde ses facettes
        sourdes sans tomber dans le trou noir. */
     "  vec2 uvc = clamp(uv, 0.0, 1.0);",
-    "  float dedans = (uv.x == uvc.x && uv.y == uvc.y) ? 1.0 : 0.30;",
+    "  float dedans = (uv.x == uvc.x && uv.y == uvc.y) ? 1.0 : 0.10;",
     "  return texture2D(uTex, vec2(uvc.x, 1.0 - uvc.y)).rgb * dedans;",
     "}",
     "void main(){",
@@ -2741,12 +2759,15 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     "  vec3 R = reflect(V, N);",
     /* Deux eclats plutot qu'un, et assez larges pour se voir : c'est la
        lumiere qui donne la durete de la pierre. */
-    "  float sp = pow(max(dot(R, L1), 0.0), 40.0) + 0.55 * pow(max(dot(R, L2), 0.0), 22.0);",
-    "  c = c * (1.0 - fr * 0.45) * 1.5 + vec3(fr) * 0.18 + vec3(sp) * 0.85;",
-    /* La pierre s'arrete au noir de la page, jamais sur un bord franc :
-       l'opacite suit ce qu'il y a reellement a voir. */
-    "  float a = clamp(max(max(c.r, c.g), c.b) * 3.2, 0.0, 1.0);",
-    "  gl_FragColor = vec4(c, a);",
+    "  float sp = pow(max(dot(R, L1), 0.0), 34.0) + 0.6 * pow(max(dot(R, L2), 0.0), 18.0);",
+    "  c = c * (1.0 - fr * 0.40) * 1.05 + vec3(fr) * 0.20 + vec3(sp) * 1.15;",
+    /* La pierre est pleine. Faire dependre l'opacite de la luminosite
+       faisait disparaitre les facettes sombres, et le contour du cristal
+       se dissolvait avec elles : on obtenait une boule floue au lieu
+       d'une taille. Une trace de lumiere ambiante suffit pour que meme
+       la facette la plus sourde se detache du noir de la page. */
+    "  c += 0.04;",
+    "  gl_FragColor = vec4(c, 1.0);",
     "}"
   ].join("\n"));
   if(!vs || !fs) return;
@@ -2775,9 +2796,15 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
      plus l'image est grossie dans la pierre et moins les rayons
      s'echappent par les cotes. Le rapport 1920/2566 est celui du
      fichier : la photo n'est jamais deformee. */
-  gl.uniform2f(gl.getUniformLocation(prg, "uFen"), 3.4, 3.4 * 2566/1920);
-  gl.uniform2f(gl.getUniformLocation(prg, "uCentre"), 0.0, 0.24);  /* on vise le visage, pas le torse */
-  gl.uniform1f(gl.getUniformLocation(prg, "uPlan"), -1.15);
+  /* Plus la fenetre est etroite, plus la photo occupe la table. A 1,75
+     la table montre environ les trois quarts de la largeur du fichier :
+     le sujet tient en entier dedans, et les facettes du pourtour, qui
+     visent au-dela de l'image, restent sombres — c'est ce contraste qui
+     detache la pierre du noir de la page. Le rapport 1920/2566 est celui
+     du fichier : la photo n'est jamais deformee. */
+  gl.uniform2f(gl.getUniformLocation(prg, "uFen"), 1.45, 1.45 * 2566/1920);
+  gl.uniform2f(gl.getUniformLocation(prg, "uCentre"), 0.0, 0.16);  /* on vise le visage, pas le torse */
+  gl.uniform1f(gl.getUniformLocation(prg, "uPlan"), -1.05);
 
   gl.enable(gl.DEPTH_TEST);
   gl.enable(gl.BLEND);

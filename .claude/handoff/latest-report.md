@@ -96,30 +96,53 @@ et vidéos en 200/206.
 
 ---
 
+## La correction qui a tout changé
+
+Le premier rendu était illisible : la photo éclatée en quartiers, le sujet
+noyé. Ce n'était pas un réglage de lumière, c'était une **faute de
+construction**.
+
+**La table avant n'était pas plate, c'était une pointe.** Le profil partait
+d'un sommet unique en `[0.00, 1.00]`, relié en éventail à l'anneau suivant :
+un cône de neuf triangles. Chaque quartier réfractait donc l'image à un angle
+différent, et il ne restait rien à lire.
+
+Sur la maquette du propriétaire, la face avant est une **grande table plate**
+par laquelle l'image passe presque sans dévier ; les facettes ne sont qu'un
+cadre autour d'elle. Le profil a été refait en conséquence : centre et bord de
+la table à la même hauteur, aucun désordre vertical sur ces deux anneaux, et
+une couronne franchement en retrait.
+
+Trois autres corrections ont suivi, chacune vérifiée à l'image :
+
+1. **Le cadrage.** Fenêtre de photo ramenée de 3,4 à 1,45 unité de pierre : le
+   sujet occupe désormais la table au lieu d'un timbre au centre.
+2. **La silhouette.** Le rondiste était à peine plus large que ses voisins ;
+   leurs sommets décalés d'un demi-pas complétaient le contour et la pierre se
+   refermait en boule. Voisins ramenés à 0,79 et 0,76 contre 1,00 : le contour
+   est maintenant un polygone à sept côtés franchement anguleux, aux arêtes de
+   longueurs inégales.
+3. **L'opacité.** Elle était calculée depuis la luminosité, donc les facettes
+   sombres disparaissaient et **mangeaient le contour du cristal**. La pierre
+   est désormais pleine, avec une trace d'ambiante pour que la facette la plus
+   sourde se détache quand même du noir de la page.
+
+---
+
 ## Ce qui n'est PAS prouvé
 
-**Le rendu lui-même n'a pas été vu.** Le volet d'aperçu a refusé toutes les
-captures d'écran — fenêtre de l'application masquée — et gèle à la fois
-`requestAnimationFrame`, les transitions CSS et `IntersectionObserver`. J'ai pu
-mesurer la géométrie, la silhouette, la facettisation et les tons dans les
-pixels lus, mais **pas juger l'aspect**.
+Le rendu **a été vu** cette fois. Le volet d'aperçu refusant toujours les
+captures d'écran, un récepteur local a été monté dans le bac à sable : la page
+envoie l'image de la pierre, elle est écrite sur le disque et relue. Quatre
+itérations ont été jugées à l'image, pas au chiffre. Ce récepteur ne fait
+partie ni du site ni du dépôt.
 
-Les réglages de lumière posés sont donc **défendables, pas validés** :
-
-| Réglage | Valeur | Ce qu'il commande |
-|---|---|---|
-| `uFen` | 3,4 | grossissement de la photo dans la pierre |
-| `uCentre.y` | 0,24 | on vise le visage, pas le torse |
-| `uPlan` | −1,15 | distance de la photo derrière la pierre |
-| gain | 1,5 | éclairement général |
-| bord hors image | 0,30 | noirceur des facettes qui sortent de la photo |
-| éclats | 40 / 22 | dureté des reflets |
-| indice | 1,62 | force de la réfraction |
-
-Ces sept valeurs sont des **questions d'œil** au sens de `experience-direction`
-§5. Elles se règlent en regardant, pas en raisonnant.
-
-**Le comportement au doigt reste non vérifié** (B-013, inchangé).
+Restent non prouvés :
+- **le comportement au doigt sur un vrai téléphone** (B-013, inchangé) ;
+- **la fluidité en images par seconde** : le volet est bridé quand il est
+  masqué, aucun chiffre fiable n'a pu être relevé et aucun n'est inventé ici.
+  Le coût reste faible par construction — environ 110 triangles, une texture,
+  une passe.
 
 ---
 
