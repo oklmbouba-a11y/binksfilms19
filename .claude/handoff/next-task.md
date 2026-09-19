@@ -260,3 +260,33 @@ Les quatre LAB ont été livrés avec les textures WebGL retournées verticaleme
 - Ne pas produire un cinquième LAB de shader avant d'avoir résolu ces points.
 
 La priorité n'est plus d'inventer un nouvel effet. La priorité est de rendre la meilleure idée actuelle **vraie, structurée et compatible avec le projet réel**.
+
+
+---
+
+## État après intervention ChatGPT — expérience v3
+
+ChatGPT a directement fait avancer le repo.
+
+### Corrigé
+- films.js : Skinny Bastard passe de 2000-09-02 à **2026-09-02**.
+- lab-experience.html devient **v3** :
+  - toujours alimenté par window.FILMS_DATA ;
+  - lecteur YouTube réel chargé seulement au clic ;
+  - contre-champ réel depuis les données ;
+  - BTS réels depuis les données ;
+  - lieu / tournage / date longue quand présents ;
+  - navigation précédent / suivant dans la zone de silence ;
+  - aucun de ces éléments ne passe dans le shader ;
+  - fermeture de la fiche détruit le lecteur actif.
+- Syntaxe JS vérifiée après modification.
+
+### Règle immédiate
+Ne pas créer de nouveau LAB. Continuer sur lab-experience.html.
+
+### Prochaine étape
+1. QA visuelle réelle de v3 sur téléphone + desktop.
+2. Vérifier le comportement tactile du contre-champ et précédent/suivant.
+3. Ajouter le routage/hash seulement si la navigation visuelle est validée.
+4. Comparer la fiche v3 à index.html pour repérer les dernières fonctions utiles manquantes avant toute intégration.
+5. Ne toucher à index.html qu'après validation visuelle et fonctionnelle du LAB.
