@@ -571,3 +571,45 @@ atteignable (`scrollHeight - innerHeight`). L'aspiration s'achève exactement au
 bas de la page.
 
 À reprendre au redimensionnement et quand la hauteur du document change.
+
+---
+
+## D-032 — Trois voix typographiques sur une carte de film
+
+- **Nom d'artiste** : Archivo, grotesque compacte, capitales. Inchangé.
+- **Titre du morceau** : `Noto Serif Display` à l'axe de largeur **62,5 %**,
+  graisse 700, capitales. Serif de titrage très étroite et à fort contraste —
+  la lettre de l'affiche et de la pochette, pas celle du livre.
+- **Catégorie et année** : petites capitales espacées. Inchangé.
+
+**La largeur vient de l'axe de la fonte, jamais d'un `transform: scaleX`.** Un
+caractère étiré est un caractère abîmé : les pleins et les déliés ne se
+déforment pas dans le même rapport.
+
+`Instrument Serif` reste en recours si la fonte ne charge pas.
+
+---
+
+## D-033 — « Les beaux arts du ghetto » devient une signature
+
+`Sacramento` remplace l'italique de labeur : trait fin, monolinéaire, fluide,
+signature d'artiste plutôt que note de bas de page.
+
+**Conséquence à ne pas oublier :** une écriture liée a une hauteur d'œil bien
+plus basse qu'un romain. À taille égale elle paraît deux fois plus petite. Les
+quatre emplacements ont donc été relevés — en-tête 11,5 → 16 px, accueil
+21–46 → 30–64 px, pied 15 → 21 px — et l'interlettrage légèrement ouvert pour
+que les liaisons respirent. Vérifié : elle reste plus basse que le nom à
+l'accueil, et n'entre pas en collision avec la navigation en en-tête.
+
+---
+
+## D-034 — On ne légende pas un objet interactif, on le fait bouger
+
+« Faire glisser pour tourner » est supprimé, sans rien à la place. À sa
+première apparition la pierre pivote de onze degrés et revient, une seule fois,
+et le premier geste de l'utilisateur annule la démonstration.
+
+Une légende se lit puis s'oublie ; un objet qui bouge tout seul se touche.
+C'est aussi une ligne de texte de moins dans une section qui n'en demandait
+pas.

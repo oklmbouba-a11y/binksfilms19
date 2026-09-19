@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230A0A0A'/%3E%3Ctext x='32' y='45' font-family='Arial Black,Arial' font-size='38' font-weight='900' fill='%23EDEBE6' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&family=Noto+Serif+Display:wdth,wght@62.5..100,400..900&family=Sacramento&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:dark;          /* on assume le thème : pas d'inversion automatique */
@@ -55,7 +55,16 @@ section[id]{scroll-margin-top:76px}
    on le répète — header, accueil, générique de fin. */
 .lockup{display:block}
 .lk-name{display:block;font-weight:800;font-stretch:125%;text-transform:uppercase;letter-spacing:-.01em;line-height:.92}
-.lk-base{display:block;font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:300;line-height:1.2}
+/* La seconde moitié du bloc de marque n'est plus une italique de labeur
+   mais une signature : trait fin, fluide, un peu irrégulier. Elle reste
+   secondaire — c'est le nom qui porte. Une écriture liée a une hauteur
+   d'oeil bien plus basse qu'un romain : les tailles sont relevées partout
+   en conséquence, et l'interlettrage légèrement ouvert pour que les
+   liaisons respirent. */
+.lk-base{
+  display:block;font-family:'Sacramento','Newsreader',Georgia,cursive;
+  font-style:normal;font-weight:400;line-height:1.05;letter-spacing:.012em;
+}
 
 /* ---------- header ---------- */
 header{
@@ -68,21 +77,21 @@ header{
 @media(min-width:1024px){header{padding:22px 48px}}
 header.sc{background:rgba(10,10,10,.94)}
 header .lk-name{font-size:13px;letter-spacing:.26em}
-header .lk-base{font-size:11.5px;color:var(--gris);margin-top:1px;letter-spacing:.01em}
+header .lk-base{font-size:16px;color:var(--gris);margin-top:0;letter-spacing:.015em}
 nav{display:flex;gap:26px}
 nav a{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris);transition:color .25s}
 nav a:hover{color:var(--ivoire)}
 @media(max-width:600px){
   header{padding:14px 20px}
   header .lk-name{font-size:11px;letter-spacing:.18em}
-  header .lk-base{font-size:10px}
+  header .lk-base{font-size:14px}
   nav{gap:13px}
   nav a{font-size:9.5px;letter-spacing:.08em}
 }
 @media(max-width:400px){
   header{padding:12px 16px;gap:10px}
   header .lk-name{font-size:10px;letter-spacing:.13em}
-  header .lk-base{font-size:9px}
+  header .lk-base{font-size:12.5px}
   nav{gap:10px}
   nav a{font-size:9px;letter-spacing:.04em}
 }
@@ -93,8 +102,7 @@ nav a:hover{color:var(--ivoire)}
 #hero .scrim{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,10,10,.3) 0%,rgba(10,10,10,.08) 36%,rgba(10,10,10,.52) 76%,rgba(10,10,10,.86) 100%)}
 #hero .inner{position:relative;z-index:1;width:100%;padding-bottom:62px}
 #hero .lk-name{font-size:clamp(44px,9.6vw,128px)}
-#hero .lk-base{font-size:clamp(21px,3.7vw,46px);margin-top:12px;color:var(--ivoire)}
-#hero .role{margin-top:22px;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gris)}
+#hero .lk-base{font-size:clamp(30px,5.2vw,64px);margin-top:6px;color:var(--ivoire)}
 
 /* ---------- le titre glisse à l'arrivée ----------
    Le nom arrive de la gauche, la phrase de la droite, le rôle ferme la
@@ -112,11 +120,10 @@ nav a:hover{color:var(--ivoire)}
   30%{opacity:1}
   to{transform:none;clip-path:inset(-30% -30% -30% -30%);opacity:1}
 }
-.glisse #hero .lk-name,.glisse #hero .lk-base,.glisse #hero .role,
+.glisse #hero .lk-name,.glisse #hero .lk-base,
 .glisse header .lk-name,.glisse header .lk-base{opacity:0}
 .glisse.entre #hero .lk-name{animation:glisse-g 1.5s cubic-bezier(.16,1,.3,1) .05s both}
 .glisse.entre #hero .lk-base{animation:glisse-d 1.5s cubic-bezier(.16,1,.3,1) .3s both}
-.glisse.entre #hero .role{animation:glisse-g 1.3s cubic-bezier(.16,1,.3,1) .55s both}
 .glisse.entre header .lk-name{animation:glisse-g 1.2s cubic-bezier(.16,1,.3,1) .5s both}
 .glisse.entre header .lk-base{animation:glisse-g 1.2s cubic-bezier(.16,1,.3,1) .65s both}
 #hero{overflow-x:clip}
@@ -151,18 +158,24 @@ nav a:hover{color:var(--ivoire)}
 }
 .film .cartel{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:0 18px 15px}
 /* Le nom porte, le titre chante, la fiche se tait.
-   Le nom en grotesque massive, le titre dans une serif de titrage à fort
-   contraste : deux voix nettement différentes, mais du même monde. */
+   Le nom en grotesque massive et compacte, le titre dans une serif de
+   titrage très étroite et à fort contraste, la fiche en petites capitales
+   espacées : trois voix nettement différentes, mais du même monde. */
 .film .artiste{
   font-weight:800;font-stretch:112%;text-transform:uppercase;
   font-size:15px;letter-spacing:.005em;line-height:1.1;
   text-shadow:0 1px 12px rgba(0,0,0,.55);
 }
 .film .titre{
-  margin-top:1px;
-  font-family:'Instrument Serif','Newsreader',Georgia,serif;
-  font-style:italic;font-weight:400;
-  font-size:24px;line-height:1.1;letter-spacing:.005em;color:var(--ivoire);
+  margin-top:3px;
+  /* Une serif de titrage tres etroite et tres haute, a fort contraste :
+     la lettre de l'affiche et de la pochette, pas celle du livre. La
+     largeur est reglee par l'axe de la fonte, jamais par un etirement —
+     un caractere etire est un caractere abime. */
+  font-family:'Noto Serif Display','Instrument Serif',Georgia,serif;
+  font-stretch:62.5%;font-weight:700;font-style:normal;
+  text-transform:uppercase;
+  font-size:30px;line-height:.98;letter-spacing:.012em;color:var(--ivoire);
   text-shadow:0 1px 14px rgba(0,0,0,.6);
 }
 .film .meta{
@@ -188,7 +201,7 @@ nav a:hover{color:var(--ivoire)}
   .film .thumb{--r:13px}
   .film .cartel{padding:0 20px 17px}
   .film .artiste{font-size:16px}
-  .film .titre{font-size:27px}
+  .film .titre{font-size:33px}
   .film .meta{margin-top:9px}
 
   /* Bannière au centre de l'écran : le texte se floute puis s'efface,
@@ -347,7 +360,6 @@ nav a:hover{color:var(--ivoire)}
    rendu ne prend sa place que si le script a reellement obtenu un
    contexte WebGL et charge l'image : c'est lui qui pose .gemme. */
 #binks figure canvas{display:none}
-#binks figure:not(.gemme) .indice{display:none}
 
 #binks figure.gemme .bl-par{will-change:transform}
 /* La gemme ne remplit pas son enveloppe : c'est le vide autour qui la
@@ -388,9 +400,12 @@ nav a:hover{color:var(--ivoire)}
 .gros-cta .puits{
   position:absolute;left:50%;top:50%;width:230%;aspect-ratio:1;
   pointer-events:none;opacity:0;
+  /* Le centre est un vrai noir, pas une ombre : c'est ce qui fait lire
+     un trou et non une tache. La chute est rapide au coeur puis longue
+     sur le bord, comme un entonnoir vu de face. */
   background:radial-gradient(circle closest-side,
-    rgba(10,10,10,.92) 0%, rgba(10,10,10,.55) 26%,
-    rgba(10,10,10,.18) 48%, rgba(10,10,10,0) 68%);
+    #000 0%, rgba(0,0,0,.96) 11%, rgba(0,0,0,.74) 24%,
+    rgba(0,0,0,.40) 40%, rgba(0,0,0,.12) 58%, rgba(0,0,0,0) 72%);
   will-change:transform,opacity;
 }
 
@@ -434,7 +449,6 @@ nav a:hover{color:var(--ivoire)}
    neutraliser le volet d'entree en mouvement reduit. */
 @media(prefers-reduced-motion:reduce){
   #binks figure .cadre{transform:none;clip-path:none;perspective:none}
-  #binks figure .indice{display:none}
 }
 /* ---------- les marques de classification ----------
    Elles ne decorent pas : elles disent a quoi on a affaire, et elles
@@ -458,10 +472,15 @@ nav a:hover{color:var(--ivoire)}
 #binks .seize{width:clamp(52px,6.5vw,84px)}
 
 @media(max-width:760px){
-  /* sur telephone la colonne est etroite : les marques se serrent aux
-     deux bords plutot que de retrecir jusqu'a l'illisible */
-  #binks .marques{margin-top:24px}
-  #binks .pa{width:174px}
+  /* Sur telephone le sigle passait devant la pierre. Il redescend a un
+     peu plus de la moitie de sa taille — assez pour rester parfaitement
+     lisible, plus assez pour disputer l'image — et le disque garde
+     presque la sienne : c'est lui qui porte l'avertissement. Davantage
+     d'air au-dessus, pour que les deux marques se lisent comme un
+     cartel et non comme une ligne de pied. */
+  #binks .marques{margin-top:38px}
+  #binks .pa{width:100px}
+  #binks .seize{width:58px}
 }
 @media(prefers-reduced-motion:reduce){
   #binks .marques{opacity:1;transform:none;transition:none}
@@ -673,7 +692,7 @@ footer .ailleurs{margin-top:30px;border:0;padding-top:0;flex-direction:row;gap:2
 /* de l'air, pas du vide : 72 + 48 au lieu de 170 + 110 */
 footer{margin-top:72px;border-top:1px solid var(--ligne-2);padding:48px 24px 44px;text-align:center}
 footer .lk-name{font-size:13px;letter-spacing:.26em}
-footer .lk-base{font-size:15px;color:var(--gris);margin-top:6px}
+footer .lk-base{font-size:21px;color:var(--gris);margin-top:2px}
 footer .legal{margin-top:34px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gris-2)}
 
 /* ---------- page film ---------- */
@@ -986,7 +1005,6 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
         <span class="lk-name">Binksfilms</span>
         <span class="lk-base">Les beaux arts du ghetto</span>
       </h1>
-      <p class="role">Réalisateur</p>
     </div>
   </section>
 
@@ -1034,7 +1052,6 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
             </span>
           </span>
         </span>
-        <p class="indice" id="indice-bloc">Faire glisser pour tourner</p>
         <!-- Les deux marques de classification. Dessinees, pas importees :
              un sigle en image serait flou au zoom et pesant pour ce qu'il
              dit. Ici c'est du texte, net a toute taille, zero kilo-octet. -->
@@ -2598,7 +2615,6 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   var bl     = document.getElementById("bl");
   var cnv    = document.getElementById("gem");
   var img    = document.getElementById("bl-img");
-  var indice = document.getElementById("indice-bloc");
   if(!figure || !bl || !cadre || !cnv || !img) return;
 
   if(reduced) return;
@@ -3034,7 +3050,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     tenu = true; axeDecide = (e.pointerType === "mouse");
     px = depX = e.clientX; py = depY = e.clientY;
     tPrec = e.timeStamp;
-    vx = 0; vy = 0; cibleRy = null; agi(); demarrer();
+    vx = 0; vy = 0; cibleRy = null; amorce = 0; agi(); demarrer();
     bl.classList.add("tenu");
     if(e.pointerType === "mouse" && bl.setPointerCapture && e.pointerId != null){
       try{ bl.setPointerCapture(e.pointerId); }catch(err){}
@@ -3062,7 +3078,6 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     vy = Math.max(-V_MAX, Math.min(V_MAX,  dx * PAR_PX / dts));
     vx = Math.max(-V_MAX, Math.min(V_MAX, -dy * PAR_PX / dts));
     agi(); aTourne = true;
-    if(indice) indice.classList.add("fini");
   }, {passive:true});
 
   /* L'orientation legere au pointeur n'a de sens qu'a la souris : il n'y
@@ -3087,9 +3102,6 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   }
   addEventListener("pointerup", lacher);
   addEventListener("pointercancel", lacher);
-  bl.addEventListener("pointerenter", function(){
-    if(!aTourne && indice) indice.classList.add("montre");
-  });
   bl.addEventListener("pointerleave", function(){ if(!tenu){ incX = 0; incY = 0; demarrer(); } });
 
   /* ---------- clavier ----------
@@ -3105,7 +3117,6 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     var base = (cibleRy === null ? ry : cibleRy);
     cibleRy = Math.round(base / 90) * 90 + sens * 90;
     vy = 0; vx = 0; agi(); aTourne = true; demarrer();
-    if(indice) indice.classList.add("fini");
   });
 
   /* ---------- l'arrivee au scroll ----------
@@ -3175,13 +3186,20 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
      defilement, et le deplacement se fait par translate3d et scale
      seuls, donc sans recalcul de la page. */
   var cible = document.querySelector("#contact .gros-cta");
-  var vol = null, puits = null, aspire = null, deplace = null;
+  var vol = null, puits = null, aspire = null, deplace = null, bruit = null;
   var aX = 0, aY = 0, bX = 0, bY = 0;
 
   /* etat partage avec le rendu */
   var pincement = 0, ecartRVB = 0, trainee = 0, dirX = 0, dirY = 1;
   var descRx = 0, descRy = 0;
   var pxPrec = null, pyPrec = 0, tPrecP = 0, vLisse = 0, dernierP = 0;
+
+  /* Aucune phrase ne dit que la pierre se manipule : elle le montre. A
+     sa premiere apparition elle pivote d'une dizaine de degres et
+     revient, une seule fois. Un objet qui bouge tout seul se touche ;
+     une legende, elle, se lit et s'oublie. Le geste de l'utilisateur
+     l'annule aussitot — il a compris, la demonstration n'a plus lieu. */
+  var amorce = -1, CLIN_DEB = 460, CLIN_DUR = 1700, CLIN_ANG = 11;
 
   /* Le bouton recoit son puits et une enveloppe pour son texte. Son
      dessin ne change pas : ni sa couleur, ni sa taille, ni sa fonte, ni
@@ -3215,6 +3233,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
       '</filter>';
     document.body.appendChild(svg);
     deplace = svg.querySelector("feDisplacementMap");
+    bruit = svg.querySelector("feTurbulence");
   }
 
   var sDebut = 0, sFin = 1;
@@ -3354,9 +3373,13 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
       puits.style.transform =
         "translate3d(-50%,-50%,0) scale(" + (0.18 + asp * 1.05).toFixed(3) + ")";
       /* la boite se pince et gauchit */
+      /* pincement, gauchissement ET rotation : trois gestes differents
+         valent mieux qu'un seul amplifie — c'est ce qui separe une
+         torsion d'un simple ecrasement */
       cible.style.transform =
-        "scale(" + (1 + 0.055 * asp).toFixed(4) + "," + (1 - 0.075 * asp).toFixed(4) + ")" +
-        " skewX(" + (-2.4 * asp).toFixed(2) + "deg)";
+        "scale(" + (1 + 0.07 * asp).toFixed(4) + "," + (1 - 0.095 * asp).toFixed(4) + ")" +
+        " skewX(" + (-3.2 * asp).toFixed(2) + "deg)" +
+        " rotate(" + (-1.1 * asp).toFixed(2) + "deg)";
       /* le texte est tire vers le puits, puis rendu */
       aspire.style.transform =
         "translate3d(" + (-6 * asp).toFixed(2) + "px,0,0)" +
@@ -3364,7 +3387,11 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
       /* et la surface elle-meme se tord */
       if(deplace){
         if(asp > 0.012){
-          deplace.setAttribute("scale", (asp * 17).toFixed(2));
+          deplace.setAttribute("scale", (asp * 22).toFixed(2));
+          /* la maille du bruit se resserre a mesure que l'aspiration
+             monte : la surface ne se deplace pas, elle tourbillonne */
+          if(bruit) bruit.setAttribute("baseFrequency",
+            (0.009 + asp * 0.016).toFixed(4) + " " + (0.034 + asp * 0.030).toFixed(4));
           if(!cible.style.filter) cible.style.filter = "url(#binks-liquide)";
         } else if(cible.style.filter){
           cible.style.filter = "";
@@ -3445,6 +3472,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
       }
       visible = vuCadre || vuContact;
       if(visible){
+        if(amorce === -1 && vuCadre) amorce = performance.now() + CLIN_DEB;
         mesurerBiais();
         /* Les ancres sont reprises quand la section revient a l'ecran :
            les images chargees plus haut dans la page ont pu decaler la
@@ -3499,12 +3527,20 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     visX += (incX - visX) * Math.min(1, 6 * dt);
     visY += (incY - visY) * Math.min(1, 6 * dt);
 
+    /* la presentation : un aller-retour, une seule fois */
+    var clin = 0;
+    if(amorce > 0){
+      var w = (now - amorce) / CLIN_DUR;
+      if(w >= 1) amorce = 0;
+      else if(w > 0) clin = Math.sin(w * Math.PI) * CLIN_ANG;
+    }
+
     /* la place a l'ecran est recalculee a chaque image, et non au
        defilement : c'est ce qui rend la descente continue au lieu de
        saccadee, et c'est gratuit — aucune lecture de mise en page */
     placer();
     dessiner(rx + visX + respX + descRx,
-             ry + visY + respY + biais * 4 * repos + descRy);
+             ry + visY + respY + biais * 4 * repos + descRy + clin);
     requestAnimationFrame(boucle);
   }
 })();
