@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>BINKSFILMS — LAB / bloc</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Instrument+Serif:ital@0;1&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   Contexte repris tel quel de la section Réalisateur d'index.html :
+   mêmes variables, même colonne, même typographie. Ce qui est
+   nouveau est isolé sous « LE BLOC » — l'intégration consistera à
+   déplacer ce bloc-là, pas à réécrire la section.
+   ============================================================ */
+:root{color-scheme:dark;--noir:#0A0A0A;--ivoire:#EDEBE6;--gris:#8E8A84;--gris-2:#5C5955;--rouge:#B11226;
+  --ligne:rgba(237,235,230,.12);--ligne-2:rgba(237,235,230,.06)}
+*{margin:0;padding:0;box-sizing:border-box}
+html{background:var(--noir)}
+body{background:var(--noir);color:var(--ivoire);font-family:'Archivo','Helvetica Neue',Arial,sans-serif;
+  font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(177,18,38,.5);color:#fff}
+:focus-visible{outline:1px solid var(--rouge);outline-offset:3px}
+img{display:block;max-width:100%}
+.wrap{max-width:1280px;margin:0 auto;padding:0 24px}
+@media(min-width:1024px){.wrap{padding:0 48px}}
+.lab{font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--gris)}
+
+#binks{padding:120px 0 140px}
+#binks .cols{display:grid;gap:52px;align-items:start;margin-top:56px}
+@media(min-width:900px){#binks .cols{grid-template-columns:5fr 4fr;gap:80px}}
+#binks .txt p.lead{margin-top:0;font-weight:800;font-stretch:112%;text-transform:uppercase;
+  font-size:clamp(26px,3.4vw,44px);line-height:1.02;letter-spacing:-.02em}
+#binks .txt p.lead em{display:block;margin-top:10px;font-family:'Newsreader',Georgia,serif;
+  font-style:italic;font-weight:300;font-size:clamp(19px,2.2vw,28px);line-height:1.25;
+  letter-spacing:0;text-transform:none;color:var(--gris)}
+#binks .voix-bloc{margin-top:48px}
+#binks .voix-bloc p{margin:0;max-width:31em;font-weight:400;font-size:17px;letter-spacing:-.004em;line-height:1.68}
+#binks .voix-bloc p + p{margin-top:22px}
+figcaption{margin-top:14px;font-size:13px;color:var(--gris-2)}
+
+/* ============================================================
+   LE BLOC — le seul ajout
+   ------------------------------------------------------------
+   Ce n'est pas un cube : c'est un bloc debout à section carrée, à la
+   hauteur de la photo. Quatre faces utilisables, et une géométrie qui
+   garde la photo dominante — on ne peut jamais la voir « de loin »
+   comme une facette parmi d'autres.
+
+   Trois règles tiennent l'ensemble :
+
+   1. AU REPOS, LA PHOTO EST EN FACE. Le bloc revient toujours chez lui
+      après quelques secondes d'inactivité. Ce n'est pas un carrousel :
+      c'est un objet posé, qu'on dérange et qui se remet droit.
+   2. LE GESTE ORDINAIRE NE FAIT QUE L'INCLINER. Souris et doigt
+      produisent une inclinaison faible et bornée. On sent le poids, on
+      ne fait pas tourner.
+   3. POUR VOIR AUTRE CHOSE, IL FAUT MAINTENIR. C'est le même verbe que
+      le contre-champ des fiches film — le site a déjà ce geste, on le
+      réemploie au lieu d'en importer un.
+   ============================================================ */
+.bloc-scene{
+  perspective:1500px;
+  perspective-origin:50% 45%;
+  /* la scène réserve la place du bloc : la page ne saute pas au chargement */
+  aspect-ratio:1920/2566;
+}
+.bloc{
+  position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;
+  will-change:transform;
+  cursor:grab;
+  touch-action:pan-y;              /* le doigt peut encore faire défiler la page */
+  -webkit-tap-highlight-color:transparent;
+}
+.bloc.tenu{cursor:grabbing}
+.face{
+  position:absolute;inset:0;overflow:hidden;
+  background:#111;
+  backface-visibility:hidden;
+  /* une arête franche, pas un bouton : le même parti que les cadres du site */
+  border-radius:2px;
+}
+.face img{width:100%;height:100%;object-fit:cover}
+/* Les faces latérales sont assombries : sans ça un bloc éclairé
+   uniformément se lit comme un montage plat. La lumière vient de face. */
+.face.f2,.face.f4{filter:brightness(.62)}
+.face.f3{filter:brightness(.42)}
+/* la face de texte : la voix du site, pas une légende */
+.face.mot{display:flex;align-items:flex-end;padding:30px 26px;background:#0C0C0C}
+.face.mot p{font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:300;
+  font-size:clamp(20px,2.4vw,30px);line-height:1.28;color:var(--ivoire);max-width:14em}
+.face.mot span{display:block;margin-top:14px;font-family:'Archivo',sans-serif;font-style:normal;
+  font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gris-2)}
+
+/* l'indication : elle n'apparaît qu'au survol, et jamais après le premier usage */
+.indice{margin-top:14px;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gris-2);opacity:0;transition:opacity .45s ease}
+.bloc-scene:hover + .indice,.indice.montre{opacity:1}
+.indice.fini{opacity:0 !important}
+
+/* ---------- replis ----------
+   Sans 3D, sans script, ou en mouvement réduit : la photo redevient
+   exactement ce qu'elle est aujourd'hui sur le site. On ne perd que
+   le relief. */
+.bloc-scene.plat{perspective:none}
+.bloc-scene.plat .bloc{transform:none !important}
+.bloc-scene.plat .face:not(.f1){display:none}
+.bloc-scene.plat .face.f1{filter:none}
+@media(prefers-reduced-motion: reduce){
+  .bloc{transition:none !important;transform:none !important}
+  .face:not(.f1){display:none}
+  .indice{display:none}
+}
+@supports not (transform-style: preserve-3d){
+  .bloc-scene{perspective:none}
+  .face:not(.f1){display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap" style="padding-top:34px"><p class="lab">Binksfilms — lab / bloc · section Réalisateur</p></div>
+
+<section id="binks">
+  <div class="wrap">
+    <div class="cols">
+      <div class="txt">
+        <p class="lead">Plus de 100 projets.<em>J'ai arrêté de compter.</em></p>
+        <div class="voix-bloc">
+          <p>Quand j'ai envie de faire un truc, je le fais. Les codes, je les regarde après. J'essaie, je cherche, je pousse les idées jusqu'à tomber sur des choses que j'avais parfois même pas prévues.</p>
+          <p>Ça fait plus de 10 ans que je filme. Projet après projet, j'ai appris en faisant.</p>
+        </div>
+      </div>
+
+      <figure>
+        <div class="bloc-scene" id="scene">
+          <div class="bloc" id="bloc" tabindex="0" role="button"
+               aria-label="Portrait du réalisateur — maintenir pour faire tourner le bloc">
+            <div class="face f1"><img src="real-web.webp" width="1920" height="2566" alt="BinksFilms, réalisateur" decoding="async"></div>
+            <div class="face f2"><img src="images/contre champs.jpg" alt="Derrière la caméra" loading="lazy" decoding="async"></div>
+            <div class="face f3 mot">
+              <p>Les codes, je les regarde après.<span>Binksfilms</span></p>
+            </div>
+            <div class="face f4"><img src="images/Adjustment Layer.00_00_56_18.Still013.jpg" alt="Plan de tournage" loading="lazy" decoding="async"></div>
+          </div>
+        </div>
+        <p class="indice" id="indice">Maintenir pour tourner</p>
+        <figcaption>Réalisateur, cadreur et monteur — depuis plus de dix ans.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var scene = document.getElementById("scene");
+  var bloc  = document.getElementById("bloc");
+  var indice= document.getElementById("indice");
+  if(!bloc) return;
+
+  var reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* Sans support 3D ou en mouvement réduit, on ne pilote rien : le CSS a
+     déjà ramené la figure à la photo plate. */
+  var supporte = CSS && CSS.supports && CSS.supports("transform-style","preserve-3d");
+  if(!supporte || reduced){ scene.classList.add("plat"); return; }
+
+  /* ---------- géométrie ----------
+     Section carrée : la profondeur vaut la largeur, donc les quatre
+     faces ont exactement la taille de la photo. Recalculée au
+     redimensionnement, jamais devinée. */
+  var demi = 0;
+  function poser(){
+    demi = bloc.offsetWidth / 2;
+    var f = bloc.children;
+    f[0].style.transform = "translateZ(" + demi + "px)";
+    f[1].style.transform = "rotateY(90deg) translateZ(" + demi + "px)";
+    f[2].style.transform = "rotateY(180deg) translateZ(" + demi + "px)";
+    f[3].style.transform = "rotateY(-90deg) translateZ(" + demi + "px)";
+  }
+  poser();
+  addEventListener("resize", poser);
+
+  /* ---------- état ----------
+     angle  : rotation courante autour de Y, en degrés, continue
+     cible  : la face vers laquelle on se pose
+     incX/Y : l'inclinaison que produit le geste ordinaire, bornée */
+  var angle = 0, vitesse = 0, cible = 0;
+  var incX = 0, incY = 0, visX = 0, visY = 0;
+  var tenu = false, depuis = 0, inactifDepuis = performance.now();
+  var aTourne = false;
+
+  var INCLIN_MAX = 11;        /* degrés — on sent le poids, on ne tourne pas */
+  var VITESSE_TOUR = 46;      /* degrés par seconde pendant le maintien */
+  var RETOUR_APRES = 4200;    /* ms d'inactivité avant de revenir face avant */
+
+  function vers(p){ /* position du pointeur -> inclinaison bornée */
+    var r = bloc.getBoundingClientRect();
+    var nx = (p.clientX - (r.left + r.width/2)) / (r.width/2);
+    var ny = (p.clientY - (r.top + r.height/2)) / (r.height/2);
+    incY = Math.max(-1, Math.min(1, nx)) * INCLIN_MAX;
+    incX = Math.max(-1, Math.min(1, ny)) * -INCLIN_MAX * 0.62;
+    inactifDepuis = performance.now();
+  }
+  function repos(){ incX = 0; incY = 0; }
+
+  /* ---------- le geste ordinaire : incliner ---------- */
+  scene.addEventListener("pointermove", function(e){ if(!tenu) vers(e); });
+  scene.addEventListener("pointerleave", repos);
+
+  /* ---------- le geste engagé : maintenir ----------
+     Le même verbe que le contre-champ. Au relâchement, le bloc se pose
+     sur la face la plus proche : on peut s'arrêter où on veut, mais on
+     ne reste jamais de travers. */
+  function prendre(e){
+    tenu = true; depuis = performance.now(); bloc.classList.add("tenu");
+    inactifDepuis = depuis;
+    if(bloc.setPointerCapture && e.pointerId != null){ try{ bloc.setPointerCapture(e.pointerId); }catch(err){} }
+  }
+  function lacher(){
+    if(!tenu) return;
+    tenu = false; bloc.classList.remove("tenu");
+    cible = Math.round(angle / 90) * 90;
+    inactifDepuis = performance.now();
+    if(aTourne && indice) indice.classList.add("fini");
+  }
+  bloc.addEventListener("pointerdown", prendre);
+  addEventListener("pointerup", lacher);
+  addEventListener("pointercancel", lacher);
+
+  /* clavier : une face par appui, pour que le bloc ne soit pas réservé
+     à la souris et au doigt */
+  bloc.addEventListener("keydown", function(e){
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      cible = Math.round(angle/90)*90 + 90; aTourne = true;
+      inactifDepuis = performance.now();
+      if(indice) indice.classList.add("fini");
+    }
+  });
+
+  /* l'indication n'existe que tant qu'on n'a pas compris */
+  scene.addEventListener("pointerenter", function(){
+    if(!aTourne && indice) indice.classList.add("montre");
+  });
+
+  /* ---------- la boucle ----------
+     Tout est amorti : rien ne saute, rien ne rebondit. Les durées sont
+     exprimées en degrés par seconde, donc indépendantes de la machine. */
+  var precedent = performance.now();
+  function boucle(now){
+    var dt = Math.min((now - precedent) / 1000, 0.05); precedent = now;
+
+    if(tenu){
+      /* montée progressive : les 180 premières millisecondes ne tournent
+         pas encore — un appui bref reste un appui, pas une rotation */
+      var engage = Math.min(1, Math.max(0, (now - depuis - 180) / 420));
+      angle += VITESSE_TOUR * engage * dt;
+      if(engage > 0) aTourne = true;
+      cible = angle;
+    } else {
+      /* retour chez soi : après un temps d'inactivité, le bloc revient
+         face avant. La photo est l'état de repos, toujours. */
+      if(now - inactifDepuis > RETOUR_APRES){
+        var tours = Math.round(angle / 360);
+        cible = tours * 360;
+      }
+      angle += (cible - angle) * Math.min(1, 4.2 * dt);
+    }
+
+    /* l'inclinaison suit le pointeur avec du retard : c'est ce retard
+       qui donne la masse */
+    visX += (incX - visX) * Math.min(1, 6.5 * dt);
+    visY += (incY - visY) * Math.min(1, 6.5 * dt);
+
+    bloc.style.transform =
+      "rotateX(" + visX.toFixed(2) + "deg) rotateY(" + (angle + visY).toFixed(2) + "deg)";
+    requestAnimationFrame(boucle);
+  }
+  requestAnimationFrame(boucle);
+})();
+</script>
+</body>
+</html>
