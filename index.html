@@ -314,58 +314,58 @@ nav a:hover{color:var(--ivoire)}
 #binks figure.vu .cadre{transform:none;clip-path:inset(0 0 0 0)}
 
 /* ============================================================
-   LE BLOC — moment signature de la section Réalisateur
+   LE CUBE — moment signature de la section Realisateur
    ------------------------------------------------------------
-   La photo n'est plus une image posée dans un cadre : c'est la face
-   avant d'un bloc debout à section carrée. Quatre faces exactement de
-   sa taille, et une géométrie qui la garde dominante — elle ne peut
-   jamais devenir une facette parmi d'autres.
+   La photo n'est plus une image posee dans un cadre : c'est la face
+   avant d'un cube photographique, un vrai volume a six faces qu'on
+   manipule.
 
-   Trois règles :
-   1. AU REPOS, LA PHOTO EST EN FACE. Après quelques secondes
-      d'inactivité le bloc revient chez lui. Ce n'est pas un carrousel,
-      c'est un objet posé qu'on dérange et qui se remet droit.
-   2. LE GESTE ORDINAIRE NE FAIT QU'INCLINER, faiblement et en retard
-      sur le pointeur — c'est ce retard qui donne la masse.
-   3. POUR VOIR AUTRE CHOSE, IL FAUT MAINTENIR. C'est le verbe du
-      contre-champ des fiches film : le site possède déjà ce geste.
+   Ce qu'il n'y a pas, volontairement : pas de sol, pas de reflet, pas
+   de decor, pas de studio, pas de lueur sur les aretes, pas de verre.
+   Le fond reste le noir de la page. Les aretes n'existent que par la
+   perspective et par un tres leger ecart de lumiere entre les faces —
+   c'est ce qui separe un objet photographique d'un cube de demo.
 
-   Ce bloc n'existe qu'ici. Aucun autre endroit du site ne le reçoit.
+   Le cube flotte a l'endroit exact ou etait la photo : l'enveloppe de
+   mise en page garde son format, seul son contenu a change.
    ============================================================ */
-/* La réserve d'origine est conservée mais déplacée sur cette enveloppe :
-   c'est elle que la parallaxe du site pilote désormais, ce qui laisse au
-   bloc la propriété transform dont il a besoin pour tourner. */
+/* La reserve d'origine est conservee mais deplacee sur cette enveloppe :
+   c'est elle que la parallaxe du site pilote, ce qui laisse au cube la
+   propriete transform dont il a besoin pour tourner. */
 #binks figure .bl-par{
   position:absolute;left:0;top:-7%;width:100%;height:114%;
   transform-style:preserve-3d;will-change:transform;
 }
+/* Le cube est centre dans l'enveloppe et ne la remplit pas : c'est ce
+   vide autour qui le fait flotter au lieu de tenir dans une fenetre. */
 #binks figure .bl{
-  position:absolute;inset:0;transform-style:preserve-3d;
-  will-change:transform;cursor:grab;touch-action:pan-y;
+  position:absolute;left:50%;top:50%;
+  transform-style:preserve-3d;
+  will-change:transform;cursor:grab;
+  touch-action:pan-y;              /* le doigt fait toujours defiler la page */
   -webkit-tap-highlight-color:transparent;
 }
 #binks figure .bl.tenu{cursor:grabbing}
 #binks figure .bl-f{
-  position:absolute;inset:0;overflow:hidden;background:#111;
+  position:absolute;left:0;top:0;width:100%;height:100%;
+  overflow:hidden;background:#0D0D0D;
   backface-visibility:hidden;
 }
-#binks figure .bl-f img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-/* les faces latérales reçoivent moins de lumière : sans ça un bloc
-   éclairé uniformément se lit comme un montage plat */
-#binks figure .bl-2,#binks figure .bl-4{filter:brightness(.6)}
-/* la face de texte parle dans la voix du site, elle ne légende pas */
-#binks figure .bl-3{filter:brightness(.42);display:flex;align-items:flex-end;padding:26px 24px;background:#0C0C0C}
-#binks figure .bl-3 p{
-  font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:300;
-  font-size:clamp(19px,2.2vw,28px);line-height:1.28;color:var(--ivoire);max-width:14em;margin:0;
+#binks figure .bl-f img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;                /* les photos couvrent la face, jamais etirees */
 }
-#binks figure .bl-3 b{
-  display:block;margin-top:13px;font-family:'Archivo','Helvetica Neue',Arial,sans-serif;
-  font-style:normal;font-size:10px;font-weight:600;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--gris-2);
-}
-/* les deux couvercles : sans eux, une inclinaison découvrirait un trou */
-#binks figure .bl-cap{position:absolute;left:0;top:50%;width:100%;background:#0B0B0B}
+/* Ecart de lumiere entre les faces : tres faible, juste assez pour que
+   l'arete se lise. Aucune lueur, aucun contour. */
+#binks figure .bl-1{filter:brightness(1)}
+#binks figure .bl-2,#binks figure .bl-4{filter:brightness(.82)}
+#binks figure .bl-5{filter:brightness(.9)}
+#binks figure .bl-3{filter:brightness(.66)}
+#binks figure .bl-6{filter:brightness(.6)}
+/* les recadrages : la meme photo vue autrement, jamais deformee */
+#binks figure .bl-1 img{object-position:50% 30%}
+#binks figure .bl-2 img{object-position:50% 74%}
+
 /* l'indication n'apparait qu'au survol et disparait des qu'on a compris */
 #binks figure .indice{
   margin-top:13px;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
@@ -374,30 +374,33 @@ nav a:hover{color:var(--ivoire)}
 #binks figure .indice.montre{opacity:1}
 #binks figure .indice.fini{opacity:0}
 
+/* Le cadre cesse de decouper une fois son volet termine : sinon la
+   rotation serait coupee aux bords. Le debordement lateral est deja
+   contenu par #binks{overflow-x:clip}. */
+#binks figure.ouvert .cadre{overflow:visible;clip-path:none}
+
 /* ---------- replis ----------
    Sans 3D, sans script, ou en mouvement reduit : la figure redevient
-   exactement la photo d'avant. On ne perd que le relief. */
+   exactement la photo d'avant. On ne perd que le volume. */
 #binks figure.plat .cadre{perspective:none}
 #binks figure.plat .bl-par{position:static;height:auto;transform:none!important;transform-style:flat}
-#binks figure.plat .bl{position:static;transform:none!important;transform-style:flat;cursor:auto}
+#binks figure.plat .bl{position:static;transform:none!important;transform-style:flat;cursor:auto;width:auto!important;height:auto!important}
 #binks figure.plat .bl-f:not(.bl-1){display:none}
-#binks figure.plat .bl-cap{display:none}
 #binks figure.plat .bl-1{position:static;filter:none}
-#binks figure.plat .bl-1 img{position:static;height:auto}
+#binks figure.plat .bl-1 img{position:static;height:auto;object-position:50% 50%}
 #binks figure.plat .indice{display:none}
 @supports not (transform-style: preserve-3d){
   #binks figure .cadre{perspective:none}
   #binks figure .bl-f:not(.bl-1){display:none}
-  #binks figure .bl-cap{display:none}
 }
 @media(prefers-reduced-motion:reduce){
   #binks figure .cadre{transform:none;clip-path:none;aspect-ratio:auto;perspective:none}
   #binks figure .bl-par{position:static;height:auto;transform:none!important}
-  #binks figure .bl{position:static;transform:none!important}
+  #binks figure .bl{position:static;transform:none!important;width:auto!important;height:auto!important}
   #binks figure .bl-f:not(.bl-1){display:none}
-  #binks figure .bl-cap,#binks figure .indice{display:none}
+  #binks figure .indice{display:none}
   #binks figure .bl-1{position:static}
-  #binks figure .bl-1 img{position:static;height:auto}
+  #binks figure .bl-1 img{position:static;height:auto;object-position:50% 50%}
 }
 #binks figcaption{margin-top:12px;font-size:13px;color:var(--gris-2)}
 
@@ -960,17 +963,17 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
         <span class="cadre">
           <span class="bl-par">
             <span class="bl" id="bl" tabindex="0" role="button"
-                  aria-label="Portrait du réalisateur — maintenir pour faire tourner le bloc">
+                  aria-label="Portrait du réalisateur — cube photographique, faire glisser pour le tourner">
               <span class="bl-f bl-1"><img src="real-web.webp" width="1920" height="2566" alt="BinksFilms, réalisateur" loading="lazy"></span>
-              <span class="bl-f bl-2"><img src="images/contre champs.jpg" alt="Derrière la caméra" loading="lazy" decoding="async"></span>
-              <span class="bl-f bl-3"><p>Les codes, je les regarde après.<b>Binksfilms</b></p></span>
-              <span class="bl-f bl-4"><img src="images/Adjustment Layer.00_00_56_18.Still013.jpg" alt="Plan de tournage" loading="lazy" decoding="async"></span>
-              <span class="bl-cap bl-haut" aria-hidden="true"></span>
-              <span class="bl-cap bl-bas" aria-hidden="true"></span>
+              <span class="bl-f bl-2"><img src="real-web.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
+              <span class="bl-f bl-3"><img src="images/skinny.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
+              <span class="bl-f bl-4"><img src="images/Adjustment Layer.00_01_57_23.Still018.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
+              <span class="bl-f bl-5"><img src="images/Adjustment Layer.00_00_56_18.Still013.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
+              <span class="bl-f bl-6"><img src="images/contre champs.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
             </span>
           </span>
         </span>
-        <p class="indice" id="indice-bloc">Maintenir pour tourner</p>
+        <p class="indice" id="indice-bloc">Faire glisser pour tourner</p>
       </figure>
     </div>
   </section>
@@ -2486,124 +2489,181 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   addEventListener("scroll",function(){ hdr.classList.toggle("sc", scrollY > 60); },{passive:true});
 })();
 
-/* ================= LE BLOC =================
-   Section Realisateur, et nulle part ailleurs.
+/* ================= LE CUBE =================
+   Section Realisateur, et nulle part ailleurs. Aucune carte film,
+   aucun autre bloc du site ne recoit ceci.
 
-   Trois regles, dans cet ordre d'importance :
-   1. au repos la photo est en face, et le bloc y revient seul ;
-   2. le geste ordinaire ne fait qu'incliner, faiblement et en retard ;
-   3. pour voir une autre face il faut maintenir - le verbe du
-      contre-champ, deja present sur les fiches film.
+   Quatre comportements, par ordre de priorite :
+   1. le glissement de l'utilisateur, toujours prioritaire ;
+   2. l'inertie au relachement, qui decelere naturellement ;
+   3. l'orientation legere que suit le pointeur quand on ne glisse pas ;
+   4. au repos, une respiration tres lente — un objet suspendu, pas une
+      animation qui tourne toute seule.
 
-   Rien n'est anime en continu : tout ce qui bouge est produit par un
-   geste et retombe avec lui. */
+   La respiration et l'arrivee au scroll s'effacent des qu'on touche le
+   cube, et reviennent progressivement quand on le laisse. */
 (function(){
   var figure = document.querySelector("#binks figure");
-  var bl = document.getElementById("bl");
+  var cadre  = figure && figure.querySelector(".cadre");
+  var bl     = document.getElementById("bl");
   var indice = document.getElementById("indice-bloc");
-  if(!figure || !bl) return;
+  if(!figure || !bl || !cadre) return;
 
   var supporte = window.CSS && CSS.supports && CSS.supports("transform-style","preserve-3d");
   if(!supporte || reduced){ figure.classList.add("plat"); return; }
 
   var faces = bl.querySelectorAll(".bl-f");
-  var caps  = bl.querySelectorAll(".bl-cap");
 
-  /* Section carree : la profondeur vaut la largeur, donc les quatre
-     faces ont exactement la taille de la photo. Recalcule au
-     redimensionnement, jamais devine. */
+  /* ---------- geometrie ----------
+     Un vrai cube : six faces carrees de cote identique. Le cote est
+     calcule depuis l'enveloppe et laisse du vide autour, pour que la
+     rotation ne soit jamais coupee et que l'objet flotte. */
+  var cote = 0;
   function poser(){
-    var L = bl.offsetWidth, H = bl.offsetHeight;
+    var L = bl.parentNode.offsetWidth, H = bl.parentNode.offsetHeight;
     if(!L || !H) return;
-    var d = L / 2;
-    faces[0].style.transform = "translateZ(" + d + "px)";
-    faces[1].style.transform = "rotateY(90deg) translateZ(" + d + "px)";
-    faces[2].style.transform = "rotateY(180deg) translateZ(" + d + "px)";
-    faces[3].style.transform = "rotateY(-90deg) translateZ(" + d + "px)";
-    /* les couvercles font la largeur du bloc en profondeur */
-    for(var i = 0; i < caps.length; i++){
-      caps[i].style.height = L + "px";
-      caps[i].style.marginTop = (-L/2) + "px";
-      caps[i].style.transform = "rotateX(" + (i === 0 ? 90 : -90) + "deg) translateZ(" + (H/2) + "px)";
-    }
+    cote = Math.round(Math.min(L * 0.82, H * 0.62));
+    var d = cote / 2;
+    bl.style.width  = cote + "px";
+    bl.style.height = cote + "px";
+    bl.style.marginLeft = (-d) + "px";
+    bl.style.marginTop  = (-d) + "px";
+    faces[0].style.transform = "translateZ(" + d + "px)";                 /* avant  */
+    faces[1].style.transform = "rotateY(90deg) translateZ(" + d + "px)";  /* droite */
+    faces[2].style.transform = "rotateY(180deg) translateZ(" + d + "px)"; /* arriere*/
+    faces[3].style.transform = "rotateY(-90deg) translateZ(" + d + "px)"; /* gauche */
+    faces[4].style.transform = "rotateX(90deg) translateZ(" + d + "px)";  /* haut   */
+    faces[5].style.transform = "rotateX(-90deg) translateZ(" + d + "px)"; /* bas    */
   }
   poser();
   addEventListener("resize", poser);
-  /* la largeur depend du volet d'entree : on repose une fois qu'il a fini */
-  setTimeout(poser, 1700);
+  /* le cadre cesse de decouper une fois son volet termine : sinon la
+     rotation serait coupee aux bords */
+  setTimeout(function(){ figure.classList.add("ouvert"); poser(); }, 1700);
 
-  var angle = 0, cible = 0, incX = 0, incY = 0, visX = 0, visY = 0;
-  var tenu = false, depuis = 0, inactif = performance.now(), aTourne = false;
+  /* ---------- etat ----------
+     rx, ry : orientation du cube, en degres, sans borne sur Y
+     vx, vy : vitesse angulaire, en degres par seconde */
+  var rx = -14, ry = 24;          /* une position de depart de trois-quarts, pas de face plate */
+  var vx = 0, vy = 0;
+  var incX = 0, incY = 0, visX = 0, visY = 0;   /* l'orientation que suit le pointeur */
+  var tenu = false, px = 0, py = 0, bouge = false;
+  var derniereAction = performance.now() - 9999;
+  var aTourne = false;
 
-  var INCLIN = 10;            /* degres : on sent le poids, on ne tourne pas */
-  var TOUR = 44;              /* degres par seconde pendant le maintien */
-  var RETOUR = 4200;          /* ms d'inactivite avant de revenir face avant */
+  var SUIVI      = 7;      /* degres : l'orientation legere au pointeur */
+  var FROTTEMENT = 1.9;    /* plus haut = s'arrete plus vite */
+  var RESP_AMP   = 2.6;    /* degres : amplitude de la respiration */
+  var RESP_PER   = 8.5;    /* secondes : sa periode */
+  var CALME      = 1500;   /* ms apres la derniere action avant que la vie revienne */
 
-  function vers(e){
-    var r = bl.getBoundingClientRect();
-    if(!r.width) return;
-    var nx = (e.clientX - (r.left + r.width/2)) / (r.width/2);
-    var ny = (e.clientY - (r.top + r.height/2)) / (r.height/2);
-    incY = Math.max(-1, Math.min(1, nx)) * INCLIN;
-    incX = Math.max(-1, Math.min(1, ny)) * -INCLIN * 0.55;
-    inactif = performance.now();
+  function agi(){ derniereAction = performance.now(); }
+
+  /* ---------- le glissement : la vraie rotation ----------
+     Une seule regle de priorite : tant que l'utilisateur tient le cube,
+     rien d'autre ne le pilote. */
+  bl.addEventListener("pointerdown", function(e){
+    tenu = true; bouge = false; px = e.clientX; py = e.clientY;
+    vx = 0; vy = 0; agi();
+    bl.classList.add("tenu");
+    if(bl.setPointerCapture && e.pointerId != null){ try{ bl.setPointerCapture(e.pointerId); }catch(err){} }
+  });
+  addEventListener("pointermove", function(e){
+    if(!tenu){
+      /* hors glissement : une orientation legere, jamais une rotation */
+      var r = bl.getBoundingClientRect();
+      if(!r.width) return;
+      var nx = (e.clientX - (r.left + r.width/2)) / (r.width/2);
+      var ny = (e.clientY - (r.top + r.height/2)) / (r.height/2);
+      if(Math.abs(nx) < 2.4 && Math.abs(ny) < 2.4){
+        incY = Math.max(-1, Math.min(1, nx)) * SUIVI;
+        incX = Math.max(-1, Math.min(1, ny)) * -SUIVI * 0.7;
+        agi();
+      } else { incX = 0; incY = 0; }
+      return;
+    }
+    var dx = e.clientX - px, dy = e.clientY - py;
+    px = e.clientX; py = e.clientY;
+    if(Math.abs(dx) + Math.abs(dy) > 2) bouge = true;
+    /* 0,32 degre par pixel : assez pour tourner franchement, assez peu
+       pour garder de la precision */
+    ry += dx * 0.32;
+    rx -= dy * 0.32;
+    if(rx >  82) rx =  82;        /* on ne passe jamais par-dessus : l'objet reste lisible */
+    if(rx < -82) rx = -82;
+    vy = dx * 13; vx = -dy * 13;  /* vitesse gardee pour l'inertie */
+    agi(); aTourne = true;
+    if(indice) indice.classList.add("fini");
+  }, {passive:true});
+  function lacher(){
+    if(!tenu) return;
+    tenu = false; bl.classList.remove("tenu"); agi();
   }
-  bl.addEventListener("pointermove", function(e){ if(!tenu) vers(e); });
-  bl.addEventListener("pointerleave", function(){ incX = 0; incY = 0; });
+  addEventListener("pointerup", lacher);
+  addEventListener("pointercancel", lacher);
   bl.addEventListener("pointerenter", function(){
     if(!aTourne && indice) indice.classList.add("montre");
   });
+  bl.addEventListener("pointerleave", function(){ if(!tenu){ incX = 0; incY = 0; } });
 
-  function prendre(e){
-    tenu = true; depuis = performance.now(); inactif = depuis;
-    bl.classList.add("tenu");
-    if(bl.setPointerCapture && e.pointerId != null){ try{ bl.setPointerCapture(e.pointerId); }catch(err){} }
-  }
-  function lacher(){
-    if(!tenu) return;
-    tenu = false; bl.classList.remove("tenu");
-    cible = Math.round(angle / 90) * 90;      /* on ne reste jamais de travers */
-    inactif = performance.now();
-    if(aTourne && indice) indice.classList.add("fini");
-  }
-  bl.addEventListener("pointerdown", prendre);
-  addEventListener("pointerup", lacher);
-  addEventListener("pointercancel", lacher);
-
-  /* clavier : une face par appui, pour que le bloc ne soit pas reserve
+  /* clavier : une face par appui, pour que le cube ne soit pas reserve
      a la souris et au doigt */
   bl.addEventListener("keydown", function(e){
     if(e.key === "Enter" || e.key === " "){
-      e.preventDefault();
-      cible = Math.round(angle/90)*90 + 90; aTourne = true;
-      inactif = performance.now();
+      e.preventDefault(); vy = 150; agi(); aTourne = true;
       if(indice) indice.classList.add("fini");
     }
   });
 
+  /* ---------- l'arrivee au scroll ----------
+     Le cube entre legerement de biais et se replace pendant qu'on
+     arrive sur la section. Ce n'est pas une animation d'introduction :
+     c'est une valeur continue, nulle quand la section est centree, et
+     qui s'efface des qu'on touche le cube. */
+  function biaisScroll(){
+    var r = cadre.getBoundingClientRect();
+    if(!r.height) return 0;
+    var centre = r.top + r.height/2;
+    var d = (centre - innerHeight/2) / (innerHeight/2);   /* -1 haut, 0 centre, +1 bas */
+    return Math.max(-1, Math.min(1, d));
+  }
+
   var precedent = performance.now();
   function boucle(now){
     var dt = Math.min((now - precedent) / 1000, 0.05); precedent = now;
+    var t  = now / 1000;
 
-    if(tenu){
-      /* les 180 premieres millisecondes ne tournent pas : un appui bref
-         reste un appui, pas une rotation */
-      var engage = Math.min(1, Math.max(0, (now - depuis - 180) / 420));
-      angle += TOUR * engage * dt;
-      if(engage > 0) aTourne = true;
-      cible = angle;
-    } else {
-      /* le bloc revient chez lui : la photo est l'etat de repos */
-      if(now - inactif > RETOUR) cible = Math.round(angle / 360) * 360;
-      angle += (cible - angle) * Math.min(1, 4.2 * dt);
+    if(!tenu){
+      /* inertie : la vitesse retombe toute seule, sans a-coup */
+      var k = Math.exp(-FROTTEMENT * dt);
+      ry += vy * dt; rx += vx * dt;
+      vy *= k; vx *= k;
+      if(Math.abs(vy) < 0.4) vy = 0;
+      if(Math.abs(vx) < 0.4) vx = 0;
+      if(rx >  82) { rx =  82; vx = 0; }
+      if(rx < -82) { rx = -82; vx = 0; }
     }
-    /* l'inclinaison suit le pointeur avec du retard : c'est ce retard
-       qui donne la masse */
-    visX += (incX - visX) * Math.min(1, 6.5 * dt);
-    visY += (incY - visY) * Math.min(1, 6.5 * dt);
+
+    /* la vie revient progressivement apres la derniere action, jamais
+       d'un coup : c'est ce degrade qui evite l'effet gadget */
+    var repos = Math.min(1, Math.max(0, (now - derniereAction - CALME) / 2200));
+
+    /* respiration : un pivot vertical tres lent, de faible amplitude,
+       plus un souffle horizontal deux fois plus lent encore */
+    var respX = Math.sin(t * (2*Math.PI/RESP_PER)) * RESP_AMP * repos;
+    var respY = Math.sin(t * (2*Math.PI/(RESP_PER*1.9)) + 1.1) * RESP_AMP * 0.55 * repos;
+
+    /* l'arrivee au scroll, elle aussi ponderee par le repos */
+    var biais = biaisScroll() * 11 * repos;
+
+    /* l'orientation au pointeur suit avec du retard : c'est ce retard
+       qui donne le poids */
+    visX += (incX - visX) * Math.min(1, 6 * dt);
+    visY += (incY - visY) * Math.min(1, 6 * dt);
 
     bl.style.transform =
-      "rotateX(" + visX.toFixed(2) + "deg) rotateY(" + (angle + visY).toFixed(2) + "deg)";
+      "rotateX(" + (rx + visX + respX).toFixed(2) + "deg) " +
+      "rotateY(" + (ry + visY + respY + biais).toFixed(2) + "deg)";
     requestAnimationFrame(boucle);
   }
   requestAnimationFrame(boucle);
