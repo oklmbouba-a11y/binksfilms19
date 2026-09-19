@@ -182,10 +182,10 @@ nav a:hover{color:var(--ivoire)}
   /* Le format d'affiche, enfin appliqué. En 16/9 pleine largeur une carte
      ne fait que 211px de haut sur un téléphone : quatre cartes tiennent à
      l'écran et l'échelle qui désigne la carte centrée n'a pas la place de
-     se voir. En 3/4 il en reste une et demie — la voisine se devine sans
-     se disputer l'attention. L'image garde toute sa largeur et se recadre
-     en hauteur : on perd le haut et le bas du plan, jamais les côtés. */
-  .film .thumb{--r:13px;aspect-ratio:3/4}
+     se voir. Le format d'affiche a été essayé et écarté par le
+     propriétaire : le 16/9 est celui du travail, et une carte de film doit
+     ressembler à un plan, pas à une pochette. */
+  .film .thumb{--r:13px}
   .film .cartel{padding:0 20px 17px}
   .film .artiste{font-size:16px}
   .film .titre{font-size:27px}
@@ -329,8 +329,8 @@ nav a:hover{color:var(--ivoire)}
    Ordre des regles : la photo plate d'abord, le cube ensuite. Le cube
    est une amelioration, jamais un prerequis — sans script, sans 3D ou
    en mouvement reduit, la figure reste exactement la photo d'avant.
-   C'est le script qui pose .cube sur la figure une fois la geometrie
-   reellement calculee.
+   C'est le script qui pose .gemme sur la figure, et seulement apres avoir
+   obtenu un contexte 3D, charge la photo et dessine une premiere image.
    ============================================================ */
 /* ---------- l'etat de base : la photo, rien d'autre ---------- */
 #binks figure .bl-par{position:absolute;left:0;top:-7%;width:100%;height:114%}
@@ -340,9 +340,7 @@ nav a:hover{color:var(--ivoire)}
   position:absolute;inset:0;width:100%;height:100%;
   object-fit:cover;                /* les photos couvrent la face, jamais etirees */
 }
-#binks figure:not(.cube) .bl-f:not(.bl-1){display:none}
-#binks figure:not(.cube) .bl-1 img{object-position:50% 30%}
-#binks figure:not(.cube) .indice{display:none}
+#binks figure:not(.gemme) .bl-1 img{object-position:50% 30%}
 
 /* ---------- la gemme ----------
    La photo plate reste l'etat par defaut de la feuille de style. Le
@@ -364,6 +362,33 @@ nav a:hover{color:var(--ivoire)}
 #binks figure.gemme .bl-f{display:none}   /* la photo passe dans la pierre */
 #binks figure.gemme canvas{display:block;width:100%;height:100%}
 #binks figure.gemme .cadre{background:transparent}
+
+/* ---------- le vol ----------
+   La pierre quitte le flux des qu'elle est montee et passe dans une
+   couche fixe : c'est ce qui lui permet de descendre avec le defilement
+   jusqu'a entrer dans la section Contact, sans que le decoupage d'aucune
+   section ne l'arrete.
+
+   Elle passe DERRIERE le texte du contact, jamais devant : une pierre qui
+   couvrirait « Parler d'un projet » couterait un clic, pas seulement de la
+   lisibilite. */
+#vol{
+  position:fixed;left:0;top:0;z-index:6;
+  pointer-events:none;transform-origin:50% 50%;
+  will-change:transform,opacity;
+}
+#vol .bl{
+  position:absolute;inset:0;margin:0!important;
+  width:100%!important;height:100%!important;
+  pointer-events:auto;cursor:grab;
+  touch-action:pan-y;              /* le doigt fait toujours defiler la page */
+  -webkit-tap-highlight-color:transparent;
+}
+#vol .bl.tenu{cursor:grabbing}
+#vol .bl-f{display:none}           /* la photo plate ne sert plus : elle est dans la pierre */
+#vol canvas{display:block;width:100%;height:100%}
+/* le texte du contact reste au-dessus de la pierre, toujours */
+#contact .wrap{position:relative;z-index:7}
 
 /* Le cadre cesse de decouper une fois son volet d'entree termine :
    sinon la rotation serait coupee aux bords. La classe est posee a la
@@ -394,49 +419,18 @@ nav a:hover{color:var(--ivoire)}
 }
 #binks figure.vu .marques{opacity:1;transform:none}
 
-/* Le sigle, en version inversee : celle qui tient sur un fond noir.
-   Une seule unite commande tout le bloc, donc il grandit d'un bloc. */
-#binks .pa{
-  --u:clamp(8.5px,1.35vw,13px);
-  flex:none;display:flex;flex-direction:column;width:calc(var(--u)*17.4);
-  font-weight:800;color:var(--ivoire);text-transform:uppercase;line-height:1;
-  -webkit-user-select:none;user-select:none;
-}
-#binks .pa i{font-style:normal;display:block;text-align:center;white-space:nowrap}
-#binks .pa .l1{
-  font-size:calc(var(--u)*.95);letter-spacing:.235em;text-indent:.235em;
-  padding-bottom:calc(var(--u)*.3);
-}
-#binks .pa .l2{
-  font-size:calc(var(--u)*1.62);letter-spacing:.025em;
-  border:calc(var(--u)*.18) solid var(--ivoire);
-  padding:calc(var(--u)*.2) 0 calc(var(--u)*.28);
-}
-#binks .pa .l3{
-  font-size:calc(var(--u)*.86);letter-spacing:.055em;
-  padding-top:calc(var(--u)*.32);
-}
-
-/* Le disque : plein, franc, sans contour. Le tiret est dessine, pas
-   tape — aucun tiret de la fonte n'a l'epaisseur qu'il faut ici. */
-#binks .seize{
-  flex:none;display:flex;align-items:center;justify-content:center;
-  width:clamp(52px,8.4vw,84px);aspect-ratio:1;border-radius:50%;
-  background:var(--ivoire);color:var(--noir);
-  font-weight:800;font-size:clamp(21px,3.4vw,34px);letter-spacing:-.015em;
-  -webkit-user-select:none;user-select:none;
-}
-#binks .seize i{
-  display:block;width:.4em;height:.15em;background:currentColor;
-  margin-right:.05em;border-radius:.02em;
-}
-#binks .seize b{font-weight:800}
+/* Les deux marques sont des images : on ne redessine pas des sigles dont
+   le propriétaire possède les fichiers. Leur seule mise en forme ici est
+   leur taille, calée sur celle de la maquette. */
+#binks .marques img{display:block;height:auto;-webkit-user-drag:none;user-select:none}
+#binks .pa{width:clamp(148px,17.4vw,226px)}
+#binks .seize{width:clamp(52px,6.5vw,84px)}
 
 @media(max-width:760px){
   /* sur telephone la colonne est etroite : les marques se serrent aux
      deux bords plutot que de retrecir jusqu'a l'illisible */
   #binks .marques{margin-top:24px}
-  #binks .pa{--u:10px}
+  #binks .pa{width:174px}
 }
 @media(prefers-reduced-motion:reduce){
   #binks .marques{opacity:1;transform:none;transition:none}
@@ -1012,15 +1006,16 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
         <!-- Les deux marques de classification. Dessinees, pas importees :
              un sigle en image serait flou au zoom et pesant pour ce qu'il
              dit. Ici c'est du texte, net a toute taille, zero kilo-octet. -->
+        <!-- Les deux marques fournies par le propriétaire. Les fichiers
+             d'origine restent dans images/ ; ceux-ci en sont les versions
+             prêtes pour un fond noir : le sigle était dessiné en noir sur
+             transparent, donc invisible sur la page, et le -16 était un
+             carré entièrement opaque dont le pourtour se serait vu. -->
         <div class="marques">
-          <span class="pa" role="img" aria-label="Parental Advisory — contenu explicite">
-            <i class="l1" aria-hidden="true">Parental</i>
-            <i class="l2" aria-hidden="true">Advisory</i>
-            <i class="l3" aria-hidden="true">Explicit Content</i>
-          </span>
-          <span class="seize" role="img" aria-label="Deconseille aux moins de 16 ans">
-            <i aria-hidden="true"></i><b aria-hidden="true">16</b>
-          </span>
+          <img class="pa" src="images/marque-parental.png" width="600" height="371"
+               alt="Parental Advisory — contenu explicite" loading="lazy" decoding="async">
+          <img class="seize" src="images/marque-16.png" width="260" height="260"
+               alt="Déconseillé aux moins de 16 ans" loading="lazy" decoding="async">
         </div>
       </figure>
     </div>
@@ -2594,7 +2589,11 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
      mesuree de la largeur utile, pas sa quasi-totalite. */
   var cote = 0, dpr = 1;
   function poser(){
-    var L = bl.parentNode.offsetWidth, H = bl.parentNode.offsetHeight;
+    /* La mesure se prend TOUJOURS sur le cadre de la figure, jamais sur
+       le parent de la pierre : celle-ci demenage dans sa couche de vol,
+       et se mesurer sur son propre contenant la ferait retrecir de huit
+       pour cent a chaque recalcul. */
+    var L = cadre.clientWidth, H = cadre.clientHeight;
     if(!L || !H) return false;
     /* La pierre est l'objet, pas une vignette posee dans un cadre : elle
        prend presque toute la place et ne garde que la marge qu'il faut
@@ -2608,6 +2607,13 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     var n = Math.round(cote * dpr);
     if(cnv.width !== n){ cnv.width = n; cnv.height = n; }
     gl.viewport(0, 0, cnv.width, cnv.height);
+    /* la couche de vol suit la taille de la pierre, sinon la mise a
+       l'echelle du deplacement part d'une base fausse */
+    if(vol){ vol.style.width = cote + "px"; vol.style.height = cote + "px"; }
+    /* Redimensionner la toile l'efface. Si la boucle est a l'arret — hors
+       ecran, onglet en arriere-plan — personne ne la redessinerait et la
+       pierre resterait invisible. On redessine donc sur place. */
+    if(prete) dessiner(rx + visX + 0, ry + visY + 0);
     return true;
   }
   if(!poser()) return;
@@ -2835,13 +2841,27 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     setTimeout(function(){
       poser(); dessiner(rx, ry);
       figure.classList.add("gemme");    /* la pierre n'existe qu'ici */
+      /* Elle sort du flux : a partir d'ici sa place a l'ecran est
+         calculee, plus heritee. Tant qu'on lit la section Realisateur
+         elle est posee exactement sur son cadre — rien ne se voit. */
+      if(cible){
+        vol = document.createElement("div");
+        vol.id = "vol";
+        vol.appendChild(bl);
+        document.body.appendChild(vol);
+        vol.style.width = cote + "px"; vol.style.height = cote + "px";
+        mesurer(); placer();
+      }
       demarrer();
     }, 0);
   }
   if(img.complete && img.naturalWidth) charger();
   else { img.addEventListener("load", charger); img.addEventListener("error", function(){}); }
 
-  addEventListener("resize", function(){ poser(); mesurerBiais(); demarrer(); }, {passive:true});
+  addEventListener("resize", function(){
+    poser();
+    mesurerBiais(); mesurer(); placer(); demarrer();
+  }, {passive:true});
 
   /* ---------- l'ouverture du cadre ----------
      Le cadre decoupe pendant son volet d'entree ; il doit cesser de
@@ -2853,6 +2873,8 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     if(ouvert) return;
     ouvert = true; clearTimeout(filet);
     figure.classList.add("ouvert"); poser();
+    /* le cadre vient de bouger : son ancre n'est plus la meme */
+    mesurer(); placer();
   }
   cadre.addEventListener("transitionend", function(e){
     if(e.target === cadre && e.propertyName === "clip-path") ouvrir();
@@ -2977,7 +2999,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     biais = Math.max(-1, Math.min(1, d));
   }
   mesurerBiais();
-  addEventListener("scroll", mesurerBiais, {passive:true});
+  addEventListener("scroll", function(){ mesurerBiais(); placer(); }, {passive:true});
 
   /* ---------- les matrices ----------
      Une projection et une rotation, rien de plus : pas de bibliotheque
@@ -3013,6 +3035,58 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   /* ---------- la boucle, et ses bornes ----------
      Elle ne demarre que lorsque la section est a l'ecran, l'onglet au
      premier plan et la matiere chargee. Elle s'arrete reellement sinon. */
+  /* ---------- la descente vers le contact ----------
+     Deux ancres : le cadre d'origine, et le bloc « Parler d'un projet ».
+     Leurs positions absolues sont mesurees une fois, puis converties en
+     position d'ecran a chaque defilement : aucune lecture de mise en page
+     n'est refaite pendant qu'on defile.
+
+     Le deplacement se fait par transformation seule — jamais par largeur
+     ni hauteur — pour que le defilement n'ait pas a recalculer la page. */
+  var cible = document.querySelector("#contact .entrees");
+  var vol = null;
+  var aX = 0, aY = 0, bX = 0, bY = 0, tailleB = 0;
+
+  function mesurer(){
+    if(!cible || !vol) return;
+    var rc = cadre.getBoundingClientRect();
+    aX = rc.left + rc.width/2 + scrollX;
+    aY = rc.top  + rc.height/2 + scrollY;
+    var rb = cible.getBoundingClientRect();
+    bX = rb.left + rb.width/2 + scrollX;
+    bY = rb.top  + rb.height/2 + scrollY;
+    /* elle arrive plus petite : elle entre dans la section, elle ne
+       l'ecrase pas */
+    tailleB = Math.min(rb.width * 0.95, cote * 0.78);
+  }
+
+  function placer(){
+    if(!vol) return;
+    var vh = innerHeight;
+    /* p vaut 0 quand le bloc contact touche le bas de l'ecran, et 1
+       quand il est centre : la pierre est donc exactement arrivee au
+       moment ou l'on regarde « Parler d'un projet ». */
+    var p = (vh - (bY - scrollY)) / (vh * 0.5);
+    p = p < 0 ? 0 : (p > 1 ? 1 : p);
+    var e = p * p * (3 - 2 * p);          /* depart et arrivee adoucis */
+    var cx = (aX + (bX - aX) * e) - scrollX;
+    var cy = (aY + (bY - aY) * e) - scrollY;
+    var k  = (cote + (tailleB - cote) * e) / cote;
+    vol.style.transform =
+      "translate(" + (cx - cote/2).toFixed(1) + "px," + (cy - cote/2).toFixed(1) + "px)" +
+      " scale(" + k.toFixed(4) + ")";
+    /* elle s'efface en arrivant : le texte du contact garde la parole */
+    vol.style.opacity = (1 - e * 0.5).toFixed(3);
+    /* et elle cesse de capter le geste avant de recouvrir le bouton */
+    vol.style.pointerEvents = e > 0.3 ? "none" : "";
+  }
+  addEventListener("load", function(){ mesurer(); placer(); });
+  /* Les polices arrivent apres le chargement et changent la taille des
+     boutons du contact : l'ancre d'arrivee doit etre reprise a ce
+     moment-la, sinon la pierre se pose a cote. */
+  if(document.fonts && document.fonts.ready)
+    document.fonts.ready.then(function(){ mesurer(); placer(); });
+
   function dessiner(ax, ay){
     matrices(ax, ay);
     gl.useProgram(prg);
@@ -3033,10 +3107,23 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   }
 
   if(window.IntersectionObserver){
-    new IntersectionObserver(function(es){
-      visible = es[0].isIntersecting;
+    /* Deux zones a surveiller, pas une : la pierre est encore animee
+       quand elle est descendue dans le contact et que son cadre d'origine
+       est sorti de l'ecran depuis longtemps. */
+    var vuCadre = false, vuContact = false;
+    var oio = new IntersectionObserver(function(es){
+      for(var q = 0; q < es.length; q++){
+        if(es[q].target === cadre) vuCadre = es[q].isIntersecting;
+        else vuContact = es[q].isIntersecting;
+      }
+      visible = vuCadre || vuContact;
       if(visible){
         mesurerBiais();
+        /* Les ancres sont reprises quand la section revient a l'ecran :
+           les images chargees plus haut dans la page ont pu decaler la
+           mise en page depuis la premiere mesure. C'est rare, et c'est
+           exactement le moment ou la justesse compte. */
+        mesurer(); placer();
         /* Le chargement paresseux est juste tant que la section est
            loin, mais le cadre est decoupe a zero pendant son volet
            d'entree : une image paresseuse dans une boite de surface
@@ -3046,7 +3133,9 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
         if(!ouvert && !filet) filet = setTimeout(ouvrir, 2200);
         demarrer();
       }
-    }, {rootMargin:"120px 0px"}).observe(cadre);
+    }, {rootMargin:"200px 0px"});
+    oio.observe(cadre);
+    if(cible) oio.observe(document.getElementById("contact"));
   } else {
     visible = true; if(!ouvert) filet = setTimeout(ouvrir, 2200); demarrer();
   }

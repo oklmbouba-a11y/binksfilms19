@@ -484,3 +484,57 @@ seulement à l'animer.
 Parental Advisory et le disque −16 sont du texte mis en forme : nets à toute
 taille, aucun fichier, aucune requête. Le sigle est en version inversée, celle
 qui tient sur un fond noir.
+
+---
+
+## D-027 — Les marques sont les fichiers du propriétaire, préparés pour le noir
+
+Les deux sigles sont désormais ceux qu'il a fournis, plus ceux que j'avais
+dessinés. Aucun des deux n'était utilisable tel quel :
+
+- `parental advisory.png` : fond transparent, **dessin noir** — invisible sur la
+  page. Inversé.
+- `Moins16.svg.png` : **entièrement opaque**, carré noir avec disque blanc. Le
+  carré se serait vu sur le noir de la page. Le pourtour a été rendu
+  transparent par remplissage depuis les bords, ce qui laisse le « −16 » gravé
+  à l'intérieur du disque en noir.
+
+Les originaux restent dans `images/`. Ce qui est servi, ce sont deux dérivées
+recadrées sur leur contenu et à la taille d'affichage : 51 Ko et 15 Ko.
+
+**Règle :** on ne redessine pas un sigle dont le propriétaire possède le
+fichier. On le prépare.
+
+---
+
+## D-028 — Le format d'affiche sur téléphone est abandonné
+
+Le 3/4 introduit en B-009 est retiré : retour au 16/9 sur téléphone. Le
+propriétaire a tranché — le 16/9 est le format du travail, et une carte de film
+doit ressembler à un plan, pas à une pochette.
+
+L'argument géométrique qui avait motivé le 3/4 (1,83 carte par écran contre
+1,73) reste vrai ; il ne suffisait pas.
+
+---
+
+## D-029 — La pierre quitte le flux pour pouvoir descendre
+
+Elle passe dans une couche fixe dès qu'elle est montée, et sa place à l'écran
+est **calculée** entre deux ancres : son cadre d'origine, et le bloc « Parler
+d'un projet ». Elle est donc exactement sur son cadre tant qu'on lit la section
+Réalisateur, puis descend jusqu'à entrer dans le contact.
+
+Trois garde-fous :
+- elle passe **derrière** le texte du contact — une pierre qui couvrirait le
+  bouton coûterait un clic, pas seulement de la lisibilité ;
+- elle cesse de capter le geste avant de le recouvrir ;
+- elle s'efface de moitié en arrivant.
+
+Les positions absolues sont mesurées **une fois**, puis converties en position
+d'écran à chaque défilement : aucune lecture de mise en page pendant le
+défilement, et le déplacement se fait par transformation seule.
+
+Les ancres sont reprises au chargement, **quand les polices sont prêtes**, à
+chaque retour de la section à l'écran, et au redimensionnement. La mesure
+faite avant l'arrivée des polices était fausse de douze pixels.
