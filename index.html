@@ -317,7 +317,7 @@ nav a:hover{color:var(--ivoire)}
    pour les bannières de films. Le cadre garde le format du fichier pour
    que la page ne saute pas au chargement. */
 #binks figure .cadre{
-  display:block;position:relative;overflow:hidden;aspect-ratio:1/1;
+  display:block;position:relative;overflow:hidden;aspect-ratio:4/5;
   transform:translateX(14vw);
   clip-path:inset(0 0 0 100%);
   transition:transform 1.5s cubic-bezier(.16,1,.3,1),clip-path 1.5s cubic-bezier(.16,1,.3,1);
@@ -467,7 +467,7 @@ nav a:hover{color:var(--ivoire)}
    Elles arrivent apres le cube, jamais en meme temps : c'est la photo
    qu'on doit voir en premier. */
 #binks .marques{
-  margin-top:clamp(26px,3.4vw,44px);
+  margin-top:clamp(42px,4.8vw,66px);
   display:flex;align-items:center;justify-content:space-between;gap:20px;
   opacity:0;transform:translateY(10px);
   transition:opacity .9s ease .4s,transform .9s cubic-bezier(.2,.7,.2,1) .4s;
@@ -488,7 +488,7 @@ nav a:hover{color:var(--ivoire)}
      presque la sienne : c'est lui qui porte l'avertissement. Davantage
      d'air au-dessus, pour que les deux marques se lisent comme un
      cartel et non comme une ligne de pied. */
-  #binks .marques{margin-top:38px}
+  #binks .marques{margin-top:64px}
   #binks .pa{width:100px}
   #binks .seize{width:58px}
 }
@@ -2645,7 +2645,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
      Le cote se calcule depuis l'enveloppe et laisse du vide autour. La
      photo doit rester l'element dominant : la pierre occupe une part
      mesuree de la largeur utile, pas sa quasi-totalite. */
-  var cote = 0, dpr = 1;
+  var cote = 0, hauteur = 0, dpr = 1;
   function poser(){
     /* La mesure se prend TOUJOURS sur le cadre de la figure, jamais sur
        le parent de la pierre : celle-ci demenage dans sa couche de vol,
@@ -2657,22 +2657,25 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        entiere, a plat, exactement comme le repli. La pierre, elle, est
        reduite dans sa geometrie pour garder a l'ecran la taille qu'elle
        avait — c'est le cadre qui a grandi, pas elle qui a retreci. */
-    cote = Math.round(Math.min(L, H));
-    bl.style.width = cote + "px"; bl.style.height = cote + "px";
-    bl.style.marginLeft = (-cote/2) + "px"; bl.style.marginTop = (-cote/2) + "px";
+    cote = Math.round(L);
+    hauteur = Math.round(cote / FMT);
+    bl.style.width = cote + "px"; bl.style.height = hauteur + "px";
+    bl.style.marginLeft = (-cote/2) + "px"; bl.style.marginTop = (-hauteur/2) + "px";
     /* deux pixels physiques par pixel css au maximum : au-dela on paie
        quatre fois le remplissage pour une nettete qu'on ne voit plus */
     dpr = Math.min(devicePixelRatio || 1, 2);
-    var n = Math.round(cote * dpr);
+    var n = Math.round(cote * dpr), nh = Math.round(hauteur * dpr);
     /* Les cibles de rendu n'existent pas encore au tout premier appel :
        celui-ci precede la construction des programmes. On ne les touche
        que lorsqu'elles sont la. */
-    if(cnv.width !== n){ cnv.width = n; cnv.height = n; if(cibles) refaireCibles(n, n); }
-    else if(cibles && !cibles[0]) refaireCibles(n, n);
+    if(cnv.width !== n || cnv.height !== nh){
+      cnv.width = n; cnv.height = nh;
+      if(cibles) refaireCibles(n, nh);
+    } else if(cibles && !cibles[0]) refaireCibles(n, nh);
     gl.viewport(0, 0, cnv.width, cnv.height);
     /* la couche de vol suit la taille de la pierre, sinon la mise a
        l'echelle du deplacement part d'une base fausse */
-    if(vol){ vol.style.width = cote + "px"; vol.style.height = cote + "px"; }
+    if(vol){ vol.style.width = cote + "px"; vol.style.height = hauteur + "px"; }
     /* Redimensionner la toile l'efface. Si la boucle est a l'arret — hors
        ecran, onglet en arriere-plan — personne ne la redessinerait et la
        pierre resterait invisible. On redessine donc sur place. */
@@ -2737,9 +2740,19 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
      dans la pierre : les deux coques resteraient sinon rigoureusement
      coplanaires et se disputeraient chaque pixel. Ce residu, invisible a
      l'ecran, suffit a garder l'ordre de profondeur. */
-  var CARRE = 1.2325;      /* demi-cote du rectangle a plat, en unites de pierre */
-  var PHO_R = 1920 / 2566; /* la part de hauteur visible en recadrage couvrant */
-  var PHO_H = 0.30 * (1 - PHO_R);   /* et sa position : 50% 30%, comme le repli */
+  /* Le cadre n'est plus carre : il faut donc DEUX demi-cotes, et une
+     projection qui tient compte du format — sans quoi l'image serait
+     etiree. Ce sont les distances, en unites de pierre, qui atteignent
+     exactement le bord de la toile. */
+  var FMT   = 0.8;                  /* largeur / hauteur du cadre */
+  var CARRE_Y = 1.2325;             /* = D / F */
+  var CARRE_X = CARRE_Y * FMT;
+  /* La part de photo visible en recadrage couvrant : le rapport du
+     fichier sur celui du cadre. Meme calcul que object-fit:cover, et
+     meme position 50% 30% que le repli — les deux montrent donc
+     exactement le meme cadrage. */
+  var PHO_R = (1920 / 2566) / FMT;
+  var PHO_H = 0.30 * (1 - PHO_R);
 
   var anneaux = [];
   for(var i = 0; i < profil.length; i++){
@@ -2766,7 +2779,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
            pierre n'existe pas encore, il naitra du pliage */
         var ec = 1 / Math.max(Math.abs(Math.cos(a)), Math.abs(Math.sin(a)));
         pts.push([Math.cos(a)*rr, Math.sin(a)*rr, zz,
-                  Math.cos(a)*ec*r*CARRE, Math.sin(a)*ec*r*CARRE, z * 0.03, r]);
+                  Math.cos(a)*ec*r*CARRE_X, Math.sin(a)*ec*r*CARRE_Y, z * 0.03, r]);
       }
     }
     anneaux.push(pts);
@@ -2775,12 +2788,16 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
      le rectangle a plat, lui, garde le format du cadre */
   for(i = 0; i < anneaux.length; i++)
     for(var j = 0; j < anneaux[i].length; j++) anneaux[i][j][1] *= 1.2;
-  /* Le cadre porte desormais la photo entiere a plat, donc la toile fait
-     toute sa largeur. La pierre est reduite d'autant pour garder a
-     l'ecran exactement la taille qu'elle avait. */
+  /* L'echelle de la pierre est calculee, plus devinee. Avec le desordre
+     des rayons son rayon reel monte a 1,14, et sa hauteur a 1,14 x 1,2 :
+     au format carre precedent elle debordait la toile de deux pour cent
+     en hauteur — d'ou la coupe plate qu'on voyait en haut et en bas. On
+     part donc de la contrainte la plus serree, ici la largeur, et on
+     laisse dix pour cent de marge pour les eclats. */
+  var GEM = 0.90 * CARRE_X / 1.14;
   for(i = 0; i < anneaux.length; i++)
     for(j = 0; j < anneaux[i].length; j++){
-      anneaux[i][j][0] *= 0.918; anneaux[i][j][1] *= 0.918; anneaux[i][j][2] *= 0.918;
+      anneaux[i][j][0] *= GEM; anneaux[i][j][1] *= GEM; anneaux[i][j][2] *= GEM;
     }
 
   var pos = [], nor = [], plat = [], uvs = [], rang = [];
@@ -2806,8 +2823,8 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     for(q = 0; q < 3; q++){
       var v = som[q];
       plat.push(v[3]||0, v[4]||0, v[5]||0);
-      uvs.push(0.5 + (v[3]||0) / (2*CARRE),
-               PHO_H + (0.5 - (v[4]||0) / (2*CARRE)) * PHO_R);
+      uvs.push(0.5 + (v[3]||0) / (2*CARRE_X),
+               PHO_H + (0.5 - (v[4]||0) / (2*CARRE_Y)) * PHO_R);
       rang.push(rg);
     }
   }
@@ -3081,7 +3098,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
         vol.id = "vol";
         vol.appendChild(bl);
         document.body.appendChild(vol);
-        vol.style.width = cote + "px"; vol.style.height = cote + "px";
+        vol.style.width = cote + "px"; vol.style.height = hauteur + "px";
         mesurer(); placer();
       }
       demarrer();
@@ -3253,7 +3270,9 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        la colonne de translation : la retrancher aussi sur les colonnes
        de base la compterait quatre fois et decentrerait la pierre. */
     function col(j, x, y, z){
-      mvp[j*4+0] = F*x; mvp[j*4+1] = F*y;
+      /* le format entre ici, et nulle part ailleurs : sans lui une toile
+         plus haute que large etirerait l'image au lieu de la cadrer */
+      mvp[j*4+0] = (F / FMT) * x; mvp[j*4+1] = F*y;
       mvp[j*4+2] = pz*z; mvp[j*4+3] = -z;
     }
     col(0, m00, m10, m20);
@@ -3384,7 +3403,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        section, ce qui reste est compte, pas souhaite — on le repartit au
        lieu de reclamer une place qui n'existe pas. */
     sFin   = Math.min(maxi, bY - vh * 0.30);
-    mDebut = aY - vh * 0.55;
+    mDebut = aY - vh * 0.70;
     var reste = sFin - mDebut;
     mFin   = mDebut + reste * 0.5;
     if(mFin - mDebut < 160) mFin = mDebut + 160;
@@ -3503,7 +3522,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     var sx = 1 + 0.6 * dfm, sy = 1 - 0.36 * dfm;
 
     vol.style.transform =
-      "translate3d(" + (x - cote/2).toFixed(1) + "px," + (y - cote/2).toFixed(1) + "px,0)" +
+      "translate3d(" + (x - cote/2).toFixed(1) + "px," + (y - hauteur/2).toFixed(1) + "px,0)" +
       " scale(" + k.toFixed(4) + ")" +
       " rotate(" + ang.toFixed(1) + "deg)" +
       " scale(" + sx.toFixed(3) + "," + sy.toFixed(3) + ")" +

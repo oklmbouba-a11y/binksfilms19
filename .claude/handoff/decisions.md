@@ -724,3 +724,44 @@ est ce qui s'en approche le plus dans ce qui est chargeable sans licence : même
 famille de geste, même inclinaison, même contraste de brosse, mais des
 terminaisons plus rondes et pas de matière sèche. Si le propriétaire fournit
 les fichiers, le passage se fait en une déclaration `@font-face`.
+
+---
+
+## D-039 — Le cadre passe au 4/5, et la projection apprend le format
+
+Le carré rendait la photographie trop ramassée. Le cadre est en **4/5**.
+
+Ce n'est pas un réglage de feuille de style : le format entre dans **quatre
+endroits** liés, et en oublier un déforme l'image.
+
+1. **La projection** — `mvp.x = (F / FMT) · x`. Sans ce terme, une toile plus
+   haute que large étire l'image au lieu de la cadrer.
+2. **Le rectangle à plat** — deux demi-côtés au lieu d'un : `CARRE_X = CARRE_Y ·
+   FMT`. Ce sont les distances qui atteignent exactement le bord de la toile.
+3. **Les coordonnées d'image** — `PHO_R = (1920/2566) / FMT`, soit le rapport du
+   fichier sur celui du cadre. C'est le calcul de `object-fit: cover`, donc la
+   pierre et le repli plat montrent exactement le même cadrage.
+4. **La toile et la couche de vol** — hauteur propre, et centrage sur les deux
+   dimensions.
+
+### Un défaut trouvé au passage
+**La pierre débordait déjà la toile en hauteur**, au format carré. Avec le
+désordre des rayons son rayon réel monte à 1,14 et sa hauteur à 1,14 × 1,2 =
+1,368, pour une demi-hauteur utile de 1,2325 : elle dépassait de 2 %. C'était la
+coupe plate visible en haut et en bas de la pierre.
+
+L'échelle est désormais **calculée depuis la contrainte la plus serrée** —
+`GEM = 0,90 · CARRE_X / 1,14` — au lieu d'être devinée. Vérifié : zéro pixel de
+contact sur les quatre bords, empreinte à 83 % de large et 73 % de haut, sur
+téléphone comme sur bureau.
+
+---
+
+## D-040 — Rythme et respiration, réglages d'œil
+
+- Le pli commence quand le centre du cadre est à **70 %** de la hauteur d'écran
+  au lieu de 55 : la photographie plate reste visible 448 px sur téléphone au
+  lieu de 529, et le reste du budget passe à 519 px de chaque côté.
+- Les marques descendent : marge supérieure de 38 à **64 px** sur téléphone, de
+  44 à **66 px** au plus large sur bureau. L'espace sous elles se réduit
+  d'autant.
