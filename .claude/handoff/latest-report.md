@@ -1,99 +1,146 @@
-# Rapport — LAB / expérience : la structure complète
+# Dernier rapport — corrections issues de l'audit du cube
 
-**Date :** 2026-09-18 · **Agent :** Claude Code (Opus 5)
-**Mission :** structurer complètement le langage créatif
-**Périmètre :** prototype isolé. Aucun fichier du site modifié.
-
----
-
-## Le livrable n'est pas l'effet, ce sont les trois règles
-
-`lab-experience.html` — entrée, flux, ouverture d'un film, retour. Une
-expérience entière, pas une démonstration.
-
-**1. La grammaire vit dans le flux, et nulle part ailleurs.**
-La fiche film est une **zone de silence** : aucun effet n'y entre, jamais, et
-l'intensité y est forcée à zéro — pas atténuée, à zéro. C'est la règle la plus
-importante du système : *un langage qui n'a pas d'endroit interdit devient un
-thème.* Sans elle, chaque section finit par avoir son gimmick, ce que la
-direction DA voulait précisément éviter.
-
-**2. Rien ne passe par du noir.**
-Ouvrir un film ne coupe pas. Le plan qu'on regardait reste là et devient le fond
-de sa propre fiche, qui monte par-dessus. Réponse directe au reproche du
-propriétaire sur le trou entre les images.
-
-**3. Le texte et la navigation ne subissent jamais l'effet.**
-L'image se tord ; l'information reste lisible. C'est la limite entre une
-expérience et un gadget.
-
-**Conséquence pour la suite :** un futur effet devra déclarer dans quelle zone il
-vit, ou il n'entre pas dans le système.
+**Mission :** appliquer l'audit `e6333ee` (revue de code approfondie du cube
+Réalisateur) transmis via `next-task.md`.
+**Mode :** SURGICAL — un seul fichier touché, `index.html`.
+**Périmètre :** section Réalisateur uniquement. Hero, intro, cartes film,
+`films.js`, `admin.html`, `vercel.json` : aucun changement.
 
 ---
 
-## La courbe d'intensité
+## Vérification préalable de l'audit
 
-Une seule, exprimée en **plans par seconde** — donc indépendante de la machine et
-de la fréquence d'affichage.
+L'audit a été mené sur `bd1ea5a`, qui **précède** le correctif tactile
+`0a6a771`. Sa remarque P1 « pointermove global » était donc déjà traitée en
+partie : l'inclinaison au pointeur avait été replacée sur le cube lui-même et
+verrouillée sur `pointerType === "mouse"`. Seul le `pointermove` de glissement
+reste au niveau fenêtre, ce qui est nécessaire pour suivre un geste souris qui
+sort du cube, et sans effet au doigt puisqu'il est gardé par `tenu`.
 
-| Geste | Vitesse | Ce qui se voit |
+Les autres points ont été vérifiés dans le code avant d'agir. Tous exacts.
+**Un l'était même en dessous de la réalité** : voir P2-fallback ci-dessous.
+
+---
+
+## Ce qui a été corrigé
+
+### P0 — l'ouverture du cadre effaçait le volet d'entrée
+`setTimeout(…, 1700)` partait du chargement de la page, donc bien avant que
+l'`IntersectionObserver` ne pose `.vu`. La règle
+`#binks figure.ouvert .cadre{clip-path:none}` supprimait alors le découpage
+avant que la transition d'entrée ait joué.
+
+Remplacé par un `transitionend` sur `.cadre`, filtré sur `propertyName ===
+"clip-path"`, avec un filet de 2 200 ms armé **au moment où la section entre à
+l'écran**, pas au chargement.
+
+*Vérifié :* ordre des classes observé `rv → cube → vu → ouvert`.
+
+### P0 — la boucle tournait en permanence
+Elle tournait pendant l'intro, hors écran et en arrière-plan d'onglet, et
+appelait `getBoundingClientRect()` à chaque image via `biaisScroll()`.
+
+- `IntersectionObserver` sur le cadre (`rootMargin: 120px`) + `document.hidden` :
+  la boucle s'arrête réellement, elle ne calcule plus dans le vide. Elle
+  redémarre à l'intersection, au `visibilitychange` et à chaque geste.
+- Le biais de défilement est mesuré dans un écouteur `scroll` passif et gardé.
+  Plus aucun `getBoundingClientRect()` par image.
+
+*Vérifié :* volet en arrière-plan, `document.hidden === true`, `transform`
+jamais posé. Onglet au premier plan, section atteinte : `transform` posé.
+
+### P1 — inertie dépendante de la fréquence d'écran
+`vy = dx * 13` exprimait des pixels par évènement. Le même geste partait deux
+fois plus fort à 120 Hz qu'à 60 Hz. Vitesse désormais dérivée de
+`e.timeStamp`, en degrés par seconde, plafonnée à 420 °/s.
+
+### P1 — 6,26 Mo d'images hors-sujet
+Mesuré : `skinny.jpg` 2 356 Ko, `Still018` 1 836 Ko, `Still013` 1 204 Ko,
+`contre champs.jpg` 868 Ko. Des plans de films, pas des photos de réalisateur —
+l'audit avait raison de les juger incohérents avec la section.
+
+Les six faces reprennent maintenant **la seule photo de réalisateur que le
+projet contient**, `real-web.webp` (396 Ko, déjà en cache), sous six
+recadrages : 26 / 72 / 50 / 10 / 90 / 60 %. Un seul fichier, une seule requête,
+**0 Ko ajouté**. Rien n'a été inventé, conformément au brief.
+
+> À reprendre dès que de vraies photos de réalisateur existeront : remplacer
+> face par face, le CSS est déjà par-face.
+
+### P1 — deux réactions au défilement superposées
+La parallaxe du site et le biais du cube réagissaient tous deux au scroll.
+Biais réduit de 11° à 4°, toujours pondéré par le repos. La parallaxe reste
+seule maîtresse du mouvement d'ensemble.
+
+### P1 — réglages trop marqués
+| | avant | après |
 |---|---|---|
-| Repos | 0 | image nette, rien d'ajouté |
-| Lent | < 1,1 | fusion par les hautes lumières |
-| Franc | 1,1 → 3,2 | la matière se déchire |
-| Arrachage | > 3,2 | bandes fines, filé, écart chromatique |
+| position de départ | rx −14° / ry 24° | **rx −5° / ry 9°** |
+| taille, mobile | 82 % | **70 %** |
+| taille, bureau | 82 % | **76 %** |
+| respiration | 2,6° | **2°** |
+| inclinaison au pointeur | 7° | **4,5°** |
+| borne verticale | 82° | **70°** |
+
+La face avant redevient l'élément dominant, comme le brief le demandait.
+
+### P2 — le repli n'existait pas (plus grave qu'annoncé)
+L'audit disait que le repli sans script était « théorique ». En réalité `.bl`
+n'avait **aucune largeur ni hauteur en CSS** — elles étaient posées par le
+script. Sans JavaScript le cube faisait 0 × 0 et **la photo disparaissait
+entièrement**. C'était une régression franche par rapport à l'état d'avant le
+cube.
+
+Cascade inversée : la photo plate est désormais l'état par défaut de la
+feuille de style, et le cube une surcouche que le script active en posant
+`.cube` sur la figure, **après** avoir calculé la géométrie. La classe `.plat`
+et ses règles disparaissent, devenues inutiles.
+
+*Vérifié sans `.cube`, sans `.ouvert` et sans styles inline :* photo
+491 × 656 dans un cadre 491 × 656, `object-fit: cover`, une seule face
+visible, indication masquée. Exactement la photo d'avant.
+
+### P2 — clavier imprévisible
+`vy = 150` lançait une impulsion dont l'arrêt dépendait du frottement.
+Remplacé par un quart de tour déterministe : `←` / `→` (et Entrée / Espace)
+amènent à `Math.round(ry/90)*90 ± 90`, rejoint sans à-coup et annulé dès qu'on
+saisit le cube.
+
+### P2 — compromis tactile
+`touch-action: pan-y` conservé, comme l'audit le recommandait : geste
+horizontal ou diagonal → rotation, geste vertical → défilement de la page. Le
+départ d'axe est tranché à 8 px.
 
 ---
 
-## Budget média tenu
+## Mesures
 
-- deux vidéos décodées au maximum dans le flux ;
-- **zéro vidéo décodée quand la fiche est ouverte** — rien ne tourne derrière une
-  zone de silence ;
-- repli complet sans WebGL : mêmes plans, même fiche, même structure ;
-- mouvement réduit : inertie neutralisée, intensité forcée à zéro.
+**Bureau (800 px utiles)** — cube 373 × 373 parfaitement carré, 76 % de la
+largeur de l'enveloppe, six faces posées à 186,5 px de demi-arête, six
+recadrages distincts, six paliers de luminosité (1 / 0,92 / 0,84 / 0,84 /
+0,68 / 0,62), faces inertes au pointeur, aucun débordement de page, aucune
+erreur console.
 
----
-
-## Deux défauts trouvés en test, et corrigés
-
-**La retombée était calculée par image, pas par seconde.** Sur un appareil lent
-l'effet serait resté collé à l'image au lieu de s'effacer. Passée en temps réel.
-
-**La reprise de lecture pouvait être perdue.** Posée dans la boucle, elle
-arrivait parfois après l'expiration de l'autorisation de lecture accordée par le
-clic. Elle est maintenant appelée dans le geste, la boucle ne servant plus que de
-filet.
-
-Ce second défaut n'est visible que sur une machine lente ou une boucle bridée —
-il l'a été ici parce que le panneau du navigateur bride l'animation à environ une
-image par seconde. L'environnement de test a rendu service.
+**Mobile 375 × 812** — cube 229 × 229 carré, 70 % de la largeur, marges
+74 | 77 px, entièrement dans l'écran, aucun débordement, `pan-y` actif, faces
+inertes.
 
 ---
 
-## Ce que je ne peux pas juger d'ici
+## Ce qui n'est pas prouvé
 
-**Les performances réelles** — toute mesure d'images par seconde prise depuis ce
-panneau est fausse.
-
-**La calibration des seuils** — 1,1 et 3,2 plans par seconde sont des valeurs de
-départ défendables, pas des vérités. La déchirure se déclenche-t-elle trop tôt ?
-L'arrachage est-il trop violent ? Question d'œil et de main.
-
-**Si la fiche doit vraiment être muette.** C'est ma règle, pas celle de ChatGPT.
-Elle est peut-être trop stricte — mais je préfère un système qui interdit
-quelque part et qu'on assouplit, à un système qui autorise partout et qu'on ne
-rattrape plus.
+- **Le comportement tactile réel sur un téléphone.** Le volet d'aperçu n'émet
+  que des évènements de synthèse et rend la page en instantané `data:`, ce qui
+  empêche à la fois le test au doigt et le chargement des images relatives.
+  La correction du bug de défilement (`0a6a771` puis celle-ci) demande une
+  vérification sur un vrai appareil.
+- **La fluidité en images par seconde.** Le volet est bridé quand il est
+  masqué ; aucun chiffre fiable n'a pu être relevé, et aucun n'est inventé ici.
 
 ---
 
-## À décider
+## État
 
-1. Les seuils.
-2. La violence de l'arrachage.
-3. La règle de silence : trop stricte ou juste ?
-4. Le son — les clips sont de la musique et tout est muet. Territoire ouvert par
-   l'ADN, jamais rempli, et probablement le prochain vrai gain.
-
-Rien n'est intégré au site tant que la sensation n'est pas jugée.
+`index.html` seul modifié : 179 insertions, 106 suppressions.
+`films.js`, `admin.html`, `vercel.json`, `images/` : intacts.
+Repères disponibles : `core-phase1`, `avant-bloc`.

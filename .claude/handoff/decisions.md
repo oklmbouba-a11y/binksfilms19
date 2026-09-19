@@ -378,3 +378,58 @@ version, aucun retour arrière n'était possible.
 **Conséquence :** `git reset --hard core-phase1` ramène à l'état d'avant toute
 expérimentation. `core.autocrlf` étant actif sous Windows, Git normalise les
 fins de ligne dans l'index seulement — les fichiers du disque sont intacts.
+
+---
+
+## D-019 — Le cube est une surcouche, jamais un prérequis
+
+**Décidé le 19/09/2026, en appliquant l'audit `e6333ee`.**
+
+`.bl` n'avait aucune dimension dans la feuille de style : elles étaient posées
+par le script. Sans JavaScript le cube faisait 0 × 0 et la photo du réalisateur
+**disparaissait**. Le repli annoncé dans le rapport précédent n'existait pas.
+
+**Règle retenue :** l'état par défaut de la feuille de style est la photo plate,
+identique à ce qu'elle était avant le cube. Le script pose `.cube` sur la figure
+**seulement après** avoir calculé une géométrie valable. Toute règle 3D est
+portée par `#binks figure.cube …`.
+
+**Conséquence générale :** aucune expérience future ne doit poser en CSS un état
+que seul le script rend visible. L'amélioration s'ajoute, elle ne conditionne pas.
+
+---
+
+## D-020 — Les faces du cube ne montrent que ce que le projet possède
+
+Les quatre faces secondaires portaient des plans de films (6,26 Mo) : hors-sujet
+pour une section Réalisateur, et sans rapport entre eux.
+
+Le projet ne contient **qu'une seule** photo de réalisateur, `real-web.webp`.
+Les six faces en sont six recadrages. Un seul fichier, une seule requête, 0 Ko
+ajouté — et un objet cohérent : un sujet vu sous six cadrages, pas six images
+étrangères.
+
+**À reprendre** dès que de vraies photos de réalisateur existeront : le CSS est
+déjà écrit face par face, le remplacement est unitaire.
+
+---
+
+## D-021 — Toute boucle d'animation est bornée
+
+`IntersectionObserver` + `document.hidden` : la boucle du cube s'arrête
+réellement hors écran et en arrière-plan d'onglet, elle ne se contente pas de
+calculer sans rien afficher. Aucune mesure de position n'est refaite par image —
+le biais de défilement est relevé dans un écouteur `scroll` passif et gardé.
+
+Cela vaut pour toute animation continue ajoutée par la suite.
+
+---
+
+## D-022 — Les vitesses s'expriment en unités par seconde
+
+`vy = dx * 13` exprimait des pixels par évènement : le même geste partait deux
+fois plus fort sur un écran à 120 Hz. Toute vitesse est désormais dérivée d'un
+écart de temps réel (`e.timeStamp`) et exprimée en degrés par seconde.
+
+Même famille de défaut que la décroissance par image corrigée plus tôt sur les
+prototypes : **rien ne doit dépendre du rythme d'affichage.**

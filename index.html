@@ -326,29 +326,40 @@ nav a:hover{color:var(--ivoire)}
    perspective et par un tres leger ecart de lumiere entre les faces —
    c'est ce qui separe un objet photographique d'un cube de demo.
 
-   Le cube flotte a l'endroit exact ou etait la photo : l'enveloppe de
-   mise en page garde son format, seul son contenu a change.
+   Ordre des regles : la photo plate d'abord, le cube ensuite. Le cube
+   est une amelioration, jamais un prerequis — sans script, sans 3D ou
+   en mouvement reduit, la figure reste exactement la photo d'avant.
+   C'est le script qui pose .cube sur la figure une fois la geometrie
+   reellement calculee.
    ============================================================ */
+/* ---------- l'etat de base : la photo, rien d'autre ---------- */
+#binks figure .bl-par{position:absolute;left:0;top:-7%;width:100%;height:114%}
+#binks figure .bl{position:absolute;inset:0}
+#binks figure .bl-f{position:absolute;inset:0;overflow:hidden;background:#0D0D0D}
+#binks figure .bl-f img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;                /* les photos couvrent la face, jamais etirees */
+}
+#binks figure:not(.cube) .bl-f:not(.bl-1){display:none}
+#binks figure:not(.cube) .bl-1 img{object-position:50% 30%}
+#binks figure:not(.cube) .indice{display:none}
+
+/* ---------- le cube ---------- */
 /* La reserve d'origine est conservee mais deplacee sur cette enveloppe :
    c'est elle que la parallaxe du site pilote, ce qui laisse au cube la
    propriete transform dont il a besoin pour tourner. */
-#binks figure .bl-par{
-  position:absolute;left:0;top:-7%;width:100%;height:114%;
-  transform-style:preserve-3d;will-change:transform;
-}
+#binks figure.cube .bl-par{transform-style:preserve-3d;will-change:transform}
 /* Le cube est centre dans l'enveloppe et ne la remplit pas : c'est ce
    vide autour qui le fait flotter au lieu de tenir dans une fenetre. */
-#binks figure .bl{
-  position:absolute;left:50%;top:50%;
+#binks figure.cube .bl{
+  inset:auto;left:50%;top:50%;
   transform-style:preserve-3d;
   will-change:transform;cursor:grab;
   touch-action:pan-y;              /* le doigt fait toujours defiler la page */
   -webkit-tap-highlight-color:transparent;
 }
-#binks figure .bl.tenu{cursor:grabbing}
-#binks figure .bl-f{
-  position:absolute;left:0;top:0;width:100%;height:100%;
-  overflow:hidden;background:#0D0D0D;
+#binks figure.cube .bl.tenu{cursor:grabbing}
+#binks figure.cube .bl-f{
   backface-visibility:hidden;
   /* Une face tournee en 3D reste cliquable a sa position projetee, donc
      elle deborde largement la boite du cube et attrape des touchers a
@@ -356,20 +367,24 @@ nav a:hover{color:var(--ivoire)}
      empechait le defilement de repartir sur telephone. */
   pointer-events:none;
 }
-#binks figure .bl-f img{
-  position:absolute;inset:0;width:100%;height:100%;
-  object-fit:cover;                /* les photos couvrent la face, jamais etirees */
-}
 /* Ecart de lumiere entre les faces : tres faible, juste assez pour que
    l'arete se lise. Aucune lueur, aucun contour. */
-#binks figure .bl-1{filter:brightness(1)}
-#binks figure .bl-2,#binks figure .bl-4{filter:brightness(.82)}
-#binks figure .bl-5{filter:brightness(.9)}
-#binks figure .bl-3{filter:brightness(.66)}
-#binks figure .bl-6{filter:brightness(.6)}
-/* les recadrages : la meme photo vue autrement, jamais deformee */
-#binks figure .bl-1 img{object-position:50% 30%}
-#binks figure .bl-2 img{object-position:50% 74%}
+#binks figure.cube .bl-1{filter:brightness(1)}
+#binks figure.cube .bl-2,#binks figure.cube .bl-4{filter:brightness(.84)}
+#binks figure.cube .bl-5{filter:brightness(.92)}
+#binks figure.cube .bl-3{filter:brightness(.68)}
+#binks figure.cube .bl-6{filter:brightness(.62)}
+/* Six recadrages d'une seule et meme photographie : le projet n'en
+   contient qu'une du realisateur, et rien n'a ete invente. C'est aussi
+   ce qui rend l'objet coherent — un seul sujet vu sous six angles de
+   cadre, pas six images sans rapport. Un seul fichier, donc une seule
+   requete et aucun poids supplementaire. */
+#binks figure.cube .bl-1 img{object-position:50% 26%}
+#binks figure.cube .bl-2 img{object-position:50% 72%}
+#binks figure.cube .bl-3 img{object-position:50% 50%}
+#binks figure.cube .bl-4 img{object-position:50% 10%}
+#binks figure.cube .bl-5 img{object-position:50% 90%}
+#binks figure.cube .bl-6 img{object-position:50% 60%}
 
 /* l'indication n'apparait qu'au survol et disparait des qu'on a compris */
 #binks figure .indice{
@@ -379,33 +394,20 @@ nav a:hover{color:var(--ivoire)}
 #binks figure .indice.montre{opacity:1}
 #binks figure .indice.fini{opacity:0}
 
-/* Le cadre cesse de decouper une fois son volet termine : sinon la
-   rotation serait coupee aux bords. Le debordement lateral est deja
-   contenu par #binks{overflow-x:clip}. */
+/* Le cadre cesse de decouper une fois son volet d'entree termine :
+   sinon la rotation serait coupee aux bords. La classe est posee a la
+   fin de la transition du cadre, jamais sur une minuterie partie du
+   chargement — sinon elle effacait le volet avant qu'il ait joue. Le
+   debordement lateral reste contenu par #binks{overflow-x:clip}. */
 #binks figure.ouvert .cadre{overflow:visible;clip-path:none}
 
 /* ---------- replis ----------
-   Sans 3D, sans script, ou en mouvement reduit : la figure redevient
-   exactement la photo d'avant. On ne perd que le volume. */
-#binks figure.plat .cadre{perspective:none}
-#binks figure.plat .bl-par{position:static;height:auto;transform:none!important;transform-style:flat}
-#binks figure.plat .bl{position:static;transform:none!important;transform-style:flat;cursor:auto;width:auto!important;height:auto!important}
-#binks figure.plat .bl-f:not(.bl-1){display:none}
-#binks figure.plat .bl-1{position:static;filter:none}
-#binks figure.plat .bl-1 img{position:static;height:auto;object-position:50% 50%}
-#binks figure.plat .indice{display:none}
-@supports not (transform-style: preserve-3d){
-  #binks figure .cadre{perspective:none}
-  #binks figure .bl-f:not(.bl-1){display:none}
-}
+   Aucun n'a besoin d'etre ecrit : le cube ne s'active que si le script
+   tourne et si la 3D est reellement supportee. Il ne reste qu'a
+   neutraliser le volet d'entree en mouvement reduit. */
 @media(prefers-reduced-motion:reduce){
-  #binks figure .cadre{transform:none;clip-path:none;aspect-ratio:auto;perspective:none}
-  #binks figure .bl-par{position:static;height:auto;transform:none!important}
-  #binks figure .bl{position:static;transform:none!important;width:auto!important;height:auto!important}
-  #binks figure .bl-f:not(.bl-1){display:none}
+  #binks figure .cadre{transform:none;clip-path:none;perspective:none}
   #binks figure .indice{display:none}
-  #binks figure .bl-1{position:static}
-  #binks figure .bl-1 img{position:static;height:auto;object-position:50% 50%}
 }
 #binks figcaption{margin-top:12px;font-size:13px;color:var(--gris-2)}
 
@@ -971,10 +973,10 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
                   aria-label="Portrait du réalisateur — cube photographique, faire glisser pour le tourner">
               <span class="bl-f bl-1"><img src="real-web.webp" width="1920" height="2566" alt="BinksFilms, réalisateur" loading="lazy"></span>
               <span class="bl-f bl-2"><img src="real-web.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
-              <span class="bl-f bl-3"><img src="images/skinny.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
-              <span class="bl-f bl-4"><img src="images/Adjustment Layer.00_01_57_23.Still018.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
-              <span class="bl-f bl-5"><img src="images/Adjustment Layer.00_00_56_18.Still013.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
-              <span class="bl-f bl-6"><img src="images/contre champs.jpg" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
+              <span class="bl-f bl-3"><img src="real-web.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
+              <span class="bl-f bl-4"><img src="real-web.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
+              <span class="bl-f bl-5"><img src="real-web.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
+              <span class="bl-f bl-6"><img src="real-web.webp" alt="" aria-hidden="true" loading="lazy" decoding="async"></span>
             </span>
           </span>
         </span>
@@ -2505,8 +2507,12 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
    4. au repos, une respiration tres lente — un objet suspendu, pas une
       animation qui tourne toute seule.
 
-   La respiration et l'arrivee au scroll s'effacent des qu'on touche le
-   cube, et reviennent progressivement quand on le laisse. */
+   La respiration s'efface des qu'on touche le cube et revient
+   progressivement quand on le laisse.
+
+   Rien ne tourne quand la section n'est pas a l'ecran ni quand
+   l'onglet est en arriere-plan : la boucle s'arrete vraiment, elle ne
+   se contente pas de calculer dans le vide. */
 (function(){
   var figure = document.querySelector("#binks figure");
   var cadre  = figure && figure.querySelector(".cadre");
@@ -2515,19 +2521,24 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   if(!figure || !bl || !cadre) return;
 
   var supporte = window.CSS && CSS.supports && CSS.supports("transform-style","preserve-3d");
-  if(!supporte || reduced){ figure.classList.add("plat"); return; }
+  /* Sans 3D ou en mouvement reduit on ne pose rien : la feuille de
+     style laisse alors la photo telle qu'elle a toujours ete. */
+  if(!supporte || reduced) return;
 
   var faces = bl.querySelectorAll(".bl-f");
 
   /* ---------- geometrie ----------
      Un vrai cube : six faces carrees de cote identique. Le cote est
      calcule depuis l'enveloppe et laisse du vide autour, pour que la
-     rotation ne soit jamais coupee et que l'objet flotte. */
+     rotation ne soit jamais coupee et que l'objet flotte. La photo
+     principale doit rester l'element dominant : le cube occupe donc
+     une part mesuree de la largeur utile, pas sa quasi-totalite. */
   var cote = 0;
   function poser(){
     var L = bl.parentNode.offsetWidth, H = bl.parentNode.offsetHeight;
-    if(!L || !H) return;
-    cote = Math.round(Math.min(L * 0.82, H * 0.62));
+    if(!L || !H) return false;
+    var etroit = innerWidth <= 760;
+    cote = Math.round(Math.min(L * (etroit ? 0.70 : 0.76), H * 0.60));
     var d = cote / 2;
     bl.style.width  = cote + "px";
     bl.style.height = cote + "px";
@@ -2539,28 +2550,44 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     faces[3].style.transform = "rotateY(-90deg) translateZ(" + d + "px)"; /* gauche */
     faces[4].style.transform = "rotateX(90deg) translateZ(" + d + "px)";  /* haut   */
     faces[5].style.transform = "rotateX(-90deg) translateZ(" + d + "px)"; /* bas    */
+    return true;
   }
-  poser();
-  addEventListener("resize", poser);
-  /* le cadre cesse de decouper une fois son volet termine : sinon la
-     rotation serait coupee aux bords */
-  setTimeout(function(){ figure.classList.add("ouvert"); poser(); }, 1700);
+  if(!poser()) return;
+  figure.classList.add("cube");          /* le volume n'existe qu'ici */
+  addEventListener("resize", function(){ poser(); mesurerBiais(); }, {passive:true});
+
+  /* ---------- l'ouverture du cadre ----------
+     Le cadre decoupe pendant son volet d'entree ; il doit cesser de
+     decouper une fois celui-ci termine, et pas avant, sinon le volet
+     n'a pas lieu. On attend donc la fin reelle de la transition, avec
+     un filet de securite au cas ou elle ne serait jamais emise. */
+  var ouvert = false, filet = 0;
+  function ouvrir(){
+    if(ouvert) return;
+    ouvert = true; clearTimeout(filet);
+    figure.classList.add("ouvert"); poser();
+  }
+  cadre.addEventListener("transitionend", function(e){
+    if(e.target === cadre && e.propertyName === "clip-path") ouvrir();
+  });
 
   /* ---------- etat ----------
-     rx, ry : orientation du cube, en degres, sans borne sur Y
+     rx, ry : orientation du cube, en degres
      vx, vy : vitesse angulaire, en degres par seconde */
-  var rx = -14, ry = 24;          /* une position de depart de trois-quarts, pas de face plate */
+  var rx = -5, ry = 9;            /* un depart de trois-quarts tres leger : la face avant domine */
   var vx = 0, vy = 0;
   var incX = 0, incY = 0, visX = 0, visY = 0;   /* l'orientation que suit le pointeur */
   var tenu = false, px = 0, py = 0;
   var derniereAction = performance.now() - 9999;
   var aTourne = false;
 
-  var SUIVI      = 7;      /* degres : l'orientation legere au pointeur */
+  var SUIVI      = 4.5;    /* degres : l'orientation legere au pointeur */
   var FROTTEMENT = 1.9;    /* plus haut = s'arrete plus vite */
-  var RESP_AMP   = 2.6;    /* degres : amplitude de la respiration */
+  var RESP_AMP   = 2;      /* degres : amplitude de la respiration */
   var RESP_PER   = 8.5;    /* secondes : sa periode */
   var CALME      = 1500;   /* ms apres la derniere action avant que la vie revienne */
+  var PAR_PX     = 0.3;    /* degres de rotation par pixel glisse */
+  var V_MAX      = 420;    /* degres par seconde : plafond de l'inertie */
 
   function agi(){ derniereAction = performance.now(); }
 
@@ -2570,15 +2597,16 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
      - mais au doigt, la page passe avant le cube. Si le geste part en
        vertical il appartient au defilement, et le cube lache aussitot. */
   var finPointeur = matchMedia("(hover: hover) and (pointer: fine)").matches;
-  var depX = 0, depY = 0, axeDecide = false;
+  var depX = 0, depY = 0, axeDecide = false, tPrec = 0;
 
   bl.addEventListener("pointerdown", function(e){
     tenu = true; axeDecide = (e.pointerType === "mouse");
     px = depX = e.clientX; py = depY = e.clientY;
-    vx = 0; vy = 0; agi();
+    tPrec = e.timeStamp;
+    vx = 0; vy = 0; cibleRy = null; agi(); demarrer();
     bl.classList.add("tenu");
     /* La capture n'est utile qu'a la souris, pour suivre un glissement
-       qui sort du cube. Au doigt elle generait la decision de
+       qui sort du cube. Au doigt elle genait la decision de
        defilement du navigateur. */
     if(e.pointerType === "mouse" && bl.setPointerCapture && e.pointerId != null){
       try{ bl.setPointerCapture(e.pointerId); }catch(err){}
@@ -2599,13 +2627,19 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     }
 
     px = e.clientX; py = e.clientY;
-    /* 0,32 degre par pixel : assez pour tourner franchement, assez peu
-       pour garder de la precision */
-    ry += dx * 0.32;
-    rx -= dy * 0.32;
-    if(rx >  82) rx =  82;        /* on ne passe jamais par-dessus : l'objet reste lisible */
-    if(rx < -82) rx = -82;
-    vy = dx * 13; vx = -dy * 13;  /* vitesse gardee pour l'inertie */
+    ry += dx * PAR_PX;
+    rx -= dy * PAR_PX;
+    if(rx >  70) rx =  70;        /* on ne passe jamais par-dessus : l'objet reste lisible */
+    if(rx < -70) rx = -70;
+
+    /* La vitesse se mesure en degres par SECONDE, jamais par
+       evenement : sinon le meme geste lance deux fois plus fort sur un
+       ecran a 120 Hz que sur un ecran a 60 Hz. */
+    var dts = Math.min(0.1, Math.max(0.008, (e.timeStamp - tPrec) / 1000));
+    tPrec = e.timeStamp;
+    vy = Math.max(-V_MAX, Math.min(V_MAX,  dx * PAR_PX / dts));
+    vx = Math.max(-V_MAX, Math.min(V_MAX, -dy * PAR_PX / dts));
+
     agi(); aTourne = true;
     if(indice) indice.classList.add("fini");
   }, {passive:true});
@@ -2627,7 +2661,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
       var ny = (e.clientY - (r.top + r.height/2)) / (r.height/2);
       incY = Math.max(-1, Math.min(1, nx)) * SUIVI;
       incX = Math.max(-1, Math.min(1, ny)) * -SUIVI * 0.7;
-      agi();
+      agi(); demarrer();
     });
   }
   function lacher(){
@@ -2639,44 +2673,87 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   bl.addEventListener("pointerenter", function(){
     if(!aTourne && indice) indice.classList.add("montre");
   });
-  bl.addEventListener("pointerleave", function(){ if(!tenu){ incX = 0; incY = 0; } });
+  bl.addEventListener("pointerleave", function(){ if(!tenu){ incX = 0; incY = 0; demarrer(); } });
 
-  /* clavier : une face par appui, pour que le cube ne soit pas reserve
-     a la souris et au doigt */
+  /* ---------- clavier ----------
+     Une face par appui, exactement, et dans la direction demandee :
+     une impulsion de vitesse serait imprevisible, un quart de tour ne
+     l'est pas. */
+  var cibleRy = null;
   bl.addEventListener("keydown", function(e){
-    if(e.key === "Enter" || e.key === " "){
-      e.preventDefault(); vy = 150; agi(); aTourne = true;
-      if(indice) indice.classList.add("fini");
-    }
+    var sens = 0;
+    if(e.key === "ArrowRight" || e.key === "Enter" || e.key === " ") sens = 1;
+    else if(e.key === "ArrowLeft") sens = -1;
+    else return;
+    e.preventDefault();
+    var base = (cibleRy === null ? ry : cibleRy);
+    cibleRy = Math.round(base / 90) * 90 + sens * 90;
+    vy = 0; vx = 0; agi(); aTourne = true; demarrer();
+    if(indice) indice.classList.add("fini");
   });
 
   /* ---------- l'arrivee au scroll ----------
-     Le cube entre legerement de biais et se replace pendant qu'on
-     arrive sur la section. Ce n'est pas une animation d'introduction :
-     c'est une valeur continue, nulle quand la section est centree, et
-     qui s'efface des qu'on touche le cube. */
-  function biaisScroll(){
+     Une inclinaison tres faible liee a la position de la section dans
+     l'ecran. La parallaxe de la page reagit deja au defilement : le
+     cube ne fait qu'ajouter un souffle, il ne double pas l'effet.
+     Mesuree au defilement et gardee, jamais recalculee a chaque image. */
+  var biais = 0;
+  function mesurerBiais(){
     var r = cadre.getBoundingClientRect();
-    if(!r.height) return 0;
-    var centre = r.top + r.height/2;
-    var d = (centre - innerHeight/2) / (innerHeight/2);   /* -1 haut, 0 centre, +1 bas */
-    return Math.max(-1, Math.min(1, d));
+    if(!r.height){ biais = 0; return; }
+    var d = ((r.top + r.height/2) - innerHeight/2) / (innerHeight/2);
+    biais = Math.max(-1, Math.min(1, d));
+  }
+  mesurerBiais();
+  addEventListener("scroll", mesurerBiais, {passive:true});
+
+  /* ---------- la boucle, et ses bornes ----------
+     Elle ne demarre que lorsque la section est a l'ecran et l'onglet
+     au premier plan, et elle s'arrete reellement sinon. */
+  var visible = false, anime = false, precedent = 0;
+
+  function demarrer(){
+    if(anime || !visible || document.hidden) return;
+    anime = true; precedent = performance.now();
+    requestAnimationFrame(boucle);
   }
 
-  var precedent = performance.now();
+  if(window.IntersectionObserver){
+    new IntersectionObserver(function(es){
+      visible = es[0].isIntersecting;
+      if(visible){
+        mesurerBiais();
+        /* filet : si la transition du cadre n'emet rien, on ouvre
+           quand meme, mais seulement une fois la section atteinte */
+        if(!ouvert && !filet) filet = setTimeout(ouvrir, 2200);
+        demarrer();
+      }
+    }, {rootMargin:"120px 0px"}).observe(cadre);
+  } else {
+    visible = true; if(!ouvert) filet = setTimeout(ouvrir, 2200); demarrer();
+  }
+  addEventListener("visibilitychange", function(){ if(!document.hidden) demarrer(); });
+
   function boucle(now){
+    if(!visible || document.hidden){ anime = false; return; }
     var dt = Math.min((now - precedent) / 1000, 0.05); precedent = now;
     var t  = now / 1000;
 
     if(!tenu){
-      /* inertie : la vitesse retombe toute seule, sans a-coup */
-      var k = Math.exp(-FROTTEMENT * dt);
-      ry += vy * dt; rx += vx * dt;
-      vy *= k; vx *= k;
-      if(Math.abs(vy) < 0.4) vy = 0;
-      if(Math.abs(vx) < 0.4) vx = 0;
-      if(rx >  82) { rx =  82; vx = 0; }
-      if(rx < -82) { rx = -82; vx = 0; }
+      if(cibleRy !== null){
+        /* le quart de tour demande au clavier, amene sans a-coup */
+        ry += (cibleRy - ry) * Math.min(1, 7 * dt);
+        if(Math.abs(cibleRy - ry) < 0.15){ ry = cibleRy; cibleRy = null; }
+      } else {
+        /* inertie : la vitesse retombe toute seule, sans a-coup */
+        var k = Math.exp(-FROTTEMENT * dt);
+        ry += vy * dt; rx += vx * dt;
+        vy *= k; vx *= k;
+        if(Math.abs(vy) < 0.4) vy = 0;
+        if(Math.abs(vx) < 0.4) vx = 0;
+        if(rx >  70) { rx =  70; vx = 0; }
+        if(rx < -70) { rx = -70; vx = 0; }
+      }
     }
 
     /* la vie revient progressivement apres la derniere action, jamais
@@ -2688,9 +2765,6 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     var respX = Math.sin(t * (2*Math.PI/RESP_PER)) * RESP_AMP * repos;
     var respY = Math.sin(t * (2*Math.PI/(RESP_PER*1.9)) + 1.1) * RESP_AMP * 0.55 * repos;
 
-    /* l'arrivee au scroll, elle aussi ponderee par le repos */
-    var biais = biaisScroll() * 11 * repos;
-
     /* l'orientation au pointeur suit avec du retard : c'est ce retard
        qui donne le poids */
     visX += (incX - visX) * Math.min(1, 6 * dt);
@@ -2698,10 +2772,9 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
 
     bl.style.transform =
       "rotateX(" + (rx + visX + respX).toFixed(2) + "deg) " +
-      "rotateY(" + (ry + visY + respY + biais).toFixed(2) + "deg)";
+      "rotateY(" + (ry + visY + respY + biais * 4 * repos).toFixed(2) + "deg)";
     requestAnimationFrame(boucle);
   }
-  requestAnimationFrame(boucle);
 })();
 
 </script>

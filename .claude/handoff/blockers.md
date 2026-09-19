@@ -262,3 +262,26 @@ alternative crédible.
 Rien n'est cassé : ces fichiers ne sont jamais requêtés par un visiteur. Ils
 pèsent sur le dépôt, pas sur le site. À supprimer quand le propriétaire aura
 confirmé que les copies sont les bonnes.
+
+---
+
+## B-013 — Le comportement tactile du cube reste non prouvé
+
+**Ouvert le 19/09/2026.**
+
+Le bug signalé par le propriétaire — « le cube réagit à côté et le défilement
+bug après » — a reçu deux séries de correctifs (`0a6a771`, puis l'application de
+l'audit). Aucun des deux n'est **vérifié sur un appareil réel**.
+
+Ce que l'aperçu automatisé ne peut pas reproduire :
+- l'arbitrage de défilement d'un navigateur mobile, qui décide lui-même de
+  prendre la main et d'émettre `pointercancel` ;
+- la différence entre un évènement de synthèse et un vrai contact ;
+- le rendu, puisque la page est servie en instantané `data:` et que les chemins
+  d'images relatifs n'y résolvent pas.
+
+**Levée du blocage :** le propriétaire ouvre le site déployé sur son téléphone
+et confirme les trois comportements listés dans `next-task.md`.
+
+Tant que ce n'est pas fait, **ne pas considérer le bug tactile comme corrigé**,
+quelle que soit la qualité du raisonnement sur le code.
