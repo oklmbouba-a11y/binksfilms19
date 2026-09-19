@@ -13,7 +13,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%230A0A0A'/%3E%3Ctext x='32' y='45' font-family='Arial Black,Arial' font-size='38' font-weight='900' fill='%23EDEBE6' text-anchor='middle'%3EB%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&family=Noto+Serif+Display:wdth,wght@62.5..100,400..900&family=Sacramento&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&family=Kaushan+Script&family=Sacramento&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:dark;          /* on assume le thème : pas d'inversion automatique */
@@ -159,27 +159,23 @@ nav a:hover{color:var(--ivoire)}
 .film .cartel{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:0 18px 15px}
 /* Le nom porte, le titre chante, la fiche se tait.
    Le nom en grotesque massive et compacte, le titre dans une serif de
-   titrage très étroite et à fort contraste, la fiche en petites capitales
-   espacées : trois voix nettement différentes, mais du même monde. */
+   titrage brossée et penchée, la fiche en petites capitales espacées :
+   trois voix nettement différentes, mais du même monde. */
 .film .artiste{
   font-weight:800;font-stretch:112%;text-transform:uppercase;
   font-size:15px;letter-spacing:.005em;line-height:1.1;
   text-shadow:0 1px 12px rgba(0,0,0,.55);
 }
 .film .titre{
-  margin-top:3px;
-  /* Une serif de titrage tres etroite et tres haute, a fort contraste :
-     la lettre de l'affiche et de la pochette, pas celle du livre. La
-     largeur est reglee par l'axe de la fonte, jamais par un etirement —
-     un caractere etire est un caractere abime. */
-  /* 'Instrument Serif' n'est plus telechargee — elle ne servait qu'ici et
-     la serif etroite l'a remplacee. Elle reste dans la chaine de recours :
-     si le visiteur la possede deja, tant mieux ; sinon Georgia prend le
-     relais, et la ligne ne casse pas. */
-  font-family:'Noto Serif Display','Instrument Serif',Georgia,serif;
-  font-stretch:62.5%;font-weight:700;font-style:normal;
-  text-transform:uppercase;
-  font-size:30px;line-height:.98;letter-spacing:.012em;color:var(--ivoire);
+  margin-top:4px;
+  /* Un brush incline : le titre est signe, pas compose. C'est la lettre
+     de la pochette rap, et elle tranche franchement avec la grotesque du
+     nom d'artiste juste au-dessus — deux voix, pas deux graisses.
+     La casse d'origine est conservee : un brush en capitales perd ses
+     liaisons, donc son geste. */
+  font-family:'Kaushan Script','Brush Script MT',cursive;
+  font-weight:400;font-style:normal;text-transform:none;
+  font-size:33px;line-height:1.06;letter-spacing:.004em;color:var(--ivoire);
   text-shadow:0 1px 14px rgba(0,0,0,.6);
 }
 .film .meta{
@@ -205,7 +201,7 @@ nav a:hover{color:var(--ivoire)}
   .film .thumb{--r:13px}
   .film .cartel{padding:0 20px 17px}
   .film .artiste{font-size:16px}
-  .film .titre{font-size:33px}
+  .film .titre{font-size:37px}
   .film .meta{margin-top:9px}
 
   /* Bannière au centre de l'écran : le texte se floute puis s'efface,
@@ -3378,12 +3374,22 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        dans la vue. La descente ne peut donc jamais demarrer avant que la
        pierre soit formee — l'une prend le relais de l'autre, elles ne se
        chevauchent pas. */
-    mDebut = aY - cote / 2 - vh * 0.95;
-    mFin   = aY - vh * 0.42;
-    if(mFin - mDebut < 200) mFin = mDebut + 200;
+    /* La photographie doit d'abord SE VOIR. Elle entre par le bas, monte
+       entiere et immobile, et ce n'est qu'une fois bien installee dans la
+       vue qu'elle commence a se plier. Demarrer des son entree ne laissait
+       pas le temps de la regarder.
+
+       Le reste du defilement disponible est ensuite partage en deux parts
+       egales : se plier, puis descendre. Le contact etant la derniere
+       section, ce qui reste est compte, pas souhaite — on le repartit au
+       lieu de reclamer une place qui n'existe pas. */
+    sFin   = Math.min(maxi, bY - vh * 0.30);
+    mDebut = aY - vh * 0.55;
+    var reste = sFin - mDebut;
+    mFin   = mDebut + reste * 0.5;
+    if(mFin - mDebut < 160) mFin = mDebut + 160;
 
     sDebut = Math.max(depart, mFin);
-    sFin   = Math.min(maxi, bY - vh * 0.5);
     if(sFin - sDebut < 120) sFin = sDebut + 120;
   }
 

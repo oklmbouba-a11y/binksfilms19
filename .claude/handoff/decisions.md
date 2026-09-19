@@ -686,3 +686,41 @@ exactement la taille qu'elle avait.
 **Les deux courses ne se chevauchent jamais** : la descente ne peut pas
 commencer avant que la pierre soit formée. Mesuré : métamorphose 594 px sur
 téléphone, 677 sur bureau ; la descente démarre au pixel où elle finit.
+
+---
+
+## D-037 — La photographie se voit avant de se plier, et le budget est partagé
+
+La métamorphose commençait dès que le cadre entrait par le bas : on n'avait
+jamais le temps de regarder la photo. Elle commence maintenant quand le cadre
+est **installé dans la vue** — son centre à 55 % de la hauteur d'écran.
+
+**Mesuré :** 529 px de photographie plate et visible sur téléphone (611 sur
+bureau), dont 202 px où elle est entière et immobile.
+
+**Le reste du défilement est partagé en deux parts égales** entre se plier et
+descendre. Le contact étant la dernière section, ce qui reste est *compté*, pas
+souhaité : on le répartit au lieu de réclamer une place qui n'existe pas. La
+fin de course passe de « bouton centré » à « bouton au tiers haut », ce qui
+rend 180 px au partage. Résultat : 424 px de chaque côté sur téléphone, 506 sur
+bureau.
+
+---
+
+## D-038 — Le titre de morceau est signé, pas composé
+
+La serif étroite (D-032) est remplacée par un **brush incliné**, sur maquette
+« variante 2 — street-luxe » du propriétaire. La casse d'origine est conservée :
+un brush en capitales perd ses liaisons, donc son geste.
+
+`Noto Serif Display` n'est plus téléchargée — elle ne servait qu'ici. Le nombre
+de familles chargées reste le même : Archivo, Newsreader, Sacramento, Kaushan
+Script.
+
+**Ce n'est pas la fonte de la maquette, et il faut le dire.** Elle nomme
+*Satoshi* et *Reckless*, dont aucune n'est sur Google Fonts — Satoshi est
+gratuite chez Fontshare, l'autre est sous licence commerciale. `Kaushan Script`
+est ce qui s'en approche le plus dans ce qui est chargeable sans licence : même
+famille de geste, même inclinaison, même contraste de brosse, mais des
+terminaisons plus rondes et pas de matière sèche. Si le propriétaire fournit
+les fichiers, le passage se fait en une déclaration `@font-face`.
