@@ -314,3 +314,30 @@ version plus lourde sans pouvoir en vérifier le coût serait le mauvais choix.
 **Atténuation prévue si le propriétaire le demande :** tampons de rétroaction à
 résolution réduite (la traînée est floue de toute façon), plafond de pixels, et
 mesure sur appareil réel avant de garder.
+
+---
+
+## B-015 — Le même titre a deux traitements selon la page
+
+**Ouvert le 19/09/2026.** Sans gravité, mais à trancher.
+
+Le titre d'un morceau est désormais en **serif étroite capitales** sur la carte
+de la grille, et reste en **grotesque large** sur la fiche film. Le propriétaire
+n'a demandé que les cartes ; le changement a été confiné à ce qu'il a demandé.
+
+Deux lectures défendables : soit la carte et la fiche sont deux objets
+différents et méritent deux voix, soit le titre est le titre et doit se
+reconnaître partout. C'est une question d'œil, pas d'argument — à regarder
+côte à côte.
+
+---
+
+## B-016 — Question tranchée : durée fixe contre réversibilité
+
+**Fermé le 19/09/2026.** Le brief demandait « environ 300–500 ms » pour la
+distorsion **et** une animation liée au défilement, réversible. Les deux ne
+peuvent pas être vraies ensemble.
+
+Le propriétaire a réaffirmé la contrainte de défilement dans le brief suivant,
+puis dans le storyboard. **Le défilement l'emporte** : la durée est celle que
+l'utilisateur donne au geste. Voir D-030.
