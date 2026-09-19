@@ -308,17 +308,96 @@ nav a:hover{color:var(--ivoire)}
   transform:translateX(14vw);
   clip-path:inset(0 0 0 100%);
   transition:transform 1.5s cubic-bezier(.16,1,.3,1),clip-path 1.5s cubic-bezier(.16,1,.3,1);
-}
-/* l'image est plus haute que son cadre : c'est cette réserve qui permet
-   au glissement de ne jamais découvrir de vide */
-#binks figure .cadre img{
-  position:absolute;left:0;top:-7%;width:100%;height:114%;object-fit:cover;
-  will-change:transform;backface-visibility:hidden;
+  perspective:1500px;perspective-origin:50% 45%;
+  background:#0B0B0B;                      /* ce qu'on voit derrière le bloc quand il s'incline */
 }
 #binks figure.vu .cadre{transform:none;clip-path:inset(0 0 0 0)}
+
+/* ============================================================
+   LE BLOC — moment signature de la section Réalisateur
+   ------------------------------------------------------------
+   La photo n'est plus une image posée dans un cadre : c'est la face
+   avant d'un bloc debout à section carrée. Quatre faces exactement de
+   sa taille, et une géométrie qui la garde dominante — elle ne peut
+   jamais devenir une facette parmi d'autres.
+
+   Trois règles :
+   1. AU REPOS, LA PHOTO EST EN FACE. Après quelques secondes
+      d'inactivité le bloc revient chez lui. Ce n'est pas un carrousel,
+      c'est un objet posé qu'on dérange et qui se remet droit.
+   2. LE GESTE ORDINAIRE NE FAIT QU'INCLINER, faiblement et en retard
+      sur le pointeur — c'est ce retard qui donne la masse.
+   3. POUR VOIR AUTRE CHOSE, IL FAUT MAINTENIR. C'est le verbe du
+      contre-champ des fiches film : le site possède déjà ce geste.
+
+   Ce bloc n'existe qu'ici. Aucun autre endroit du site ne le reçoit.
+   ============================================================ */
+/* La réserve d'origine est conservée mais déplacée sur cette enveloppe :
+   c'est elle que la parallaxe du site pilote désormais, ce qui laisse au
+   bloc la propriété transform dont il a besoin pour tourner. */
+#binks figure .bl-par{
+  position:absolute;left:0;top:-7%;width:100%;height:114%;
+  transform-style:preserve-3d;will-change:transform;
+}
+#binks figure .bl{
+  position:absolute;inset:0;transform-style:preserve-3d;
+  will-change:transform;cursor:grab;touch-action:pan-y;
+  -webkit-tap-highlight-color:transparent;
+}
+#binks figure .bl.tenu{cursor:grabbing}
+#binks figure .bl-f{
+  position:absolute;inset:0;overflow:hidden;background:#111;
+  backface-visibility:hidden;
+}
+#binks figure .bl-f img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* les faces latérales reçoivent moins de lumière : sans ça un bloc
+   éclairé uniformément se lit comme un montage plat */
+#binks figure .bl-2,#binks figure .bl-4{filter:brightness(.6)}
+/* la face de texte parle dans la voix du site, elle ne légende pas */
+#binks figure .bl-3{filter:brightness(.42);display:flex;align-items:flex-end;padding:26px 24px;background:#0C0C0C}
+#binks figure .bl-3 p{
+  font-family:'Newsreader',Georgia,serif;font-style:italic;font-weight:300;
+  font-size:clamp(19px,2.2vw,28px);line-height:1.28;color:var(--ivoire);max-width:14em;margin:0;
+}
+#binks figure .bl-3 b{
+  display:block;margin-top:13px;font-family:'Archivo','Helvetica Neue',Arial,sans-serif;
+  font-style:normal;font-size:10px;font-weight:600;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--gris-2);
+}
+/* les deux couvercles : sans eux, une inclinaison découvrirait un trou */
+#binks figure .bl-cap{position:absolute;left:0;top:50%;width:100%;background:#0B0B0B}
+/* l'indication n'apparait qu'au survol et disparait des qu'on a compris */
+#binks figure .indice{
+  margin-top:13px;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gris-2);opacity:0;transition:opacity .45s ease;
+}
+#binks figure .indice.montre{opacity:1}
+#binks figure .indice.fini{opacity:0}
+
+/* ---------- replis ----------
+   Sans 3D, sans script, ou en mouvement reduit : la figure redevient
+   exactement la photo d'avant. On ne perd que le relief. */
+#binks figure.plat .cadre{perspective:none}
+#binks figure.plat .bl-par{position:static;height:auto;transform:none!important;transform-style:flat}
+#binks figure.plat .bl{position:static;transform:none!important;transform-style:flat;cursor:auto}
+#binks figure.plat .bl-f:not(.bl-1){display:none}
+#binks figure.plat .bl-cap{display:none}
+#binks figure.plat .bl-1{position:static;filter:none}
+#binks figure.plat .bl-1 img{position:static;height:auto}
+#binks figure.plat .indice{display:none}
+@supports not (transform-style: preserve-3d){
+  #binks figure .cadre{perspective:none}
+  #binks figure .bl-f:not(.bl-1){display:none}
+  #binks figure .bl-cap{display:none}
+}
 @media(prefers-reduced-motion:reduce){
-  #binks figure .cadre{transform:none;clip-path:none;aspect-ratio:auto}
-  #binks figure .cadre img{position:static;top:0;height:auto;transform:none!important}
+  #binks figure .cadre{transform:none;clip-path:none;aspect-ratio:auto;perspective:none}
+  #binks figure .bl-par{position:static;height:auto;transform:none!important}
+  #binks figure .bl{position:static;transform:none!important}
+  #binks figure .bl-f:not(.bl-1){display:none}
+  #binks figure .bl-cap,#binks figure .indice{display:none}
+  #binks figure .bl-1{position:static}
+  #binks figure .bl-1 img{position:static;height:auto}
 }
 #binks figcaption{margin-top:12px;font-size:13px;color:var(--gris-2)}
 
@@ -878,7 +957,20 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
         <!-- width et height doivent correspondre aux vraies dimensions du
              fichier : sinon le navigateur réserve la mauvaise place et la
              page saute au chargement. À remettre à jour si tu changes la photo. -->
-        <span class="cadre"><img src="real-web.webp" width="1920" height="2566" alt="BinksFilms, réalisateur" loading="lazy"></span>
+        <span class="cadre">
+          <span class="bl-par">
+            <span class="bl" id="bl" tabindex="0" role="button"
+                  aria-label="Portrait du réalisateur — maintenir pour faire tourner le bloc">
+              <span class="bl-f bl-1"><img src="real-web.webp" width="1920" height="2566" alt="BinksFilms, réalisateur" loading="lazy"></span>
+              <span class="bl-f bl-2"><img src="images/contre champs.jpg" alt="Derrière la caméra" loading="lazy" decoding="async"></span>
+              <span class="bl-f bl-3"><p>Les codes, je les regarde après.<b>Binksfilms</b></p></span>
+              <span class="bl-f bl-4"><img src="images/Adjustment Layer.00_00_56_18.Still013.jpg" alt="Plan de tournage" loading="lazy" decoding="async"></span>
+              <span class="bl-cap bl-haut" aria-hidden="true"></span>
+              <span class="bl-cap bl-bas" aria-hidden="true"></span>
+            </span>
+          </span>
+        </span>
+        <p class="indice" id="indice-bloc">Maintenir pour tourner</p>
       </figure>
     </div>
   </section>
@@ -2248,7 +2340,11 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   /* Parallaxe : l'image glisse dans son cadre, plus lentement que la page.
      Une seule boucle d'animation, et seulement sur les cartes visibles. */
   var cartes = [], enCours = false;
-  var photo = document.querySelector("#binks figure .cadre img");
+  /* La parallaxe pilote desormais l'enveloppe du bloc et non l'image :
+     le bloc a besoin de sa propre propriete transform pour tourner.
+     L'intention d'origine - glisser dans le cadre, grossir au centre -
+     est conservee telle quelle. */
+  var photo = document.querySelector("#binks figure .bl-par");
   function recenser(){ cartes = [].slice.call(document.querySelectorAll(".film .thumb img")); }
   var carteActive = null;
   function placer(){
@@ -2389,6 +2485,130 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   var hdr = document.getElementById("hdr");
   addEventListener("scroll",function(){ hdr.classList.toggle("sc", scrollY > 60); },{passive:true});
 })();
+
+/* ================= LE BLOC =================
+   Section Realisateur, et nulle part ailleurs.
+
+   Trois regles, dans cet ordre d'importance :
+   1. au repos la photo est en face, et le bloc y revient seul ;
+   2. le geste ordinaire ne fait qu'incliner, faiblement et en retard ;
+   3. pour voir une autre face il faut maintenir - le verbe du
+      contre-champ, deja present sur les fiches film.
+
+   Rien n'est anime en continu : tout ce qui bouge est produit par un
+   geste et retombe avec lui. */
+(function(){
+  var figure = document.querySelector("#binks figure");
+  var bl = document.getElementById("bl");
+  var indice = document.getElementById("indice-bloc");
+  if(!figure || !bl) return;
+
+  var supporte = window.CSS && CSS.supports && CSS.supports("transform-style","preserve-3d");
+  if(!supporte || reduced){ figure.classList.add("plat"); return; }
+
+  var faces = bl.querySelectorAll(".bl-f");
+  var caps  = bl.querySelectorAll(".bl-cap");
+
+  /* Section carree : la profondeur vaut la largeur, donc les quatre
+     faces ont exactement la taille de la photo. Recalcule au
+     redimensionnement, jamais devine. */
+  function poser(){
+    var L = bl.offsetWidth, H = bl.offsetHeight;
+    if(!L || !H) return;
+    var d = L / 2;
+    faces[0].style.transform = "translateZ(" + d + "px)";
+    faces[1].style.transform = "rotateY(90deg) translateZ(" + d + "px)";
+    faces[2].style.transform = "rotateY(180deg) translateZ(" + d + "px)";
+    faces[3].style.transform = "rotateY(-90deg) translateZ(" + d + "px)";
+    /* les couvercles font la largeur du bloc en profondeur */
+    for(var i = 0; i < caps.length; i++){
+      caps[i].style.height = L + "px";
+      caps[i].style.marginTop = (-L/2) + "px";
+      caps[i].style.transform = "rotateX(" + (i === 0 ? 90 : -90) + "deg) translateZ(" + (H/2) + "px)";
+    }
+  }
+  poser();
+  addEventListener("resize", poser);
+  /* la largeur depend du volet d'entree : on repose une fois qu'il a fini */
+  setTimeout(poser, 1700);
+
+  var angle = 0, cible = 0, incX = 0, incY = 0, visX = 0, visY = 0;
+  var tenu = false, depuis = 0, inactif = performance.now(), aTourne = false;
+
+  var INCLIN = 10;            /* degres : on sent le poids, on ne tourne pas */
+  var TOUR = 44;              /* degres par seconde pendant le maintien */
+  var RETOUR = 4200;          /* ms d'inactivite avant de revenir face avant */
+
+  function vers(e){
+    var r = bl.getBoundingClientRect();
+    if(!r.width) return;
+    var nx = (e.clientX - (r.left + r.width/2)) / (r.width/2);
+    var ny = (e.clientY - (r.top + r.height/2)) / (r.height/2);
+    incY = Math.max(-1, Math.min(1, nx)) * INCLIN;
+    incX = Math.max(-1, Math.min(1, ny)) * -INCLIN * 0.55;
+    inactif = performance.now();
+  }
+  bl.addEventListener("pointermove", function(e){ if(!tenu) vers(e); });
+  bl.addEventListener("pointerleave", function(){ incX = 0; incY = 0; });
+  bl.addEventListener("pointerenter", function(){
+    if(!aTourne && indice) indice.classList.add("montre");
+  });
+
+  function prendre(e){
+    tenu = true; depuis = performance.now(); inactif = depuis;
+    bl.classList.add("tenu");
+    if(bl.setPointerCapture && e.pointerId != null){ try{ bl.setPointerCapture(e.pointerId); }catch(err){} }
+  }
+  function lacher(){
+    if(!tenu) return;
+    tenu = false; bl.classList.remove("tenu");
+    cible = Math.round(angle / 90) * 90;      /* on ne reste jamais de travers */
+    inactif = performance.now();
+    if(aTourne && indice) indice.classList.add("fini");
+  }
+  bl.addEventListener("pointerdown", prendre);
+  addEventListener("pointerup", lacher);
+  addEventListener("pointercancel", lacher);
+
+  /* clavier : une face par appui, pour que le bloc ne soit pas reserve
+     a la souris et au doigt */
+  bl.addEventListener("keydown", function(e){
+    if(e.key === "Enter" || e.key === " "){
+      e.preventDefault();
+      cible = Math.round(angle/90)*90 + 90; aTourne = true;
+      inactif = performance.now();
+      if(indice) indice.classList.add("fini");
+    }
+  });
+
+  var precedent = performance.now();
+  function boucle(now){
+    var dt = Math.min((now - precedent) / 1000, 0.05); precedent = now;
+
+    if(tenu){
+      /* les 180 premieres millisecondes ne tournent pas : un appui bref
+         reste un appui, pas une rotation */
+      var engage = Math.min(1, Math.max(0, (now - depuis - 180) / 420));
+      angle += TOUR * engage * dt;
+      if(engage > 0) aTourne = true;
+      cible = angle;
+    } else {
+      /* le bloc revient chez lui : la photo est l'etat de repos */
+      if(now - inactif > RETOUR) cible = Math.round(angle / 360) * 360;
+      angle += (cible - angle) * Math.min(1, 4.2 * dt);
+    }
+    /* l'inclinaison suit le pointeur avec du retard : c'est ce retard
+       qui donne la masse */
+    visX += (incX - visX) * Math.min(1, 6.5 * dt);
+    visY += (incY - visY) * Math.min(1, 6.5 * dt);
+
+    bl.style.transform =
+      "rotateX(" + visX.toFixed(2) + "deg) rotateY(" + (angle + visY).toFixed(2) + "deg)";
+    requestAnimationFrame(boucle);
+  }
+  requestAnimationFrame(boucle);
+})();
+
 </script>
 </body>
 </html>
