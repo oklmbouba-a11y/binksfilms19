@@ -765,3 +765,51 @@ téléphone comme sur bureau.
 - Les marques descendent : marge supérieure de 38 à **64 px** sur téléphone, de
   44 à **66 px** au plus large sur bureau. L'espace sous elles se réduit
   d'autant.
+
+---
+
+## D-041 — L'aspiration se déclenche sur la distance, jamais sur le défilement
+
+**Le défaut le plus visible du lot.** Les quatre temps du storyboard étaient
+calés sur la position dans le défilement, alors que la position du cristal, elle,
+suivait une courbe fortement ralentie. Les deux ne disaient pas la même chose :
+**les ondes naissaient alors que le cristal était encore à cent pixels du
+bouton**, et la fin de trajectoire paraissait hors de contrôle.
+
+Ils se déclenchent désormais sur la **distance réelle** entre le cristal et le
+bouton, avec un rayon de `max(70, côté × 0,60)`. La distance ne peut pas mentir,
+et comme la position vient du défilement, tout reste rembobinable.
+
+Mesuré : le creux n'apparaît plus qu'à 72 px du bouton, et la distance se
+referme de façon monotone — 664, 442, 187, 72, 27, 0.
+
+---
+
+## D-042 — Les phases sont calées sur des positions d'écran, pas sur un budget
+
+Partager le défilement restant en deux parts égales laissait le cristal finir de
+se former alors que son cadre était **déjà au cinquième supérieur de l'écran** :
+il naissait tout en haut, et la descente semblait décrochée.
+
+- Le pli commence quand le cadre entre entièrement dans la vue (66 % de la
+  hauteur), et se termine quand il est **encore bien placé** — 36 %.
+- Ce qui reste va à la descente.
+
+**Deux corrections de trajectoire l'accompagnent :**
+
+1. **Courbe de 2,15 à 1,3.** À 2,15 le cristal n'avait parcouru qu'un quart du
+   chemin quand la page en avait fait la moitié : il restait collé à son cadre,
+   donc il partait vers le haut avec lui.
+2. **Un ventre vertical** de 0,17 × hauteur d'écran, nul aux deux bouts. Le
+   cadre de départ file vers le haut à mesure qu'on défile ; sans ce ventre le
+   cristal le suit et se tasse dans le quart supérieur pendant tout le trajet.
+
+Résultat mesuré : le cristal se forme à 36 % de l'écran et **reste entre 30 et
+42 %** pendant toute la descente, sur téléphone comme sur bureau.
+
+### Une contrainte à connaître
+Entre le centre du cadre et le bouton il n'y a que **645 px** pour un écran de
+812 : tout le trajet tient dans moins d'un écran. Réduire l'espace avant le
+contact — demandé par le propriétaire — l'a encore raccourci. Les quatre phases
+ne peuvent donc pas être longues toutes les quatre ; c'est un arbitrage, pas un
+réglage.
