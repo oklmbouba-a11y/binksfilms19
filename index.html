@@ -62,8 +62,9 @@ section[id]{scroll-margin-top:76px}
    en conséquence, et l'interlettrage légèrement ouvert pour que les
    liaisons respirent. */
 .lk-base{
-  display:block;font-family:'Sacramento','Newsreader',Georgia,cursive;
-  font-style:normal;font-weight:400;line-height:1.05;letter-spacing:.012em;
+  display:block;font-family:'Archivo','Helvetica Neue',Arial,sans-serif;
+  font-style:normal;font-weight:600;font-stretch:100%;
+  text-transform:uppercase;line-height:1.08;letter-spacing:.055em;
 }
 
 /* ---------- header ---------- */
@@ -77,21 +78,21 @@ header{
 @media(min-width:1024px){header{padding:22px 48px}}
 header.sc{background:rgba(10,10,10,.94)}
 header .lk-name{font-size:13px;letter-spacing:.26em}
-header .lk-base{font-size:16px;color:var(--gris);margin-top:0;letter-spacing:.015em}
+header .lk-base{font-size:11px;color:var(--gris);margin-top:3px;letter-spacing:.055em}
 nav{display:flex;gap:26px}
 nav a{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--gris);transition:color .25s}
 nav a:hover{color:var(--ivoire)}
 @media(max-width:600px){
   header{padding:14px 20px}
   header .lk-name{font-size:11px;letter-spacing:.18em}
-  header .lk-base{font-size:14px}
+  header .lk-base{font-size:10px}
   nav{gap:13px}
   nav a{font-size:9.5px;letter-spacing:.08em}
 }
 @media(max-width:400px){
   header{padding:12px 16px;gap:10px}
   header .lk-name{font-size:10px;letter-spacing:.13em}
-  header .lk-base{font-size:12.5px}
+  header .lk-base{font-size:9px}
   nav{gap:10px}
   nav a{font-size:9px;letter-spacing:.04em}
 }
@@ -102,7 +103,7 @@ nav a:hover{color:var(--ivoire)}
 #hero .scrim{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,10,10,.3) 0%,rgba(10,10,10,.08) 36%,rgba(10,10,10,.52) 76%,rgba(10,10,10,.86) 100%)}
 #hero .inner{position:relative;z-index:1;width:100%;padding-bottom:62px}
 #hero .lk-name{font-size:clamp(44px,9.6vw,128px)}
-#hero .lk-base{font-size:clamp(30px,5.2vw,64px);margin-top:6px;color:var(--ivoire)}
+#hero .lk-base{font-size:clamp(14px,2.4vw,28px);margin-top:10px;color:var(--ivoire)}
 
 /* ---------- le titre glisse à l'arrivée ----------
    Le nom arrive de la gauche, la phrase de la droite, le rôle ferme la
@@ -709,7 +710,7 @@ footer .ailleurs{margin-top:30px;border:0;padding-top:0;flex-direction:row;gap:2
 /* de l'air, pas du vide : 72 + 48 au lieu de 170 + 110 */
 footer{margin-top:72px;border-top:1px solid var(--ligne-2);padding:48px 24px 44px;text-align:center}
 footer .lk-name{font-size:13px;letter-spacing:.26em}
-footer .lk-base{font-size:21px;color:var(--gris);margin-top:2px}
+footer .lk-base{font-size:11px;color:var(--gris);margin-top:7px;letter-spacing:.055em}
 footer .legal{margin-top:34px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gris-2)}
 
 /* ---------- page film ---------- */
