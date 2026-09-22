@@ -3418,7 +3418,13 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     mFin   = aY - vh * 0.36;   /* cristal forme, et encore bien place */
     if(mFin - mDebut < 140) mFin = mDebut + 140;
 
-    sDebut = Math.max(depart, mFin);
+    /* En remontant, la pierre doit se recoller a son cadre AVANT que
+       celui-ci sorte par le haut. Sinon p retombe a 0 alors que le cadre
+       est deja hors ecran, et la securite de viewport la laisse collee
+       en haut de la page. On peut attendre la fin du texte, mais jamais
+       au-dela du dernier instant ou la photo tient encore dans la vue. */
+    var dernierDepartVisible = aY - (hauteur / 2 + 6);
+    sDebut = Math.max(mFin, Math.min(depart, dernierDepartVisible));
     sFin   = Math.min(maxi, bY - vh * 0.30);
     if(sFin - sDebut < 200) sFin = sDebut + 200;
   }
@@ -3487,12 +3493,18 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     var k = Math.pow(1 - e, 0.72);
     var t = cote * k;
 
-    /* elle reste toujours entierement a l'ecran, dans les deux sens */
-    var marge = 6 + t/2;
-    if(x < marge) x = marge;
-    if(x > vw - marge) x = vw - marge;
-    if(y < marge) y = marge;
-    if(y > vh - marge) y = vh - marge;
+    /* La securite de viewport ne s'applique QUE pendant le vol.
+       Quand p === 0, la pierre est rattachee a son cadre source et doit
+       pouvoir quitter naturellement l'ecran avec lui. C'est essentiel au
+       scroll inverse : aucun effet "sticky" ne doit remonter dans Films. */
+    if(p > 0 && p < 1){
+      var margeX = Math.min(vw / 2 - 2, 6 + t / 2);
+      var margeY = Math.min(vh / 2 - 2, 6 + (hauteur * k) / 2);
+      if(x < margeX) x = margeX;
+      if(x > vw - margeX) x = vw - margeX;
+      if(y < margeY) y = margeY;
+      if(y > vh - margeY) y = vh - margeY;
+    }
 
     /* la vitesse reelle a l'ecran, lissee : c'est elle qui commande la
        trainee et l'ecart chromatique, jamais une valeur devinee */
