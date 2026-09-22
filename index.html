@@ -257,37 +257,94 @@ nav a:hover{color:var(--ivoire)}
   width:100%;height:100%;display:flex;align-items:center;justify-content:center;
   white-space:nowrap;
 }
-/* Après le compteur, on change de langage : plus de texte aspiré.
-   Un petit signal traverse l'espace, entre dans les films puis ressort
-   du dernier vers REALISATEUR. Aucun trait n'est dessiné : seule la
-   matière en mouvement rend la trajectoire visible. */
-#scroll-flow .flow-pulse{
-  display:block;width:100%;height:100%;border-radius:999px;
-  background:radial-gradient(circle at 42% 46%,
-    rgba(237,235,230,.98) 0 13%,
-    rgba(177,18,38,.95) 25%,
-    rgba(177,18,38,.38) 47%,
-    rgba(177,18,38,0) 72%);
-  box-shadow:0 0 12px rgba(177,18,38,.30);
+/* Après le compteur, on change de langage : un circuit industriel
+   traverse le catalogue. Le câble physique n'est JAMAIS dessiné sur une
+   vidéo : il s'arrête au connecteur d'entrée, passe derrière la carte et
+   ressort au connecteur opposé. Dans l'image, seule l'énergie est visible. */
+#scroll-flow .flow-pulse{display:none!important}
+
+#project-bus{
+  position:absolute;left:0;top:0;z-index:3;
+  width:100%;height:100%;pointer-events:none;overflow:visible;
 }
-/* Les cartes ne gagnent pas un contour ou un câble : quand elles passent
-   au centre, une respiration très courte dans l'image matérialise le
-   passage du signal. */
-.film .thumb::after{
-  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
-  border-radius:inherit;opacity:var(--flow-op,0);
-  background:radial-gradient(ellipse at 50% 56%,
-    rgba(237,235,230,.10) 0%,
-    rgba(177,18,38,.11) 34%,
-    rgba(177,18,38,0) 70%);
-  mix-blend-mode:screen;
-  transition:opacity .16s linear;
+#project-bus .bus-shell{
+  fill:none;stroke:#111;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;
 }
-.film.flow-hit .thumb::after{opacity:.82}
-#binks .mot-video{transition:filter .18s ease}
-#binks .mot-video.flow-hit{
-  filter:drop-shadow(0 0 14px rgba(177,18,38,.22));
+#project-bus .bus-metal{
+  fill:none;stroke:rgba(112,112,112,.58);stroke-width:2.2;
+  stroke-linecap:round;stroke-linejoin:round;
 }
+#project-bus .bus-energy{
+  fill:none;stroke:rgba(177,18,38,.34);stroke-width:1.25;
+  stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:12 26;animation:bus-current 1.35s linear infinite;
+  transition:opacity .22s ease,stroke-width .22s ease,stroke .22s ease;
+}
+#project-bus .bus-link:not(.live) .bus-energy{opacity:.34}
+#project-bus .bus-link.passed .bus-energy{opacity:.5}
+#project-bus .bus-link.live .bus-energy{
+  opacity:1;stroke:#E01B24;stroke-width:1.9;filter:url(#bus-glow);
+}
+@keyframes bus-current{to{stroke-dashoffset:-38}}
+
+#films .film,#films .sect-head,#binks .wrap{position:relative;z-index:4}
+
+/* Petites prises intégrées au bord de l'image. Elles appartiennent au
+   projet et suivent donc exactement sa bascule/son scale. */
+.film .flow-port,#binks figure .flow-target-port{
+  position:absolute;z-index:6;width:15px;height:11px;
+  margin-top:-5.5px;background:#0c0c0c;border:1px solid rgba(180,180,180,.55);
+  box-shadow:inset 0 0 0 2px #171717,0 0 0 1px rgba(0,0,0,.9);
+  pointer-events:none;
+}
+.film .flow-port::after,#binks figure .flow-target-port::after{
+  content:"";position:absolute;left:50%;top:50%;width:4px;height:4px;
+  margin:-2px 0 0 -2px;border-radius:50%;background:#5c0b14;
+  box-shadow:0 0 4px rgba(177,18,38,.35);
+  transition:background .16s ease,box-shadow .16s ease;
+}
+.film.flow-current .flow-port::after,#binks figure.flow-connected .flow-target-port::after{
+  background:#f5efeb;box-shadow:0 0 4px #fff,0 0 11px #E01B24,0 0 18px rgba(224,27,36,.55);
+}
+.film.flow-lr .flow-in{left:0;top:36%;border-left:0;border-radius:0 3px 3px 0}
+.film.flow-lr .flow-out{right:0;top:64%;border-right:0;border-radius:3px 0 0 3px}
+.film.flow-rl .flow-in{right:0;top:36%;border-right:0;border-radius:3px 0 0 3px}
+.film.flow-rl .flow-out{left:0;top:64%;border-left:0;border-radius:0 3px 3px 0}
+
+/* A l'intérieur du plan : pas de gaine, pas de trait de câble.
+   Juste une propagation lumineuse très courte, comme si le signal
+   voyageait DANS l'image avant de ressortir de l'autre côté. */
+.film .card-signal{
+  position:absolute;inset:0;z-index:1;width:100%;height:100%;
+  pointer-events:none;overflow:visible;opacity:0;
+  mix-blend-mode:screen;transition:opacity .2s ease;
+}
+.film .card-signal .sig-bed{
+  fill:none;stroke:rgba(177,18,38,.22);stroke-width:1.2;
+  vector-effect:non-scaling-stroke;filter:url(#card-signal-soft);
+}
+.film .card-signal .sig-run{
+  fill:none;stroke:#f4efeb;stroke-width:1.35;vector-effect:non-scaling-stroke;
+  stroke-linecap:round;stroke-dasharray:7 93;stroke-dashoffset:0;
+  filter:url(#card-signal-glow);
+}
+.film.flow-current .card-signal{opacity:.78}
+.film.flow-current .card-signal .sig-run{animation:signal-through .92s linear infinite}
+@keyframes signal-through{to{stroke-dashoffset:-100}}
+
+/* Le dernier câble se branche réellement DANS la photo du réalisateur. */
+#binks figure{margin:0;position:relative}
+#binks figure .flow-target-port{
+  left:0;top:18%;margin-left:0;border-left:0;border-radius:0 3px 3px 0;
+}
+#binks figure .cadre{z-index:1}
+
+body.film #project-bus{display:none}
+@media(prefers-reduced-motion:reduce){
+  #project-bus .bus-energy,.film .card-signal .sig-run{animation:none}
+  .film .card-signal{display:none}
+}
+
 #hero .lockup.flow-source-off,
 #films .sect-head h2.flow-source-off{opacity:0!important}
 #films .sect-head h2,#films .sect-head .count{
@@ -1481,9 +1538,23 @@ function accrochage(n){
   document.getElementById("grid").innerHTML = FILMS.map(function(f,i){
     /* Le texte vit dans la bannière, pas sous elle. Mêmes informations,
        simplement posées sur l'image avec un voile pour la lisibilité. */
-    return '<a class="film'+(w[i]?" w":"")+'" href="#/film/'+f.slug+'">'
+    var sens = (i % 2 === 0) ? " flow-lr" : " flow-rl";
+    var trajet = (i % 2 === 0)
+      ? "M0 36 C24 31 67 70 100 64"
+      : "M100 36 C76 31 33 70 0 64";
+    return '<a class="film'+(w[i]?" w":"")+sens+'" data-flow-index="'+i+'" href="#/film/'+f.slug+'">'
       + '<div class="thumb">'
       +   thumb(f)
+      +   '<svg class="card-signal" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">'
+      +     '<defs>'
+      +       '<filter id="card-signal-soft" x="-30%" y="-100%" width="160%" height="300%"><feGaussianBlur stdDeviation="1.7"/></filter>'
+      +       '<filter id="card-signal-glow" x="-80%" y="-300%" width="260%" height="700%"><feGaussianBlur stdDeviation=".9" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'
+      +     '</defs>'
+      +     '<path class="sig-bed" d="'+trajet+'" pathLength="100"></path>'
+      +     '<path class="sig-run" d="'+trajet+'" pathLength="100"></path>'
+      +   '</svg>'
+      +   '<span class="flow-port flow-in" aria-hidden="true"></span>'
+      +   '<span class="flow-port flow-out" aria-hidden="true"></span>'
       +   '<span class="voile" aria-hidden="true"></span>'
       +   '<div class="cartel">'
       +     '<p class="artiste"><span>'+esc(f.artist)+'</span></p>'
@@ -2879,74 +2950,15 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
       return;
     }
 
-    /* Connexion 3 : le compteur ne repart pas en texte. Une impulsion
-       compacte en sort et se fait absorber par la première image. */
-    if(y>=s3a && y<=s3b){
-      impulsion();
-      couche.classList.add("on");
-      couche.style.filter="";
-      deplace.setAttribute("scale","0");
-
-      var p3=borne((y-s3a)/(s3b-s3a),0,1);
-      var e3=doux(p3);
-      var ax3=C.x-scrollX, ay3=C.y-scrollY;
-      var bx3=D.x-scrollX, by3=D.y-scrollY;
-      var q3=bezier(ax3,ay3,bx3,by3,e3,-vw*.08,vh*.045);
-      var ang3=Math.atan2(by3-ay3,bx3-ax3)*180/Math.PI;
-      var souffle3=Math.sin(p3*Math.PI);
-      var long3=1+souffle3*1.65;
-      var fin3=p3<.84?1:Math.max(0,1-(p3-.84)/.16);
-
-      couche.style.opacity=fin3.toFixed(3);
-      couche.style.transform=
-        "translate3d("+(q3.x-11).toFixed(1)+"px,"+(q3.y-11).toFixed(1)+"px,0)"+
-        " rotate("+ang3.toFixed(1)+"deg)"+
-        " scale("+long3.toFixed(3)+","+(1/(1+souffle3*.62)).toFixed(3)+")";
-
-      if(p3>.72) firstFilm.parentNode.classList.add("flow-hit");
-      return;
-    }
-
-    /* Le catalogue est la connexion : à mesure qu'une carte traverse le
-       centre, sa propre respiration prend le relais. Rien ne flotte entre
-       les projets et aucun câble n'est dessiné. */
-    if(y>s3b && y<s4a){
+    /* Après le compteur, le relais appartient au circuit des projets.
+       La couche d'aspiration s'arrête ici : plus de boule lumineuse qui flotte
+       entre les cartes. */
+    if(y>s2b){
       couche.classList.remove("on");
       couche.style.opacity="0";
       couche.style.filter="";
       deplace.setAttribute("scale","0");
-      return;
-    }
-
-    /* Connexion 4 : la dernière carte transmet une impulsion au mot
-       REALISATEUR. Dès l'impact, les animations déjà présentes dans cette
-       section prennent le relais : mot vidéo, texte qui s'allume, puis
-       photo qui glisse jusqu'au contact. */
-    if(y>=s4a && y<=s4b){
-      impulsion();
-      couche.classList.add("on");
-      couche.style.filter="";
-      deplace.setAttribute("scale","0");
-
-      var p4=borne((y-s4a)/(s4b-s4a),0,1);
-      var e4=doux(p4);
-      var ax4=E.x-scrollX, ay4=E.y-scrollY;
-      var bx4=F.x-scrollX, by4=F.y-scrollY;
-      var sens4=bx4<ax4?-1:1;
-      var q4=bezier(ax4,ay4,bx4,by4,e4,vw*.07*sens4,vh*.035);
-      var ang4=Math.atan2(by4-ay4,bx4-ax4)*180/Math.PI;
-      var souffle4=Math.sin(p4*Math.PI);
-      var long4=1+souffle4*1.9;
-      var fin4=p4<.86?1:Math.max(0,1-(p4-.86)/.14);
-
-      couche.style.opacity=fin4.toFixed(3);
-      couche.style.transform=
-        "translate3d("+(q4.x-11).toFixed(1)+"px,"+(q4.y-11).toFixed(1)+"px,0)"+
-        " rotate("+ang4.toFixed(1)+"deg)"+
-        " scale("+long4.toFixed(3)+","+(1/(1+souffle4*.70)).toFixed(3)+")";
-
-      if(p4<.28) lastFilm.parentNode.classList.add("flow-hit");
-      if(p4>.74) realisateur.classList.add("flow-hit");
+      count.classList.remove("flow-impact");
       return;
     }
 
@@ -2954,7 +2966,6 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     couche.style.opacity="0";
     couche.style.filter="";
     deplace.setAttribute("scale","0");
-    if(y>s2b) count.classList.remove("flow-impact");
   }
 
   function demander(){
@@ -2968,6 +2979,169 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     document.fonts.ready.then(function(){ mesurer(); demander(); });
   }
   mesurer(); placer();
+})();
+
+/* ================= CIRCUIT DES PROJETS =================
+   Le câble physique vit UNIQUEMENT dans les vides entre les cartes.
+   Il entre dans une prise, passe derrière l'image, puis ressort de l'autre
+   côté. A l'intérieur, seule l'énergie traverse le plan. */
+(function(){
+  if(reduced) return;
+
+  var films = [].slice.call(document.querySelectorAll("#grid .film"));
+  var count = document.getElementById("count");
+  var cadreReal = document.querySelector("#binks figure .cadre");
+  var figureReal = document.querySelector("#binks figure");
+  if(!films.length || !count || !cadreReal || !figureReal) return;
+
+  var target = document.createElement("span");
+  target.className = "flow-target-port";
+  target.setAttribute("aria-hidden","true");
+  cadreReal.appendChild(target);
+
+  var NS="http://www.w3.org/2000/svg";
+  var svg=document.createElementNS(NS,"svg");
+  svg.id="project-bus";
+  svg.setAttribute("aria-hidden","true");
+  svg.innerHTML=
+    '<defs>'+
+      '<filter id="bus-glow" x="-80%" y="-80%" width="260%" height="260%">'+
+        '<feGaussianBlur stdDeviation="3.2" result="g"/>'+
+        '<feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>'+
+      '</filter>'+
+    '</defs>'+
+    '<g class="bus-links"></g>';
+  document.body.appendChild(svg);
+
+  var host=svg.querySelector(".bus-links");
+  var links=[];
+  var enCours=false;
+
+  function creerLien(){
+    var g=document.createElementNS(NS,"g");
+    g.setAttribute("class","bus-link");
+    var shell=document.createElementNS(NS,"path");
+    shell.setAttribute("class","bus-shell");
+    var metal=document.createElementNS(NS,"path");
+    metal.setAttribute("class","bus-metal");
+    var energy=document.createElementNS(NS,"path");
+    energy.setAttribute("class","bus-energy");
+    g.appendChild(shell);g.appendChild(metal);g.appendChild(energy);
+    host.appendChild(g);
+    return {g:g,shell:shell,metal:metal,energy:energy};
+  }
+
+  /* count -> film 0 ; chaque film -> suivant ; dernier -> photo real */
+  for(var i=0;i<films.length+1;i++) links.push(creerLien());
+
+  function centre(el){
+    var r=el.getBoundingClientRect();
+    return {x:r.left+r.width/2+scrollX,y:r.top+r.height/2+scrollY};
+  }
+  function rectDoc(el){
+    var r=el.getBoundingClientRect();
+    return {left:r.left+scrollX,right:r.right+scrollX,top:r.top+scrollY,bottom:r.bottom+scrollY,width:r.width,height:r.height};
+  }
+  function side(el,kind){
+    var lr=el.classList.contains("flow-lr");
+    if(kind==="in") return lr ? "left" : "right";
+    return lr ? "right" : "left";
+  }
+
+  /* Coudes façon piste/câble industriel. Comme les cartes alternent LR/RL,
+     les liaisons successives remontent naturellement par un seul gutter. */
+  function routeSameSide(a,b,cote){
+    var marge=Math.max(18,Math.min(34,innerWidth*.045));
+    var gx=(cote==="left")
+      ? Math.min(a.x,b.x)-marge
+      : Math.max(a.x,b.x)+marge;
+    return "M"+a.x.toFixed(1)+" "+a.y.toFixed(1)+
+           " L"+gx.toFixed(1)+" "+a.y.toFixed(1)+
+           " L"+gx.toFixed(1)+" "+b.y.toFixed(1)+
+           " L"+b.x.toFixed(1)+" "+b.y.toFixed(1);
+  }
+
+  function routeFirst(a,b,firstRect){
+    var gy=a.y+Math.max(18,Math.min(42,(b.y-a.y)*.24));
+    var gx=Math.max(12,firstRect.left-Math.max(18,innerWidth*.045));
+    return "M"+a.x.toFixed(1)+" "+a.y.toFixed(1)+
+           " L"+a.x.toFixed(1)+" "+gy.toFixed(1)+
+           " L"+gx.toFixed(1)+" "+gy.toFixed(1)+
+           " L"+gx.toFixed(1)+" "+b.y.toFixed(1)+
+           " L"+b.x.toFixed(1)+" "+b.y.toFixed(1);
+  }
+
+  function appliquer(link,d){
+    link.shell.setAttribute("d",d);
+    link.metal.setAttribute("d",d);
+    link.energy.setAttribute("d",d);
+    link.energy.setAttribute("pathLength","100");
+  }
+
+  function tracer(){
+    enCours=false;
+    if(document.body.classList.contains("film")){
+      svg.style.display="none";return;
+    }
+    svg.style.display="block";
+
+    var W=Math.max(document.documentElement.scrollWidth,document.body.scrollWidth);
+    var H=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);
+    svg.setAttribute("width",W);
+    svg.setAttribute("height",H);
+    svg.setAttribute("viewBox","0 0 "+W+" "+H);
+    svg.style.width=W+"px";svg.style.height=H+"px";
+
+    var entrees=[],sorties=[];
+    for(var i=0;i<films.length;i++){
+      entrees.push(centre(films[i].querySelector(".flow-in")));
+      sorties.push(centre(films[i].querySelector(".flow-out")));
+    }
+
+    /* 10 films -> première carte */
+    var rc=rectDoc(count), rf=rectDoc(films[0].querySelector(".thumb"));
+    var depart={x:rc.left+rc.width*.5,y:rc.bottom+7};
+    appliquer(links[0],routeFirst(depart,entrees[0],rf));
+
+    /* Sortie réelle d'une image -> entrée réelle de la suivante. */
+    for(var j=0;j<films.length-1;j++){
+      var cote=side(films[j],"out");
+      appliquer(links[j+1],routeSameSide(sorties[j],entrees[j+1],cote));
+    }
+
+    /* Dernier projet -> prise intégrée dans la photo du réalisateur. */
+    var fin=centre(target);
+    var coteFin=side(films[films.length-1],"out");
+    appliquer(links[links.length-1],routeSameSide(sorties[sorties.length-1],fin,coteFin));
+
+    /* La carte la plus proche du centre reçoit le courant. */
+    var milieu=innerHeight/2, idx=-1, dist=Infinity;
+    for(var k=0;k<films.length;k++){
+      var r=films[k].getBoundingClientRect();
+      var d=Math.abs((r.top+r.height/2)-milieu);
+      if(d<dist){dist=d;idx=k;}
+      films[k].classList.remove("flow-current");
+    }
+    if(idx>=0 && dist<innerHeight*.68) films[idx].classList.add("flow-current");
+
+    for(var n=0;n<links.length;n++){
+      links[n].g.classList.toggle("live",n===idx || (idx===films.length-1 && n===links.length-1 && figureReal.getBoundingClientRect().top<innerHeight*.88));
+      links[n].g.classList.toggle("passed",idx>=0 && n<idx);
+    }
+
+    var rr=figureReal.getBoundingClientRect();
+    figureReal.classList.toggle("flow-connected",rr.top<innerHeight*.78 && rr.bottom>innerHeight*.12);
+  }
+
+  function demander(){
+    if(!enCours){enCours=true;requestAnimationFrame(tracer);}
+  }
+  addEventListener("scroll",demander,{passive:true});
+  addEventListener("resize",demander,{passive:true});
+  addEventListener("load",demander);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(demander);
+  window.__recalculerCircuit=demander;
+  tracer();
 })();
 
 /* ================= DIVERS ================= */
