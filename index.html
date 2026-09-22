@@ -257,6 +257,34 @@ nav a:hover{color:var(--ivoire)}
   width:100%;height:100%;display:flex;align-items:center;justify-content:center;
   white-space:nowrap;
 }
+/* Après le compteur, on change de langage : plus de texte aspiré.
+   Un petit signal traverse l'espace, entre dans les films puis ressort
+   du dernier vers REALISATEUR. Aucun trait n'est dessiné : seule la
+   matière en mouvement rend la trajectoire visible. */
+#scroll-flow .flow-pulse{
+  display:block;width:100%;height:100%;border-radius:999px;
+  background:radial-gradient(circle at 42% 46%,
+    rgba(237,235,230,.98) 0 13%,
+    rgba(177,18,38,.95) 25%,
+    rgba(177,18,38,.38) 47%,
+    rgba(177,18,38,0) 72%);
+  box-shadow:0 0 12px rgba(177,18,38,.30);
+}
+/* Les cartes ne gagnent pas un contour ou un câble : quand elles passent
+   au centre, une respiration très courte dans l'image matérialise le
+   passage du signal. */
+.film .thumb::after{
+  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
+  border-radius:inherit;opacity:var(--flow-op,0);
+  background:radial-gradient(ellipse at 50% 56%,
+    rgba(237,235,230,.10) 0%,
+    rgba(177,18,38,.11) 34%,
+    rgba(177,18,38,0) 70%);
+  mix-blend-mode:screen;
+}
+#binks .mot-video.flow-hit{
+  filter:drop-shadow(0 0 14px rgba(177,18,38,.22));
+}
 #hero .lockup.flow-source-off,
 #films .sect-head h2.flow-source-off{opacity:0!important}
 #films .sect-head h2,#films .sect-head .count{
@@ -2526,13 +2554,18 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     for(var i = 0; i < cartes.length; i++){
       var img = cartes[i], cadre = img.parentNode;
       var r = cadre.getBoundingClientRect();
-      if(r.bottom < -250 || r.top > h + 250) continue;   /* hors écran : on saute */
+      if(r.bottom < -250 || r.top > h + 250){
+        cadre.style.setProperty("--flow-op","0");
+        continue;   /* hors écran : on saute */
+      }
 
       var milieu = r.top + r.height / 2;
       /* d = -1 tout en haut de l'écran, 0 au centre, +1 tout en bas */
       var d = (milieu - milieuEcran) / (h / 2);
       if(d < -1.4) d = -1.4; else if(d > 1.4) d = 1.4;
       var abs = Math.abs(d);
+      var flowProx = 1 - Math.min(1, abs / 0.82);
+      cadre.style.setProperty("--flow-op",(flowProx * 0.58).toFixed(3));
 
       if(etroit){
         /* Sur téléphone la bannière grandit en approchant du centre.
@@ -2616,7 +2649,11 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   var source = document.querySelector("#hero .inner .lockup");
   var films = document.querySelector("#films .sect-head h2");
   var count = document.getElementById("count");
-  if(!source || !films || !count) return;
+  var cartesFilm = [].slice.call(document.querySelectorAll("#grid .film"));
+  var firstFilm = cartesFilm[0] ? cartesFilm[0].querySelector(".thumb") : null;
+  var lastFilm = cartesFilm.length ? cartesFilm[cartesFilm.length-1].querySelector(".thumb") : null;
+  var realisateur = document.querySelector("#binks .mot-video");
+  if(!source || !films || !count || !firstFilm || !lastFilm || !realisateur) return;
 
   var couche = document.createElement("div");
   couche.id = "scroll-flow";
@@ -2637,8 +2674,8 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   var bruit = svg.querySelector("feTurbulence");
   var deplace = svg.querySelector("feDisplacementMap");
 
-  var A=null,B=null,C=null;
-  var s1a=0,s1b=1,s2a=2,s2b=3;
+  var A=null,B=null,C=null,D=null,E=null,F=null;
+  var s1a=0,s1b=1,s2a=2,s2b=3,s3a=4,s3b=5,s4a=6,s4b=7;
   var mode="";
   var enCours=false;
 
@@ -2657,6 +2694,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
 
   function mesurer(){
     A=ancre(source); B=ancre(films); C=ancre(count);
+    D=ancre(firstFilm); E=ancre(lastFilm); F=ancre(realisateur);
     var vh=innerHeight;
 
     /* Le premier geste commence quand le badge quitte son moment hero
@@ -2668,6 +2706,16 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
        le compteur. Elle est plus courte et plus nerveuse. */
     s2a=s1b+Math.max(54,vh*.075);
     s2b=s2a+Math.max(170,vh*.27);
+
+    /* Après 10 films on CHANGE de connexion : le texte ne voyage plus.
+       Le compteur libère une impulsion qui entre dans la première carte. */
+    s3a=s2b+Math.max(52,vh*.065);
+    s3b=Math.max(s3a+Math.max(150,vh*.20),D.y-vh*.60);
+
+    /* Dans le catalogue, les cartes centrées prennent le relais.
+       Le dernier projet libère ensuite la même impulsion vers REALISATEUR. */
+    s4a=Math.max(s3b+Math.max(180,vh*.30),E.y-vh*.48);
+    s4b=Math.max(s4a+Math.max(190,vh*.25),F.y-vh*.58);
   }
 
   function recopierStyle(src,dst){
@@ -2708,6 +2756,14 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     couche.style.height=r.height+"px";
   }
 
+  function impulsion(){
+    if(mode==="pulse") return;
+    mode="pulse";
+    couche.innerHTML='<span class="flow-pulse"></span>';
+    couche.style.width="22px";
+    couche.style.height="22px";
+  }
+
   function bezier(ax,ay,bx,by,t,arcX,arcY){
     var cx=(ax+bx)/2+arcX, cy=(ay+by)/2+arcY;
     var u=1-t;
@@ -2737,6 +2793,9 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
       source.classList.remove("flow-source-off");
       films.classList.remove("flow-source-off","flow-impact");
       count.classList.remove("flow-impact");
+      firstFilm.parentNode.classList.remove("flow-hit");
+      lastFilm.parentNode.classList.remove("flow-hit");
+      realisateur.classList.remove("flow-hit");
       return;
     }
 
@@ -2745,6 +2804,9 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     films.classList.toggle("flow-source-off",y>s2a);
     films.classList.remove("flow-impact");
     count.classList.remove("flow-impact");
+    firstFilm.parentNode.classList.remove("flow-hit");
+    lastFilm.parentNode.classList.remove("flow-hit");
+    realisateur.classList.remove("flow-hit");
 
     if(y>=s1a && y<=s1b){
       badge();
@@ -2811,6 +2873,77 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
         " scale("+sx2.toFixed(3)+","+sy2.toFixed(3)+")";
 
       if(p2>.76) count.classList.add("flow-impact");
+      return;
+    }
+
+    /* Connexion 3 : le compteur ne repart pas en texte. Une impulsion
+       compacte en sort et se fait absorber par la première image. */
+    if(y>=s3a && y<=s3b){
+      impulsion();
+      couche.classList.add("on");
+      couche.style.filter="";
+      deplace.setAttribute("scale","0");
+
+      var p3=borne((y-s3a)/(s3b-s3a),0,1);
+      var e3=doux(p3);
+      var ax3=C.x-scrollX, ay3=C.y-scrollY;
+      var bx3=D.x-scrollX, by3=D.y-scrollY;
+      var q3=bezier(ax3,ay3,bx3,by3,e3,-vw*.08,vh*.045);
+      var ang3=Math.atan2(by3-ay3,bx3-ax3)*180/Math.PI;
+      var souffle3=Math.sin(p3*Math.PI);
+      var long3=1+souffle3*1.65;
+      var fin3=p3<.84?1:Math.max(0,1-(p3-.84)/.16);
+
+      couche.style.opacity=fin3.toFixed(3);
+      couche.style.transform=
+        "translate3d("+(q3.x-11).toFixed(1)+"px,"+(q3.y-11).toFixed(1)+"px,0)"+
+        " rotate("+ang3.toFixed(1)+"deg)"+
+        " scale("+long3.toFixed(3)+","+(1/(1+souffle3*.62)).toFixed(3)+")";
+
+      if(p3>.72) firstFilm.parentNode.classList.add("flow-hit");
+      return;
+    }
+
+    /* Le catalogue est la connexion : à mesure qu'une carte traverse le
+       centre, sa propre respiration prend le relais. Rien ne flotte entre
+       les projets et aucun câble n'est dessiné. */
+    if(y>s3b && y<s4a){
+      couche.classList.remove("on");
+      couche.style.opacity="0";
+      couche.style.filter="";
+      deplace.setAttribute("scale","0");
+      return;
+    }
+
+    /* Connexion 4 : la dernière carte transmet une impulsion au mot
+       REALISATEUR. Dès l'impact, les animations déjà présentes dans cette
+       section prennent le relais : mot vidéo, texte qui s'allume, puis
+       photo qui glisse jusqu'au contact. */
+    if(y>=s4a && y<=s4b){
+      impulsion();
+      couche.classList.add("on");
+      couche.style.filter="";
+      deplace.setAttribute("scale","0");
+
+      var p4=borne((y-s4a)/(s4b-s4a),0,1);
+      var e4=doux(p4);
+      var ax4=E.x-scrollX, ay4=E.y-scrollY;
+      var bx4=F.x-scrollX, by4=F.y-scrollY;
+      var sens4=bx4<ax4?-1:1;
+      var q4=bezier(ax4,ay4,bx4,by4,e4,vw*.07*sens4,vh*.035);
+      var ang4=Math.atan2(by4-ay4,bx4-ax4)*180/Math.PI;
+      var souffle4=Math.sin(p4*Math.PI);
+      var long4=1+souffle4*1.9;
+      var fin4=p4<.86?1:Math.max(0,1-(p4-.86)/.14);
+
+      couche.style.opacity=fin4.toFixed(3);
+      couche.style.transform=
+        "translate3d("+(q4.x-11).toFixed(1)+"px,"+(q4.y-11).toFixed(1)+"px,0)"+
+        " rotate("+ang4.toFixed(1)+"deg)"+
+        " scale("+long4.toFixed(3)+","+(1/(1+souffle4*.70)).toFixed(3)+")";
+
+      if(p4<.28) lastFilm.parentNode.classList.add("flow-hit");
+      if(p4>.74) realisateur.classList.add("flow-hit");
       return;
     }
 
