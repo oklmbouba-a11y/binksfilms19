@@ -168,15 +168,13 @@ nav a:hover{color:var(--ivoire)}
 }
 .film .titre{
   margin-top:4px;
-  /* Un brush incline : le titre est signe, pas compose. C'est la lettre
-     de la pochette rap, et elle tranche franchement avec la grotesque du
-     nom d'artiste juste au-dessus — deux voix, pas deux graisses.
-     La casse d'origine est conservee : un brush en capitales perd ses
-     liaisons, donc son geste. */
-  font-family:'Kaushan Script','Brush Script MT',cursive;
-  font-weight:400;font-style:normal;text-transform:none;
-  font-size:33px;line-height:1.06;letter-spacing:.004em;color:var(--ivoire);
-  text-shadow:0 1px 14px rgba(0,0,0,.6);
+  /* Serif italique elegante, proche de la reference : plus cinema/luxe,
+     fine et lisible, sans perdre le contraste avec le nom d'artiste. */
+  font-family:'Newsreader',Georgia,serif;
+  font-weight:400;font-style:italic;text-transform:none;
+  font-size:clamp(24px,5.2vw,42px);
+  line-height:.96;letter-spacing:-.02em;color:var(--ivoire);
+  text-shadow:0 1px 14px rgba(0,0,0,.58);
 }
 .film .meta{
   margin-top:8px;
@@ -201,7 +199,7 @@ nav a:hover{color:var(--ivoire)}
   .film .thumb{--r:13px}
   .film .cartel{padding:0 20px 17px}
   .film .artiste{font-size:16px}
-  .film .titre{font-size:37px}
+  .film .titre{font-size:clamp(30px,3vw,46px);line-height:.98}
   .film .meta{margin-top:9px}
 
   /* Bannière au centre de l'écran : le texte se floute puis s'efface,
