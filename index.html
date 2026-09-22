@@ -239,6 +239,41 @@ nav a:hover{color:var(--ivoire)}
   .film.vu.actif .voile{opacity:.35}
 }
 
+/* ---------- connexion au scroll : HERO -> FILMS -> compteur ----------
+   Un seul element vole a la fois. Il est copie dans une couche fixe,
+   deforme par turbulence pendant l'aspiration, puis absorbe par la cible.
+   Tout est calcule depuis scrollY : remonter rembobine exactement. */
+#scroll-flow{
+  position:fixed;left:0;top:0;z-index:34;
+  pointer-events:none;opacity:0;visibility:hidden;
+  transform-origin:50% 50%;
+  will-change:transform,opacity,filter;
+  backface-visibility:hidden;
+}
+#scroll-flow.on{visibility:visible}
+#scroll-flow .flow-lockup{display:block;width:100%;height:100%;text-align:center}
+#scroll-flow .flow-lockup span{display:block}
+#scroll-flow .flow-word{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  white-space:nowrap;
+}
+#hero .lockup.flow-source-off,
+#films .sect-head h2.flow-source-off{opacity:0!important}
+#films .sect-head h2,#films .sect-head .count{
+  transition:opacity .18s ease,transform .18s ease,color .18s ease,text-shadow .18s ease;
+}
+#films .sect-head h2.flow-impact,
+#films .sect-head .count.flow-impact{
+  color:var(--ivoire);
+  transform:scale(1.045);
+  text-shadow:0 0 16px rgba(177,18,38,.28);
+}
+@media(prefers-reduced-motion:reduce){
+  #scroll-flow{display:none!important}
+  #hero .lockup.flow-source-off,
+  #films .sect-head h2.flow-source-off{opacity:1!important}
+}
+
 /* ---------- réalisateur ---------- */
 #binks{padding:160px 0 0}
 #binks .cols{display:grid;gap:52px;align-items:start;margin-top:56px}
@@ -2569,6 +2604,234 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   addEventListener("resize", function(){ recenser(); auScroll(); }, {passive:true});
   window.__recenserParallaxe = function(){ recenser(); placer(); };
   recenser(); placer();
+})();
+
+/* ================= CONNEXION AU SCROLL =================
+   1) le badge BINKSFILMS est aspire dans FILMS ;
+   2) FILMS est ensuite aspire dans le compteur.
+   Deformation + turbulence pendant chaque aspiration, entierement reversible. */
+(function(){
+  if(reduced) return;
+
+  var source = document.querySelector("#hero .inner .lockup");
+  var films = document.querySelector("#films .sect-head h2");
+  var count = document.getElementById("count");
+  if(!source || !films || !count) return;
+
+  var couche = document.createElement("div");
+  couche.id = "scroll-flow";
+  couche.setAttribute("aria-hidden","true");
+  document.body.appendChild(couche);
+
+  /* turbulence SVG : la deformation ne vit que pendant le vol */
+  var svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svg.setAttribute("aria-hidden","true");
+  svg.setAttribute("focusable","false");
+  svg.style.cssText = "position:fixed;width:0;height:0;overflow:hidden;pointer-events:none";
+  svg.innerHTML =
+    '<filter id="scroll-flow-distort" x="-35%" y="-55%" width="170%" height="210%" color-interpolation-filters="sRGB">' +
+      '<feTurbulence type="fractalNoise" baseFrequency="0.008 0.022" numOctaves="2" seed="19" result="noise"/>' +
+      '<feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G"/>' +
+    '</filter>';
+  document.body.appendChild(svg);
+  var bruit = svg.querySelector("feTurbulence");
+  var deplace = svg.querySelector("feDisplacementMap");
+
+  var A=null,B=null,C=null;
+  var s1a=0,s1b=1,s2a=2,s2b=3;
+  var mode="";
+  var enCours=false;
+
+  function borne(v,a,b){ return v<a?a:(v>b?b:v); }
+  function mix(a,b,t){ return a+(b-a)*t; }
+  function doux(t){ return t*t*(3-2*t); }
+
+  function ancre(el){
+    var r=el.getBoundingClientRect();
+    return {
+      x:r.left+r.width/2+scrollX,
+      y:r.top+r.height/2+scrollY,
+      w:r.width,h:r.height
+    };
+  }
+
+  function mesurer(){
+    A=ancre(source); B=ancre(films); C=ancre(count);
+    var vh=innerHeight;
+
+    /* Le premier geste commence quand le badge quitte son moment hero
+       et finit quand le titre FILMS est installe dans la moitie basse. */
+    s1a=Math.max(0,A.y-vh*.70);
+    s1b=Math.max(s1a+Math.max(220,vh*.34),B.y-vh*.58);
+
+    /* Une courte respiration sur FILMS, puis seconde aspiration vers
+       le compteur. Elle est plus courte et plus nerveuse. */
+    s2a=s1b+Math.max(54,vh*.075);
+    s2b=s2a+Math.max(170,vh*.27);
+  }
+
+  function recopierStyle(src,dst){
+    var c=getComputedStyle(src);
+    dst.style.fontFamily=c.fontFamily;
+    dst.style.fontSize=c.fontSize;
+    dst.style.fontWeight=c.fontWeight;
+    dst.style.fontStretch=c.fontStretch;
+    dst.style.fontStyle=c.fontStyle;
+    dst.style.letterSpacing=c.letterSpacing;
+    dst.style.lineHeight=c.lineHeight;
+    dst.style.color=c.color;
+    dst.style.textTransform=c.textTransform;
+    dst.style.textShadow=c.textShadow;
+    dst.style.whiteSpace="nowrap";
+  }
+
+  function badge(){
+    if(mode==="badge") return;
+    mode="badge";
+    couche.innerHTML =
+      '<div class="flow-lockup"><span class="flow-name">BINKSFILMS</span>' +
+      '<span class="flow-base">LES BEAUX ARTS DU GHETTO</span></div>';
+    recopierStyle(source.querySelector(".lk-name"),couche.querySelector(".flow-name"));
+    recopierStyle(source.querySelector(".lk-base"),couche.querySelector(".flow-base"));
+    var r=source.getBoundingClientRect();
+    couche.style.width=r.width+"px";
+    couche.style.height=r.height+"px";
+  }
+
+  function motFilms(){
+    if(mode==="films") return;
+    mode="films";
+    couche.innerHTML='<div class="flow-word">FILMS</div>';
+    recopierStyle(films,couche.querySelector(".flow-word"));
+    var r=films.getBoundingClientRect();
+    couche.style.width=r.width+"px";
+    couche.style.height=r.height+"px";
+  }
+
+  function bezier(ax,ay,bx,by,t,arcX,arcY){
+    var cx=(ax+bx)/2+arcX, cy=(ay+by)/2+arcY;
+    var u=1-t;
+    return {
+      x:u*u*ax+2*u*t*cx+t*t*bx,
+      y:u*u*ay+2*u*t*cy+t*t*by
+    };
+  }
+
+  function turbulence(t,forte){
+    /* calme aux deux extremites, nerveuse au milieu de l'aspiration */
+    var w=Math.pow(Math.sin(Math.PI*borne(t,0,1)),.78);
+    var val=w*(forte?31:24);
+    deplace.setAttribute("scale",val.toFixed(2));
+    bruit.setAttribute("baseFrequency",
+      (0.0075+w*.010).toFixed(4)+" "+(0.020+w*.024).toFixed(4));
+    couche.style.filter=w>.015 ? "url(#scroll-flow-distort)" : "";
+    return w;
+  }
+
+  function placer(){
+    enCours=false;
+    if(!A || !B || !C) mesurer();
+
+    if(document.body.classList.contains("film")){
+      couche.classList.remove("on");
+      source.classList.remove("flow-source-off");
+      films.classList.remove("flow-source-off","flow-impact");
+      count.classList.remove("flow-impact");
+      return;
+    }
+
+    var y=scrollY, vh=innerHeight, vw=document.documentElement.clientWidth;
+    source.classList.toggle("flow-source-off",y>s1a);
+    films.classList.toggle("flow-source-off",y>s2a);
+    films.classList.remove("flow-impact");
+    count.classList.remove("flow-impact");
+
+    if(y>=s1a && y<=s1b){
+      badge();
+      couche.classList.add("on");
+
+      var p=borne((y-s1a)/(s1b-s1a),0,1);
+      var e=doux(p);
+
+      var ax=A.x-scrollX, ay=A.y-scrollY;
+      var bx=B.x-scrollX, by=B.y-scrollY;
+      /* le badge plonge vers la gauche, puis se resserre sur FILMS */
+      var q=bezier(ax,ay,bx,by,e,-vw*.055,vh*.035);
+      var target=borne((B.w/A.w)*1.08,.085,.18);
+      var sc=mix(1,target,e);
+      var tur=turbulence(p,true);
+
+      var sx=1+tur*.19, sy=1-tur*.13;
+      var skew=Math.sin(p*Math.PI*3.2)*tur*7.5;
+      var op=p<.80?1:Math.max(.05,1-(p-.80)/.20);
+
+      couche.style.opacity=op.toFixed(3);
+      couche.style.transform=
+        "translate3d("+(q.x-A.w/2).toFixed(1)+"px,"+(q.y-A.h/2).toFixed(1)+"px,0)"+
+        " scale("+sc.toFixed(4)+")"+
+        " skewX("+skew.toFixed(2)+"deg)"+
+        " scale("+sx.toFixed(3)+","+sy.toFixed(3)+")";
+
+      if(p>.78) films.classList.add("flow-impact");
+      return;
+    }
+
+    if(y>s1b && y<s2a){
+      couche.classList.remove("on");
+      couche.style.opacity="0";
+      couche.style.filter="";
+      deplace.setAttribute("scale","0");
+      films.classList.add("flow-impact");
+      return;
+    }
+
+    if(y>=s2a && y<=s2b){
+      motFilms();
+      couche.classList.add("on");
+
+      var p2=borne((y-s2a)/(s2b-s2a),0,1);
+      var e2=doux(p2);
+      var ax2=B.x-scrollX, ay2=B.y-scrollY;
+      var bx2=C.x-scrollX, by2=C.y-scrollY;
+      /* deuxieme connexion : plus laterale, avec un ventre discret */
+      var q2=bezier(ax2,ay2,bx2,by2,e2,0,vh*.055);
+      var target2=borne(C.w/B.w,.55,1.25);
+      var sc2=mix(1,target2,e2);
+      var tur2=turbulence(p2,false);
+
+      var sx2=1+tur2*.22, sy2=1-tur2*.16;
+      var skew2=Math.sin(p2*Math.PI*4.1)*tur2*8;
+      var op2=p2<.82?1:Math.max(.04,1-(p2-.82)/.18);
+
+      couche.style.opacity=op2.toFixed(3);
+      couche.style.transform=
+        "translate3d("+(q2.x-B.w/2).toFixed(1)+"px,"+(q2.y-B.h/2).toFixed(1)+"px,0)"+
+        " scale("+sc2.toFixed(4)+")"+
+        " skewX("+skew2.toFixed(2)+"deg)"+
+        " scale("+sx2.toFixed(3)+","+sy2.toFixed(3)+")";
+
+      if(p2>.76) count.classList.add("flow-impact");
+      return;
+    }
+
+    couche.classList.remove("on");
+    couche.style.opacity="0";
+    couche.style.filter="";
+    deplace.setAttribute("scale","0");
+    if(y>s2b) count.classList.remove("flow-impact");
+  }
+
+  function demander(){
+    if(!enCours){ enCours=true; requestAnimationFrame(placer); }
+  }
+
+  addEventListener("scroll",demander,{passive:true});
+  addEventListener("resize",function(){ mesurer(); demander(); },{passive:true});
+  addEventListener("load",function(){ mesurer(); demander(); });
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){ mesurer(); demander(); });
+  }
+  mesurer(); placer();
 })();
 
 /* ================= DIVERS ================= */
