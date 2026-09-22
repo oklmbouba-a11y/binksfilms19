@@ -156,33 +156,37 @@ nav a:hover{color:var(--ivoire)}
   background:linear-gradient(to top,
     rgba(6,6,6,.94) 0%, rgba(6,6,6,.72) 22%, rgba(6,6,6,.3) 46%, rgba(6,6,6,0) 72%);
 }
-.film .cartel{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:0 18px 15px}
-/* Le nom porte, le titre chante, la fiche se tait.
-   Le nom en grotesque massive et compacte, le titre dans une serif de
-   titrage brossée et penchée, la fiche en petites capitales espacées :
-   trois voix nettement différentes, mais du même monde. */
+.film .cartel{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:0 16px 15px}
+/* Cartel gauche cale sur la reference : artiste discret en capitales,
+   petit trait rouge fixe, titre serif italique puis fiche technique. */
 .film .artiste{
-  font-weight:800;font-stretch:112%;text-transform:uppercase;
-  font-size:15px;letter-spacing:.005em;line-height:1.1;
-  text-shadow:0 1px 12px rgba(0,0,0,.55);
+  font-weight:600;font-stretch:100%;text-transform:uppercase;
+  font-size:12.5px;letter-spacing:.055em;line-height:1.08;
+  text-shadow:0 1px 12px rgba(0,0,0,.58);
+}
+.film .artiste span{
+  display:inline-block;position:relative;padding-bottom:7px;
+}
+.film .artiste span::after{
+  content:"";position:absolute;left:0;bottom:2px;
+  width:30px;height:2px;background:var(--rouge);
 }
 .film .titre{
-  margin-top:4px;
-  /* Serif italique elegante, proche de la reference : plus cinema/luxe,
-     fine et lisible, sans perdre le contraste avec le nom d'artiste. */
+  margin-top:2px;
   font-family:'Newsreader',Georgia,serif;
   font-weight:400;font-style:italic;text-transform:none;
-  font-size:clamp(24px,5.2vw,42px);
-  line-height:.96;letter-spacing:-.02em;color:var(--ivoire);
-  text-shadow:0 1px 14px rgba(0,0,0,.58);
+  font-size:26px;line-height:.98;letter-spacing:-.025em;color:var(--ivoire);
+  text-shadow:0 1px 14px rgba(0,0,0,.6);
 }
 .film .meta{
-  margin-top:8px;
-  font-size:9.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
-  color:rgba(237,235,230,.55);font-variant-numeric:tabular-nums;
+  margin-top:9px;
+  font-size:9.5px;font-weight:600;letter-spacing:.19em;text-transform:uppercase;
+  color:rgba(237,235,230,.66);font-variant-numeric:tabular-nums;
 }
-.film .artiste span{background-image:linear-gradient(var(--ivoire),var(--ivoire));background-size:0 1px;background-position:0 100%;background-repeat:no-repeat;transition:background-size .35s}
-.film:hover .artiste span{background-size:100% 1px}
+.film .meta-dot{
+  color:var(--rouge);font-size:.9em;
+  display:inline-block;margin:0 .65em;transform:translateY(-.02em);
+}
 
 /* ---------- la grille sur téléphone ----------
    Format d'affiche plutôt que vignette 16/9, espacement resserré :
@@ -197,10 +201,12 @@ nav a:hover{color:var(--ivoire)}
      propriétaire : le 16/9 est celui du travail, et une carte de film doit
      ressembler à un plan, pas à une pochette. */
   .film .thumb{--r:13px}
-  .film .cartel{padding:0 20px 17px}
-  .film .artiste{font-size:16px}
-  .film .titre{font-size:clamp(30px,3vw,46px);line-height:.98}
-  .film .meta{margin-top:9px}
+  .film .cartel{padding:0 15px 14px}
+  .film .artiste{font-size:12.5px;letter-spacing:.055em}
+  .film .artiste span{padding-bottom:7px}
+  .film .artiste span::after{width:28px;height:2px;bottom:2px}
+  .film .titre{font-size:23px;line-height:.98;letter-spacing:-.025em}
+  .film .meta{margin-top:9px;font-size:9.5px}
 
   /* Bannière au centre de l'écran : le texte se floute puis s'efface,
      l'image reste seule. Il revient net dès qu'elle n'est plus au centre. */
@@ -1394,7 +1400,7 @@ function accrochage(n){
       +   '<div class="cartel">'
       +     '<p class="artiste"><span>'+esc(f.artist)+'</span></p>'
       +     '<p class="titre">'+esc(f.title)+'</p>'
-      +     '<p class="meta">'+f.type+' &middot; '+annee(f)+'</p>'
+      +     '<p class="meta">'+f.type+'<span class="meta-dot" aria-hidden="true">•</span>'+annee(f)+'</p>'
       +   '</div>'
       + '</div></a>';
   }).join("");
