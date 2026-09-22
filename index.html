@@ -281,7 +281,10 @@ nav a:hover{color:var(--ivoire)}
     rgba(177,18,38,.11) 34%,
     rgba(177,18,38,0) 70%);
   mix-blend-mode:screen;
+  transition:opacity .16s linear;
 }
+.film.flow-hit .thumb::after{opacity:.82}
+#binks .mot-video{transition:filter .18s ease}
 #binks .mot-video.flow-hit{
   filter:drop-shadow(0 0 14px rgba(177,18,38,.22));
 }
