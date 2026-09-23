@@ -859,3 +859,39 @@ Un produit sans caisse **ne fabrique pas un faux bouton** : il affiche
 `publie` visible de tous · `brouillon` visible seulement sur `#/shop/tout`,
 avec une marque rouge · `epuise` visible sans bouton. Un brouillon permet de
 juger une fiche avant de l'ouvrir au public.
+
+---
+
+## D-044 — La typographie a été tranchée par le propriétaire, avec ChatGPT
+
+**Confirmé le 23/09/2026 par le propriétaire.** Les changements de typographie
+faits ici les 19 et 20/09 ont été annulés depuis, volontairement, dans une
+session avec ChatGPT.
+
+**État qui fait foi :**
+
+| Élément | Typographie retenue |
+|---|---|
+| Titre de morceau (cartes) | `Newsreader` italique |
+| « Les beaux arts du ghetto » | `Archivo`, capitales, graisse 600 |
+
+**Ceci remplace D-032, D-033 et D-038.** Aucun des deux agents ne doit
+rétablir la serif étroite, le brush `Kaushan Script` ni la signature
+`Sacramento` sans une demande explicite du propriétaire.
+
+Le seul reliquat était technique et a été corrigé : les deux familles
+restaient téléchargées à chaque visite alors qu'aucune règle ne les employait.
+Le lien Google Fonts n'avait pas suivi le retour en arrière.
+
+### La leçon, qui vaut au-delà de la typographie
+Deux agents éditent `index.html`. Sans trace de **qui a tranché quoi**, chacun
+lit le travail de l'autre comme un défaut à corriger — et le fichier oscille.
+
+**Règle :** une décision de direction prise par le propriétaire s'écrit ici,
+avec sa date et l'agent qui l'a exécutée. Ce qui n'y est pas écrit peut être
+discuté ; ce qui y est écrit ne se défait que sur sa parole.
+
+Corollaire pratique : `git pull` avant chaque mission, et à la moindre
+divergence, **lire l'historique avant de réparer**. Ici le rebasage est passé
+sans conflit — les seize commits arrivés touchaient d'autres régions du
+fichier — mais rien ne le garantissait.
