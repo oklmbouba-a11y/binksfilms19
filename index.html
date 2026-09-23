@@ -521,6 +521,137 @@ nav a:hover{color:var(--ivoire)}
 @media(prefers-reduced-motion:reduce){
   #binks .marques{opacity:1;transform:none;transition:none}
 }
+/* ============================================================
+   LA BOUTIQUE
+   ------------------------------------------------------------
+   Une boutique a d'autres problemes qu'un portfolio : comprendre ce
+   qu'un produit fait, ce qu'on recoit exactement, et payer sans
+   angoisse. On ne recolle donc pas les formes des cartes film — ni
+   leur rayon, ni leur cartel pose dans l'image, ni leur grille.
+
+   Deux principes tenus :
+
+   1. L'OBJET EST LE SUJET. Un etalonnage ne se decrit pas, il se
+      montre sur une image. Chaque produit est donc une bande pleine
+      largeur coupee en deux par un rideau qu'on deplace : a gauche
+      l'image telle qu'elle sort, a droite ce que le produit en fait.
+      Le dispositif d'achat se range dessous, il ne dispute rien.
+
+   2. UN QUATRIEME ROLE D'ENONCIATION. Le prix, le format, la licence
+      et le delai engagent : ils ne peuvent etre ni murmures dans le
+      registre qui consigne, ni chantes dans celui qui dit. Ils ont
+      donc leur propre voix — un registre de bordereau : filets fins,
+      colonnes alignees, chiffres tabulaires, capitales espacees. Ce
+      registre n'apparait nulle part ailleurs sur le site.
+
+   Ce qui n'y est pas, volontairement : aucun badge de confiance,
+   aucun compte a rebours, aucun avis, aucune recommandation, aucun
+   bandeau. Chacun aurait du se justifier contre le silence, et aucun
+   n'y survivait. Un seul bouton par produit.
+   ============================================================ */
+#shop-view{display:none;min-height:100svh;padding-top:120px}
+#shop-view.on{display:block}
+body.boutique main#home{display:none}
+
+#shop-view .back{margin-bottom:38px}
+.sh-tete{margin-bottom:clamp(44px,6vw,86px)}
+.sh-tete h1{font-size:clamp(34px,5.4vw,64px)}
+.sh-tete .intro{margin-top:24px;font-size:17.5px;line-height:1.7;max-width:34em;color:var(--gris)}
+.sh-tete .intro em{font-family:'Newsreader',Georgia,serif;font-style:italic;color:var(--ivoire)}
+
+/* ---------- un produit ---------- */
+.prod{padding-bottom:clamp(64px,8vw,120px);margin-bottom:clamp(64px,8vw,120px);border-bottom:1px solid var(--ligne-2)}
+.prod:last-child{border-bottom:0;margin-bottom:0}
+
+/* La bande : deux images superposees, la brute decoupee par le rideau.
+   Aucun arrondi — ce n'est pas une vignette de film, c'est un plan. */
+.rideau{
+  position:relative;overflow:hidden;background:#0B0B0B;
+  aspect-ratio:16/9;cursor:ew-resize;
+  touch-action:pan-y;                /* le doigt fait toujours defiler la page */
+  -webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;
+}
+.rideau img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.rideau .brut{clip-path:inset(0 var(--coupe,50%) 0 0)}
+/* une simulation, quand le produit n'a pas encore sa vraie image brute */
+.rideau .brut.simule{filter:saturate(.42) contrast(.88) brightness(1.1)}
+/* le trait de coupe : un filet, pas une poignee de composant */
+.rideau .trait{
+  position:absolute;top:0;bottom:0;left:calc(100% - var(--coupe,50%));
+  width:1px;background:var(--ivoire);opacity:.85;pointer-events:none;
+  box-shadow:0 0 18px rgba(0,0,0,.6);
+}
+.rideau .trait::after{
+  content:"";position:absolute;top:50%;left:50%;width:34px;height:34px;
+  transform:translate(-50%,-50%);border:1px solid var(--ivoire);border-radius:50%;
+  background:rgba(10,10,10,.25);backdrop-filter:blur(2px);
+}
+/* les deux etats se nomment : sans ca on ne sait pas quel cote est quoi */
+.rideau .dit{
+  position:absolute;bottom:14px;font-size:9.5px;font-weight:600;letter-spacing:.22em;
+  text-transform:uppercase;color:rgba(237,235,230,.72);pointer-events:none;
+  text-shadow:0 1px 10px rgba(0,0,0,.8);
+}
+.rideau .dit.g{left:16px}
+.rideau .dit.d{right:16px}
+
+/* ---------- ce qui se dit sous la bande ---------- */
+.prod .sous{margin-top:26px;display:grid;gap:34px 54px;grid-template-columns:1fr}
+@media(min-width:900px){.prod .sous{grid-template-columns:1.15fr .85fr;align-items:start}}
+.prod .nom{font-size:clamp(24px,3.2vw,38px);font-weight:800;font-stretch:112%;text-transform:uppercase;letter-spacing:-.005em;line-height:1.05}
+.prod .phrase{margin-top:12px;font-size:16px;line-height:1.65;color:var(--gris);max-width:30em}
+.prod .brouillon{display:inline-block;margin-bottom:12px;font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--rouge)}
+
+/* ---------- LE ROLE CONTRACTUEL ----------
+   Le registre du bordereau. Il n'existe que la. */
+.bordereau{border-top:1px solid var(--ligne);padding-top:16px}
+.bordereau .ligne{
+  display:flex;gap:18px;align-items:baseline;justify-content:space-between;
+  padding:9px 0;border-bottom:1px solid var(--ligne-2);
+}
+.bordereau .ligne b{
+  flex:none;font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--gris-2);
+}
+.bordereau .ligne span{
+  text-align:right;font-size:13.5px;color:var(--ivoire);
+  font-variant-numeric:tabular-nums;overflow-wrap:break-word;
+}
+/* le prix : le seul grand nombre du site */
+.prix{
+  margin-top:22px;display:flex;align-items:baseline;justify-content:space-between;gap:18px;
+}
+.prix .n{font-size:clamp(30px,4.2vw,46px);font-weight:800;font-stretch:112%;letter-spacing:-.01em;font-variant-numeric:tabular-nums;line-height:1}
+.prix .quoi{font-size:10px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gris-2)}
+.acheter{
+  margin-top:20px;width:100%;
+  display:inline-flex;align-items:center;justify-content:space-between;gap:18px;
+  background:var(--ivoire);color:var(--noir);border:0;font-family:inherit;
+  font-size:clamp(13px,1.7vw,15px);font-weight:800;font-stretch:110%;
+  letter-spacing:.14em;text-transform:uppercase;text-decoration:none;
+  padding:20px 26px;transition:opacity .25s;
+}
+.acheter:hover{opacity:.84}
+.acheter i{font-style:normal;transition:transform .25s}
+.acheter:hover i{transform:translateX(5px)}
+/* un produit sans caisse ne ment pas : il le dit */
+.pas-encore{
+  margin-top:20px;padding:18px 0;border-top:1px solid var(--ligne);
+  font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--gris-2);
+}
+
+/* ---------- la boutique vide ---------- */
+.sh-vide{padding:40px 0 120px;border-top:1px solid var(--ligne)}
+.sh-vide p{font-size:17px;line-height:1.7;color:var(--gris);max-width:32em}
+
+@media(max-width:760px){
+  #shop-view{padding-top:90px}
+  .rideau{aspect-ratio:4/3}
+  .rideau .trait::after{width:28px;height:28px}
+}
+@media(prefers-reduced-motion:reduce){
+  .acheter i{transition:none}
+}
 #binks figcaption{margin-top:12px;font-size:13px;color:var(--gris-2)}
 
 /* ---------- contact ---------- */
@@ -1028,6 +1159,7 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
   <nav aria-label="Navigation">
     <a href="#films">Films</a>
     <a href="#binks">Réalisateur</a>
+    <a href="#/shop">Shop</a>
     <a href="#contact">Contact</a>
   </nav>
 </header>
@@ -1137,6 +1269,7 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
 </main>
 
 <main id="film-view" class="wrap" aria-live="polite"></main>
+<main id="shop-view" class="wrap" aria-live="polite"></main>
 
 <footer>
   <a class="lockup" href="#/" onclick="retourAccueil(event)">
@@ -1154,6 +1287,7 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
 
 <!-- Les films sont dans films.js — modifiable sans code depuis admin.html -->
 <script src="films.js"></script>
+<script src="shop.js"></script>
 
 <div class="ov" id="devis" role="dialog" aria-modal="true" aria-label="Parler d’un projet">
   <div class="ov-bar">
@@ -1686,14 +1820,200 @@ function renderFilm(f,i){
   }
 }
 
+/* ================= BOUTIQUE =================
+   Le fichier shop.js est la source, ceci n'est que son affichage.
+
+   Un etalonnage ne se decrit pas : il se montre sur une image. Chaque
+   produit est donc une bande coupee par un rideau qu'on deplace, et
+   le dispositif d'achat se range dessous.
+
+   Le paiement part vers une caisse hebergee que le proprietaire
+   possede — lien Stripe, Lemon Squeezy, Gumroad. Aucune cle ne touche
+   jamais cette page : tout ce qui s'y trouve est lisible par le
+   visiteur, donc rien de secret ne peut y vivre. Un produit sans
+   caisse ne fabrique pas un faux bouton, il le dit. */
+var SHOP = (window.SHOP_DATA || []);
+
+function prixFr(n){
+  if(n === 0) return "Gratuit";
+  try{
+    return new Intl.NumberFormat("fr-FR", {style:"currency", currency:"EUR",
+      minimumFractionDigits: (n % 1 === 0 ? 0 : 2)}).format(n);
+  }catch(e){ return n + " €"; }
+}
+
+function unProduit(a, tout){
+  var brouillon = a.statut === "brouillon";
+  var epuise    = a.statut === "epuise";
+  var apres = a.apres || a.avant || "";
+  var avant = a.avant || a.apres || "";
+
+  var bande = "";
+  if(apres){
+    bande = '<div class="rideau" data-coupe="50">'
+      + '<img class="traite" src="'+esc(apres)+'" alt="'+esc(a.nom)+' — l\'image avec le produit" loading="lazy" decoding="async">'
+      + '<img class="brut'+(a.simule ? " simule" : "")+'" src="'+esc(avant)+'" alt="'+esc(a.nom)+' — l\'image sans le produit" loading="lazy" decoding="async" aria-hidden="true">'
+      + '<span class="trait" aria-hidden="true"></span>'
+      + '<span class="dit g">Sans</span><span class="dit d">Avec</span>'
+      + '</div>';
+  }
+
+  var lignes = (a.contenu || []).map(function(c){
+    return '<div class="ligne"><b>'+esc(c[0])+'</b><span>'+esc(c[1])+'</span></div>';
+  }).join("");
+  if(a.tailles && a.tailles.length)
+    lignes += '<div class="ligne"><b>Tailles</b><span>'+esc(a.tailles.join(" · "))+'</span></div>';
+
+  var achat;
+  if(epuise)
+    achat = '<p class="pas-encore">Épuisé</p>';
+  else if(a.achat)
+    achat = '<a class="acheter" href="'+esc(a.achat)+'" target="_blank" rel="noopener">'
+          + 'Acheter <i>&rarr;</i></a>';
+  else
+    achat = '<p class="pas-encore">Bientôt en vente</p>';
+
+  return '<article class="prod">'
+    + bande
+    + '<div class="sous">'
+    +   '<div>'
+    +     (brouillon ? '<span class="brouillon">Brouillon — invisible du public</span>' : '')
+    +     '<h2 class="nom">'+esc(a.nom)+'</h2>'
+    +     (a.phrase ? '<p class="phrase">'+esc(a.phrase)+'</p>' : '')
+    +   '</div>'
+    +   '<div class="bordereau">'
+    +     lignes
+    +     '<div class="prix"><span class="n">'+esc(prixFr(a.prix || 0))+'</span>'
+    +     '<span class="quoi">'+(a.famille === "vetement" ? "Pièce" : "Téléchargement")+'</span></div>'
+    +     achat
+    +   '</div>'
+    + '</div>'
+    + '</article>';
+}
+
+function renderShop(tout){
+  var liste = SHOP.filter(function(a){
+    return tout ? true : a.statut !== "brouillon";
+  });
+  var h = '<a class="back" href="#/"><i class="ar">&larr;</i><span>Retour</span></a>'
+    + '<div class="sh-tete">'
+    +   '<h1 class="display">Shop</h1>'
+    +   '<p class="intro">Les outils avec lesquels je travaille, et ce qu\'ils font '
+    +   'sur mes propres images. <em>Tire le rideau pour voir la différence.</em></p>'
+    + '</div>';
+
+  if(!liste.length){
+    h += '<div class="sh-vide"><p>La boutique n\'est pas encore ouverte. '
+       + 'Les premiers outils arrivent bientôt.</p></div>';
+  } else {
+    h += liste.map(function(a){ return unProduit(a, tout); }).join("");
+  }
+
+  var vue = document.getElementById("shop-view");
+  vue.innerHTML = h;
+  brancherRideaux(vue);
+}
+
+/* ---------- le rideau ----------
+   Une seule regle de priorite, la meme que pour la pierre : au doigt,
+   la page passe avant. Si le geste part en vertical il appartient au
+   defilement, et le rideau lache aussitot. */
+function brancherRideaux(racine){
+  var elems = racine.querySelectorAll(".rideau");
+  for(var i = 0; i < elems.length; i++) unRideau(elems[i]);
+}
+function unRideau(el){
+  var trait = el.querySelector(".trait");
+  var brut  = el.querySelector(".brut");
+  var tenu = false, axeDecide = false, depX = 0, depY = 0;
+
+  function poser(pc){
+    pc = pc < 2 ? 2 : (pc > 98 ? 98 : pc);
+    el.style.setProperty("--coupe", (100 - pc) + "%");
+  }
+  function depuis(e){
+    var r = el.getBoundingClientRect();
+    if(!r.width) return;
+    poser((e.clientX - r.left) / r.width * 100);
+  }
+  poser(50);
+
+  el.addEventListener("pointerdown", function(e){
+    tenu = true; axeDecide = (e.pointerType === "mouse");
+    depX = e.clientX; depY = e.clientY;
+    el.__vu = true;                       /* le geste annule la demonstration */
+    if(axeDecide) depuis(e);
+  });
+  addEventListener("pointermove", function(e){
+    if(!tenu) return;
+    if(!axeDecide){
+      var tx = Math.abs(e.clientX - depX), ty = Math.abs(e.clientY - depY);
+      if(tx + ty < 8) return;
+      axeDecide = true;
+      if(ty > tx){ tenu = false; return; }   /* le defilement gagne */
+    }
+    depuis(e);
+  }, {passive:true});
+  addEventListener("pointerup",     function(){ tenu = false; });
+  addEventListener("pointercancel", function(){ tenu = false; });
+  /* a la souris, le rideau suit simplement le survol : aucun clic a
+     apprendre, et rien a maintenir */
+  if(matchMedia("(hover: hover) and (pointer: fine)").matches){
+    el.addEventListener("pointermove", function(e){
+      if(tenu || e.pointerType !== "mouse") return;
+      el.__vu = true; depuis(e);
+    });
+  }
+
+  /* Aucune legende ne dit que le rideau se deplace : il le montre. Une
+     seule fois, a son arrivee, il fait un aller-retour. Le premier
+     geste de l'utilisateur l'annule. */
+  if(window.IntersectionObserver && !reduced){
+    var io = new IntersectionObserver(function(es){
+      if(!es[0].isIntersecting || el.__vu) return;
+      io.disconnect();
+      var t0 = 0;
+      requestAnimationFrame(function boucle(t){
+        if(el.__vu) return;
+        if(!t0) t0 = t;
+        var u = (t - t0) / 1600;
+        if(u >= 1){ poser(50); return; }
+        poser(50 + Math.sin(u * Math.PI) * 26);
+        requestAnimationFrame(boucle);
+      });
+    }, {rootMargin:"0px 0px -25% 0px"});
+    io.observe(el);
+  }
+}
+
 /* ================= ROUTEUR =================
    On retient la position de l'accueil avant d'ouvrir un film,
    et on y revient exactement au retour. */
 var homeY = 0;
 function showRoute(first){
   var m = location.hash.match(/^#\/film\/([\w-]+)/);
+  var b = location.hash.match(/^#\/shop(\/tout)?/);
   var body = document.body, view = document.getElementById("film-view");
+  var vueShop = document.getElementById("shop-view");
   var etaitFilm = body.classList.contains("film");
+  var etaitShop = body.classList.contains("boutique");
+
+  /* la boutique : meme mecanique que la fiche film — une vue qui
+     remplace l'accueil, et l'accueil qu'on retrouve ou on l'a laisse */
+  if(b){
+    if(!etaitFilm && !etaitShop) homeY = scrollY;
+    stopApercuVideo(); clearInterval(apercuTimer);
+    body.classList.remove("film"); view.classList.remove("on"); view.innerHTML = "";
+    renderShop(!!b[1]);
+    body.classList.add("boutique");
+    vueShop.classList.add("on");
+    document.title = "Shop · BINKSFILMS";
+    scrollTo(0,0);
+    return;
+  }
+  body.classList.remove("boutique");
+  vueShop.classList.remove("on");
+  vueShop.innerHTML = "";
 
   if(m){
     var i = -1;
@@ -1720,15 +2040,16 @@ function showRoute(first){
   var ancre = location.hash.replace("#","");
   var cible = ancre && ancre.charAt(0) !== "/" ? document.getElementById(ancre) : null;
   if(cible) cible.scrollIntoView();                 /* clic sur Films / Réalisateur / Contact */
-  else if(etaitFilm) scrollTo(0, homeY);            /* retour depuis un film : pile où on était */
+  else if(etaitFilm || etaitShop) scrollTo(0, homeY);   /* retour d'une vue : pile où on était */
   else scrollTo(0,0);
 }
 /* Le logo ramène toujours à l'accueil, même si l'adresse est déjà « #/ » :
    sans ça, le navigateur n'émet aucun événement et il ne se passe rien. */
 function retourAccueil(e){
   e.preventDefault();
-  if(document.body.classList.contains("film")){
-    location.hash = "#/";                       /* on quitte la page film */
+  if(document.body.classList.contains("film") ||
+     document.body.classList.contains("boutique")){
+    location.hash = "#/";                       /* on quitte la vue ouverte */
   } else if(location.hash){
     history.replaceState(null, "", location.pathname + location.search);
   }
@@ -1747,11 +2068,11 @@ function cut(fn){
     c.classList.remove("on");
   }, 100);
 }
-var lastWasFilm = /^#\/film\//.test(location.hash);
+var lastWasVue = /^#\/(film\/|shop)/.test(location.hash);
 addEventListener("hashchange", function(){
-  var isFilm = /^#\/film\//.test(location.hash);
-  if(isFilm || lastWasFilm) cut(showRoute); else showRoute();
-  lastWasFilm = isFilm;
+  var isVue = /^#\/(film\/|shop)/.test(location.hash);
+  if(isVue || lastWasVue) cut(showRoute); else showRoute();
+  lastWasVue = isVue;
 });
 showRoute(true);
 

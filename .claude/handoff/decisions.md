@@ -813,3 +813,49 @@ Entre le centre du cadre et le bouton il n'y a que **645 px** pour un écran de
 contact — demandé par le propriétaire — l'a encore raccourci. Les quatre phases
 ne peuvent donc pas être longues toutes les quatre ; c'est un arbitrage, pas un
 réglage.
+
+---
+
+## D-043 — La boutique : un quatrième rôle d'énonciation, et aucune clé
+
+Premier territoire ouvert réellement construit. `open-territories.md` §1 en
+donnait la doctrine ; elle a été suivie point par point.
+
+**Ce qui est vendu :** LUTs et packs d'effets d'abord, vêtements ensuite.
+
+### L'idée organisatrice
+Un étalonnage **ne se décrit pas, il se montre sur une image**. Chaque produit
+est donc une bande pleine largeur coupée par un rideau qu'on déplace : à gauche
+l'image telle qu'elle sort, à droite ce que le produit en fait. Le dispositif
+d'achat se range dessous — l'objet reste le sujet (invariant I transposé).
+
+### Le rôle contractuel, inventé et non copié
+Prix, format, licence, délai : cette information **engage**. Elle ne pouvait
+être ni murmurée dans le registre qui consigne, ni chantée dans celui qui dit.
+Elle a donc sa propre voix — **un registre de bordereau** : filets fins,
+colonnes alignées, chiffres tabulaires, capitales espacées, valeurs calées à
+droite. Ce registre n'apparaît nulle part ailleurs sur le site. Le prix est le
+**seul grand nombre** du site.
+
+### Ce qui n'y est pas, et c'est délibéré
+Aucun badge de confiance, aucun compte à rebours, aucun avis, aucune
+recommandation, aucun bandeau. **Un seul bouton par produit.** Aucune forme des
+cartes film n'a été recollée — ni le rayon de 11 px, ni le cartel posé dans
+l'image, ni la grille : ce sont des solutions à des problèmes de portfolio.
+
+### Le paiement — la décision structurante
+Le champ `achat` est l'adresse d'une **caisse hébergée que le propriétaire
+possède** (lien Stripe, Lemon Squeezy, Gumroad). Le site n'y fait que mener.
+
+**Aucune clé secrète ne peut vivre dans ce site.** Tout ce qui est servi est
+lisible par n'importe quel visiteur : une clé posée dans `shop.js` ou dans la
+page serait exactement le trou évoqué pour `admin.html`. C'est aussi pourquoi
+je ne peux ni créer le compte ni manipuler les clés — c'est au propriétaire.
+
+Un produit sans caisse **ne fabrique pas un faux bouton** : il affiche
+« Bientôt en vente ».
+
+### Les états
+`publie` visible de tous · `brouillon` visible seulement sur `#/shop/tout`,
+avec une marque rouge · `epuise` visible sans bouton. Un brouillon permet de
+juger une fiche avant de l'ouvrir au public.

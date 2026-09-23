@@ -341,3 +341,32 @@ peuvent pas être vraies ensemble.
 Le propriétaire a réaffirmé la contrainte de défilement dans le brief suivant,
 puis dans le storyboard. **Le défilement l'emporte** : la durée est celle que
 l'utilisateur donne au geste. Voir D-030.
+
+---
+
+## B-017 — La boutique attend son contenu et sa caisse
+
+**Ouvert le 23/09/2026.** La page existe, elle est vide de produits réels.
+
+Trois choses qui n'appartiennent qu'au propriétaire :
+
+1. **Créer la caisse** chez un prestataire, produit par produit, et coller
+   l'adresse obtenue dans le champ `achat`. Pour des LUTs, préférer un
+   prestataire qui **livre le fichier et gère la TVA** (Lemon Squeezy, Gumroad) :
+   Stripe encaisse très bien mais ne livre pas de fichier.
+2. **Fournir les vraies images avant / après.** L'entrée de démonstration
+   utilise deux fois la même image avec un filtre — c'est marqué `simule` et
+   c'est un brouillon, donc invisible du public. Une fiche publiée doit montrer
+   deux vraies images.
+3. **Compresser ces images.** Celle de la démonstration fait 3840 px de large
+   pour 2,4 Mo. Sur une page qui en empile plusieurs, c'est intenable.
+
+**Jamais de clé secrète** dans `shop.js` ni dans la page : tout y est public.
+
+## B-018 — `admin.html` ne connaît pas encore la boutique
+
+`shop.js` s'écrit à la main pour l'instant, alors que `films.js` est généré.
+C'est acceptable pour deux ou trois produits, pas au-delà. À traiter en même
+temps que le filtrage des entrées archivées à l'export (voir la note sécurité
+du 19/09 : les 7 films `archived` restent lisibles publiquement dans
+`films.js`).
