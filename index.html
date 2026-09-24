@@ -554,7 +554,7 @@ nav a:hover{color:var(--ivoire)}
 body.boutique main#home{display:none}
 
 #shop-view .back{margin-bottom:30px}
-.sh-tete{margin-bottom:18px}
+.sh-tete{margin-bottom:8px}
 .sh-tete h1{font-size:clamp(36px,8.6vw,72px);line-height:.92}
 .sh-tete .intro{margin-top:22px;font-size:clamp(17px,4.2vw,21px);line-height:1.45;max-width:28em;color:var(--gris)}
 .sh-tete .intro em{font-family:'Newsreader',Georgia,serif;font-style:italic;color:var(--ivoire);font-weight:400}
@@ -834,6 +834,33 @@ body.boutique main#home{display:none}
   .prod-hero-boite{padding-top:28px}
 }
 @media(prefers-reduced-motion:reduce){.prod-hero-video{transition:none}}
+
+/* ---------- index Shop : produit immédiatement sous le titre ----------
+   Pas de deuxième écran vide : le packaging monte, puis son prix apparaît
+   dans la même lecture. La video reste le décor fixe derrière toute la page. */
+.shop-index .sh-tete{margin-bottom:0}
+.shop-index .prod-hero,
+.shop-index .prod-hero.a-boite{
+  min-height:auto;
+  margin-bottom:20px;
+  padding-top:0;
+}
+.shop-index .prod-hero-boite{
+  flex:none;
+  padding:10px 0 8px;
+}
+.shop-index .prod-hero-sous{
+  margin-top:0;
+  padding-bottom:22px;
+}
+.shop-index .prod-hero-nom{margin-top:2px}
+.shop-index .prod-hero-cta{margin-top:12px}
+.shop-index .prod-hero-prix{display:block}
+@media(max-width:760px){
+  .shop-index .prod-hero,
+  .shop-index .prod-hero.a-boite{min-height:auto}
+  .shop-index .prod-hero-boite{padding-top:6px}
+}
 
 .rideaux-multi{display:grid;gap:2px}
 .rideau .legende{
@@ -2253,8 +2280,6 @@ function renderShop(tout){
   var h = fond + '<div class="shop-index shop-index-contenu">'
     + '<div class="sh-tete">'
     +   '<h1 class="display">Shop</h1>'
-    +   '<p class="intro">Les outils avec lesquels je travaille, et ce qu\'ils font '
-    +   'sur mes propres images. <em>Une vision, des créations en édition limitée.</em></p>'
     + '</div>';
 
   if(!liste.length){
