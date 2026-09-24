@@ -342,11 +342,14 @@ nav a:hover{color:var(--ivoire)}
    légèrement en passant au centre : c'est le script qui la pilote, comme
    pour les bannières de films. Le cadre garde le format du fichier pour
    que la page ne saute pas au chargement. */
+/* Plus de volet d'entree (glissement depuis la droite) : des que la pierre
+   est prete, la photo quitte le cadre pour sa couche de vol, qui ne suit
+   pas ce glissement. Si la photo arrivait pendant le volet — premiere
+   visite, rien en cache — elle sautait a sa place ; apres actualisation
+   elle etait deja la. On garde le comportement de l'actualisation : la
+   photo est a sa place, tout de suite, a chaque visite. */
 #binks figure .cadre{
   display:block;position:relative;overflow:hidden;aspect-ratio:4/5;
-  transform:translateX(14vw);
-  clip-path:inset(0 0 0 100%);
-  transition:transform 1.5s cubic-bezier(.16,1,.3,1),clip-path 1.5s cubic-bezier(.16,1,.3,1);
   perspective:1500px;perspective-origin:50% 45%;
   background:#0B0B0B;                      /* ce qu'on voit derrière le bloc quand il s'incline */
 }
@@ -837,9 +840,11 @@ body.boutique main#home{display:none}
   margin-bottom:20px;
   padding-top:0;
 }
+/* Assez d'air au-dessus du pack : incline en 3D et flottant de 10px, il
+   depassait le haut de la scene (overflow:hidden) et se faisait couper. */
 .shop-index .prod-hero-boite{
   flex:none;
-  padding:10px 0 8px;
+  padding:clamp(44px,5vw,60px) 0 8px;
 }
 .shop-index .prod-hero-sous{
   margin-top:0;
@@ -851,7 +856,7 @@ body.boutique main#home{display:none}
 @media(max-width:760px){
   .shop-index .prod-hero,
   .shop-index .prod-hero.a-boite{min-height:auto}
-  .shop-index .prod-hero-boite{padding-top:6px}
+  .shop-index .prod-hero-boite{padding-top:44px}
 }
 
 .rideaux-multi{display:grid;gap:2px}
@@ -2396,7 +2401,10 @@ function brancherHeroVideo(racine){
     v.classList.add("pret");
     scene.classList.add("attend-video");
   });
-  v.addEventListener("canplay", function(){ v.play().catch(repli); });
+  /* Pas de repli sur un refus de play() : Safari en rejette souvent un
+     simplement interrompu par le suivant, et l'image revenait une seconde
+     avant la video. Seuls l'erreur et le delai de garde decident. */
+  v.addEventListener("canplay", function(){ var lu = v.play(); if(lu && lu.catch) lu.catch(function(){}); });
   v.addEventListener("error", function(){ clearTimeout(garde); repli(); v.remove(); }, true);
   v.src = v.getAttribute("data-src");
   v.load();
