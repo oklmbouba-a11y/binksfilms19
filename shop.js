@@ -71,8 +71,8 @@ window.SHOP_DATA = [
     phrase: "Entrée de démonstration : elle sert à voir la mise en page, pas à vendre.",
     prix: 0,
     achat: "",
-    apres: "images/skinny.jpg",
-    avant: "images/skinny.jpg",
+    apres: "images/fulltrap-skinny-bastard-skinny-bastard-s-flow-type-shit-bann.jpg",
+    avant: "images/fulltrap-skinny-bastard-skinny-bastard-s-flow-type-shit-bann.jpg",
     simule: true,
     contenu: [
       ["Contenu", "à renseigner"],

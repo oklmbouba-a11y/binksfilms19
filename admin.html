@@ -688,7 +688,14 @@ function fichierExiste(chemin, genre){
       var v = document.createElement("video");
       v.preload = "metadata"; v.muted = true;
       v.onloadedmetadata = function(){ ok(true); v.src = ""; };
-      v.onerror = function(){ ok(false); };
+      /* une video que ce navigateur ne sait pas decoder n'est pas une
+         video absente : on demande au serveur avant de conclure */
+      v.onerror = function(){
+        if(location.protocol === "file:"){ ok(false); return; }
+        fetch(url, {method:"HEAD"})
+          .then(function(r){ ok(r.ok); })
+          .catch(function(){ ok(false); });
+      };
       v.src = url;
     } else {
       var img = new Image();
