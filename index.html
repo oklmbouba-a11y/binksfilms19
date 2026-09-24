@@ -612,6 +612,64 @@ body.boutique main#home{display:none}
 /* ---------- une fiche produit dediee ---------- */
 .prod{padding-bottom:clamp(64px,8vw,120px)}
 
+/* ---------- fiche produit : nettoyage ----------
+   La fiche commence directement dans l'image. Le retour flotte sur la scene,
+   aucun grand bloc noir avant le packaging. Le nom existe encore, mais en
+   etiquette secondaire : le packaging le dit deja. */
+.shop-detail{
+  position:relative;
+  margin-top:-104px;
+}
+.shop-detail>.prod-back{
+  position:absolute;z-index:6;
+  top:118px;left:0;
+  margin:0;
+  color:rgba(237,235,230,.72);
+  text-shadow:0 1px 14px rgba(0,0,0,.75);
+}
+.shop-detail .prod-hero{
+  margin-top:0;
+  margin-bottom:0;
+}
+.shop-detail .prod-hero-brand{display:none}
+.shop-detail .prod-hero-sous{
+  padding-bottom:24px;
+}
+.shop-detail .prod-hero-nom{
+  margin-top:0;
+  font-size:clamp(12px,2.8vw,15px);
+  font-weight:700;
+  letter-spacing:.16em;
+  line-height:1.1;
+  color:rgba(237,235,230,.78);
+}
+.shop-detail .prod-hero-edition{
+  margin-top:8px;
+  font-size:9px;
+  letter-spacing:.23em;
+  color:rgba(237,235,230,.54);
+}
+.shop-detail .prod-hero-cta{
+  margin-top:12px;
+  gap:9px;
+}
+.shop-detail .prod-hero-prix{
+  font-size:clamp(26px,5vw,34px);
+}
+.shop-detail .prod-hero-cta .pas-encore{
+  font-size:9px;
+  letter-spacing:.22em;
+  color:rgba(237,235,230,.48);
+}
+.shop-detail .rideaux-multi{margin-top:0}
+.shop-detail .prod .sous{margin-top:30px}
+@media(max-width:760px){
+  .shop-detail{margin-top:-94px}
+  .shop-detail>.prod-back{top:104px;left:0}
+  .shop-detail .prod-hero-boite{padding-top:72px}
+  .shop-detail .prod-hero-sous{padding-bottom:22px}
+}
+
 /* Le hero est une scene, pas une carte : la video prend tout le viewport,
    et le packaging flotte dans l'image avant les informations produit. */
 .prod-hero{
@@ -2164,9 +2222,6 @@ function unProduit(a){
     +   '</div>'
     +   '<div class="bordereau">'
     +     lignes
-    +     '<div class="prix"><span class="n">'+esc(prixFr(a.prix || 0))+'</span>'
-    +     '<span class="quoi">'+(a.famille === "vetement" ? "Pièce" : "Téléchargement")+'</span></div>'
-    +     boutonAchat(a)
     +   '</div>'
     + '</div>'
     + '</article>';
@@ -2225,16 +2280,19 @@ function renderShop(tout){
 function renderShopProduit(slug){
   var a = null;
   for(var i=0;i<SHOP.length;i++){ if(SHOP[i].slug === slug){ a = SHOP[i]; break; } }
-  var h = '<a class="back" href="#/shop"><i class="ar">&larr;</i><span>Shop</span></a>';
   var vue = document.getElementById("shop-view");
 
   if(!a){
-    h += '<div class="sh-vide"><p>Ce produit n\'existe pas, ou plus.</p></div>';
-    vue.innerHTML = h;
+    vue.innerHTML = '<a class="back" href="#/shop"><i class="ar">&larr;</i><span>Shop</span></a>'
+      + '<div class="sh-vide"><p>Ce produit n\'existe pas, ou plus.</p></div>';
     return null;
   }
 
-  h += unProduit(a);
+  var h = '<div class="shop-detail">'
+    + '<a class="back prod-back" href="#/shop"><i class="ar">&larr;</i><span>Shop</span></a>'
+    + unProduit(a)
+    + '</div>';
+
   vue.innerHTML = h;
   brancherRideaux(vue);
   brancherHeroVideo(vue);
