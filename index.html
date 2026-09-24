@@ -559,6 +559,46 @@ body.boutique main#home{display:none}
 .sh-tete .intro{margin-top:22px;font-size:clamp(17px,4.2vw,21px);line-height:1.45;max-width:28em;color:var(--gris)}
 .sh-tete .intro em{font-family:'Newsreader',Georgia,serif;font-style:italic;color:var(--ivoire);font-weight:400}
 
+/* ---------- fond de la page SHOP ----------
+   Une seule video plein ecran, fixee au viewport. Le contenu defile par-dessus :
+   le decor ne repart jamais avec chaque produit et ne laisse aucun trou noir. */
+.shop-fond-fixe{
+  position:fixed;inset:0;z-index:0;overflow:hidden;background:#0A0A0A;
+  pointer-events:none;
+}
+.shop-fond-fixe img,.shop-fond-fixe video{
+  position:absolute;inset:0;width:100%;height:100%;
+  max-width:none;object-fit:cover;object-position:center center;
+}
+.shop-fond-fixe img{transform:scale(1.015)}
+.shop-fond-fixe video{opacity:0;transition:opacity 1.1s ease;transform:scale(1.015)}
+.shop-fond-fixe video.pret{opacity:1}
+.shop-fond-fixe .shop-fond-voile{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(to bottom,rgba(8,8,9,.34) 0%,rgba(8,8,9,.08) 26%,rgba(8,8,9,.18) 55%,rgba(8,8,9,.58) 100%),
+    radial-gradient(circle at 50% 40%,rgba(255,255,255,.035),rgba(0,0,0,0) 52%);
+}
+.shop-index-contenu{position:relative;z-index:1}
+.shop-index .prod-hero{
+  background:transparent;
+  isolation:auto;
+}
+/* Sur l'index Shop, le packaging porte deja le nom : la legende reste
+   volontairement petite pour pouvoir accueillir beaucoup de futurs produits. */
+.shop-index .prod-hero-brand{display:none}
+.shop-index .prod-hero-nom{
+  margin-top:0;
+  font-size:clamp(15px,3.8vw,20px);
+  font-weight:700;letter-spacing:.10em;line-height:1.1;
+}
+.shop-index .prod-hero-edition{
+  margin-top:9px;font-size:9.5px;letter-spacing:.24em;
+}
+.shop-index .prod-hero-cta{margin-top:16px}
+.shop-index .prod-hero-prix{font-size:clamp(25px,5.2vw,34px)}
+@media(prefers-reduced-motion:reduce){.shop-fond-fixe video{display:none}}
+
 /* ---------- la page d'ensemble : le produit devient une vraie scene plein ecran ---------- */
 .sh-heros{display:flex;flex-direction:column;gap:2px;padding-bottom:clamp(64px,8vw,120px)}
 .sh-heros .prod-hero{margin:0 -24px}
@@ -2087,9 +2127,9 @@ function unHero(a, apercu){
   var tag = apercu ? "a" : "div";
   var ouvre = apercu ? ' href="#/shop/'+esc(a.slug)+'"' : "";
   return '<'+tag+' class="prod-hero'+(a.boite ? " a-boite" : "")+(apercu ? " prod-hero-lien" : "")+'"'+ouvre+'>'
-    + (fond ? '<img class="prod-hero-fond" src="'+esc(fond)+'" alt="" aria-hidden="true" decoding="async">' : '')
-    + (a.video ? '<video class="prod-hero-video" data-src="'+esc(a.video)+'" muted loop playsinline preload="none" aria-hidden="true"></video>' : '')
-    + '<span class="prod-hero-scrim" aria-hidden="true"></span>'
+    + (!apercu && fond ? '<img class="prod-hero-fond" src="'+esc(fond)+'" alt="" aria-hidden="true" decoding="async">' : '')
+    + (!apercu && a.video ? '<video class="prod-hero-video" data-src="'+esc(a.video)+'" muted loop playsinline preload="none" aria-hidden="true"></video>' : '')
+    + (!apercu ? '<span class="prod-hero-scrim" aria-hidden="true"></span>' : '')
     + uneBoite(a)
     + '<div class="prod-hero-sous wrap">'
     +   (a.statut === "brouillon" ? '<span class="brouillon">Brouillon — invisible du public</span>' : '')
@@ -2136,7 +2176,27 @@ function renderShop(tout){
   var liste = SHOP.filter(function(a){
     return tout ? true : a.statut !== "brouillon";
   });
-  var h = '<div class="sh-tete">'
+
+  /* Le premier produit publie qui possede une video fournit le decor global
+     de la boutique. Quand d'autres produits arrivent, ils partagent donc la
+     meme scene au lieu de recreer une video dans chaque carte. */
+  var decor = null;
+  for(var d=0;d<liste.length;d++){
+    if(liste[d].video){ decor = liste[d]; break; }
+  }
+  if(!decor && liste.length) decor = liste[0];
+
+  var r0 = decor ? ((decor.rideaux && decor.rideaux[0]) || {avant:decor.avant, apres:decor.apres}) : null;
+  var imageFond = decor ? (decor.visuel || (r0 && (r0.apres || r0.avant)) || "") : "";
+
+  var fond = '<div class="shop-fond-fixe" aria-hidden="true">'
+    + (imageFond ? '<img src="'+esc(imageFond)+'" alt="" decoding="async">' : '')
+    + (decor && decor.video ? '<video class="prod-hero-video" data-src="'+esc(decor.video)+'" muted loop playsinline preload="none"></video>' : '')
+    + '<span class="shop-fond-voile"></span>'
+    + '</div>';
+
+  var h = fond + '<div class="shop-index shop-index-contenu">'
+    + '<div class="sh-tete">'
     +   '<h1 class="display">Shop</h1>'
     +   '<p class="intro">Les outils avec lesquels je travaille, et ce qu\'ils font '
     +   'sur mes propres images. <em>Une vision, des créations en édition limitée.</em></p>'
@@ -2148,12 +2208,16 @@ function renderShop(tout){
   } else {
     h += '<div class="sh-heros">' + liste.map(function(a){ return unHero(a, true); }).join("") + '</div>';
   }
+  h += '</div>';
 
   var vue = document.getElementById("shop-view");
   vue.innerHTML = h;
+
+  var fondFixe = vue.querySelector(".shop-fond-fixe");
+  if(fondFixe) brancherHeroVideo(fondFixe);
+
   var heros = vue.querySelectorAll(".prod-hero");
   for(var i=0;i<heros.length;i++){
-    brancherHeroVideo(heros[i]);
     brancherBoite(heros[i]);
   }
 }
