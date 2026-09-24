@@ -8,6 +8,73 @@ Format : ID · date · décision · raison · conséquence · statut.
 
 ---
 
+## D-019 — Premier produit réel de la boutique : BINKS LOOK, 49 €
+**Date :** 2026-09-24 · **Statut :** ACTIVE
+
+Le produit `binks-color` (slug conservé, nom affiché changé) a son premier
+contenu réel : un LUT `.cube` 3D 16 points fourni par le propriétaire, cinq
+vraies paires avant/après (nuit, extérieur, mariage ×2, piscine — remplaçant
+les stills de démonstration `simule`), et un packaging que l'acheteur peut
+faire tourner du doigt sur la fiche (voir ci-dessous).
+
+**Nom :** le fichier `.cube` s'est appelé successivement `BINKS LOOK.cube` puis
+`BINKS COLOR.cube` en cours de mission ; le nom affiché a suivi chaque fois.
+Le propriétaire a ensuite fourni deux mockups de packaging portant `BINKS
+LOOK`, et tranché en faveur de ce nom. **`BINKS LOOK` est donc le nom retenu**
+côté site — si le fichier `.cube` distribué porte encore `BINKS COLOR.cube`,
+c'est un désaccord à corriger d'un côté ou de l'autre avant la mise en vente.
+
+**Packaging (boîte 3D CSS, champ `boite` de `shop.js`) :**
+- face avant : illustration de corbeau générée par IA, dans l'esprit d'un
+  mockup fourni par le propriétaire — élément graphique assumé comme tel, pas
+  une photo prétendant être réelle ;
+- face arrière : collage composé à partir des **cinq vraies photos** du
+  rideau (pas d'IA) — la preuve du LUT plutôt qu'un décor inventé ;
+- tranche : typographie générée, `BINKS LOOK` vertical.
+Ces trois faces sont un premier jet explicitement signalé comme tel au
+propriétaire ; à remplacer dès qu'un vrai packshot ou modèle 3D existe.
+
+**Prix et licence :** 49 €, un fichier par achat, revente interdite,
+téléchargement immédiat après paiement. Le pack inclut désormais des rushs
+d'exemple en plus du `.cube` — le propriétaire doit encore préparer et
+héberger ce paquet de livraison chez son prestataire de caisse (voir B-017,
+toujours ouvert pour le lien `achat`).
+
+**Conséquence :** B-017 est largement avancé (images réelles, packaging,
+nom, prix) mais **pas fermé** — il manque le lien de caisse et le paquet de
+livraison zippé. Voir aussi D-020 pour la refonte de la page shop elle-même.
+
+---
+
+## D-020 — La page shop devient une scène, pas une grille
+**Date :** 2026-09-24 · **Statut :** ACTIVE
+
+Trois refontes successives de la même zone, dans l'ordre : (1) grille de
+cartes → page d'ensemble + fiche dédiée séparées ; (2) le bandeau d'ouverture
+de la fiche (nom, prix, achat, boîte tournante) déplacé directement sur la
+page d'ensemble `#/shop`, avec un bouton « Voir le produit » qui renvoie vers
+la fiche pour l'achat réel ; (3) **une session distante (branche
+`claude/github-bugs-cleanup-0eseqh`, PR #1) a repris ce même chantier en
+parallèle** et l'a poussé plus loin : vidéo de fond fixe plein viewport
+partagée par tous les produits (`shop-fond-fixe`), fiche dédiée nettoyée de
+la répétition du bandeau (elle commence directement par la démonstration
+avant/après), prix en serif au bas de la fiche.
+
+**Fusionné le 2026-09-24** (`git merge origin/main`, commit `7d84591`) sans
+conflit textuel : les deux sessions n'avaient pas touché `index.html` aux
+mêmes endroits au même moment. Vérifié au navigateur après fusion — desktop
+et mobile, page d'ensemble et fiche dédiée, rotation de la boîte sans
+navigation accidentelle.
+
+**Pourquoi consigner ceci en particulier :** c'est le scénario exact que
+`handoff-protocol-github` est censé éviter — deux sessions sur la même zone
+sans se lire. Cette fois la fusion s'est bien passée, mais seulement parce
+qu'aucune n'avait encore poussé au moment où l'autre travaillait. **Prochaine
+session (Claude ou ChatGPT) : `git pull` avant de toucher à la zone shop —
+elle est maintenant activement disputée entre deux exécutants.**
+
+---
+
 ## D-018 — La signature est retirée : l'exécution ne tenait pas
 **Date :** 2026-09-18 · **Statut :** ACTIVE · **Remplace :** D-017
 

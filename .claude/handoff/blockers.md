@@ -344,22 +344,29 @@ l'utilisateur donne au geste. Voir D-030.
 
 ---
 
-## B-017 — La boutique attend son contenu et sa caisse
+## B-017 — La boutique attend sa caisse
+**Sévérité :** MAJOR · **Propriétaire :** utilisateur · **Statut :** PARTIELLEMENT RÉSOLU 2026-09-24
 
-**Ouvert le 23/09/2026.** La page existe, elle est vide de produits réels.
+**Ouvert le 23/09/2026.** À l'origine : page vide de produits réels.
 
-Trois choses qui n'appartiennent qu'au propriétaire :
+Ce qui est fait (voir D-019, D-020) : le produit `BINKS LOOK` est publié avec
+cinq vraies paires avant/après compressées (~150-450 Ko pièce, plus la
+centaine de Mo de sources `.tif` archivées hors déploiement dans
+`color-reference/`), un packaging manipulable, un prix (49 €) et une fiche
+contractuelle complète.
 
-1. **Créer la caisse** chez un prestataire, produit par produit, et coller
-   l'adresse obtenue dans le champ `achat`. Pour des LUTs, préférer un
-   prestataire qui **livre le fichier et gère la TVA** (Lemon Squeezy, Gumroad) :
-   Stripe encaisse très bien mais ne livre pas de fichier.
-2. **Fournir les vraies images avant / après.** L'entrée de démonstration
-   utilise deux fois la même image avec un filtre — c'est marqué `simule` et
-   c'est un brouillon, donc invisible du public. Une fiche publiée doit montrer
-   deux vraies images.
-3. **Compresser ces images.** Celle de la démonstration fait 3840 px de large
-   pour 2,4 Mo. Sur une page qui en empile plusieurs, c'est intenable.
+Ce qui reste, et qui n'appartient qu'au propriétaire :
+
+1. **Créer la caisse** chez un prestataire et coller l'adresse obtenue dans le
+   champ `achat` de `shop.js`. Pour un LUT, préférer un prestataire qui
+   **livre le fichier et gère la TVA** (Lemon Squeezy, Gumroad) : Stripe
+   encaisse très bien mais ne livre pas de fichier.
+2. **Préparer le paquet de livraison** : le `.cube` plus des rushs d'exemple
+   (annoncés dans le champ `contenu`), zippés et uploadés chez ce prestataire.
+   Aucun fichier de rush vidéo n'existe encore dans le dépôt pour ça — seules
+   des captures fixes.
+3. **Trancher le nom** si `BINKS LOOK` (site) et `BINKS COLOR.cube` (fichier
+   distribué) ne sont pas censés coexister — voir D-019.
 
 **Jamais de clé secrète** dans `shop.js` ni dans la page : tout y est public.
 

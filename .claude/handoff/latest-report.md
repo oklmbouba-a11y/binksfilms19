@@ -1,126 +1,69 @@
-# Dernier rapport — la section Réalisateur et la porte du Contact
+# Dernier rapport — la boutique reçoit son premier produit
 
-**Période couverte :** de l'audit du cube (`e6333ee`) à la surface d'eau
-(`44650b4`). **Périmètre :** `index.html` et deux images dérivées dans
-`images/`. `films.js`, `admin.html`, `vercel.json` : aucun changement.
+**Période couverte :** du premier dépôt du LUT (`color-reference/`, hors
+déploiement) à la fusion avec la session parallèle (`7d84591`).
+**Périmètre :** `shop.js`, `index.html` (section boutique uniquement),
+`images/shop-binks-color-*`, `videos/video-intro.mp4` (renommé),
+`.vercelignore`. `films.js`, `admin.html`, `vercel.json` : aucun changement.
 
----
-
-## Où en est la section Réalisateur
-
-La photo du réalisateur est devenue **une pierre taillée en WebGL**. Ce n'est
-pas un cube incliné : les facettes réfractent réellement l'image, chacune à son
-angle, avec une dispersion chromatique sur les arêtes et deux éclats
-spéculaires.
-
-**Pourquoi cette couche.** La règle du projet impose la plus simple qui exprime
-vraiment le concept. Des facettes qui réfractent demandent un calcul par pixel ;
-ni le DOM ni le CSS 3D ne savent faire autre chose qu'incliner des images
-entières. Le cube à six faces en était la preuve — il inclinait, il ne
-réfractait pas.
-
-**Coût réseau : zéro.** Une seule photo, `real-web.webp`, déjà chargée pour le
-repli. ~110 triangles, une texture, deux passes.
-
-La correction décisive fut géométrique : **la table avant n'était pas plate,
-c'était une pointe** — un cône de neuf triangles. Chaque quartier réfractait à
-un angle différent et le sujet devenait illisible. Centre et bord de la table
-sont désormais à la même hauteur, sans aucun désordre vertical sur ces deux
-anneaux.
-
-Sous la pierre, **les deux marques de classification** : fichiers du
-propriétaire, préparés pour un fond sombre (D-027, puis D-035 pour leur forme
-de référence).
+**Origine de la mission :** commandée en direct par le propriétaire dans une
+session Claude Code interactive, pas via `next-task.md` — ce fichier reste
+donc inchangé et ses points en attente restent valables pour la suite.
 
 ---
 
-## La descente vers le Contact
+## Ce qui a changé
 
-La pierre quitte le flux dès qu'elle est montée et passe dans une couche fixe.
-Sa place à l'écran est **calculée** entre deux ancres : son cadre d'origine, et
-le bouton « Parler d'un projet ».
+**Le produit.** `BINKS LOOK` (slug `binks-color`), un LUT `.cube` 3D 16
+points fourni par le propriétaire. 49 €. Cinq vraies paires avant/après
+(nuit, extérieur, mariage ×2, piscine) remplacent l'entrée de démonstration
+`simule`. Fiche contractuelle complète (contenu, format, compatible,
+licence, livraison). Voir D-019.
 
-- **Départ** — dès qu'on dépasse le texte de clôture de la section, pas quand
-  le bouton pointe. Course : 855 px sur téléphone, 600 sur bureau.
-- **Trajectoire** — courbe de Bézier à déviation latérale (jamais verticale :
-  une perpendiculaire faisait remonter la pierre), plus une oscillation qui
-  s'éteint. Lente d'abord, puis accélérée.
-- **Rotation 3D** continue pendant toute la descente.
-- **Taille** décroissante jusqu'à zéro.
-- **Fin de course** bornée au dernier pixel de défilement atteignable — sans
-  quoi, le contact étant la dernière section, l'aspiration ne se terminerait
-  jamais.
+**Le packaging.** Un pavé en CSS 3D pur (`transform-style: preserve-3d`, six
+faces, pas de WebGL ni de librairie) qu'on tourne au doigt ou à la souris sur
+les deux axes — zone fermée (`touch-action:none`), ne dispute rien au
+défilement de la page. Face avant : illustration de corbeau générée par IA
+dans l'esprit d'un mockup fourni par le propriétaire. Face arrière : collage
+composé à partir des cinq vraies photos du rideau, sans IA. Premier jet
+explicitement signalé comme tel — à remplacer dès qu'un vrai packshot existe.
 
----
+**La page shop.** Trois refontes dans la même journée, la dernière issue
+d'une session parallèle et fusionnée sans conflit (voir D-020) : page
+d'ensemble `#/shop` devenue une scène plein viewport avec vidéo de fond
+fixe partagée, bouton « Voir le produit » vers la fiche dédiée, fiche
+nettoyée de la répétition du bandeau.
 
-## La porte : une surface d'eau
+**Vidéo :** en l'absence de vidéo dédiée au produit, la vidéo d'introduction
+du site (`videos/video-intro.mp4`, lune + corbeaux) sert de fond — la
+coïncidence avec l'illustration du corbeau sur le packaging est heureuse et
+volontairement conservée telle quelle.
 
-Quatre temps, selon le storyboard : **approche, impact, immersion, retour.**
+**Sécurité/déploiement :** le `.cube` et les `.tif` sources (plusieurs
+dizaines de Mo) sont dans `color-reference/`, versionné mais exclu du
+déploiement Vercel via `.vercelignore` — jamais téléchargeables publiquement.
 
-Deux invariants de forme portent tout l'effet :
+## Ce qui a été refusé pendant la mission
 
-1. **Le rectangle du bouton ne bouge pas.** Mesuré 342 × 67 au repos, au pic et
-   à la fin. Ce qui se déforme est ce qu'il y a dedans — la matière claire et
-   le texte, par déplacement de pixels piloté par une houle basse fréquence.
-2. **La déformation reste locale.** Un creux doux sous le point d'entrée, et
-   trois ondes décalées qui naissent, s'ouvrent et s'éteignent.
+Le propriétaire a demandé à plusieurs reprises de publier une image de rush
+contenant de la nudité explicite comme visuel produit. Refusé à chaque
+demande, y compris reformulée en ordre direct. Résolu en substituant un rush
+sans nudité (le plan « nuit »).
 
-Tout est fonction de la position de défilement : remonter rembobine exactement.
-La déformation suit une cloche, donc **le bouton revient propre sans qu'aucun
-code ne l'y ramène** — rien ne peut rester coincé.
+## Ce qui attend une décision du propriétaire
 
----
+1. **Le lien `achat`** — créer la caisse (Gumroad/Lemon Squeezy conseillés
+   pour la livraison de fichier) et coller l'adresse dans `shop.js`.
+2. **Le paquet de livraison** — zipper `.cube` + rushs d'exemple, l'héberger
+   chez ce prestataire. Aucun rush vidéo n'existe encore dans le dépôt pour
+   ça, seulement des stills.
+3. **Le nom** — `BINKS LOOK` (site) contre `BINKS COLOR.cube` (fichier
+   distribué actuel) : à aligner d'un côté ou de l'autre.
+4. **Le packaging définitif** — remplacer les trois faces IA/collage par un
+   vrai packshot ou modèle 3D si le propriétaire en produit un.
 
-## Typographie
+## Note pour la prochaine session (Claude ou ChatGPT)
 
-| Élément | Avant | Après |
-|---|---|---|
-| Titre de morceau (cartes) | Instrument Serif italique | **Noto Serif Display**, axe de largeur 62,5 %, graisse 700, capitales |
-| « Les beaux arts du ghetto » | Newsreader italique | **Sacramento**, tailles relevées aux 4 emplacements |
-| Nom d'artiste, catégorie, année | — | inchangés |
-| Titre de la **fiche film** | — | inchangé (grotesque Archivo) |
-
-`Instrument Serif` n'est plus téléchargée : elle ne servait qu'aux titres de
-cartes. Elle reste dans la chaîne de recours, au cas où le visiteur la possède.
-
-> **Question d'œil restée ouverte :** le même titre de morceau est désormais en
-> serif étroite sur la carte et en grotesque large sur la fiche film. Le
-> propriétaire n'a demandé que les cartes. À trancher en regardant.
-
----
-
-## Mesures de cette période
-
-**Bureau 1280** — cadre carré 484, pierre 445, écart nul avec son cadre au
-repos ; silhouette en polygone fermé irrégulier ; à l'arrivée, bouton à
-342 × 67 inchangé et cliquable au pic ; aucun débordement de page.
-
-**Mobile 375 × 812** — pierre 301 au repos, soit 80 % de la largeur d'écran ;
-jamais hors écran sur quinze points échantillonnés ; sigle 100 × 62, disque 58,
-marges égales à 24 px ; cartes film à 1,80:1 ; aucun débordement.
-
-**Séquence de la surface** — approche : surface rigoureusement intacte. Impact :
-creux 0,41, première onde 0,73 pour 0,46 d'écartement. Immersion : creux 0,84,
-trois ondes vivantes, houle 14,3. Retour : tout à zéro, cristal 0,004.
-
-**Repli** — sans WebGL, sans `Save-Data`, en mouvement réduit ou si l'image
-échoue : la photo plate reste, dans un cadre carré, recadrée sur le visage.
-
----
-
-## Ce qui n'est PAS prouvé
-
-- **B-013** — le comportement au doigt sur un vrai téléphone.
-- **B-014** — la traînée floute la pierre mais ne strie pas le chemin.
-- **Les 60 images par seconde** — le volet d'aperçu est bridé quand il est
-  masqué ; aucun chiffre fiable n'a pu être relevé, et aucun n'est inventé ici.
-- **La rotation d'accueil de 11°** — demande une boucle d'animation vivante.
-- **Le photoréalisme de la surface** — le storyboard est un rendu avec
-  caustiques et réfraction réelle. Un bouton du DOM ne sait pas faire de
-  caustiques ; ce qui est livré en tient la lecture, pas le photoréalisme.
-
-Le rendu de la pierre, lui, **a été vu**. Les captures d'écran du volet
-échouant systématiquement, un récepteur local a été monté dans le bac à sable :
-la page lui envoie l'image de la toile, elle est écrite sur le disque et relue.
-Huit itérations ont été jugées à l'image, pas au chiffre. Ce récepteur ne fait
-partie ni du site ni du dépôt.
+`git pull` avant de toucher à la zone shop : deux sessions y ont travaillé en
+parallèle le même jour sans se lire, la fusion s'est bien passée par chance
+(zones non superposées), pas par coordination. Voir D-020.
