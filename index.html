@@ -2529,7 +2529,11 @@ function retourAccueil(e){
   e.preventDefault();
   if(document.body.classList.contains("film") ||
      document.body.classList.contains("boutique")){
-    location.hash = "#/";                       /* on quitte la vue ouverte */
+    /* le logo mene en haut de l'accueil, pas a la position qu'on y avait
+       laissee : le routeur, qui y revient, lit homeY */
+    homeY = 0;
+    location.hash = "#/";                       /* on quitte la vue ouverte : le routeur fait la coupe */
+    return;
   } else if(location.hash){
     history.replaceState(null, "", location.pathname + location.search);
   }
