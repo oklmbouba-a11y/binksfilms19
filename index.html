@@ -559,9 +559,28 @@ body.boutique main#home{display:none}
 .sh-tete .intro{margin-top:24px;font-size:17.5px;line-height:1.7;max-width:34em;color:var(--gris)}
 .sh-tete .intro em{font-family:'Newsreader',Georgia,serif;font-style:italic;color:var(--ivoire)}
 
-/* ---------- un produit ---------- */
-.prod{padding-bottom:clamp(64px,8vw,120px);margin-bottom:clamp(64px,8vw,120px);border-bottom:1px solid var(--ligne-2)}
-.prod:last-child{border-bottom:0;margin-bottom:0}
+/* ---------- la page d'ensemble : une grille de cartes ---------- */
+.sh-grille{display:grid;gap:2px;grid-template-columns:1fr;padding-bottom:clamp(64px,8vw,120px)}
+@media(min-width:640px){.sh-grille{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1100px){.sh-grille{grid-template-columns:repeat(3,1fr)}}
+.carte-prod{display:block;text-decoration:none;color:inherit}
+.carte-img{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;background:#0B0B0B}
+.carte-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s}
+.carte-prod:hover .carte-img img{transform:scale(1.045)}
+.carte-sous{display:block;padding:20px 2px 8px}
+.carte-nom{display:block;font-size:15px;font-weight:800;font-stretch:112%;text-transform:uppercase;letter-spacing:-.005em}
+.carte-phrase{display:block;margin-top:8px;font-size:13.5px;line-height:1.55;color:var(--gris)}
+.carte-prix{display:block;margin-top:14px;font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gris-2);font-variant-numeric:tabular-nums}
+@media(prefers-reduced-motion:reduce){.carte-img img{transition:none}}
+
+/* ---------- une fiche produit dediee ---------- */
+.prod{padding-bottom:clamp(64px,8vw,120px)}
+.rideaux-multi{display:grid;gap:2px}
+.rideau .legende{
+  position:absolute;top:14px;left:16px;font-size:9.5px;font-weight:600;letter-spacing:.2em;
+  text-transform:uppercase;color:rgba(237,235,230,.72);text-shadow:0 1px 10px rgba(0,0,0,.8);
+  pointer-events:none;
+}
 
 /* La bande : deux images superposees, la brute decoupee par le rideau.
    Aucun arrondi — ce n'est pas une vignette de film, c'est un plan. */
@@ -600,7 +619,7 @@ body.boutique main#home{display:none}
 @media(min-width:900px){.prod .sous{grid-template-columns:1.15fr .85fr;align-items:start}}
 .prod .nom{font-size:clamp(24px,3.2vw,38px);font-weight:800;font-stretch:112%;text-transform:uppercase;letter-spacing:-.005em;line-height:1.05}
 .prod .phrase{margin-top:12px;font-size:16px;line-height:1.65;color:var(--gris);max-width:30em}
-.prod .brouillon{display:inline-block;margin-bottom:12px;font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--rouge)}
+.brouillon{display:inline-block;margin-bottom:12px;font-size:9.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--rouge)}
 
 /* ---------- LE ROLE CONTRACTUEL ----------
    Le registre du bordereau. Il n'existe que la. */
@@ -1842,21 +1861,29 @@ function prixFr(n){
   }catch(e){ return n + " €"; }
 }
 
-function unProduit(a, tout){
-  var brouillon = a.statut === "brouillon";
-  var epuise    = a.statut === "epuise";
-  var apres = a.apres || a.avant || "";
-  var avant = a.avant || a.apres || "";
-
-  var bande = "";
-  if(apres){
-    bande = '<div class="rideau" data-coupe="50">'
+/* Une fiche peut montrer un seul rideau (avant/apres) ou plusieurs
+   (rideaux), pour un etalonnage qui tient sur plusieurs lumieres. */
+function rideauxDe(a){
+  var liste = (a.rideaux && a.rideaux.length) ? a.rideaux
+            : [{avant:a.avant, apres:a.apres, simule:a.simule}];
+  return liste.map(function(r){
+    var apres = r.apres || r.avant || "";
+    var avant = r.avant || r.apres || "";
+    if(!apres) return "";
+    return '<div class="rideau" data-coupe="50">'
       + '<img class="traite" src="'+esc(apres)+'" alt="'+esc(a.nom)+' — l\'image avec le produit" loading="lazy" decoding="async">'
-      + '<img class="brut'+(a.simule ? " simule" : "")+'" src="'+esc(avant)+'" alt="'+esc(a.nom)+' — l\'image sans le produit" loading="lazy" decoding="async" aria-hidden="true">'
+      + '<img class="brut'+(r.simule ? " simule" : "")+'" src="'+esc(avant)+'" alt="'+esc(a.nom)+' — l\'image sans le produit" loading="lazy" decoding="async" aria-hidden="true">'
       + '<span class="trait" aria-hidden="true"></span>'
       + '<span class="dit g">Sans</span><span class="dit d">Avec</span>'
+      + (r.legende ? '<span class="legende">'+esc(r.legende)+'</span>' : '')
       + '</div>';
-  }
+  }).join("");
+}
+
+function unProduit(a){
+  var brouillon = a.statut === "brouillon";
+  var epuise    = a.statut === "epuise";
+  var bande = '<div class="rideaux-multi">'+rideauxDe(a)+'</div>';
 
   var lignes = (a.contenu || []).map(function(c){
     return '<div class="ligne"><b>'+esc(c[0])+'</b><span>'+esc(c[1])+'</span></div>';
@@ -1891,27 +1918,57 @@ function unProduit(a, tout){
     + '</article>';
 }
 
+function uneCarte(a){
+  var r0 = (a.rideaux && a.rideaux[0]) || {avant:a.avant, apres:a.apres};
+  var img = r0.apres || r0.avant || "";
+  return '<a class="carte-prod" href="#/shop/'+esc(a.slug)+'">'
+    + (img ? '<span class="carte-img"><img src="'+esc(img)+'" alt="" loading="lazy" decoding="async"></span>' : '')
+    + '<span class="carte-sous">'
+    +   (a.statut === "brouillon" ? '<span class="brouillon">Brouillon</span>' : '')
+    +   '<span class="carte-nom">'+esc(a.nom)+'</span>'
+    +   (a.phrase ? '<span class="carte-phrase">'+esc(a.phrase)+'</span>' : '')
+    +   '<span class="carte-prix">'+esc(prixFr(a.prix || 0))+'</span>'
+    + '</span>'
+    + '</a>';
+}
+
 function renderShop(tout){
   var liste = SHOP.filter(function(a){
     return tout ? true : a.statut !== "brouillon";
   });
-  var h = '<a class="back" href="#/"><i class="ar">&larr;</i><span>Retour</span></a>'
-    + '<div class="sh-tete">'
+  var h = '<div class="sh-tete">'
     +   '<h1 class="display">Shop</h1>'
     +   '<p class="intro">Les outils avec lesquels je travaille, et ce qu\'ils font '
-    +   'sur mes propres images. <em>Tire le rideau pour voir la différence.</em></p>'
+    +   'sur mes propres images. <em>Ouvre une fiche pour tirer le rideau.</em></p>'
     + '</div>';
 
   if(!liste.length){
     h += '<div class="sh-vide"><p>La boutique n\'est pas encore ouverte. '
        + 'Les premiers outils arrivent bientôt.</p></div>';
   } else {
-    h += liste.map(function(a){ return unProduit(a, tout); }).join("");
+    h += '<div class="sh-grille">' + liste.map(uneCarte).join("") + '</div>';
   }
 
   var vue = document.getElementById("shop-view");
   vue.innerHTML = h;
+}
+
+function renderShopProduit(slug){
+  var a = null;
+  for(var i=0;i<SHOP.length;i++){ if(SHOP[i].slug === slug){ a = SHOP[i]; break; } }
+  var h = '<a class="back" href="#/shop"><i class="ar">&larr;</i><span>Shop</span></a>';
+  var vue = document.getElementById("shop-view");
+
+  if(!a){
+    h += '<div class="sh-vide"><p>Ce produit n\'existe pas, ou plus.</p></div>';
+    vue.innerHTML = h;
+    return null;
+  }
+
+  h += unProduit(a);
+  vue.innerHTML = h;
   brancherRideaux(vue);
+  return a;
 }
 
 /* ---------- le rideau ----------
@@ -1992,22 +2049,30 @@ function unRideau(el){
 var homeY = 0;
 function showRoute(first){
   var m = location.hash.match(/^#\/film\/([\w-]+)/);
-  var b = location.hash.match(/^#\/shop(\/tout)?/);
+  var b = location.hash.match(/^#\/shop(?:\/([\w-]+))?$/);
   var body = document.body, view = document.getElementById("film-view");
   var vueShop = document.getElementById("shop-view");
   var etaitFilm = body.classList.contains("film");
   var etaitShop = body.classList.contains("boutique");
 
   /* la boutique : meme mecanique que la fiche film — une vue qui
-     remplace l'accueil, et l'accueil qu'on retrouve ou on l'a laisse */
+     remplace l'accueil, et l'accueil qu'on retrouve ou on l'a laisse.
+     #/shop est la page d'ensemble, #/shop/tout y ajoute les brouillons,
+     #/shop/<slug> ouvre la fiche dediee de ce produit. */
   if(b){
     if(!etaitFilm && !etaitShop) homeY = scrollY;
     stopApercuVideo(); clearInterval(apercuTimer);
     body.classList.remove("film"); view.classList.remove("on"); view.innerHTML = "";
-    renderShop(!!b[1]);
+    var sous = b[1];
+    if(sous && sous !== "tout"){
+      var produit = renderShopProduit(sous);
+      document.title = (produit ? produit.nom+" — " : "") + "Shop · BINKSFILMS";
+    } else {
+      renderShop(sous === "tout");
+      document.title = "Shop · BINKSFILMS";
+    }
     body.classList.add("boutique");
     vueShop.classList.add("on");
-    document.title = "Shop · BINKSFILMS";
     scrollTo(0,0);
     return;
   }

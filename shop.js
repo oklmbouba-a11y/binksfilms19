@@ -37,6 +37,10 @@
    avant     la même image sans le produit. C'est la seule preuve
              honnête pour un étalonnage : on ne décrit pas un LUT,
              on le montre sur une image.
+   rideaux   pour montrer plusieurs exemples sur la fiche dédiée :
+             [{avant, apres, legende}, ...]. Remplace avant/apres sur
+             la fiche si présent ; le premier sert de vignette sur la
+             page d'ensemble. Sans lui, avant/apres suffisent.
    contenu   le rôle contractuel : [[libellé, valeur], ...]
              ce qu'on reçoit, dans quel format, sous quelle licence.
    tailles   pour un vêtement seulement : ["S","M","L"].
@@ -68,5 +72,28 @@ window.SHOP_DATA = [
       ["Livraison", "à renseigner"]
     ],
     statut: "brouillon"
+  },
+  {
+    slug: "binks-color",
+    nom: "BINKS COLOR",
+    famille: "lut",
+    phrase: "Les nuits qui tiennent, les peaux qui ne virent pas — étalonné sur mes propres tournages.",
+    prix: 35,
+    achat: "",
+    rideaux: [
+      { avant: "images/shop-binks-color-avant-nuit.jpg", apres: "images/shop-binks-color-apres-nuit.jpg", legende: "Nuit" },
+      { avant: "images/shop-binks-color-avant-exterieur.jpg", apres: "images/shop-binks-color-apres-exterieur.jpg", legende: "Extérieur" },
+      { avant: "images/shop-binks-color-avant-mariage.jpg", apres: "images/shop-binks-color-apres-mariage.jpg", legende: "Mariage" },
+      { avant: "images/shop-binks-color-avant-mariage-groupe.jpg", apres: "images/shop-binks-color-apres-mariage-groupe.jpg", legende: "Mariage — groupe" },
+      { avant: "images/shop-binks-color-avant-piscine.jpg", apres: "images/shop-binks-color-apres-piscine.jpg", legende: "Piscine" }
+    ],
+    contenu: [
+      ["Contenu", "1 fichier .cube"],
+      ["Format", "LUT 3D 16 points, pour rushs en Rec.709"],
+      ["Compatible", "DaVinci Resolve, Premiere Pro, Final Cut Pro"],
+      ["Licence", "Usage personnel et professionnel, un fichier par achat, revente interdite"],
+      ["Livraison", "Téléchargement immédiat après paiement"]
+    ],
+    statut: "publie"
   }
 ];
