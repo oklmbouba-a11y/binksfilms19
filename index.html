@@ -76,7 +76,7 @@ header{
   transition:background .3s;
 }
 @media(min-width:1024px){header{padding:22px 48px}}
-header.sc{background:rgba(10,10,10,.94)}
+header.sc{background:#0A0A0A}   /* opaque : a .94 les grands titres restaient lisibles dessous */
 header .lk-name{font-size:13px;letter-spacing:.26em}
 header .lk-base{font-size:11px;color:var(--gris);margin-top:3px;letter-spacing:.055em}
 nav{display:flex;gap:26px}
@@ -571,7 +571,8 @@ body.boutique main#home{display:none}
   position:absolute;inset:0;width:100%;height:100%;
   max-width:none;object-fit:cover;object-position:center center;
 }
-.shop-fond-fixe img{transform:scale(1.015)}
+.shop-fond-fixe img{transform:scale(1.015);transition:opacity .6s ease}
+.shop-fond-fixe.attend-video img{opacity:0}
 .shop-fond-fixe video{opacity:0;transition:opacity 1.1s ease;transform:scale(1.015)}
 .shop-fond-fixe video.pret{opacity:1}
 .shop-fond-fixe .shop-fond-voile{
@@ -680,7 +681,8 @@ body.boutique main#home{display:none}
   position:absolute;inset:0;width:100%;height:100%;
   object-fit:cover;object-position:center center;
 }
-.prod-hero-fond{transform:scale(1.02)}
+.prod-hero-fond{transform:scale(1.02);transition:opacity .6s ease}
+.attend-video > .prod-hero-fond{opacity:0}
 .prod-hero-video{
   opacity:0;transition:opacity 1.1s ease;
   transform:scale(1.015);
@@ -2380,10 +2382,26 @@ function brancherHeroVideo(racine){
     v.remove();
     return;
   }
-  v.addEventListener("canplay", function(){ v.classList.add("pret"); v.play().catch(function(){}); });
-  v.addEventListener("error", function(){ v.remove(); }, true);
+  /* Une seule image a la fois : l'image fixe s'efface pendant que la
+     video charge, au lieu de rester dessous pendant le fondu (sur iPhone
+     on voyait les deux superposees). Elle revient si la video echoue ou
+     ne demarre pas — mode economie d'energie, lecture automatique
+     refusee. La video n'est revelee que lorsqu'elle joue vraiment. */
+  var scene = v.parentNode;
+  function repli(){ scene.classList.remove("attend-video"); }
+  scene.classList.add("attend-video");
+  var garde = setTimeout(function(){ if(!v.classList.contains("pret")) repli(); }, 3500);
+  v.addEventListener("playing", function(){
+    clearTimeout(garde);
+    v.classList.add("pret");
+    scene.classList.add("attend-video");
+  });
+  v.addEventListener("canplay", function(){ v.play().catch(repli); });
+  v.addEventListener("error", function(){ clearTimeout(garde); repli(); v.remove(); }, true);
   v.src = v.getAttribute("data-src");
   v.load();
+  /* Safari iOS ne charge rien tant qu'on ne demande pas la lecture */
+  var lu = v.play(); if(lu && lu.catch) lu.catch(function(){});
 }
 
 /* ---------- le rideau ----------
@@ -4193,14 +4211,28 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   }
 
   var sDebut = 0, sFin = 1, mDebut = 0, mFin = 1;
+  /* Position de REPOS d'un element dans la page : offsetLeft/offsetTop
+     ignorent les transformations. getBoundingClientRect, lui, lisait le
+     cadre en plein volet d'entree (translateX 14vw) : si la mesure
+     tombait a ce moment, la pierre restait decalee a droite et sortait
+     de l'ecran. */
+  function centreRepos(el){
+    var w = el.offsetWidth, hh = el.offsetHeight, x = 0, y = 0;
+    for(var n = el; n; n = n.offsetParent){ x += n.offsetLeft; y += n.offsetTop; }
+    return w && hh ? {x: x + w/2, y: y + hh/2} : null;
+  }
+  /* Accueil masque (page film ou shop) : tout mesure zero. Une mesure
+     prise la ne vaut rien — elle posait la pierre au-dessus des Films au
+     retour. On la marque perimee et on la reprend des que l'accueil
+     revient. */
+  var ancresPerimees = true;
   function mesurer(){
     if(!cible || !vol) return;
-    var rc = cadre.getBoundingClientRect();
-    aX = rc.left + rc.width/2 + scrollX;
-    aY = rc.top  + rc.height/2 + scrollY;
-    var rb = cible.getBoundingClientRect();
-    bX = rb.left + rb.width/2 + scrollX;
-    bY = rb.top  + rb.height/2 + scrollY;
+    var ca = centreRepos(cadre), cb = centreRepos(cible);
+    if(!ca || !cb){ ancresPerimees = true; return; }
+    ancresPerimees = false;
+    aX = ca.x; aY = ca.y;
+    bX = cb.x; bY = cb.y;
 
     /* La course se mesure en defilement, pas en position d'ecran. Le
        contact est la derniere section : si la page s'arrete avant que le
@@ -4262,6 +4294,10 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
 
   function placer(){
     if(!vol) return;
+    if(ancresPerimees){
+      mesurer();
+      if(ancresPerimees){ vol.style.visibility = "hidden"; return; }
+    }
     var vh = innerHeight, vw = document.documentElement.clientWidth;
 
     /* La metamorphose : 0 = la photographie, plate et entiere ; 1 = la
@@ -4458,6 +4494,12 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
     dernierP = p;
   }
   addEventListener("load", function(){ mesurer(); placer(); });
+  /* La mise en page de l'accueil bouge apres coup (images paresseuses,
+     retour d'une page film ou shop) : chaque changement de taille reprend
+     les ancres. */
+  if(window.ResizeObserver){
+    new ResizeObserver(function(){ mesurer(); placer(); }).observe(document.getElementById("home"));
+  }
   /* Les polices arrivent apres le chargement et changent la taille des
      boutons du contact : l'ancre d'arrivee doit etre reprise a ce
      moment-la, sinon la pierre se pose a cote. */
