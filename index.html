@@ -467,6 +467,7 @@ nav a:hover{color:var(--ivoire)}
   -webkit-tap-highlight-color:transparent;
 }
 #vol .bl.tenu{cursor:grabbing}
+body.film #vol,body.boutique #vol{display:none}   /* la pierre n'existe que sur l'accueil */
 #vol .bl-f{display:none}           /* la photo plate ne sert plus : elle est dans la pierre */
 #vol canvas{display:block;width:100%;height:100%}
 /* le texte du contact reste au-dessus de la pierre, toujours */
@@ -1694,7 +1695,6 @@ var FILMS = (window.FILMS_DATA || []).filter(enLigne).map(function(f){
 var isFile = location.protocol === "file:";
 var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 var pad = function(n){ return String(n).padStart(2,"0"); };
-function esc(s){ return String(s).replace(/</g,"&lt;"); }
 /* ---------- Chaîne de secours des images ----------
    Une bannière personnalisée absente ou cassée ne doit jamais laisser un
    trou. Ordre : image perso → miniature YouTube (maxres puis hq) →
@@ -1866,7 +1866,7 @@ function accrochage(n){
    Le lecteur réel ne se charge qu'au clic. */
 var apercuTimer = null;
 function lecteur(f){
-  var label = esc(f.artist+" — "+f.title);
+  var label = att(f.artist+" — "+f.title);
   /* première image = la bannière (perso ou YouTube), puis 3 vues du film */
   var vues = [banniere(f),
               "https://i.ytimg.com/vi/"+f.yt+"/hq1.jpg",
@@ -2022,7 +2022,7 @@ function lireFilm(btn,yt,title){
 
   /* pas d'aperçu (mouvement réduit, connexion lente) : lecteur classique */
   p.classList.remove("apercu-on");
-  p.innerHTML = '<iframe class="plein" src="https://www.youtube-nocookie.com/embed/'+yt+'?autoplay=1&rel=0&playsinline=1" title="'+title+'" '
+  p.innerHTML = '<iframe class="plein" src="https://www.youtube-nocookie.com/embed/'+yt+'?autoplay=1&rel=0&playsinline=1" title="'+att(title)+'" '
     + 'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
 }
 
@@ -2061,7 +2061,7 @@ function renderFilm(f,i){
     + '<span class="eyebrow">'+pad(i+1)+' / '+pad(n)+'</span></div>'
     + '<h1 class="f-title display">'+intituleColore(f)+'</h1>'
     + '<div class="f-meta">'
-    + f.credits.map(function(c){ return '<div class="row"><b>'+c[0]+'</b><span>'+c[1]+'</span></div>'; }).join("")
+    + f.credits.map(function(c){ return '<div class="row"><b>'+esc(c[0])+'</b><span>'+esc(c[1])+'</span></div>'; }).join("")
     + (f.lieu ? '<div class="row"><b>Lieu</b><span>'+esc(f.lieu)+'</span></div>' : '')
     + (f.tournage ? '<div class="row"><b>Tournage</b><span>'+esc(f.tournage)+'</span></div>' : '')
     + (dateLongue(f) ? '<div class="row"><b>Sortie</b><span>'+dateLongue(f)+'</span></div>' : '')
@@ -2110,6 +2110,7 @@ function renderFilm(f,i){
     cc.addEventListener("pointerdown",on);
     cc.addEventListener("pointerup",off);
     cc.addEventListener("pointerleave",off);
+    cc.addEventListener("pointercancel",off);
     cc.addEventListener("keydown",function(e){ if(e.key===" "||e.key==="Enter"){ on(e); } });
     cc.addEventListener("keyup",off);
   }
@@ -2147,8 +2148,8 @@ function rideauxDe(a){
     var avant = r.avant || r.apres || "";
     if(!apres) return "";
     return '<div class="rideau" data-coupe="50">'
-      + '<img class="traite" src="'+esc(apres)+'" alt="'+esc(a.nom)+' — l\'image avec le produit" loading="lazy" decoding="async">'
-      + '<img class="brut'+(r.simule ? " simule" : "")+'" src="'+esc(avant)+'" alt="'+esc(a.nom)+' — l\'image sans le produit" loading="lazy" decoding="async" aria-hidden="true">'
+      + '<img class="traite" src="'+att(apres)+'" alt="'+att(a.nom)+' — l\'image avec le produit" loading="lazy" decoding="async">'
+      + '<img class="brut'+(r.simule ? " simule" : "")+'" src="'+att(avant)+'" alt="'+att(a.nom)+' — l\'image sans le produit" loading="lazy" decoding="async" aria-hidden="true">'
       + '<span class="trait" aria-hidden="true"></span>'
       + '<span class="dit g">Sans</span><span class="dit d">Avec</span>'
       + (r.legende ? '<span class="legende">'+esc(r.legende)+'</span>' : '')
@@ -2158,7 +2159,7 @@ function rideauxDe(a){
 
 function boutonAchat(a){
   if(a.statut === "epuise") return '<p class="pas-encore">Épuisé</p>';
-  if(a.achat) return '<a class="acheter" href="'+esc(a.achat)+'" target="_blank" rel="noopener">'
+  if(a.achat) return '<a class="acheter" href="'+att(a.achat)+'" target="_blank" rel="noopener">'
              + 'Acheter <i>&rarr;</i></a>';
   return '<p class="pas-encore">Bientôt en vente</p>';
 }
@@ -2185,7 +2186,7 @@ function uneBoite(a){
   var h = '<div class="prod-hero-boite"><div class="boite-shell"><div class="boite-3d">';
   for(var i=0;i<faces.length;i++){
     if(!faces[i][1]) continue;
-    h += '<span class="face '+faces[i][0]+'" style="background-image:url(\''+esc(faces[i][1])+'\')"></span>';
+    h += '<span class="face '+faces[i][0]+'" style="background-image:url(\''+att(faces[i][1])+'\')"></span>';
   }
   h += '</div></div></div>';
   return h;
@@ -2199,10 +2200,10 @@ function unHero(a, apercu){
   var fond = a.visuel || r0.apres || r0.avant || "";
   var kicker = a.famille === "vetement" ? "Pièce" : a.famille === "pack" ? "Pack" : "Lut pack";
   var tag = apercu ? "a" : "div";
-  var ouvre = apercu ? ' href="#/shop/'+esc(a.slug)+'"' : "";
+  var ouvre = apercu ? ' href="#/shop/'+att(a.slug)+'"' : "";
   return '<'+tag+' class="prod-hero'+(a.boite ? " a-boite" : "")+(apercu ? " prod-hero-lien" : "")+'"'+ouvre+'>'
-    + (!apercu && fond ? '<img class="prod-hero-fond" src="'+esc(fond)+'" alt="" aria-hidden="true" decoding="async">' : '')
-    + (!apercu && a.video ? '<video class="prod-hero-video" data-src="'+esc(a.video)+'" muted loop playsinline preload="none" aria-hidden="true"></video>' : '')
+    + (!apercu && fond ? '<img class="prod-hero-fond" src="'+att(fond)+'" alt="" aria-hidden="true" decoding="async">' : '')
+    + (!apercu && a.video ? '<video class="prod-hero-video" data-src="'+att(a.video)+'" muted loop playsinline preload="none" aria-hidden="true"></video>' : '')
     + (!apercu ? '<span class="prod-hero-scrim" aria-hidden="true"></span>' : '')
     + uneBoite(a)
     + '<div class="prod-hero-sous wrap">'
@@ -2223,7 +2224,7 @@ function unHero(a, apercu){
 function unProduit(a){
   var bande = '<div class="rideaux-multi">'+rideauxDe(a)+'</div>';
   var demo = a.videoAvantApres
-    ? '<div class="prod-demo-video"><video src="'+esc(a.videoAvantApres)+'" muted loop playsinline autoplay preload="metadata"></video></div>'
+    ? '<div class="prod-demo-video"><video src="'+att(a.videoAvantApres)+'" muted loop playsinline autoplay preload="metadata"></video></div>'
     : '';
 
   var lignes = (a.contenu || []).map(function(c){
@@ -2268,8 +2269,8 @@ function renderShop(tout){
   var imageFond = decor ? (decor.visuel || (r0 && (r0.apres || r0.avant)) || "") : "";
 
   var fond = '<div class="shop-fond-fixe" aria-hidden="true">'
-    + (imageFond ? '<img src="'+esc(imageFond)+'" alt="" decoding="async">' : '')
-    + (decor && decor.video ? '<video class="prod-hero-video" data-src="'+esc(decor.video)+'" muted loop playsinline preload="none"></video>' : '')
+    + (imageFond ? '<img src="'+att(imageFond)+'" alt="" decoding="async">' : '')
+    + (decor && decor.video ? '<video class="prod-hero-video" data-src="'+att(decor.video)+'" muted loop playsinline preload="none"></video>' : '')
     + '<span class="shop-fond-voile"></span>'
     + '</div>';
 
@@ -3169,7 +3170,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
 
   /* deja entre pendant cette visite : on ne repasse pas par la porte */
   var memoire = { lu:null, ecrire:function(){} };
-  try{ memoire.lu = sessionStorage.getItem("bf.intro2");
+  try{ memoire.lu = sessionStorage.getItem("bf.intro3");
        memoire.ecrire = function(){ sessionStorage.setItem("bf.intro3","1"); }; }catch(e){}
   function glisserTitre(){ document.documentElement.classList.add("entre"); }
   if(memoire.lu){ el.remove(); glisserTitre(); return; }
