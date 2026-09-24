@@ -613,63 +613,52 @@ body.boutique main#home{display:none}
 .prod{padding-bottom:clamp(64px,8vw,120px)}
 
 /* ---------- fiche produit : nettoyage ----------
-   La fiche commence directement dans l'image. Le retour flotte sur la scene,
-   aucun grand bloc noir avant le packaging. Le nom existe encore, mais en
-   etiquette secondaire : le packaging le dit deja. */
-.shop-detail{
-  position:relative;
-  margin-top:-104px;
-}
+   La fiche ne repete plus le packaging ni le nom/prix en haut.
+   Elle commence par la demonstration (video si elle est fournie, sinon images),
+   puis termine par le prix et l'action d'achat. */
+.shop-detail{position:relative}
 .shop-detail>.prod-back{
-  position:absolute;z-index:6;
-  top:118px;left:0;
-  margin:0;
-  color:rgba(237,235,230,.72);
-  text-shadow:0 1px 14px rgba(0,0,0,.75);
+  display:inline-flex;
+  margin:0 0 22px;
+  color:rgba(237,235,230,.62);
 }
-.shop-detail .prod-hero{
-  margin-top:0;
-  margin-bottom:0;
+.shop-detail .prod{padding-bottom:clamp(54px,8vw,100px)}
+.prod-demo-video{
+  position:relative;overflow:hidden;background:#0B0B0B;
+  margin:0 -24px 2px;aspect-ratio:16/9;
 }
-.shop-detail .prod-hero-brand{display:none}
-.shop-detail .prod-hero-sous{
-  padding-bottom:24px;
+.prod-demo-video video{width:100%;height:100%;object-fit:cover}
+@media(min-width:1024px){
+  .prod-demo-video{margin-left:-48px;margin-right:-48px}
 }
-.shop-detail .prod-hero-nom{
-  margin-top:0;
-  font-size:clamp(12px,2.8vw,15px);
-  font-weight:700;
-  letter-spacing:.16em;
-  line-height:1.1;
-  color:rgba(237,235,230,.78);
+.fiche-achat{
+  margin-top:clamp(46px,8vw,86px);
+  padding-top:26px;
+  border-top:1px solid var(--ligne);
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
 }
-.shop-detail .prod-hero-edition{
-  margin-top:8px;
-  font-size:9px;
-  letter-spacing:.23em;
-  color:rgba(237,235,230,.54);
+.fiche-achat-prix{
+  font-family:'Newsreader',Georgia,serif;
+  font-size:clamp(38px,8vw,64px);
+  font-weight:400;line-height:1;
+  font-variant-numeric:tabular-nums;
+  color:var(--ivoire);
 }
-.shop-detail .prod-hero-cta{
-  margin-top:12px;
-  gap:9px;
+.fiche-achat .acheter{
+  margin-top:24px;
+  max-width:420px;
 }
-.shop-detail .prod-hero-prix{
-  font-size:clamp(26px,5vw,34px);
+.fiche-achat .pas-encore{
+  width:100%;
+  margin-top:20px;
 }
-.shop-detail .prod-hero-cta .pas-encore{
-  font-size:9px;
-  letter-spacing:.22em;
-  color:rgba(237,235,230,.48);
-}
-.shop-detail .rideaux-multi{margin-top:0}
-.shop-detail .prod .sous{margin-top:30px}
 @media(max-width:760px){
-  .shop-detail{margin-top:-94px}
-  .shop-detail>.prod-back{top:104px;left:0}
-  .shop-detail .prod-hero-boite{padding-top:72px}
-  .shop-detail .prod-hero-sous{padding-bottom:22px}
+  .shop-detail>.prod-back{margin-bottom:18px}
+  .prod-demo-video{margin-left:-24px;margin-right:-24px}
+  .fiche-achat{margin-top:46px;padding-bottom:18px}
 }
-
 /* Le hero est une scene, pas une carte : la video prend tout le viewport,
    et le packaging flotte dans l'image avant les informations produit. */
 .prod-hero{
@@ -1452,8 +1441,8 @@ if(!window.matchMedia("(prefers-reduced-motion: reduce)").matches){
   document.documentElement.classList.add("glisse");
 }
 (function(){
-  try{ if(sessionStorage.getItem("bf.intro2")) return; }catch(e){}
-  document.getElementById("introvid").src = "videos/video%20intro.mp4";
+  try{ if(sessionStorage.getItem("bf.intro3")) return; }catch(e){}
+  document.getElementById("introvid").src = "videos/video-intro.mp4";
 })();
 </script>
 
@@ -2220,7 +2209,7 @@ function unHero(a, apercu){
     +   (a.statut === "brouillon" ? '<span class="brouillon">Brouillon — invisible du public</span>' : '')
     +   '<span class="prod-hero-brand">BINKSFILMS</span>'
     +   '<h1 class="prod-hero-nom">'+esc(a.nom)+'</h1>'
-    +   '<span class="prod-hero-edition">'+esc(kicker)+(a.famille === "lut" ? " — Édition limitée" : "")+'</span>'
+    +   '<span class="prod-hero-edition">'+esc(kicker)+'</span>'
     +   '<div class="prod-hero-cta">'
     +     '<span class="prod-hero-prix">'+esc(prixFr(a.prix || 0))+'</span>'
     +     (apercu
@@ -2233,6 +2222,9 @@ function unHero(a, apercu){
 
 function unProduit(a){
   var bande = '<div class="rideaux-multi">'+rideauxDe(a)+'</div>';
+  var demo = a.videoAvantApres
+    ? '<div class="prod-demo-video"><video src="'+esc(a.videoAvantApres)+'" muted loop playsinline autoplay preload="metadata"></video></div>'
+    : '';
 
   var lignes = (a.contenu || []).map(function(c){
     return '<div class="ligne"><b>'+esc(c[0])+'</b><span>'+esc(c[1])+'</span></div>';
@@ -2240,8 +2232,8 @@ function unProduit(a){
   if(a.tailles && a.tailles.length)
     lignes += '<div class="ligne"><b>Tailles</b><span>'+esc(a.tailles.join(" · "))+'</span></div>';
 
-  return '<article class="prod prod-premium">'
-    + unHero(a)
+  return '<article class="prod prod-premium prod-fiche-clean">'
+    + demo
     + bande
     + '<div class="sous">'
     +   '<div>'
@@ -2250,6 +2242,10 @@ function unProduit(a){
     +   '<div class="bordereau">'
     +     lignes
     +   '</div>'
+    + '</div>'
+    + '<div class="fiche-achat">'
+    +   '<span class="fiche-achat-prix">'+esc(prixFr(a.prix || 0))+'</span>'
+    +   boutonAchat(a)
     + '</div>'
     + '</article>';
 }
@@ -3174,7 +3170,7 @@ addEventListener("keydown", function(e){ if(e.key === "Escape") fermerOv(); });
   /* deja entre pendant cette visite : on ne repasse pas par la porte */
   var memoire = { lu:null, ecrire:function(){} };
   try{ memoire.lu = sessionStorage.getItem("bf.intro2");
-       memoire.ecrire = function(){ sessionStorage.setItem("bf.intro2","1"); }; }catch(e){}
+       memoire.ecrire = function(){ sessionStorage.setItem("bf.intro3","1"); }; }catch(e){}
   function glisserTitre(){ document.documentElement.classList.add("entre"); }
   if(memoire.lu){ el.remove(); glisserTitre(); return; }
   document.body.classList.add("intro");
