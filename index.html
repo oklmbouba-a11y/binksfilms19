@@ -575,6 +575,38 @@ body.boutique main#home{display:none}
 
 /* ---------- une fiche produit dediee ---------- */
 .prod{padding-bottom:clamp(64px,8vw,120px)}
+
+/* le bandeau d'ouverture : le produit d'abord, immediatement — nom, prix,
+   achat, avant meme la preuve du rideau qui vient juste apres */
+.prod-hero{
+  position:relative;overflow:hidden;background:#0B0B0B;
+  aspect-ratio:3/4;min-height:460px;
+  display:flex;align-items:flex-end;
+  margin:0 -24px 40px;
+}
+@media(min-width:760px){
+  .prod-hero{aspect-ratio:21/9;min-height:560px;margin-bottom:54px}
+}
+@media(min-width:1024px){
+  .prod-hero{margin-left:-48px;margin-right:-48px}
+}
+.prod-hero-fond,.prod-hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.prod-hero-video{opacity:0;transition:opacity 1.1s}
+.prod-hero-video.pret{opacity:1}
+.prod-hero-scrim{
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(10,10,10,.12) 0%,rgba(10,10,10,.08) 42%,rgba(10,10,10,.74) 84%,rgba(10,10,10,.94) 100%);
+}
+.prod-hero-sous{position:relative;padding-bottom:clamp(30px,4.4vw,58px)}
+.prod-hero-sous .brouillon{display:block}
+.prod-hero-kicker{display:block;font-size:10.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--gris)}
+.prod-hero-nom{margin-top:12px;font-size:clamp(36px,6.6vw,84px);font-weight:800;font-stretch:112%;text-transform:uppercase;letter-spacing:-.01em;line-height:.98}
+.prod-hero-cta{margin-top:28px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.prod-hero-prix{font-size:clamp(20px,2.4vw,27px);font-weight:800;font-stretch:112%;font-variant-numeric:tabular-nums}
+.prod-hero-cta .acheter{margin-top:0;width:auto;padding:17px 28px}
+.prod-hero-cta .pas-encore{margin-top:0;border-top:0;padding:0;font-size:10.5px}
+@media(prefers-reduced-motion:reduce){.prod-hero-video{transition:none}}
+
 .rideaux-multi{display:grid;gap:2px}
 .rideau .legende{
   position:absolute;top:14px;left:16px;font-size:9.5px;font-weight:600;letter-spacing:.2em;
@@ -1880,9 +1912,39 @@ function rideauxDe(a){
   }).join("");
 }
 
+function boutonAchat(a){
+  if(a.statut === "epuise") return '<p class="pas-encore">Épuisé</p>';
+  if(a.achat) return '<a class="acheter" href="'+esc(a.achat)+'" target="_blank" rel="noopener">'
+             + 'Acheter <i>&rarr;</i></a>';
+  return '<p class="pas-encore">Bientôt en vente</p>';
+}
+
+/* Le bandeau d'ouverture d'une fiche : le produit d'abord, tout de suite
+   visible (nom, prix, achat), avant meme la preuve du rideau. Fond :
+   une vraie video en boucle si elle existe, sinon une image de mise en
+   scene, sinon on retombe sur le premier "apres" des rideaux — jamais
+   un packshot invente. */
+function unHero(a){
+  var r0 = (a.rideaux && a.rideaux[0]) || {avant:a.avant, apres:a.apres};
+  var fond = a.visuel || r0.apres || r0.avant || "";
+  var kicker = a.famille === "vetement" ? "Pièce" : a.famille === "pack" ? "Pack" : "Lut pack";
+  return '<div class="prod-hero">'
+    + (fond ? '<img class="prod-hero-fond" src="'+esc(fond)+'" alt="" aria-hidden="true" decoding="async">' : '')
+    + (a.video ? '<video class="prod-hero-video" data-src="'+esc(a.video)+'" muted loop playsinline preload="none" aria-hidden="true"></video>' : '')
+    + '<span class="prod-hero-scrim" aria-hidden="true"></span>'
+    + '<div class="prod-hero-sous wrap">'
+    +   (a.statut === "brouillon" ? '<span class="brouillon">Brouillon — invisible du public</span>' : '')
+    +   '<span class="prod-hero-kicker">'+esc(kicker)+'</span>'
+    +   '<h1 class="prod-hero-nom">'+esc(a.nom)+'</h1>'
+    +   '<div class="prod-hero-cta">'
+    +     '<span class="prod-hero-prix">'+esc(prixFr(a.prix || 0))+'</span>'
+    +     boutonAchat(a)
+    +   '</div>'
+    + '</div>'
+    + '</div>';
+}
+
 function unProduit(a){
-  var brouillon = a.statut === "brouillon";
-  var epuise    = a.statut === "epuise";
   var bande = '<div class="rideaux-multi">'+rideauxDe(a)+'</div>';
 
   var lignes = (a.contenu || []).map(function(c){
@@ -1891,28 +1953,18 @@ function unProduit(a){
   if(a.tailles && a.tailles.length)
     lignes += '<div class="ligne"><b>Tailles</b><span>'+esc(a.tailles.join(" · "))+'</span></div>';
 
-  var achat;
-  if(epuise)
-    achat = '<p class="pas-encore">Épuisé</p>';
-  else if(a.achat)
-    achat = '<a class="acheter" href="'+esc(a.achat)+'" target="_blank" rel="noopener">'
-          + 'Acheter <i>&rarr;</i></a>';
-  else
-    achat = '<p class="pas-encore">Bientôt en vente</p>';
-
-  return '<article class="prod">'
+  return '<article class="prod prod-premium">'
+    + unHero(a)
     + bande
     + '<div class="sous">'
     +   '<div>'
-    +     (brouillon ? '<span class="brouillon">Brouillon — invisible du public</span>' : '')
-    +     '<h2 class="nom">'+esc(a.nom)+'</h2>'
     +     (a.phrase ? '<p class="phrase">'+esc(a.phrase)+'</p>' : '')
     +   '</div>'
     +   '<div class="bordereau">'
     +     lignes
     +     '<div class="prix"><span class="n">'+esc(prixFr(a.prix || 0))+'</span>'
     +     '<span class="quoi">'+(a.famille === "vetement" ? "Pièce" : "Téléchargement")+'</span></div>'
-    +     achat
+    +     boutonAchat(a)
     +   '</div>'
     + '</div>'
     + '</article>';
@@ -1968,7 +2020,25 @@ function renderShopProduit(slug){
   h += unProduit(a);
   vue.innerHTML = h;
   brancherRideaux(vue);
+  brancherHeroVideo(vue);
   return a;
+}
+
+/* La video du bandeau ne charge meme pas son fichier si le mouvement est
+   reduit ou la connexion econome : preload="none" tant que ce script n'a
+   pas pose le src. Une image fixe (prod-hero-fond) tient lieu de version
+   sans mouvement — l'intention n'est jamais perdue, juste pas jouee. */
+function brancherHeroVideo(racine){
+  var v = racine.querySelector(".prod-hero-video");
+  if(!v) return;
+  var co = navigator.connection;
+  if(reduced || (co && (co.saveData || /(^|-)2g$/.test(co.effectiveType || "")))){
+    v.remove();
+    return;
+  }
+  v.addEventListener("canplay", function(){ v.classList.add("pret"); v.play().catch(function(){}); });
+  v.addEventListener("error", function(){ v.remove(); }, true);
+  v.src = v.getAttribute("data-src");
 }
 
 /* ---------- le rideau ----------
