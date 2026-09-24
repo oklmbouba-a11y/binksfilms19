@@ -85,7 +85,7 @@ window.SHOP_DATA = [
   },
   {
     slug: "binks-color",
-    nom: "BINKS COLOR 01",
+    nom: "BINKS LOOK",
     famille: "lut",
     phrase: "Les nuits qui tiennent, les peaux qui ne virent pas — étalonné sur mes propres tournages.",
     prix: 49,
@@ -94,7 +94,7 @@ window.SHOP_DATA = [
     visuel: "",
     boite: {
       avant: "images/shop-binks-color-boite-avant.jpg",
-      arriere: "images/shop-binks-color-boite-plain.jpg",
+      arriere: "images/shop-binks-color-boite-arriere.jpg",
       gauche: "images/shop-binks-color-boite-tranche.jpg",
       droite: "images/shop-binks-color-boite-tranche.jpg",
       dessus: "images/shop-binks-color-boite-plain.jpg",
