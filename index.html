@@ -834,10 +834,12 @@ body.boutique main#home{display:none}
   min-height:auto;
   margin-bottom:20px;
   padding-top:0;
+  overflow:visible;   /* le packaging flotte et projette une ombre : rien
+                          ici n'a besoin d'etre coupe au bord */
 }
 .shop-index .prod-hero-boite{
   flex:none;
-  padding:10px 0 8px;
+  padding:22px 0 20px;
 }
 .shop-index .prod-hero-sous{
   margin-top:0;
@@ -849,7 +851,7 @@ body.boutique main#home{display:none}
 @media(max-width:760px){
   .shop-index .prod-hero,
   .shop-index .prod-hero.a-boite{min-height:auto}
-  .shop-index .prod-hero-boite{padding-top:6px}
+  .shop-index .prod-hero-boite{padding:18px 0 16px}
 }
 
 .rideaux-multi{display:grid;gap:2px}
@@ -2340,7 +2342,7 @@ function brancherBoite(racine){
   var idle = !reduced;
   function tourner(){
     if(!idle || tenu) return;
-    ry += 0.05; poser();
+    ry += 0.12; poser();
     requestAnimationFrame(tourner);
   }
   if(idle) requestAnimationFrame(tourner);
