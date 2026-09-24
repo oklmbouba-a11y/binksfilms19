@@ -90,7 +90,7 @@ window.SHOP_DATA = [
     phrase: "Les nuits qui tiennent, les peaux qui ne virent pas — étalonné sur mes propres tournages.",
     prix: 49,
     achat: "",
-    video: "",
+    video: "videos/video-intro.mp4",
     visuel: "",
     boite: {
       avant: "images/shop-binks-color-boite-avant.jpg",

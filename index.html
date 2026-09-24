@@ -559,19 +559,15 @@ body.boutique main#home{display:none}
 .sh-tete .intro{margin-top:24px;font-size:17.5px;line-height:1.7;max-width:34em;color:var(--gris)}
 .sh-tete .intro em{font-family:'Newsreader',Georgia,serif;font-style:italic;color:var(--ivoire)}
 
-/* ---------- la page d'ensemble : une grille de cartes ---------- */
-.sh-grille{display:grid;gap:2px;grid-template-columns:1fr;padding-bottom:clamp(64px,8vw,120px)}
-@media(min-width:640px){.sh-grille{grid-template-columns:repeat(2,1fr)}}
-@media(min-width:1100px){.sh-grille{grid-template-columns:repeat(3,1fr)}}
-.carte-prod{display:block;text-decoration:none;color:inherit}
-.carte-img{position:relative;display:block;aspect-ratio:4/5;overflow:hidden;background:#0B0B0B}
-.carte-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s}
-.carte-prod:hover .carte-img img{transform:scale(1.045)}
-.carte-sous{display:block;padding:20px 2px 8px}
-.carte-nom{display:block;font-size:15px;font-weight:800;font-stretch:112%;text-transform:uppercase;letter-spacing:-.005em}
-.carte-phrase{display:block;margin-top:8px;font-size:13.5px;line-height:1.55;color:var(--gris)}
-.carte-prix{display:block;margin-top:14px;font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gris-2);font-variant-numeric:tabular-nums}
-@media(prefers-reduced-motion:reduce){.carte-img img{transition:none}}
+/* ---------- la page d'ensemble : chaque produit, plein bandeau ---------- */
+.sh-heros{display:flex;flex-direction:column;gap:2px;padding-bottom:clamp(64px,8vw,120px)}
+.sh-heros .prod-hero{margin:0 -24px}
+@media(min-width:1024px){.sh-heros .prod-hero{margin-left:-48px;margin-right:-48px}}
+.prod-hero-lien{text-decoration:none;color:inherit;cursor:pointer}
+.prod-hero-lien:hover .prod-hero-fond{transform:scale(1.02)}
+.prod-hero-fond{transition:transform .8s}
+@media(prefers-reduced-motion:reduce){.prod-hero-fond{transition:none}}
+.acheter.voir{cursor:pointer}
 
 /* ---------- une fiche produit dediee ---------- */
 .prod{padding-bottom:clamp(64px,8vw,120px)}
@@ -1996,11 +1992,16 @@ function uneBoite(a){
   return h;
 }
 
-function unHero(a){
+/* apercu:true (page d'ensemble) renvoie vers la fiche au lieu de vendre
+   depuis la vue d'ensemble — l'achat reste un geste delibere, pris sur
+   la fiche dediee, jamais depuis un simple aperçu qui defile. */
+function unHero(a, apercu){
   var r0 = (a.rideaux && a.rideaux[0]) || {avant:a.avant, apres:a.apres};
   var fond = a.visuel || r0.apres || r0.avant || "";
   var kicker = a.famille === "vetement" ? "Pièce" : a.famille === "pack" ? "Pack" : "Lut pack";
-  return '<div class="prod-hero'+(a.boite ? " a-boite" : "")+'">'
+  var tag = apercu ? "a" : "div";
+  var ouvre = apercu ? ' href="#/shop/'+esc(a.slug)+'"' : "";
+  return '<'+tag+' class="prod-hero'+(a.boite ? " a-boite" : "")+(apercu ? " prod-hero-lien" : "")+'"'+ouvre+'>'
     + (fond ? '<img class="prod-hero-fond" src="'+esc(fond)+'" alt="" aria-hidden="true" decoding="async">' : '')
     + (a.video ? '<video class="prod-hero-video" data-src="'+esc(a.video)+'" muted loop playsinline preload="none" aria-hidden="true"></video>' : '')
     + '<span class="prod-hero-scrim" aria-hidden="true"></span>'
@@ -2011,10 +2012,12 @@ function unHero(a){
     +   '<h1 class="prod-hero-nom">'+esc(a.nom)+'</h1>'
     +   '<div class="prod-hero-cta">'
     +     '<span class="prod-hero-prix">'+esc(prixFr(a.prix || 0))+'</span>'
-    +     boutonAchat(a)
+    +     (apercu
+           ? '<span class="acheter voir">Voir le produit <i>&rarr;</i></span>'
+           : boutonAchat(a))
     +   '</div>'
     + '</div>'
-    + '</div>';
+    + '</'+tag+'>';
 }
 
 function unProduit(a){
@@ -2043,20 +2046,6 @@ function unProduit(a){
     + '</article>';
 }
 
-function uneCarte(a){
-  var r0 = (a.rideaux && a.rideaux[0]) || {avant:a.avant, apres:a.apres};
-  var img = r0.apres || r0.avant || "";
-  return '<a class="carte-prod" href="#/shop/'+esc(a.slug)+'">'
-    + (img ? '<span class="carte-img"><img src="'+esc(img)+'" alt="" loading="lazy" decoding="async"></span>' : '')
-    + '<span class="carte-sous">'
-    +   (a.statut === "brouillon" ? '<span class="brouillon">Brouillon</span>' : '')
-    +   '<span class="carte-nom">'+esc(a.nom)+'</span>'
-    +   (a.phrase ? '<span class="carte-phrase">'+esc(a.phrase)+'</span>' : '')
-    +   '<span class="carte-prix">'+esc(prixFr(a.prix || 0))+'</span>'
-    + '</span>'
-    + '</a>';
-}
-
 function renderShop(tout){
   var liste = SHOP.filter(function(a){
     return tout ? true : a.statut !== "brouillon";
@@ -2064,18 +2053,23 @@ function renderShop(tout){
   var h = '<div class="sh-tete">'
     +   '<h1 class="display">Shop</h1>'
     +   '<p class="intro">Les outils avec lesquels je travaille, et ce qu\'ils font '
-    +   'sur mes propres images. <em>Ouvre une fiche pour tirer le rideau.</em></p>'
+    +   'sur mes propres images.</p>'
     + '</div>';
 
   if(!liste.length){
     h += '<div class="sh-vide"><p>La boutique n\'est pas encore ouverte. '
        + 'Les premiers outils arrivent bientôt.</p></div>';
   } else {
-    h += '<div class="sh-grille">' + liste.map(uneCarte).join("") + '</div>';
+    h += '<div class="sh-heros">' + liste.map(function(a){ return unHero(a, true); }).join("") + '</div>';
   }
 
   var vue = document.getElementById("shop-view");
   vue.innerHTML = h;
+  var heros = vue.querySelectorAll(".prod-hero");
+  for(var i=0;i<heros.length;i++){
+    brancherHeroVideo(heros[i]);
+    brancherBoite(heros[i]);
+  }
 }
 
 function renderShopProduit(slug){
@@ -2108,7 +2102,7 @@ function brancherBoite(racine){
   var scene = racine.querySelector(".prod-hero-boite");
   if(!scene) return;
   var boite = scene.querySelector(".boite-3d");
-  var rx = -16, ry = 28, tenu = false, dx0 = 0, dy0 = 0, rx0 = rx, ry0 = ry;
+  var rx = -16, ry = 28, tenu = false, dx0 = 0, dy0 = 0, rx0 = rx, ry0 = ry, glisse = false;
 
   function poser(){ boite.style.transform = "rotateX("+rx+"deg) rotateY("+ry+"deg)"; }
   poser();
@@ -2122,20 +2116,26 @@ function brancherBoite(racine){
   if(idle) requestAnimationFrame(tourner);
 
   scene.addEventListener("pointerdown", function(e){
-    tenu = true; idle = false;
+    tenu = true; idle = false; glisse = false;
     dx0 = e.clientX; dy0 = e.clientY; rx0 = rx; ry0 = ry;
     scene.classList.add("tenue");
     if(scene.setPointerCapture) try{ scene.setPointerCapture(e.pointerId); }catch(err){}
   });
   scene.addEventListener("pointermove", function(e){
     if(!tenu) return;
-    ry = ry0 + (e.clientX - dx0) * 0.45;
-    rx = Math.max(-65, Math.min(65, rx0 - (e.clientY - dy0) * 0.45));
+    var dx = e.clientX - dx0, dy = e.clientY - dy0;
+    if(Math.abs(dx) + Math.abs(dy) > 4) glisse = true;
+    ry = ry0 + dx * 0.45;
+    rx = Math.max(-65, Math.min(65, rx0 - dy * 0.45));
     poser();
   });
   function lacher(){ tenu = false; scene.classList.remove("tenue"); }
   scene.addEventListener("pointerup", lacher);
   scene.addEventListener("pointercancel", lacher);
+  /* la boite vit parfois dans le lien "voir le produit" de la page
+     d'ensemble : un vrai glisser pour tourner ne doit pas ouvrir la
+     fiche, seul un geste sans deplacement reste un clic */
+  scene.addEventListener("click", function(e){ if(glisse) e.preventDefault(); });
 }
 
 /* La video du bandeau ne charge meme pas son fichier si le mouvement est
@@ -2153,6 +2153,7 @@ function brancherHeroVideo(racine){
   v.addEventListener("canplay", function(){ v.classList.add("pret"); v.play().catch(function(){}); });
   v.addEventListener("error", function(){ v.remove(); }, true);
   v.src = v.getAttribute("data-src");
+  v.load();
 }
 
 /* ---------- le rideau ----------
