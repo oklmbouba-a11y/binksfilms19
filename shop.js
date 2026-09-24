@@ -47,6 +47,10 @@
    visuel    optionnel. Une image de mise en scène du produit (packaging,
              objet) pour le bandeau d'ouverture. Vide = on retombe sur le
              premier "apres" de rideaux, assombri.
+   boite     optionnel. Un packaging qu'on peut faire tourner du doigt dans
+             le bandeau d'ouverture : {avant, arriere, gauche, droite,
+             dessus, dessous} — six faces, chacune une image. Une face
+             absente retombe sur "arriere". Sans ce champ, pas de boite.
    contenu   le rôle contractuel : [[libellé, valeur], ...]
              ce qu'on reçoit, dans quel format, sous quelle licence.
    tailles   pour un vêtement seulement : ["S","M","L"].
@@ -88,6 +92,14 @@ window.SHOP_DATA = [
     achat: "",
     video: "",
     visuel: "",
+    boite: {
+      avant: "images/shop-binks-color-boite-avant.jpg",
+      arriere: "images/shop-binks-color-boite-plain.jpg",
+      gauche: "images/shop-binks-color-boite-tranche.jpg",
+      droite: "images/shop-binks-color-boite-tranche.jpg",
+      dessus: "images/shop-binks-color-boite-plain.jpg",
+      dessous: "images/shop-binks-color-boite-plain.jpg"
+    },
     rideaux: [
       { avant: "images/shop-binks-color-avant-nuit.jpg", apres: "images/shop-binks-color-apres-nuit.jpg", legende: "Nuit" },
       { avant: "images/shop-binks-color-avant-exterieur.jpg", apres: "images/shop-binks-color-apres-exterieur.jpg", legende: "Extérieur" },

@@ -580,12 +580,14 @@ body.boutique main#home{display:none}
    achat, avant meme la preuve du rideau qui vient juste apres */
 .prod-hero{
   position:relative;overflow:hidden;background:#0B0B0B;
-  aspect-ratio:3/4;min-height:460px;
-  display:flex;align-items:flex-end;
+  min-height:460px;
+  display:flex;flex-direction:column;
   margin:0 -24px 40px;
 }
+.prod-hero.a-boite{min-height:560px}
 @media(min-width:760px){
-  .prod-hero{aspect-ratio:21/9;min-height:560px;margin-bottom:54px}
+  .prod-hero{min-height:460px;margin-bottom:54px}
+  .prod-hero.a-boite{min-height:640px}
 }
 @media(min-width:1024px){
   .prod-hero{margin-left:-48px;margin-right:-48px}
@@ -597,7 +599,54 @@ body.boutique main#home{display:none}
   position:absolute;inset:0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(10,10,10,.12) 0%,rgba(10,10,10,.08) 42%,rgba(10,10,10,.74) 84%,rgba(10,10,10,.94) 100%);
 }
-.prod-hero-sous{position:relative;padding-bottom:clamp(30px,4.4vw,58px)}
+/* avec une boite, le fond n'est qu'une ambiance : il s'efface derriere
+   l'objet qu'on vient de poser au centre */
+.prod-hero.a-boite .prod-hero-scrim{background:rgba(9,9,10,.62)}
+
+/* ---------- la boite : un pave CSS qu'on tourne du doigt ---------- */
+.prod-hero-boite{
+  position:relative;flex:1;display:flex;align-items:center;justify-content:center;
+  padding:clamp(44px,7vw,84px) 0 16px;perspective:1400px;
+}
+.boite-3d{
+  position:relative;width:184px;height:238px;transform-style:preserve-3d;
+  cursor:grab;touch-action:none;-webkit-user-select:none;user-select:none;
+  will-change:transform;
+}
+.prod-hero-boite.tenue .boite-3d{cursor:grabbing}
+.boite-3d .face{
+  position:absolute;top:0;left:0;background-size:cover;background-position:center;
+  background-color:#0B0B0B;box-shadow:inset 0 0 0 1px rgba(237,235,230,.06);
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+/* un pave W x H x D : chaque face au format qui lui revient, recentree
+   sur l'axe qu'elle ne remplit pas, puis poussee vers l'exterieur de la
+   moitie de son propre axe — sinon les faces s'emboitent mal quand on
+   tourne le pave. W=184 H=238 D=48 (mobile). */
+.boite-3d .face.avant,.boite-3d .face.arriere{width:184px;height:238px}
+.boite-3d .face.avant{transform:translateZ(24px)}
+.boite-3d .face.arriere{transform:rotateY(180deg) translateZ(24px)}
+.boite-3d .face.gauche,.boite-3d .face.droite{width:48px;height:238px;left:68px}
+.boite-3d .face.gauche{transform:rotateY(-90deg) translateZ(92px)}
+.boite-3d .face.droite{transform:rotateY(90deg) translateZ(92px)}
+.boite-3d .face.dessus,.boite-3d .face.dessous{width:184px;height:48px;top:95px}
+.boite-3d .face.dessus{transform:rotateX(90deg) translateZ(119px)}
+.boite-3d .face.dessous{transform:rotateX(-90deg) translateZ(119px)}
+@media(min-width:760px){
+  .boite-3d{width:232px;height:300px}
+  .boite-3d .face.avant,.boite-3d .face.arriere{width:232px;height:300px}
+  .boite-3d .face.avant{transform:translateZ(30px)}
+  .boite-3d .face.arriere{transform:rotateY(180deg) translateZ(30px)}
+  .boite-3d .face.gauche,.boite-3d .face.droite{width:60px;height:300px;left:86px}
+  .boite-3d .face.gauche{transform:rotateY(-90deg) translateZ(116px)}
+  .boite-3d .face.droite{transform:rotateY(90deg) translateZ(116px)}
+  .boite-3d .face.dessus,.boite-3d .face.dessous{width:232px;height:60px;top:120px}
+  .boite-3d .face.dessus{transform:rotateX(90deg) translateZ(150px)}
+  .boite-3d .face.dessous{transform:rotateX(-90deg) translateZ(150px)}
+}
+@media(prefers-reduced-motion:reduce){.boite-3d{transition:none}}
+
+.prod-hero-sous{position:relative;margin-top:auto;padding-bottom:clamp(30px,4.4vw,58px)}
 .prod-hero-sous .brouillon{display:block}
 .prod-hero-kicker{display:block;font-size:10.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;color:var(--gris)}
 .prod-hero-nom{margin-top:12px;font-size:clamp(36px,6.6vw,84px);font-weight:800;font-stretch:112%;text-transform:uppercase;letter-spacing:-.01em;line-height:.98}
@@ -1924,14 +1973,38 @@ function boutonAchat(a){
    une vraie video en boucle si elle existe, sinon une image de mise en
    scene, sinon on retombe sur le premier "apres" des rideaux — jamais
    un packshot invente. */
+/* La boite : six faces posees sur les six faces d'un pave CSS. Une
+   face absente retombe sur "arriere" plutot que de laisser un trou. */
+function uneBoite(a){
+  var b = a.boite;
+  if(!b) return "";
+  var f = function(face){ return b[face] || b.arriere || ""; };
+  var faces = [
+    ["avant",   f("avant")],
+    ["arriere", f("arriere")],
+    ["droite",  f("droite")],
+    ["gauche",  f("gauche")],
+    ["dessus",  f("dessus")],
+    ["dessous", f("dessous")]
+  ];
+  var h = '<div class="prod-hero-boite"><div class="boite-3d">';
+  for(var i=0;i<faces.length;i++){
+    if(!faces[i][1]) continue;
+    h += '<span class="face '+faces[i][0]+'" style="background-image:url(\''+esc(faces[i][1])+'\')"></span>';
+  }
+  h += '</div></div>';
+  return h;
+}
+
 function unHero(a){
   var r0 = (a.rideaux && a.rideaux[0]) || {avant:a.avant, apres:a.apres};
   var fond = a.visuel || r0.apres || r0.avant || "";
   var kicker = a.famille === "vetement" ? "Pièce" : a.famille === "pack" ? "Pack" : "Lut pack";
-  return '<div class="prod-hero">'
+  return '<div class="prod-hero'+(a.boite ? " a-boite" : "")+'">'
     + (fond ? '<img class="prod-hero-fond" src="'+esc(fond)+'" alt="" aria-hidden="true" decoding="async">' : '')
     + (a.video ? '<video class="prod-hero-video" data-src="'+esc(a.video)+'" muted loop playsinline preload="none" aria-hidden="true"></video>' : '')
     + '<span class="prod-hero-scrim" aria-hidden="true"></span>'
+    + uneBoite(a)
     + '<div class="prod-hero-sous wrap">'
     +   (a.statut === "brouillon" ? '<span class="brouillon">Brouillon — invisible du public</span>' : '')
     +   '<span class="prod-hero-kicker">'+esc(kicker)+'</span>'
@@ -2021,7 +2094,48 @@ function renderShopProduit(slug){
   vue.innerHTML = h;
   brancherRideaux(vue);
   brancherHeroVideo(vue);
+  brancherBoite(vue);
   return a;
+}
+
+/* La boite se tient au doigt et au pointeur, sur les deux axes — ce
+   n'est pas le rideau, qui cede au defilement vertical : la boite est
+   une zone volontairement fermee (touch-action:none), petite et posee
+   au centre, donc elle ne se dispute rien a la page. Une legere
+   rotation continue montre qu'elle est prenable, coupee des qu'on la
+   touche et jamais lancee si le mouvement est reduit. */
+function brancherBoite(racine){
+  var scene = racine.querySelector(".prod-hero-boite");
+  if(!scene) return;
+  var boite = scene.querySelector(".boite-3d");
+  var rx = -16, ry = 28, tenu = false, dx0 = 0, dy0 = 0, rx0 = rx, ry0 = ry;
+
+  function poser(){ boite.style.transform = "rotateX("+rx+"deg) rotateY("+ry+"deg)"; }
+  poser();
+
+  var idle = !reduced;
+  function tourner(){
+    if(!idle || tenu) return;
+    ry += 0.05; poser();
+    requestAnimationFrame(tourner);
+  }
+  if(idle) requestAnimationFrame(tourner);
+
+  scene.addEventListener("pointerdown", function(e){
+    tenu = true; idle = false;
+    dx0 = e.clientX; dy0 = e.clientY; rx0 = rx; ry0 = ry;
+    scene.classList.add("tenue");
+    if(scene.setPointerCapture) try{ scene.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  scene.addEventListener("pointermove", function(e){
+    if(!tenu) return;
+    ry = ry0 + (e.clientX - dx0) * 0.45;
+    rx = Math.max(-65, Math.min(65, rx0 - (e.clientY - dy0) * 0.45));
+    poser();
+  });
+  function lacher(){ tenu = false; scene.classList.remove("tenue"); }
+  scene.addEventListener("pointerup", lacher);
+  scene.addEventListener("pointercancel", lacher);
 }
 
 /* La video du bandeau ne charge meme pas son fichier si le mouvement est
